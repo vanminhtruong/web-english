@@ -137,6 +137,26 @@ onMounted(() => {
   accordionState.value = getStoredAccordionState()
 })
 
+// Get group topics for save functionality
+const getGroupTopicsForSave = (): Record<string, string> => {
+  try {
+    const stored = localStorage.getItem('vocabulary-group-topics')
+    return stored ? JSON.parse(stored) : {}
+  } catch (error) {
+    console.warn('Failed to load group topics for save:', error)
+    return {}
+  }
+}
+
+// Restore group topics from loaded data
+const restoreGroupTopics = (topics: Record<string, string>) => {
+  try {
+    localStorage.setItem('vocabulary-group-topics', JSON.stringify(topics))
+  } catch (error) {
+    console.warn('Failed to restore group topics:', error)
+  }
+}
+
 interface Word {
   id: string
   word: string

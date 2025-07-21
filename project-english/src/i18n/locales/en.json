@@ -80,7 +80,12 @@
     },
     "accordion": {
       "expand": "Expand group",
-      "collapse": "Collapse group"
+      "collapse": "Collapse group",
+      "addTopic": "Add Topic",
+      "editTopic": "Edit Topic",
+      "topicPlaceholder": "Enter topic for this group...",
+      "saveTopic": "Save Topic",
+      "cancelTopic": "Cancel"
     },
     "notFound": "Vocabulary not found!",
     "updateError": "An error occurred while updating vocabulary. Please try again.",

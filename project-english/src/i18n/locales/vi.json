@@ -80,7 +80,12 @@
     },
     "accordion": {
       "expand": "Mở rộng nhóm",
-      "collapse": "Thu gọn nhóm"
+      "collapse": "Thu gọn nhóm",
+      "addTopic": "Thêm chủ đề",
+      "editTopic": "Sửa chủ đề",
+      "topicPlaceholder": "Nhập chủ đề cho nhóm này...",
+      "saveTopic": "Lưu chủ đề",
+      "cancelTopic": "Hủy"
     },
     "notFound": "Không tìm thấy từ vựng!",
     "updateError": "Có lỗi xảy ra khi cập nhật từ vựng. Vui lòng thử lại.",

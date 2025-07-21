@@ -11,9 +11,9 @@
         :selected-level="selectedLevel"
         :categories="categories"
         :show-favorites-only="showFavoritesOnly"
-        @update:searchQuery="searchQuery = $event"
-        @update:selectedCategory="selectedCategory = $event"
-        @update:selectedLevel="selectedLevel = $event"
+        @update:searchQuery="updateSearchQuery"
+        @update:selectedCategory="updateSelectedCategory"
+        @update:selectedLevel="updateSelectedLevel"
         @update:showFavoritesOnly="updateShowFavoritesOnly"
       />
       
@@ -308,19 +308,100 @@ let autoSaveTimer: number | null = null
 let debounceTimer: number | null = null
 
 // Methods to handle localStorage
-const getStoredShowFavoritesOnly = (): boolean => {
-  const stored = localStorage.getItem('vocabulary-show-favorites-only')
-  return stored ? JSON.parse(stored) : false
+function getStoredShowFavoritesOnly(): boolean {
+  try {
+    const stored = localStorage.getItem('vocabulary-show-favorites-only')
+    return stored === 'true'
+  } catch {
+    return false
+  }
 }
 
-const setStoredShowFavoritesOnly = (value: boolean) => {
-  localStorage.setItem('vocabulary-show-favorites-only', JSON.stringify(value))
+function setStoredShowFavoritesOnly(value: boolean) {
+  localStorage.setItem('vocabulary-show-favorites-only', value.toString())
 }
 
-const updateShowFavoritesOnly = (value: boolean) => {
+function updateShowFavoritesOnly(value: boolean) {
   showFavoritesOnly.value = value
   setStoredShowFavoritesOnly(value)
-  
+  // Reset to first page when changing filters
+  currentPage.value = 1
+  // Clear date group pages
+  dateGroupPages.value = {}
+}
+
+// Search Query localStorage methods
+function getStoredSearchQuery(): string {
+  try {
+    return localStorage.getItem('vocabulary-search-query') || ''
+  } catch {
+    return ''
+  }
+}
+
+function setStoredSearchQuery(value: string) {
+  localStorage.setItem('vocabulary-search-query', value)
+}
+
+function updateSearchQuery(value: string) {
+  searchQuery.value = value
+  setStoredSearchQuery(value)
+  // Reset to first page when changing filters
+  currentPage.value = 1
+  // Clear date group pages
+  dateGroupPages.value = {}
+  // Trigger auto-save if enabled
+  if (autoSaveEnabled.value) {
+    debounceAutoSave()
+  }
+}
+
+// Selected Category localStorage methods
+function getStoredSelectedCategory(): string {
+  try {
+    return localStorage.getItem('vocabulary-selected-category') || ''
+  } catch {
+    return ''
+  }
+}
+
+function setStoredSelectedCategory(value: string) {
+  localStorage.setItem('vocabulary-selected-category', value)
+}
+
+function updateSelectedCategory(value: string) {
+  selectedCategory.value = value
+  setStoredSelectedCategory(value)
+  // Reset to first page when changing filters
+  currentPage.value = 1
+  // Clear date group pages
+  dateGroupPages.value = {}
+  // Trigger auto-save if enabled
+  if (autoSaveEnabled.value) {
+    debounceAutoSave()
+  }
+}
+
+// Selected Level localStorage methods
+function getStoredSelectedLevel(): string {
+  try {
+    return localStorage.getItem('vocabulary-selected-level') || ''
+  } catch {
+    return ''
+  }
+}
+
+function setStoredSelectedLevel(value: string) {
+  localStorage.setItem('vocabulary-selected-level', value)
+}
+
+function updateSelectedLevel(value: string) {
+  selectedLevel.value = value
+  setStoredSelectedLevel(value)
+  // Reset to first page when changing filters
+  currentPage.value = 1
+  // Clear date group pages
+  dateGroupPages.value = {}
   // Trigger auto-save if enabled
   if (autoSaveEnabled.value) {
     debounceAutoSave()
@@ -409,12 +490,25 @@ const manualSave = async () => {
   saveStatus.value = 'saving'
   
   try {
-    // Get vocabulary data and custom topics
+    // Get group topics from localStorage
+    const getGroupTopics = (): Record<string, string> => {
+      try {
+        const stored = localStorage.getItem('vocabulary-group-topics')
+        return stored ? JSON.parse(stored) : {}
+      } catch (error) {
+        console.warn('Failed to load group topics for save:', error)
+        return {}
+      }
+    }
+    
+    // Get vocabulary data, custom topics, and group topics
     const vocabularyData = {
       vocabularies: vocabularyStore.allVocabularies.value,
       customTopics: vocabularyStore.customTopics.value,
+      groupTopics: getGroupTopics(), // Include group topics in save data
+      accordionState: JSON.parse(localStorage.getItem('vocabulary-accordion-state') || '{}'), // Include accordion state
       exportDate: new Date().toISOString(),
-      version: '1.0',
+      version: '1.1', // Updated version to include new data
       totalCount: vocabularyStore.totalCount.value
     }
     
@@ -532,12 +626,25 @@ const performAutoSave = async () => {
     console.log('Starting auto-save process...')
     saveStatus.value = 'saving'
     
-    // Get vocabulary data and custom topics for JSON file
+    // Get group topics from localStorage
+    const getGroupTopics = (): Record<string, string> => {
+      try {
+        const stored = localStorage.getItem('vocabulary-group-topics')
+        return stored ? JSON.parse(stored) : {}
+      } catch (error) {
+        console.warn('Failed to load group topics for auto-save:', error)
+        return {}
+      }
+    }
+    
+    // Get vocabulary data, custom topics, and group topics for JSON file
     const vocabularyData = {
       vocabularies: vocabularyStore.allVocabularies.value,
       customTopics: vocabularyStore.customTopics.value,
+      groupTopics: getGroupTopics(), // Include group topics in auto-save data
+      accordionState: JSON.parse(localStorage.getItem('vocabulary-accordion-state') || '{}'), // Include accordion state
       exportDate: new Date().toISOString(),
-      version: '1.0',
+      version: '1.1', // Updated version to include new data
       totalCount: vocabularyStore.totalCount.value
     }
     
@@ -757,6 +864,26 @@ const handleFileImport = async (event: Event) => {
         vocabularyStore.addCustomTopic(topic)
       })
       console.log('Custom topics imported successfully')
+    }
+    
+    // Import group topics if available (version 1.1+)
+    if (data.groupTopics && typeof data.groupTopics === 'object') {
+      try {
+        localStorage.setItem('vocabulary-group-topics', JSON.stringify(data.groupTopics))
+        console.log('Group topics imported successfully:', data.groupTopics)
+      } catch (error) {
+        console.warn('Failed to import group topics:', error)
+      }
+    }
+    
+    // Import accordion state if available (version 1.1+)
+    if (data.accordionState && typeof data.accordionState === 'object') {
+      try {
+        localStorage.setItem('vocabulary-accordion-state', JSON.stringify(data.accordionState))
+        console.log('Accordion state imported successfully:', data.accordionState)
+      } catch (error) {
+        console.warn('Failed to import accordion state:', error)
+      }
     }
     
     // Update save time
@@ -1146,6 +1273,9 @@ onMounted(() => {
   lastSaveTime.value = getStoredLastSaveTime()
   autoSaveEnabled.value = getStoredAutoSaveEnabled()
   hasAutoSaveFile.value = getStoredHasAutoSaveFile()
+  searchQuery.value = getStoredSearchQuery()
+  selectedCategory.value = getStoredSelectedCategory()
+  selectedLevel.value = getStoredSelectedLevel()
   
   // Start auto-save scheduling if enabled
   if (autoSaveEnabled.value) {

@@ -31,6 +31,70 @@
           </h4>
         </div>
         
+        <!-- Center topic section -->
+        <div class="flex-1 flex justify-center mx-4">
+          <div v-if="!showTopicInput" class="flex items-center space-x-2">
+            <!-- Topic display or add button -->
+            <div v-if="groupTopic" class="flex items-center space-x-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
+              <svg class="w-3 h-3 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-xs font-medium text-blue-700 dark:text-blue-300">{{ groupTopic }}</span>
+              <button
+                @click="editTopic"
+                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none"
+                :aria-label="t('vocabulary.accordion.editTopic')"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                </svg>
+              </button>
+            </div>
+            <button
+              v-else
+              @click="showTopicInput = true"
+              class="flex items-center space-x-1 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :aria-label="t('vocabulary.accordion.addTopic')"
+            >
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>{{ t('vocabulary.accordion.addTopic') }}</span>
+            </button>
+          </div>
+          
+          <!-- Topic input form -->
+          <div v-else class="flex items-center space-x-2 w-full max-w-xs">
+            <input
+              ref="topicInput"
+              v-model="topicInputValue"
+              @keyup.enter="saveTopic"
+              @keyup.escape="cancelTopicInput"
+              type="text"
+              :placeholder="t('vocabulary.accordion.topicPlaceholder')"
+              class="flex-1 px-2 py-1 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button
+              @click="saveTopic"
+              class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              :aria-label="t('vocabulary.accordion.saveTopic')"
+            >
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button
+              @click="cancelTopicInput"
+              class="px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+              :aria-label="t('vocabulary.accordion.cancelTopic')"
+            >
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
         <!-- Date group pagination (only show when expanded) -->
         <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="flex items-center space-x-2">
           <button 
@@ -106,6 +170,67 @@ const isExpanded = ref(props.defaultExpanded)
 const accordionContent = ref<HTMLElement>()
 const accordionMaxHeight = ref(0)
 
+// Topic functionality state
+const showTopicInput = ref(false)
+const topicInputValue = ref('')
+const topicInput = ref<HTMLInputElement>()
+const groupTopic = ref('')
+
+// Local storage key for topics
+const TOPICS_STORAGE_KEY = 'vocabulary-group-topics'
+
+// Load group topics from localStorage
+const getStoredTopics = (): Record<string, string> => {
+  try {
+    const stored = localStorage.getItem(TOPICS_STORAGE_KEY)
+    return stored ? JSON.parse(stored) : {}
+  } catch (error) {
+    console.warn('Failed to load group topics from localStorage:', error)
+    return {}
+  }
+}
+
+// Save group topics to localStorage
+const setStoredTopics = (topics: Record<string, string>) => {
+  try {
+    localStorage.setItem(TOPICS_STORAGE_KEY, JSON.stringify(topics))
+  } catch (error) {
+    console.warn('Failed to save group topics to localStorage:', error)
+  }
+}
+
+// Topic functionality methods
+const editTopic = () => {
+  topicInputValue.value = groupTopic.value
+  showTopicInput.value = true
+  nextTick(() => {
+    topicInput.value?.focus()
+  })
+}
+
+const saveTopic = () => {
+  const trimmedTopic = topicInputValue.value.trim()
+  groupTopic.value = trimmedTopic
+  
+  // Update localStorage
+  const storedTopics = getStoredTopics()
+  if (trimmedTopic) {
+    storedTopics[props.group.date] = trimmedTopic
+  } else {
+    delete storedTopics[props.group.date]
+  }
+  setStoredTopics(storedTopics)
+  
+  // Reset input state
+  showTopicInput.value = false
+  topicInputValue.value = ''
+}
+
+const cancelTopicInput = () => {
+  showTopicInput.value = false
+  topicInputValue.value = ''
+}
+
 // Calculate accordion content height for smooth animation
 const calculateHeight = async () => {
   if (!accordionContent.value) return
@@ -130,11 +255,17 @@ const calculateHeight = async () => {
   }
 }
 
-// Initialize accordion state
+// Initialize accordion state and load topics
 onMounted(async () => {
   // Check if there's a saved state for this date group
   if (props.accordionState && typeof props.accordionState[props.group.date] === 'boolean') {
     isExpanded.value = props.accordionState[props.group.date]
+  }
+  
+  // Load saved topic for this group
+  const storedTopics = getStoredTopics()
+  if (storedTopics[props.group.date]) {
+    groupTopic.value = storedTopics[props.group.date]
   }
   
   // Calculate height for smooth animation
