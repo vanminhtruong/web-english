@@ -43,6 +43,57 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
   const imageAnswered = ref(false)
   const imageCorrect = ref(false)
 
+  // Pronunciation mode states
+  const isRecording = ref(false)
+  const pronunciationResult = ref('')
+  const pronunciationAnswered = ref(false)
+  const pronunciationCorrect = ref(false)
+  let recognition: any = null
+
+  const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition
+  const isSpeechRecognitionSupported = !!SpeechRecognition
+
+  if (isSpeechRecognitionSupported) {
+    recognition = new SpeechRecognition()
+    recognition.continuous = false
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript
+      pronunciationResult.value = transcript
+      checkPronunciationAnswer(transcript)
+    }
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error', event.error)
+      isRecording.value = false
+    }
+
+    recognition.onend = () => {
+      isRecording.value = false
+    }
+  }
+
+  const startRecording = () => {
+    if (isRecording.value || !isSpeechRecognitionSupported) return
+    pronunciationResult.value = ''
+    pronunciationAnswered.value = false
+    pronunciationCorrect.value = false
+    isRecording.value = true
+    recognition.start()
+  }
+
+  const checkPronunciationAnswer = (transcript: string) => {
+    if (!currentCard.value) return false
+    pronunciationAnswered.value = true
+    const userAnswer = transcript.toLowerCase().trim().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+    const correctAnswer = currentCard.value.word.toLowerCase().trim().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+    pronunciationCorrect.value = userAnswer === correctAnswer
+    return pronunciationCorrect.value
+  }
+
   // Quiz mode methods
   const generateQuizOptions = () => {
     if (!currentCard.value) return
@@ -159,11 +210,22 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     imageCorrect.value = false
   }
 
+  const resetPronunciationMode = () => {
+    if (recognition && isRecording.value) {
+      recognition.stop()
+    }
+    isRecording.value = false
+    pronunciationResult.value = ''
+    pronunciationAnswered.value = false
+    pronunciationCorrect.value = false
+  }
+
   const resetAllModes = () => {
     resetQuizMode()
     resetTypingMode()
     resetListeningMode()
     resetImageMode()
+    resetPronunciationMode()
   }
 
   // Helper to check if can proceed to next card
@@ -173,7 +235,8 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
       quiz: quizAnswered.value,
       typing: typingAnswered.value,
       listening: listeningAnswered.value,
-      image: imageAnswered.value
+      image: imageAnswered.value,
+      pronunciation: pronunciationAnswered.value,
     }
   }
 
@@ -212,6 +275,15 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     imageCorrect,
     checkImageAnswer,
     resetImageMode,
+
+    // Pronunciation mode
+    isRecording,
+    pronunciationResult,
+    pronunciationAnswered,
+    pronunciationCorrect,
+    isSpeechRecognitionSupported,
+    startRecording,
+    resetPronunciationMode,
     
     // General
     resetAllModes,

@@ -49,6 +49,11 @@ declare global {
       [elem: string]: any
     }
   }
+
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
 }
 
 // Module augmentation cho Vue

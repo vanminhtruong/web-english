@@ -262,7 +262,8 @@
       "quiz": "Quiz",
       "typing": "Typing",
       "listening": "Listening",
-      "image": "Image"
+      "image": "Image",
+      "pronunciation": "Pronunciation"
     },
     "image": {
       "imageAlt": "Vocabulary image",

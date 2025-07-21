@@ -158,6 +158,12 @@ const nextCard = () => {
   }
 }
 
+const resetPractice = () => {
+  stopTimer()
+  hasStarted.value = false
+  remainingTime.value = props.maxTime
+}
+
 const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60)
   const secs = seconds % 60
@@ -195,7 +201,8 @@ defineExpose({
   stopTimer,
   resetTimer,
   nextCard,
-  hasStarted
+  hasStarted,
+  resetPractice,
 })
 </script>
 

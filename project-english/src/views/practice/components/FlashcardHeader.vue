@@ -57,6 +57,7 @@
               <option value="typing">{{ $t('flashcard.modes.typing') }}</option>
               <option value="listening">{{ $t('flashcard.modes.listening') }}</option>
               <option value="image">{{ $t('flashcard.modes.image') }}</option>
+              <option value="pronunciation">{{ $t('flashcard.modes.pronunciation') }}</option>
             </select>
             <button @click="$emit('show-settings')" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :title="$t('flashcard.header.settings')">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">

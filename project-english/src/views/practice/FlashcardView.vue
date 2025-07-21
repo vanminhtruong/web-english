@@ -92,6 +92,45 @@
             @check-answer="handleImageAnswer"
           />
 
+          <!-- Pronunciation Mode -->
+          <div v-else-if="practiceMode === 'pronunciation'" class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96">
+            <div class="text-center h-full flex flex-col justify-center">
+              <div class="mb-6">
+                <span class="px-3 py-1 bg-blue-100 dark:bg-gray-800 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-full">
+                  {{ currentShuffledCard?.category ? getTopicName(currentShuffledCard.category) : '' }}
+                </span>
+              </div>
+              <h2 class="text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ currentShuffledCard?.word }}</h2>
+              <p class="text-xl text-gray-500 dark:text-gray-400 mb-8">{{ currentShuffledCard?.pronunciation }}</p>
+
+              <div v-if="!isSpeechRecognitionSupported" class="text-red-500 dark:text-red-400">
+                Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói.
+              </div>
+              <div v-else>
+                <button
+                  @click="startRecording"
+                  :disabled="isRecording"
+                  class="bg-red-500 hover:bg-red-600 text-white p-6 rounded-full transition-colors disabled:opacity-50"
+                  :class="{ 'animate-pulse': isRecording }"
+                >
+                  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z" />
+                    <path d="M5.5 9.5a.5.5 0 01.5.5v1a4 4 0 004 4h.5a.5.5 0 010 1h-.5a5 5 0 01-5-5v-1a.5.5 0 01.5-.5z" />
+                    <path d="M10 18a5 5 0 005-5h-1a4 4 0 01-4 4v1z" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="mt-8">
+                <p v-if="pronunciationResult" class="text-gray-600 dark:text-gray-300">Bạn đã nói: <span class="font-medium text-gray-800 dark:text-white">{{ pronunciationResult }}</span></p>
+                <div v-if="pronunciationAnswered" class="mt-4">
+                  <p v-if="pronunciationCorrect" class="text-2xl font-bold text-green-600 dark:text-green-400">Chính xác!</p>
+                  <p v-else class="text-2xl font-bold text-red-600 dark:text-red-400">Hãy thử lại!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Listening Mode -->
           <div v-else-if="practiceMode === 'listening'" class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96">
           <div class="text-center h-full flex flex-col justify-center">
@@ -366,7 +405,7 @@
             </div>
           </div>
           <div class="items-center px-4 py-3 space-y-2">
-            <button @click="restartSession" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600">
+            <button @click="handleRestartSession" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600">
               {{ $t('common.restart') }}
             </button>
             <button @click="goBack" class="px-4 py-2 bg-gray-300 dark:bg-gray-800 text-gray-700 dark:text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 dark:hover:bg-gray-700">
@@ -701,7 +740,15 @@ const {
   resetImageMode,
   resetAllModes,
   getCanProceed,
-  getShortMeaning
+  getShortMeaning,
+  // Pronunciation mode
+  isRecording,
+  pronunciationResult,
+  pronunciationAnswered,
+  pronunciationCorrect,
+  isSpeechRecognitionSupported,
+  startRecording,
+  resetPronunciationMode,
 } = useFlashcardModes(currentShuffledCard, currentFlashcards)
 
 // History composable
@@ -792,6 +839,7 @@ const resetCurrentCardWithModes = () => {
   resetTypingMode()
   resetListeningMode()
   resetImageMode()  // Fix: Reset image mode state when moving to next card
+  resetPronunciationMode()
   
   // Generate quiz options after reset if in quiz mode
   if (practiceMode.value === 'quiz') {
@@ -801,6 +849,11 @@ const resetCurrentCardWithModes = () => {
 
 // Override navigation functions to work with shuffled cards
 const enhancedNextCard = () => {
+  // For pronunciation mode, record the answer just before proceeding.
+  if (practiceMode.value === 'pronunciation' && pronunciationAnswered.value) {
+    recordAnswer(pronunciationCorrect.value)
+  }
+
   if (currentIndex.value < currentFlashcards.value.length - 1) {
     currentIndex.value++
     resetCurrentCardWithModes()
@@ -843,6 +896,14 @@ const handleSessionComplete = () => {
   saveSessionToHistory(stats.value, totalCards)
 }
 
+const handleRestartSession = () => {
+  restartSession() // Call the original function from the composable
+  practiceStarted.value = false
+  if (practiceTimerRef.value) {
+    practiceTimerRef.value.resetPractice()
+  }
+}
+
 // Auto flip functionality
 let autoFlipTimer: number | null = null
 
@@ -876,6 +937,15 @@ watch(showCompletionModal, (newValue) => {
 
 // Prevent body scroll when modal is open
 watch(showHistory, (newValue) => {
+  if (newValue) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
+})
+
+// Prevent body scroll when settings modal is open
+watch(showSettingsDialog, (newValue) => {
   if (newValue) {
     document.body.classList.add('modal-open')
   } else {
