@@ -412,7 +412,13 @@ const {
 } = useFlashcardGame()
 
 // Combine filter and shuffle logic
-const baseFlashcards = computed(() => filteredVocabularies.value)
+const baseFlashcards = computed(() => {
+  return filteredVocabularies.value.filter(vocab => {
+    const categoryMatch = !settings.value.category || vocab.category === settings.value.category
+    const levelMatch = !settings.value.difficulty || settings.value.difficulty === 'all' || vocab.level === settings.value.difficulty
+    return categoryMatch && levelMatch
+  })
+})
 
 // Get current flashcards (filtered + shuffled if enabled)
 const currentFlashcards = computed(() => {

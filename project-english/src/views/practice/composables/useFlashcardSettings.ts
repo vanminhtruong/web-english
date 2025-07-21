@@ -16,6 +16,8 @@ export function useFlashcardSettings() {
     shuffleCards: false,
     voiceType: 'female',
     practiceMode: 'flashcard',
+    category: '',
+    level: ''
   }
 
   // Current settings
@@ -133,7 +135,7 @@ export function useFlashcardSettings() {
       beginner: {
         ...defaultSettings,
         cardCount: 10,
-        difficulty: 'easy',
+        difficulty: 'easy' as const,
         autoFlip: true,
         flipDelay: 5,
         showDefinition: true,
@@ -143,7 +145,7 @@ export function useFlashcardSettings() {
       intermediate: {
         ...defaultSettings,
         cardCount: 20,
-        difficulty: 'medium',
+        difficulty: 'medium' as const,
         autoFlip: false,
         showDefinition: true,
         showExample: true,
@@ -152,7 +154,7 @@ export function useFlashcardSettings() {
       advanced: {
         ...defaultSettings,
         cardCount: 50,
-        difficulty: 'hard',
+        difficulty: 'hard' as const,
         autoFlip: false,
         showDefinition: false,
         showExample: false,

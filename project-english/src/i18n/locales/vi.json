@@ -27,7 +27,10 @@
     "minutes": "phút",
     "finish": "Hoàn thành",
     "close": "Đóng",
-    "confirm": "Xác nhận"
+    "confirm": "Xác nhận",
+    "reset": "Đặt lại",
+    "apply": "Áp dụng",
+    "resetToDefault": "Về mặc định"
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -703,27 +706,33 @@
   },
   "voice": {
     "selector": {
-      "title": "Chọn giọng đọc"
+      "title": "Giọng đọc"
     },
     "gender": {
       "female": "Nữ",
       "male": "Nam"
     },
     "types": {
-      "female_sweet": "Nữ ngọt ngào",
-      "female_clear": "Nữ rõ ràng",
-      "female_professional": "Nữ chuyên nghiệp",
-      "male_strong": "Nam dõng dạc",
-      "male_gentle": "Nam nhẹ nhàng",
-      "male_deep": "Nam trầm ấm"
+      "female_sweet": "Giọng nữ Ngọt ngào",
+      "female_clear": "Giọng nữ Trong trẻo",
+      "female_professional": "Giọng nữ Chuyên nghiệp",
+      "male_strong": "Giọng nam Mạnh mẽ",
+      "male_gentle": "Giọng nam Dịu dàng",
+      "male_deep": "Giọng nam Trầm ấm"
     },
     "info": {
-      "name": "Tên giọng",
+      "name": "Tên",
       "language": "Ngôn ngữ",
       "gender": "Giới tính"
     },
-    "test": "Thử giọng",
+    "test": "Thử nghiệm giọng",
     "testing": "Đang thử...",
-    "testText": "Xin chào, đây là giọng đọc tiếng Anh của tôi."
+    "testText": "Xin chào! Đây là một bài kiểm tra giọng nói.",
+    "settings": {
+      "title": "Cài đặt giọng nói",
+      "rate": "Tốc độ",
+      "pitch": "Cao độ",
+      "volume": "Âm lượng"
+    }
   }
 } 

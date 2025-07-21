@@ -11,4 +11,6 @@ export interface GameSettings {
   shuffleCards: boolean;
   voiceType: 'female' | 'male';
   practiceMode?: PracticeMode;
+  category?: string;
+  level?: string;
 } 

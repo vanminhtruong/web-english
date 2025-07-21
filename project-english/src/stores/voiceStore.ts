@@ -19,21 +19,27 @@ const debugAvailableVoices = () => {
 export type VoiceType = 'female-sweet' | 'female-clear' | 'male-strong' | 'male-gentle' | 'female-professional' | 'male-deep'
 
 export interface VoiceSettings {
-  voiceType: VoiceType
   rate: number
   pitch: number
   volume: number
 }
 
-// Global reactive state - Optimized for natural human-like speech
-const defaultSettings: VoiceSettings = {
-  voiceType: 'female-sweet',
-  rate: 0.9,  // Slightly faster for more natural flow
-  pitch: 0.95, // Slightly lower pitch for more human-like sound
-  volume: 1.0
+export type AllVoiceSettings = {
+  [key in VoiceType]: VoiceSettings
 }
 
-const voiceSettings = ref<VoiceSettings>({ ...defaultSettings })
+// Global reactive state - Optimized for natural human-like speech
+const defaultSettings: AllVoiceSettings = {
+  'female-sweet': { rate: 0.85, pitch: 1.1, volume: 1.0 },
+  'female-clear': { rate: 1.0, pitch: 0.95, volume: 1.0 },
+  'female-professional': { rate: 0.9, pitch: 0.85, volume: 1.0 },
+  'male-strong': { rate: 0.8, pitch: 0.7, volume: 1.0 },
+  'male-gentle': { rate: 0.9, pitch: 0.9, volume: 1.0 },
+  'male-deep': { rate: 0.75, pitch: 0.6, volume: 1.0 }
+}
+
+const voiceSettings = ref<AllVoiceSettings>({ ...defaultSettings })
+const currentVoiceType = ref<VoiceType>('female-sweet')
 const availableVoices = ref<SpeechSynthesisVoice[]>([])
 const selectedVoice = ref<SpeechSynthesisVoice | null>(null)
 
@@ -62,7 +68,7 @@ const loadVoices = () => {
 const updateSelectedVoice = () => {
   const voices = availableVoices.value
   console.log('Updating voice selection, available voices:', voices.length)
-  console.log('Current voice type:', voiceSettings.value.voiceType)
+  console.log('Current voice type:', currentVoiceType.value)
   
   if (voices.length === 0) {
     console.log('No voices available, loading voices...')
@@ -99,7 +105,7 @@ const updateSelectedVoice = () => {
     console.log('No gender-specific voices found, splitting by index')
   }
   
-  switch (voiceSettings.value.voiceType) {
+  switch (currentVoiceType.value) {
     case 'female-sweet':
       // Use first female voice or first available
       targetVoice = femaleVoices[0] || voices[0]
@@ -137,7 +143,7 @@ const updateSelectedVoice = () => {
       break
   }
 
-  console.log(`Looking for ${voiceSettings.value.voiceType} voice, found:`, targetVoice?.name)
+  console.log(`Looking for ${currentVoiceType.value} voice, found:`, targetVoice?.name)
 
   // Fallback: use first available voice or default system voice
   const previousVoice = selectedVoice.value?.name
@@ -149,20 +155,37 @@ const updateSelectedVoice = () => {
 // Load settings from localStorage
 const loadSettings = () => {
   const saved = localStorage.getItem('voice-settings')
+  const savedType = localStorage.getItem('voice-type')
+  
   if (saved) {
     try {
       const parsedSettings = JSON.parse(saved)
-      voiceSettings.value = { ...defaultSettings, ...parsedSettings }
+      // Deep merge with defaults to ensure all keys exist
+      voiceSettings.value = {
+        ...defaultSettings,
+        ...Object.keys(parsedSettings).reduce((acc, key) => {
+          const voiceType = key as VoiceType
+          if (defaultSettings[voiceType]) {
+            acc[voiceType] = { ...defaultSettings[voiceType], ...parsedSettings[voiceType] }
+          }
+          return acc
+        }, {} as AllVoiceSettings)
+      }
     } catch (error) {
       console.error('Error loading voice settings:', error)
       voiceSettings.value = { ...defaultSettings }
     }
+  }
+  
+  if (savedType) {
+    currentVoiceType.value = savedType as VoiceType
   }
 }
 
 // Save settings to localStorage
 const saveSettings = () => {
   localStorage.setItem('voice-settings', JSON.stringify(voiceSettings.value))
+  localStorage.setItem('voice-type', currentVoiceType.value)
 }
 
 // Create and configure speech utterance with voice-specific settings
@@ -173,42 +196,14 @@ const createUtterance = (text: string): SpeechSynthesisUtterance => {
   const utterance = new SpeechSynthesisUtterance(text)
   utterance.lang = 'en-US'
   
-  // Voice-specific settings for distinct characteristics
-  let rate = voiceSettings.value.rate
-  let pitch = voiceSettings.value.pitch
+  // Get settings for the current voice type
+  const settings = voiceSettings.value[currentVoiceType.value]
   
-  switch (voiceSettings.value.voiceType) {
-    case 'female-sweet':
-      rate = 0.85 // Slower, sweeter
-      pitch = 1.1  // Higher, more gentle
-      break
-    case 'female-clear':
-      rate = 1.0   // Normal speed
-      pitch = 0.95 // Slightly lower, professional
-      break
-    case 'female-professional':
-      rate = 0.9   // Slightly slower, authoritative
-      pitch = 0.85 // Lower, more confident
-      break
-    case 'male-strong':
-      rate = 0.8   // Slower, more powerful
-      pitch = 0.7  // Much lower, strong
-      break
-    case 'male-gentle':
-      rate = 0.9   // Gentle pace
-      pitch = 0.9  // Warm, friendly
-      break
-    case 'male-deep':
-      rate = 0.75  // Very slow, deep
-      pitch = 0.6  // Very low, resonant
-      break
-  }
+  utterance.rate = Math.max(0.1, Math.min(10, settings.rate))
+  utterance.pitch = Math.max(0, Math.min(2, settings.pitch))
+  utterance.volume = Math.max(0, Math.min(1, settings.volume))
   
-  utterance.rate = Math.max(0.6, Math.min(1.2, rate))
-  utterance.pitch = Math.max(0.5, Math.min(1.3, pitch))
-  utterance.volume = voiceSettings.value.volume
-  
-  console.log('Creating utterance with voice type:', voiceSettings.value.voiceType)
+  console.log('Creating utterance with voice type:', currentVoiceType.value)
   console.log('Selected voice for utterance:', selectedVoice.value?.name)
   
   if (selectedVoice.value) {
@@ -239,7 +234,7 @@ const playAudio = (text: string): Promise<void> => {
 // Update voice type
 const setVoiceType = (type: VoiceType) => {
   console.log('Setting voice type to:', type)
-  voiceSettings.value.voiceType = type
+  currentVoiceType.value = type
   
   // Force reload voices if not available
   if (availableVoices.value.length === 0) {
@@ -255,8 +250,24 @@ const setVoiceType = (type: VoiceType) => {
   console.log('Voice updated to:', selectedVoice.value?.name)
 }
 
+// Update settings for a specific voice
+const updateVoiceSettings = (type: VoiceType, newSettings: Partial<VoiceSettings>) => {
+  if (voiceSettings.value[type]) {
+    voiceSettings.value[type] = { ...voiceSettings.value[type], ...newSettings }
+    saveSettings()
+  }
+}
+
+// Reset settings for a specific voice
+const resetVoiceSettings = (type: VoiceType) => {
+  if (defaultSettings[type]) {
+    voiceSettings.value[type] = { ...defaultSettings[type] }
+    saveSettings()
+  }
+}
+
 // Get voice type options for UI
-const getVoiceTypeOptions = () => {
+const getVoiceTypeOptions = (): Array<{value: VoiceType, label: string, icon: string}> => {
   const { t } = useI18n()
   
   return [
@@ -274,7 +285,7 @@ const getCurrentVoiceInfo = () => {
   if (!selectedVoice.value) return null
   
   // Extract gender from voice type
-  const gender = voiceSettings.value.voiceType.includes('female') ? 'female' : 'male'
+  const gender = currentVoiceType.value.includes('female') ? 'female' : 'male'
   
   return {
     name: selectedVoice.value.name,
@@ -285,15 +296,15 @@ const getCurrentVoiceInfo = () => {
 
 // Watch for settings changes
 watch(voiceSettings, () => {
-  updateSelectedVoice()
   saveSettings()
 }, { deep: true })
 
 // Watch specifically for voice type changes
-watch(() => voiceSettings.value.voiceType, (newType, oldType) => {
+watch(currentVoiceType, (newType, oldType) => {
   if (newType !== oldType) {
     console.log('Voice type changed from', oldType, 'to', newType)
     updateSelectedVoice()
+    saveSettings()
   }
 })
 
@@ -312,9 +323,12 @@ loadVoices()
 export function useVoiceStore() {
   return {
     voiceSettings,
+    currentVoiceType,
     availableVoices,
     selectedVoice,
     setVoiceType,
+    updateVoiceSettings,
+    resetVoiceSettings,
     playAudio,
     createUtterance,
     getVoiceTypeOptions,

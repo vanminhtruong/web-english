@@ -527,15 +527,15 @@ const submitForm = async () => {
   
   // Validate form before submission - show toast for first invalid field
   if (!validateWord()) return
-  if (!validateMeaning()) return
+  if (!validatePronunciation()) return
   if (!validatePartOfSpeech()) return
   if (!validateCategory()) return
   if (!validateLevel()) return
+  if (!validateMeaning()) return
   if (!validateExample()) return
-  if (!validateNotes()) return
-  if (!validatePronunciation()) return
   if (!validateSynonyms()) return
   if (!validateAntonyms()) return
+  if (!validateNotes()) return
   
   isSubmitting.value = true
   

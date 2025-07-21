@@ -7,21 +7,21 @@
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('flashcard.settings.category') }}</label>
-            <select :value="settings.category" @change="updateSetting('category', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
+            <select :value="localSettings.category" @change="updateLocalSetting('category', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
               <option value="">{{ t('flashcard.settings.all') }}</option>
-              <option value="Technology">Technology</option>
-              <option value="Business">Business</option>
-              <option value="Travel">Travel</option>
+              <option v-for="category in categories" :key="category" :value="category">
+                {{ getTopicName(category) }}
+              </option>
             </select>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('flashcard.settings.level') }}</label>
-            <select :value="settings.level" @change="updateSetting('level', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
+            <select :value="localSettings.level" @change="updateLocalSetting('level', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
               <option value="">{{ t('flashcard.settings.all') }}</option>
-              <option value="beginner">{{ t('flashcard.settings.beginner') }}</option>
-              <option value="intermediate">{{ t('flashcard.settings.intermediate') }}</option>
-              <option value="advanced">{{ t('flashcard.settings.advanced') }}</option>
+              <option v-for="level in levels" :key="level" :value="level">
+                {{ t(`flashcard.settings.${level.toLowerCase()}`) }}
+              </option>
             </select>
           </div>
 
@@ -55,6 +55,8 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useVocabularyStore } from '../../../composables/useVocabularyStore';
+import { getTopicName } from '../../../utils/topicUtils';
 
 const props = defineProps<{
   show: boolean;
@@ -65,14 +67,14 @@ const props = defineProps<{
 const emit = defineEmits(['update:settings', 'update:local-settings', 'cancel', 'apply']);
 
 const { t } = useI18n();
+const { getCategories, getLevels } = useVocabularyStore();
 
-const updateSetting = (key: string, event: Event) => {
-  const target = event.target as HTMLSelectElement;
-  emit('update:settings', { ...props.settings, [key]: target.value });
-};
+const categories = getCategories;
+const levels = getLevels;
 
 const updateLocalSetting = (key: string, event: Event) => {
-  const target = event.target as HTMLInputElement;
-  emit('update:local-settings', { ...props.localSettings, [key]: target.checked });
+  const target = event.target as HTMLInputElement | HTMLSelectElement;
+  const value = target.type === 'checkbox' ? (target as HTMLInputElement).checked : target.value;
+  emit('update:local-settings', { ...props.localSettings, [key]: value });
 };
 </script> 

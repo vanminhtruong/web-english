@@ -19,31 +19,38 @@
       </button>
     </div>
     
-    <!-- Dropdown Menu - Positioned outside using Teleport -->
+    <!-- Dropdown Menu -->
     <Teleport to="body">
       <div 
         v-if="showDropdown"
         ref="dropdownMenu"
         :style="dropdownStyle"
-        class="w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+        class="w-56 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto z-[9998]"
       >
-        <button
+        <div
           v-for="option in voiceOptions"
           :key="option.value"
           @click="selectVoiceOption(option)"
           :class="[
-            'w-full flex items-center space-x-2 px-3 py-2 text-left text-sm transition-colors',
+            'flex items-center justify-between space-x-2 px-3 py-2 text-left text-sm transition-colors cursor-pointer',
             currentVoiceType === option.value
               ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
           ]"
         >
-          <span>{{ option.icon }}</span>
-          <span>{{ option.label }}</span>
-          <svg v-if="currentVoiceType === option.value" class="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-          </svg>
-        </button>
+          <div class="flex items-center space-x-2">
+            <span>{{ option.icon }}</span>
+            <span>{{ option.label }}</span>
+          </div>
+          <div class="flex items-center">
+            <svg v-if="currentVoiceType === option.value" class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            <button @click.stop="openVoiceSettings(option)" class="ml-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-500">
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </button>
+          </div>
+        </div>
       </div>
     </Teleport>
     
@@ -99,19 +106,36 @@
       </svg>
       <span>{{ isTesting ? t('voice.testing') : t('voice.test') }}</span>
     </button>
+
+    <!-- Voice Settings Modal -->
+    <VoiceSettingsModal
+      v-if="showSettingsModal && selectedVoiceForSettings"
+      :show="showSettingsModal"
+      :voice-type="selectedVoiceForSettings.value"
+      :voice-name="selectedVoiceForSettings.label"
+      :initial-settings="voiceSettings[selectedVoiceForSettings.value]"
+      @close="showSettingsModal = false"
+      @save="handleSaveVoiceSettings"
+      @reset="handleResetVoiceSettings"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useVoiceStore } from '../stores/voiceStore'
-import type { VoiceType } from '../stores/voiceStore'
+import type { VoiceType, VoiceSettings } from '../stores/voiceStore'
+
+const VoiceSettingsModal = defineAsyncComponent(() => import('./VoiceSettingsModal.vue'))
 
 const { t } = useI18n()
 const { 
-  voiceSettings, 
-  setVoiceType, 
+  voiceSettings,
+  currentVoiceType,
+  setVoiceType,
+  updateVoiceSettings,
+  resetVoiceSettings,
   playAudio, 
   getVoiceTypeOptions, 
   getCurrentVoiceInfo,
@@ -134,9 +158,10 @@ const showDropdown = ref(false)
 const dropdownButton = ref<HTMLElement | null>(null)
 const dropdownMenu = ref<HTMLElement | null>(null)
 const dropdownContainer = ref<HTMLElement | null>(null)
+const showSettingsModal = ref(false)
+const selectedVoiceForSettings = ref<{ value: VoiceType; label: string; icon: string } | null>(null)
 
 // Computed
-const currentVoiceType = computed(() => voiceSettings.value.voiceType)
 const voiceOptions = computed(() => getVoiceTypeOptions())
 const currentVoiceInfo = computed(() => getCurrentVoiceInfo())
 const currentVoiceOption = computed(() => {
@@ -186,6 +211,26 @@ const testVoice = async () => {
 
 const toggleVoiceInfo = () => {
   showTooltip.value = !showTooltip.value
+}
+
+// Settings Modal Methods
+const openVoiceSettings = (option: { value: VoiceType; label: string; icon: string }) => {
+  selectedVoiceForSettings.value = option
+  showSettingsModal.value = true
+}
+
+const handleSaveVoiceSettings = (payload: { voiceType: VoiceType; settings: VoiceSettings }) => {
+  updateVoiceSettings(payload.voiceType, payload.settings)
+  showSettingsModal.value = false
+}
+
+const handleResetVoiceSettings = (voiceType: VoiceType) => {
+  resetVoiceSettings(voiceType)
+  // Re-open modal to show updated default values
+  const option = voiceOptions.value.find(o => o.value === voiceType)
+  if(option) {
+    selectedVoiceForSettings.value = option
+  }
 }
 
 // Close dropdown when clicking outside

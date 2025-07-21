@@ -27,7 +27,9 @@
     "minutes": "minutes",
     "finish": "Finish",
     "close": "Close",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "reset": "Reset",
+    "resetToDefault": "Reset to Default"
   },
   "levels": {
     "beginner": "Beginner",
@@ -724,6 +726,12 @@
     },
     "test": "Test Voice",
     "testing": "Testing...",
-    "testText": "Hello, this is my English voice."
+    "testText": "Hello! This is a voice test.",
+    "settings": {
+      "title": "Voice Settings",
+      "rate": "Rate",
+      "pitch": "Pitch",
+      "volume": "Volume"
+    }
   }
 } 
