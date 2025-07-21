@@ -26,7 +26,9 @@
     "next": "Tiếp",
     "minutes": "phút",
     "finish": "Hoàn thành",
-    "close": "Đóng"
+    "close": "Đóng",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy"
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -207,7 +209,8 @@
       "builtInTopics": "Chủ đề có sẵn",
       "builtInTopicsDescription": "Hệ thống có sẵn 16 chủ đề cơ bản như Technology, Business, Travel... Bạn có thể thêm chủ đề tùy chỉnh ở đây.",
       "manageTopics": "Quản lý chủ đề"
-    }
+    },
+    "deleteSuccess": "Đã xóa \"{word}\" thành công."
   },
   "flashcard": {
     "header": {

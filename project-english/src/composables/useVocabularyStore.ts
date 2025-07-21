@@ -162,9 +162,12 @@ export function useVocabularyStore() {
   const updateVocabulary = (id: number, updates: Partial<Vocabulary>): boolean => {
     const index = vocabularies.value.findIndex(vocab => vocab.id === id)
     if (index !== -1) {
+      const existingVocab = vocabularies.value[index];
       vocabularies.value[index] = {
-        ...vocabularies.value[index],
+        ...existingVocab,
         ...updates,
+        synonyms: updates.synonyms !== undefined ? updates.synonyms : existingVocab.synonyms,
+        antonyms: updates.antonyms !== undefined ? updates.antonyms : existingVocab.antonyms,
         updatedAt: new Date().toISOString()
       }
       

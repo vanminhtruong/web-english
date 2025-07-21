@@ -4,3 +4,6 @@
 4. Mỗi lần nói chuyện với tôi là phải nói bằng tiếng anh
 5. Nhớ là mỗi lần sửa bug thì bạn hãy kiểm tra những cái gì liên quan tới cái bug này có lỗi hoặc thiếu gì không để mà bổ sung
 6. Mỗi lần mà có xảy ra lỗi lint lập tức phải xử lý ngay cho tôi
+7. Khi xử lý xong vấn đề gì là tôi cần bạn phải check lại kĩ xem có gì thiếu xót không trước khi bạn nói đã hoàn thành
+8. Khi bạn xử lý một vấn đề gì đó bạn không được phép thay đổi các thành phần logic và giao diện gốc hoặc các thành phần khác, chỉ sửa vấn đề mà tôi yêu cầu thôi
+9. Hãy nhớ là máy tôi là dùng window nên là cú pháp terminal không được dùng &&

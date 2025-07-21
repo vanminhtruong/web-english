@@ -1,0 +1,14 @@
+export type PracticeMode = 'flashcard' | 'quiz' | 'typing' | 'image' | 'pronunciation' | 'listening';
+
+export interface GameSettings {
+  cardCount: number;
+  difficulty: 'all' | 'easy' | 'medium' | 'hard';
+  autoFlip: boolean;
+  flipDelay: number;
+  showDefinition: boolean;
+  showExample: boolean;
+  showPronunciation: boolean;
+  shuffleCards: boolean;
+  voiceType: 'female' | 'male';
+  practiceMode?: PracticeMode;
+} 

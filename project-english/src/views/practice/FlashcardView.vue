@@ -93,81 +93,30 @@
           />
 
           <!-- Pronunciation Mode -->
-          <div v-else-if="practiceMode === 'pronunciation'" class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96">
-            <div class="text-center h-full flex flex-col justify-center">
-              <div class="mb-6">
-                <span class="px-3 py-1 bg-blue-100 dark:bg-gray-800 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-full">
-                  {{ currentShuffledCard?.category ? getTopicName(currentShuffledCard.category) : '' }}
-                </span>
-              </div>
-              <h2 class="text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ currentShuffledCard?.word }}</h2>
-              <p class="text-xl text-gray-500 dark:text-gray-400 mb-8">{{ currentShuffledCard?.pronunciation }}</p>
-
-              <div v-if="!isSpeechRecognitionSupported" class="text-red-500 dark:text-red-400">
-                Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói.
-              </div>
-              <div v-else>
-                <button
-                  @click="startRecording"
-                  :disabled="isRecording"
-                  class="bg-red-500 hover:bg-red-600 text-white p-6 rounded-full transition-colors disabled:opacity-50"
-                  :class="{ 'animate-pulse': isRecording }"
-                >
-                  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z" />
-                    <path d="M5.5 9.5a.5.5 0 01.5.5v1a4 4 0 004 4h.5a.5.5 0 010 1h-.5a5 5 0 01-5-5v-1a.5.5 0 01.5-.5z" />
-                    <path d="M10 18a5 5 0 005-5h-1a4 4 0 01-4 4v1z" />
-                  </svg>
-                </button>
-              </div>
-
-              <div class="mt-8">
-                <p v-if="pronunciationResult" class="text-gray-600 dark:text-gray-300">Bạn đã nói: <span class="font-medium text-gray-800 dark:text-white">{{ pronunciationResult }}</span></p>
-                <div v-if="pronunciationAnswered" class="mt-4">
-                  <p v-if="pronunciationCorrect" class="text-2xl font-bold text-green-600 dark:text-green-400">Chính xác!</p>
-                  <p v-else class="text-2xl font-bold text-red-600 dark:text-red-400">Hãy thử lại!</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <PronunciationMode
+            v-else-if="practiceMode === 'pronunciation'"
+            :card="currentShuffledCard"
+            :is-recording="isRecording"
+            :pronunciation-result="pronunciationResult"
+            :pronunciation-answered="pronunciationAnswered"
+            :pronunciation-correct="pronunciationCorrect"
+            :is-speech-recognition-supported="isSpeechRecognitionSupported"
+            :get-topic-name="getTopicName"
+            @start-recording="startRecording"
+          />
 
           <!-- Listening Mode -->
-          <div v-else-if="practiceMode === 'listening'" class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96">
-          <div class="text-center h-full flex flex-col justify-center">
-            <div class="mb-6">
-              <span class="px-3 py-1 bg-blue-100 dark:bg-gray-800 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-full">
-                {{ currentShuffledCard?.category ? getTopicName(currentShuffledCard.category) : '' }}
-              </span>
-            </div>
-            <div class="mb-8">
-              <button
-                @click="playAudio"
-                class="bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-full transition-colors"
-              >
-                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.816L4.846 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.846l3.537-3.816a1 1 0 011.617.816zM16 8a2 2 0 11-4 0 2 2 0 014 0zm-2 6a4 4 0 100-8 4 4 0 000 8z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-            </div>
-            <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">{{ $t('flashcard.listening.instruction') }}</p>
-
-            <div class="max-w-md mx-auto">
-              <input
-                v-model="listeningAnswer"
-                @keyup.enter="handleListeningAnswer"
-                type="text"
-                :disabled="listeningAnswered"
-                class="w-full p-4 text-center text-xl border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :placeholder="$t('flashcard.listening.placeholder')"
-              />
-              <div v-if="listeningAnswered" class="mt-4">
-                <p v-if="listeningCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ $t('flashcard.listening.correct') }}</p>
-                <p v-else class="text-red-600 dark:text-red-400 font-medium">{{ $t('flashcard.listening.incorrect') }} {{ currentShuffledCard?.word }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ currentShuffledCard?.meaning }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          <ListeningMode
+            v-else-if="practiceMode === 'listening'"
+            :card="currentShuffledCard"
+            :listening-answer="listeningAnswer"
+            @update:listening-answer="listeningAnswer = $event"
+            :listening-answered="listeningAnswered"
+            :listening-correct="listeningCorrect"
+            :get-topic-name="getTopicName"
+            @check-answer="handleListeningAnswer"
+            @play-audio="playAudio"
+          />
 
           <!-- Controls -->
           <FlashcardControls
@@ -193,259 +142,51 @@
         />
 
           <!-- Stats -->
-          <div v-if="practiceMode === 'flashcard'" class="grid grid-cols-3 gap-4 mt-8">
-            <div class="bg-white dark:bg-[#0a0a0a] rounded-lg p-4 text-center shadow border border-gray-200 dark:border-gray-800">
-              <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.easy }}</p>
-              <p class="text-sm text-gray-600 dark:text-gray-300">{{ $t('common.easy') }}</p>
-            </div>
-            <div class="bg-white dark:bg-[#0a0a0a] rounded-lg p-4 text-center shadow border border-gray-200 dark:border-gray-800">
-              <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ stats.reviewed }}</p>
-              <p class="text-sm text-gray-600 dark:text-gray-300">{{ $t('common.reviewed') }}</p>
-            </div>
-            <div class="bg-white dark:bg-[#0a0a0a] rounded-lg p-4 text-center shadow border border-gray-200 dark:border-gray-800">
-              <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ stats.difficult }}</p>
-              <p class="text-sm text-gray-600 dark:text-gray-300">{{ $t('common.difficult') }}</p>
-            </div>
-          </div>
-
-          <!-- Practice Stats -->
-          <div v-else class="grid grid-cols-2 gap-4 mt-8">
-            <div class="bg-white dark:bg-[#0a0a0a] rounded-lg p-4 text-center shadow border border-gray-200 dark:border-gray-800">
-              <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.correct }}</p>
-              <p class="text-sm text-gray-600 dark:text-gray-300">{{ $t('common.correct') }}</p>
-            </div>
-            <div class="bg-white dark:bg-[#0a0a0a] rounded-lg p-4 text-center shadow border border-gray-200 dark:border-gray-800">
-              <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ stats.incorrect }}</p>
-              <p class="text-sm text-gray-600 dark:text-gray-300">{{ $t('common.incorrect') }}</p>
-            </div>
-          </div>
+          <PracticeStats :stats="stats" :mode="practiceMode" />
         </div>
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">{{ $t('flashcard.empty.title') }}</h3>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $t('flashcard.empty.description') }}</p>
-        <div class="mt-6">
-          <button @click="goToVocabulary" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-            {{ $t('flashcard.empty.action') }}
-          </button>
-        </div>
-      </div>
+      <FlashcardEmptyState v-else @go-to-vocabulary="goToVocabulary" />
     </div>
 
     <!-- Settings Modal -->
-    <div v-if="showSettingsDialog" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-[#0a0a0a] dark:border-gray-800">
-        <div class="mt-3">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ $t('flashcard.settings.title') }}</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ $t('flashcard.settings.category') }}</label>
-              <select v-model="settings.category" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
-                <option value="">{{ $t('flashcard.settings.all') }}</option>
-                <option value="Technology">Technology</option>
-                <option value="Business">Business</option>
-                <option value="Travel">Travel</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ $t('flashcard.settings.level') }}</label>
-              <select v-model="settings.level" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
-                <option value="">{{ $t('flashcard.settings.all') }}</option>
-                <option value="beginner">{{ $t('flashcard.settings.beginner') }}</option>
-                <option value="intermediate">{{ $t('flashcard.settings.intermediate') }}</option>
-                <option value="advanced">{{ $t('flashcard.settings.advanced') }}</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="flex items-center">
-                <input type="checkbox" v-model="localSettings.autoFlip" class="mr-2">
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('flashcard.settings.autoFlip') }}</span>
-              </label>
-            </div>
-            
-            <div>
-              <label class="flex items-center">
-                <input type="checkbox" v-model="localSettings.shuffleCards" class="mr-2">
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('flashcard.settings.shuffle') }}</span>
-              </label>
-            </div>
-          </div>
-          
-          <div class="flex justify-end space-x-3 mt-6">
-            <button @click="cancelSettings" class="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800">
-              {{ $t('common.cancel') }}
-            </button>
-            <button @click="applyGameSettings" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md">
-              {{ $t('common.apply') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <SettingsModal
+      :show="showSettingsDialog"
+      :settings="settings"
+      @update:settings="settings = $event"
+      :local-settings="localSettings"
+      @update:local-settings="localSettings = $event"
+      @cancel="cancelSettings"
+      @apply="applyGameSettings"
+    />
 
     <!-- History Modal -->
-    <div v-if="showHistory" class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center h-full w-full z-50">
-      <div class="relative mx-auto p-5 border w-full max-w-4xl max-h-[80vh] shadow-lg rounded-md bg-white dark:bg-[#0a0a0a] dark:border-gray-800 flex flex-col">
-        <div class="flex justify-between items-center mb-4 flex-shrink-0">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $t('flashcard.history.title') }}</h3>
-          <button @click="showHistory = false" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-            </svg>
-          </button>
-        </div>
-
-        <div class="flex-1 overflow-y-auto">
-          <div v-if="practiceHistory.length === 0" class="text-center py-8">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">{{ $t('flashcard.history.empty.title') }}</h3>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $t('flashcard.history.empty.description') }}</p>
-          </div>
-
-          <div v-else class="space-y-4">
-            <div v-for="session in practiceHistory" :key="session.id" class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <div class="flex justify-between items-start">
-                <div class="flex-1">
-                  <div class="flex items-center space-x-2 mb-2">
-                    <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getModeColor(session.mode)">
-                      {{ getModeText(session.mode) }}
-                    </span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(session.date) }}</span>
-                  </div>
-
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <span class="text-gray-500 dark:text-gray-400">{{ $t('flashcard.history.totalCards') }}:</span>
-                      <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ session.totalCards }}</span>
-                    </div>
-                    <div>
-                      <span class="text-gray-500 dark:text-gray-400">{{ $t('flashcard.history.correct') }}:</span>
-                      <span class="ml-1 font-medium text-green-600 dark:text-green-400">{{ session.correctAnswers }}</span>
-                    </div>
-                    <div>
-                      <span class="text-gray-500 dark:text-gray-400">{{ $t('flashcard.history.incorrect') }}:</span>
-                      <span class="ml-1 font-medium text-red-600 dark:text-red-400">{{ session.incorrectAnswers }}</span>
-                    </div>
-                    <div>
-                      <span class="text-gray-500 dark:text-gray-400">{{ $t('flashcard.history.duration') }}:</span>
-                      <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ formatDuration(session.duration) }}</span>
-                    </div>
-                  </div>
-
-                  <div class="mt-2">
-                    <span class="text-gray-500 dark:text-gray-400 text-sm">{{ $t('flashcard.history.categories') }}:</span>
-                    <div class="flex flex-wrap gap-1 mt-1">
-                      <span v-for="category in session.categories" :key="category" class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
-                        {{ category }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="text-right">
-                  <div class="text-lg font-bold text-gray-900 dark:text-white">
-                    {{ Math.round((session.correctAnswers / session.totalCards) * 100) }}%
-                  </div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('flashcard.history.accuracy') }}</div>
-                  <div class="mt-1">
-                    <span 
-                      class="text-xs font-medium px-2 py-0.5 rounded-full" 
-                      :class="Math.round((session.correctAnswers / session.totalCards) * 100) >= 70 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'"
-                    >
-                      {{ Math.round((session.correctAnswers / session.totalCards) * 100) >= 70 ? $t('flashcard.history.pass') : $t('flashcard.history.fail') }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <HistoryModal
+      :show="showHistory"
+      :history="practiceHistory"
+      :get-mode-color="getModeColor"
+      :get-mode-text="getModeText"
+      :format-date="formatDate"
+      :format-duration="formatDuration"
+      @close="showHistory = false"
+    />
 
     <!-- Completion Modal -->
-    <div v-if="showCompletionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-[#0a0a0a] dark:border-gray-800">
-        <div class="mt-3 text-center">
-          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-gray-800">
-            <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-            </svg>
-          </div>
-          <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-4">{{ $t('flashcard.completion.title') }}</h3>
-          <div class="mt-2 px-7 py-3">
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('flashcard.completion.description', { count: flashcards.length }) }}</p>
-            <div class="mt-4 text-left">
-              <p class="text-sm"><span class="font-medium text-green-600 dark:text-green-400">{{ $t('flashcard.completion.correct') }}:</span> {{ stats.correct }}</p>
-              <p class="text-sm"><span class="font-medium text-red-600 dark:text-red-400">{{ $t('flashcard.completion.incorrect') }}:</span> {{ stats.incorrect }}</p>
-              <p class="text-sm"><span class="font-medium text-gray-600 dark:text-gray-400">{{ $t('flashcard.completion.accuracy') }}:</span> {{ (stats.correct + stats.incorrect) > 0 ? Math.round((stats.correct / (stats.correct + stats.incorrect)) * 100) : 0 }}%</p>
-              <p class="text-sm mt-2">
-                <span class="font-medium">{{ $t('flashcard.completion.result') }}:</span>
-                <span 
-                  class="ml-1 px-2 py-0.5 text-xs font-medium rounded-full" 
-                  :class="(stats.correct + stats.incorrect) > 0 && Math.round((stats.correct / (stats.correct + stats.incorrect)) * 100) >= 70 
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'"
-                >
-                  {{ (stats.correct + stats.incorrect) > 0 && Math.round((stats.correct / (stats.correct + stats.incorrect)) * 100) >= 70 ? $t('flashcard.history.pass') : $t('flashcard.history.fail') }}
-                </span>
-              </p>
-            </div>
-          </div>
-          <div class="items-center px-4 py-3 space-y-2">
-            <button @click="handleRestartSession" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600">
-              {{ $t('common.restart') }}
-            </button>
-            <button @click="goBack" class="px-4 py-2 bg-gray-300 dark:bg-gray-800 text-gray-700 dark:text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 dark:hover:bg-gray-700">
-              {{ $t('common.back') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <CompletionModal
+      :show="showCompletionModal"
+      :stats="stats"
+      :card-count="flashcards.length"
+      @restart="handleRestartSession"
+      @go-back="goBack"
+    />
 
     <!-- Exit Warning Modal -->
-    <div v-if="showExitWarning" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-8 max-w-md mx-4 text-center">
-        <div class="text-orange-500 mb-4">
-          <svg class="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-          {{ t('practice.exitWarning.title') }}
-        </h3>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">
-          {{ t('practice.exitWarning.message') }}
-        </p>
-        <div class="flex gap-3">
-          <button
-            @click="continueSession"
-            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            {{ t('practice.exitWarning.continue') }}
-          </button>
-          <button
-            @click="confirmExit"
-            class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            {{ t('practice.exitWarning.exit') }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <ExitWarningModal
+      :show="showExitWarning"
+      @continue="continueSession"
+      @confirm="confirmExit"
+    />
   </div>
 </template>
 
@@ -472,6 +213,16 @@ const FlashcardImage = defineAsyncComponent(() => import('./components/Flashcard
 const FlashcardControls = defineAsyncComponent(() => import('./components/FlashcardControls.vue'))
 const PracticeTimer = defineAsyncComponent(() => import('./components/PracticeTimer.vue'))
 const VoiceSelector = defineAsyncComponent(() => import('../../components/VoiceSelector.vue'))
+
+// New component imports
+const ExitWarningModal = defineAsyncComponent(() => import('./components/ExitWarningModal.vue'))
+const CompletionModal = defineAsyncComponent(() => import('./components/CompletionModal.vue'))
+const HistoryModal = defineAsyncComponent(() => import('./components/HistoryModal.vue'))
+const SettingsModal = defineAsyncComponent(() => import('./components/SettingsModal.vue'))
+const PronunciationMode = defineAsyncComponent(() => import('./components/PronunciationMode.vue'))
+const ListeningMode = defineAsyncComponent(() => import('./components/ListeningMode.vue'))
+const PracticeStats = defineAsyncComponent(() => import('./components/PracticeStats.vue'))
+const FlashcardEmptyState = defineAsyncComponent(() => import('./components/FlashcardEmptyState.vue'))
 
 // Composables
 import { useFlashcardGame } from './composables/useFlashcardGame'

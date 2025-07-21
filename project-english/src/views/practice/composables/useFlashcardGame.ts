@@ -1,35 +1,12 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useVocabularyStore } from '@/composables/useVocabularyStore'
-
-export interface GameSettings {
-  cardCount: number
-  difficulty: string
-  autoFlip: boolean
-  flipDelay: number
-  showDefinition: boolean
-  showExample: boolean
-  showPronunciation: boolean
-  shuffleCards: boolean
-  voiceType: 'male' | 'female'
-}
-
-export interface GameStats {
-  correct: number
-  incorrect: number
-  total: number
-  startTime: Date
-  endTime: Date | null
-  mode: string
-  categories?: string[]
-  easy?: number
-  difficult?: number
-  reviewed?: number
-}
+import { useVocabularyStore } from '../../../composables/useVocabularyStore'
+import type { Vocabulary } from '../../../composables/useVocabularyStore'
+import type { GameSettings, PracticeMode } from '../types'
 
 export function useFlashcardGame() {
   const router = useRouter()
-  const vocabularyStore = useVocabularyStore()
+  const { allVocabularies } = useVocabularyStore()
 
   // Practice mode localStorage key
   const PRACTICE_MODE_STORAGE_KEY = 'flashcard-practice-mode'
@@ -59,7 +36,7 @@ export function useFlashcardGame() {
   // Game state
   const currentIndex = ref(0)
   const isFlipped = ref(false)
-  const practiceMode = ref(loadPracticeModeFromStorage()) // Initialize from localStorage
+  const practiceMode = ref<PracticeMode>('flashcard')
   const showSettings = ref(false)
   const showCompletionModal = ref(false)
   const isCompleted = ref(false)
@@ -74,11 +51,32 @@ export function useFlashcardGame() {
     showExample: true,
     showPronunciation: true,
     shuffleCards: false,
-    voiceType: 'female'
+    voiceType: 'female',
+    practiceMode: 'flashcard',
   })
 
+  watch(settings, (newSettings) => {
+    if (newSettings.practiceMode) {
+      practiceMode.value = newSettings.practiceMode;
+    }
+  }, { immediate: true });
+
+
   // Game stats
-  const stats = ref<GameStats>({
+  const stats = ref<{
+    easy: number;
+    difficult: number;
+    reviewed: number;
+    correct: number;
+    incorrect: number;
+    total: number;
+    startTime: Date;
+    endTime: Date | null;
+    mode: string;
+  }>({
+    easy: 0,
+    difficult: 0,
+    reviewed: 0,
     correct: 0,
     incorrect: 0,
     total: 0,
@@ -88,7 +86,7 @@ export function useFlashcardGame() {
   })
 
   // Get flashcards from vocabulary store
-  const flashcards = computed(() => vocabularyStore.allVocabularies.value)
+  const flashcards = computed(() => allVocabularies.value)
 
   // Current card
   const currentCard = computed(() => {
@@ -139,6 +137,9 @@ export function useFlashcardGame() {
     isCompleted.value = false
     showCompletionModal.value = false
     stats.value = {
+      easy: 0,
+      difficult: 0,
+      reviewed: 0,
       correct: 0,
       incorrect: 0,
       total: 0,
@@ -149,9 +150,9 @@ export function useFlashcardGame() {
     resetCurrentCard()
   }
 
-  const changePracticeMode = (mode: string) => {
+  const changePracticeMode = (mode: PracticeMode) => {
     practiceMode.value = mode
-    stats.value.mode = mode
+    settings.value.practiceMode = mode;
     savePracticeModeToStorage(mode) // Save to localStorage
     resetCurrentCard()
   }
@@ -162,7 +163,7 @@ export function useFlashcardGame() {
   }
 
   const goBack = () => {
-    router.push('/vocabulary')
+    router.push('/practice/flashcard')
   }
 
   const goToVocabulary = () => {

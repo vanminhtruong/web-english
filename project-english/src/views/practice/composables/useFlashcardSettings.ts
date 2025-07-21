@@ -1,5 +1,5 @@
 import { ref, watch, onMounted } from 'vue'
-import type { GameSettings } from './useFlashcardGame'
+import type { GameSettings } from '../types'
 
 export function useFlashcardSettings() {
   const showSettings = ref(false)
@@ -14,7 +14,8 @@ export function useFlashcardSettings() {
     showExample: true,
     showPronunciation: true,
     shuffleCards: false,
-    voiceType: 'female'
+    voiceType: 'female',
+    practiceMode: 'flashcard',
   }
 
   // Current settings
