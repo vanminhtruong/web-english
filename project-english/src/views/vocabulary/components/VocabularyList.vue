@@ -93,7 +93,7 @@
 import { defineAsyncComponent, computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
-import { groupVocabulariesByDate, type GroupedVocabulary } from '../../../utils/dateUtils'
+import { groupVocabulariesByDateAndTopic, type GroupedVocabulary } from '../../../utils/dateUtils'
 
 const { t, locale } = useI18n()
 
@@ -190,30 +190,30 @@ const props = defineProps<Props>()
 // Computed for grouped words with pagination
 const groupedWords = computed((): GroupedVocabulary[] => {
   if (!props.useGrouping) return []
-  
+
   // Use allWords for grouping if provided, otherwise use paginatedWords
   const wordsToGroup = props.allWords || props.paginatedWords
-  const allGroups = groupVocabulariesByDate(wordsToGroup, locale.value)
-  
-  // Apply pagination to each group if dateGroupPages and itemsPerPageGrouped are provided
+  const allGroups = groupVocabulariesByDateAndTopic(wordsToGroup, locale.value)
+
+  // Phân trang theo số lượng topic group (categories) cho mỗi group date
   if (props.dateGroupPages && props.itemsPerPageGrouped) {
     return allGroups.map(group => {
       const currentPage = props.dateGroupPages![group.date] || 1
       const itemsPerPage = props.itemsPerPageGrouped!
+      const totalTopics = group.topics ? group.topics.length : 0
       const startIndex = (currentPage - 1) * itemsPerPage
       const endIndex = startIndex + itemsPerPage
-      const totalItems = group.vocabularies.length // Keep track before slicing
-      
       return {
         ...group,
-        vocabularies: group.vocabularies.slice(startIndex, endIndex),
-        totalItems,
+        topics: group.topics ? group.topics.slice(startIndex, endIndex) : [],
         currentPage,
-        totalPages: Math.ceil(totalItems / itemsPerPage)
+        totalPages: Math.ceil(totalTopics / itemsPerPage),
+        topicsTotal: totalTopics,
+        totalItems: group.vocabularies.length, // giữ lại số lượng từ vựng gốc
       }
     })
   }
-  
+
   return allGroups
 })
 

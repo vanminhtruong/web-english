@@ -383,7 +383,38 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
   }
 }
 
-// Main game composable - pass filtered vocabularies
+// History composable
+const {
+  showHistory,
+  practiceHistory,
+  saveSessionToHistory,
+  getModeColor,
+  getModeText,
+  formatDate,
+  formatDuration
+} = useFlashcardHistory()
+
+// Settings composable  
+const {
+  showSettings: showSettingsDialog,
+  settings: flashcardSettings,
+  localSettings,
+  applySettings: applyGameSettings,
+  resetSettings,
+  cancelSettings,
+  openSettings
+} = useFlashcardSettings()
+
+// Combine filter and shuffle logic
+const baseFlashcards = computed(() => {
+  return filteredVocabularies.value.filter(vocab => {
+    const categoryMatch = !settings.value.category || vocab.category === settings.value.category
+    const levelMatch = !settings.value.difficulty || settings.value.difficulty === 'all' || vocab.level === settings.value.difficulty
+    return categoryMatch && levelMatch
+  })
+})
+
+// Main game composable - must be after baseFlashcards
 const {
   currentIndex,
   isFlipped,
@@ -395,7 +426,6 @@ const {
   stats,
   flashcards,
   currentCard,
-  progressPercentage,
   nextCard,
   previousCard,
   flipCard,
@@ -409,16 +439,16 @@ const {
   markEasy,
   markDifficult,
   cleanup
-} = useFlashcardGame()
+} = useFlashcardGame(baseFlashcards)
 
-// Combine filter and shuffle logic
-const baseFlashcards = computed(() => {
-  return filteredVocabularies.value.filter(vocab => {
-    const categoryMatch = !settings.value.category || vocab.category === settings.value.category
-    const levelMatch = !settings.value.difficulty || settings.value.difficulty === 'all' || vocab.level === settings.value.difficulty
-    return categoryMatch && levelMatch
-  })
-})
+// Stats composable - must be after useFlashcardGame
+const {
+  sessionStats,
+  initializeStats,
+  recordAnswer,
+  nextCardStats,
+  getDetailedStats
+} = useFlashcardStats(stats)
 
 // Get current flashcards (filtered + shuffled if enabled)
 const currentFlashcards = computed(() => {
@@ -445,23 +475,6 @@ const currentProgressPercentage = computed(() => {
 // Shuffle functionality
 const shuffleEnabled = computed(() => flashcardSettings.value.shuffleCards)
 const shuffledFlashcards = ref<any[]>([])
-
-const toggleShuffle = () => {
-  // Update settings through the settings composable to ensure localStorage persistence
-  flashcardSettings.value.shuffleCards = !flashcardSettings.value.shuffleCards
-  
-  // If shuffle is enabled, create shuffled array
-  if (flashcardSettings.value.shuffleCards) {
-    shuffleFlashcards()
-  } else {
-    // Clear shuffled array when shuffle is disabled
-    shuffledFlashcards.value = []
-  }
-  
-  // Reset to first card after shuffle
-  currentIndex.value = 0
-  resetCurrentCardWithModes()
-}
 
 const shuffleFlashcards = (cards = baseFlashcards.value) => {
   // Fisher-Yates shuffle algorithm - use filtered flashcards
@@ -511,71 +524,6 @@ const {
   resetPronunciationMode,
 } = useFlashcardModes(currentShuffledCard, currentFlashcards)
 
-// History composable
-const {
-  showHistory,
-  practiceHistory,
-  saveSessionToHistory,
-  getModeColor,
-  getModeText,
-  formatDate,
-  formatDuration
-} = useFlashcardHistory()
-
-// Settings composable  
-const {
-  showSettings: showSettingsDialog,
-  settings: flashcardSettings,
-  localSettings,
-  applySettings: applyGameSettings,
-  resetSettings,
-  cancelSettings,
-  openSettings
-} = useFlashcardSettings()
-
-// Stats composable
-const {
-  sessionStats,
-  initializeStats,
-  recordAnswer,
-  nextCard: nextCardStats,
-  getDetailedStats
-} = useFlashcardStats(stats)
-
-// Synchronize settings
-watch(flashcardSettings, (newSettings) => {
-  settings.value = newSettings
-}, { deep: true })
-
-// Initialize stats when starting
-watch(flashcards, (newFlashcards) => {
-  if (newFlashcards.length > 0) {
-    initializeStats(newFlashcards.length)
-  }
-}, { immediate: true })
-
-// Watch for filter changes and update flashcards (after flashcardSettings is initialized)
-watch(baseFlashcards, (newFlashcards) => {
-  // Reset current index when filter changes
-  currentIndex.value = 0
-  
-  // If shuffle is enabled, shuffle the new filtered cards
-  if (flashcardSettings.value.shuffleCards) {
-    shuffleFlashcards(newFlashcards)
-  } else {
-    shuffledFlashcards.value = []
-  }
-}, { immediate: true })
-
-// Ensure currentIndex is valid for currentFlashcards
-watch(currentFlashcards, (newFlashcards) => {
-  if (newFlashcards.length === 0) {
-    currentIndex.value = 0
-  } else if (currentIndex.value >= newFlashcards.length) {
-    currentIndex.value = Math.max(0, newFlashcards.length - 1)
-  }
-}, { immediate: true })
-
 // Override resetCurrentCard to use modes composable
 const handleQuizAnswer = (answer: string) => {
   const isCorrect = selectQuizAnswer(answer)
@@ -605,6 +553,23 @@ const resetCurrentCardWithModes = () => {
   if (practiceMode.value === 'quiz') {
     generateQuizOptions()
   }
+}
+
+const toggleShuffle = () => {
+  // Update settings through the settings composable to ensure localStorage persistence
+  flashcardSettings.value.shuffleCards = !flashcardSettings.value.shuffleCards
+  
+  // If shuffle is enabled, create shuffled array
+  if (flashcardSettings.value.shuffleCards) {
+    shuffleFlashcards()
+  } else {
+    // Clear shuffled array when shuffle is disabled
+    shuffledFlashcards.value = []
+  }
+  
+  // Reset to first card after shuffle
+  currentIndex.value = 0
+  resetCurrentCardWithModes()
 }
 
 // Override navigation functions to work with shuffled cards
@@ -639,13 +604,11 @@ const enhancedPreviousCard = () => {
 
 const enhancedMarkEasy = () => {
   recordAnswer(true)
-  nextCardStats()
   enhancedNextCard()
 }
 
 const enhancedMarkDifficult = () => {
   recordAnswer(false)
-  nextCardStats()
   enhancedNextCard()
 }
 

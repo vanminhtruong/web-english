@@ -26,7 +26,7 @@
             </svg>
             <span>{{ group.displayDate }}</span>
             <span class="text-xs text-gray-500 dark:text-gray-400">
-              ({{ group.totalItems || group.vocabularies.length }} {{ t('vocabulary.words') }})
+              ({{ group.topicsTotal || group.totalItems || group.vocabularies.length }} {{ t('vocabulary.words') }})
             </span>
           </h4>
         </div>
@@ -123,18 +123,62 @@
     <!-- Collapsible content with simple transition -->
     <transition name="accordion">
       <div v-if="isExpanded" class="accordion-content">
-        <!-- Words in this date group -->
-        <div class="divide-y divide-gray-200 dark:divide-gray-700">
-          <VocabularyCard
-            v-for="word in group.vocabularies"
-            :key="word.id"
-            :word="word"
-            @play-audio="$emit('play-audio', $event)"
-            @edit-word="$emit('edit-word', $event)"
-            @delete-word="$emit('delete-word', $event)"
-            @toggle-favorite="$emit('toggle-favorite', $event)"
-            @view-details="$emit('view-details', $event)"
-          />
+        <!-- Topic-based sub-groups -->
+        <div v-if="group.topics && group.topics.length > 0" class="divide-y divide-gray-200 dark:divide-gray-700">
+          <div v-for="topicGroup in group.topics" :key="topicGroup.topic" class="topic-group">
+            <!-- Topic header with accordion toggle -->
+            <div 
+              class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50"
+              @click="toggleTopicAccordion(topicGroup.topic)"
+            >
+              <div class="flex items-center space-x-2">
+                <svg 
+                  class="w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform duration-200"
+                  :class="{ 'transform rotate-90': isTopicExpanded(topicGroup.topic) }"
+                  fill="currentColor" 
+                  viewBox="0 0 20 20"
+                >
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <h5 class="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {{ getTopicName(topicGroup.topic) }}
+                  <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
+                </h5>
+              </div>
+            </div>
+
+            <!-- Collapsible content for topic -->
+            <transition name="topic-accordion">
+              <div v-if="isTopicExpanded(topicGroup.topic)" class="topic-accordion-content py-2">
+                <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                  <VocabularyCard
+                    v-for="word in topicGroup.vocabularies"
+                    :key="word.id"
+                    :word="word"
+                    @play-audio="$emit('play-audio', $event)"
+                    @edit-word="$emit('edit-word', $event)"
+                    @delete-word="$emit('delete-word', $event)"
+                    @toggle-favorite="$emit('toggle-favorite', $event)"
+                    @view-details="$emit('view-details', $event)"
+                  />
+                </div>
+              </div>
+            </transition>
+          </div>
+        </div>
+
+        <!-- Fallback for words without topics -->
+        <div v-else class="divide-y divide-gray-200 dark:divide-gray-700">
+            <VocabularyCard
+              v-for="word in group.vocabularies"
+              :key="word.id"
+              :word="word"
+              @play-audio="$emit('play-audio', $event)"
+              @edit-word="$emit('edit-word', $event)"
+              @delete-word="$emit('delete-word', $event)"
+              @toggle-favorite="$emit('toggle-favorite', $event)"
+              @view-details="$emit('view-details', $event)"
+            />
         </div>
       </div>
     </transition>
@@ -146,6 +190,7 @@ import { defineAsyncComponent, ref, watch, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import type { GroupedVocabulary } from '../../../utils/dateUtils'
+import { getTopicName } from '../../../utils/topicUtils'
 
 const { t } = useI18n()
 
@@ -169,6 +214,18 @@ const props = withDefaults(defineProps<Props>(), {
 const isExpanded = ref(props.defaultExpanded)
 const accordionContent = ref<HTMLElement>()
 const accordionMaxHeight = ref(0)
+
+// State for topic accordions
+const expandedTopics = ref<Record<string, boolean>>({})
+
+// Toggle topic accordion
+const toggleTopicAccordion = (topic: string) => {
+  expandedTopics.value[topic] = !expandedTopics.value[topic]
+}
+
+const isTopicExpanded = (topic: string) => {
+  return expandedTopics.value[topic] || false
+}
 
 // Topic functionality state
 const showTopicInput = ref(false)
@@ -343,5 +400,16 @@ svg {
 .accordion-content {
   transform-origin: top;
   backface-visibility: hidden;
+}
+
+/* Topic Accordion transition classes */
+.topic-accordion-enter-active,
+.topic-accordion-leave-active {
+  transition: all 0.3s ease-out;
+}
+.topic-accordion-enter-from,
+.topic-accordion-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
 }
 </style>

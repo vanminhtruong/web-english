@@ -1,9 +1,11 @@
 import { useI18n } from 'vue-i18n'
+import type { TopicGroup } from '../views/vocabulary/types'
 
 export interface GroupedVocabulary {
   date: string
   displayDate: string
   vocabularies: any[]
+  topics?: TopicGroup[]
   totalItems?: number
   currentPage?: number
   totalPages?: number
@@ -92,6 +94,51 @@ export const getDateKey = (dateString: string | undefined): string => {
   } catch (error) {
     return ''
   }
+}
+
+/**
+ * Group vocabularies by topic
+ */
+export const groupVocabulariesByTopic = (vocabularies: any[]): TopicGroup[] => {
+  const grouped = new Map<string, any[]>()
+  const uncategorizedKey = 'Uncategorized'
+
+  vocabularies.forEach(vocab => {
+    const topic = vocab.category || uncategorizedKey
+    if (!grouped.has(topic)) {
+      grouped.set(topic, [])
+    }
+    grouped.get(topic)!.push(vocab)
+  })
+
+  const result = Array.from(grouped.entries()).map(([topic, vocabs]) => ({
+    topic,
+    vocabularies: vocabs.sort((a, b) => {
+        const timeA = new Date(a.createdAt || '').getTime()
+        const timeB = new Date(b.createdAt || '').getTime()
+        return timeB - timeA
+      })
+  }))
+
+  return result.sort((a, b) => {
+    if (a.topic === uncategorizedKey) return 1;
+    if (b.topic === uncategorizedKey) return -1;
+    return a.topic.localeCompare(b.topic);
+  });
+}
+
+/**
+ * Group vocabularies by date and then by topic
+ */
+export const groupVocabulariesByDateAndTopic = (vocabularies: any[], locale: string = 'vi-VN'): GroupedVocabulary[] => {
+  const groupedByDate = groupVocabulariesByDate(vocabularies, locale)
+
+  return groupedByDate.map(dateGroup => {
+    return {
+      ...dateGroup,
+      topics: groupVocabulariesByTopic(dateGroup.vocabularies)
+    }
+  })
 }
 
 /**

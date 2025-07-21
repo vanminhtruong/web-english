@@ -1,12 +1,12 @@
 import { ref, computed, onUnmounted, watch } from 'vue'
+import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useVocabularyStore } from '../../../composables/useVocabularyStore'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 import type { GameSettings, PracticeMode } from '../types'
+import type { GameStats } from './useFlashcardStats'
 
-export function useFlashcardGame() {
+export function useFlashcardGame(flashcards: Ref<Vocabulary[]>) {
   const router = useRouter()
-  const { allVocabularies } = useVocabularyStore()
 
   // Practice mode localStorage key
   const PRACTICE_MODE_STORAGE_KEY = 'flashcard-practice-mode'
@@ -63,17 +63,7 @@ export function useFlashcardGame() {
 
 
   // Game stats
-  const stats = ref<{
-    easy: number;
-    difficult: number;
-    reviewed: number;
-    correct: number;
-    incorrect: number;
-    total: number;
-    startTime: Date;
-    endTime: Date | null;
-    mode: string;
-  }>({
+  const stats = ref<GameStats>({
     easy: 0,
     difficult: 0,
     reviewed: 0,
@@ -85,19 +75,10 @@ export function useFlashcardGame() {
     mode: 'flashcard'
   })
 
-  // Get flashcards from vocabulary store
-  const flashcards = computed(() => allVocabularies.value)
-
   // Current card
   const currentCard = computed(() => {
     if (flashcards.value.length === 0) return null
     return flashcards.value[currentIndex.value]
-  })
-
-  // Progress
-  const progressPercentage = computed(() => {
-    if (flashcards.value.length === 0) return 0
-    return ((currentIndex.value + 1) / flashcards.value.length) * 100
   })
 
   // Game controls
@@ -163,7 +144,7 @@ export function useFlashcardGame() {
   }
 
   const goBack = () => {
-    router.push('/practice/flashcard')
+    router.back()
   }
 
   const goToVocabulary = () => {
@@ -218,7 +199,6 @@ export function useFlashcardGame() {
     // Computed
     flashcards,
     currentCard,
-    progressPercentage,
     
     // Methods
     nextCard,

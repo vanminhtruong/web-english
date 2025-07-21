@@ -1,5 +1,4 @@
 import { ref, computed, type Ref } from 'vue'
-import type { GameStats } from './useFlashcardGame'
 
 export interface SessionStats {
   totalCards: number
@@ -78,11 +77,12 @@ export function useFlashcardStats(stats: Ref<GameStats>) {
       cardStartTime.value = new Date()
     }
 
-    updateStats()
+    nextCardStats()
   }
 
-  // Move to next card
-  const nextCard = () => {
+  // Move to next card and update reviewed count
+  const nextCardStats = () => {
+    stats.value.reviewed++
     sessionStats.value.currentCard++
     cardStartTime.value = new Date()
   }
@@ -182,11 +182,24 @@ export function useFlashcardStats(stats: Ref<GameStats>) {
     maxStreak,
     initializeStats,
     recordAnswer,
-    nextCard,
+    nextCardStats,
     getPerformanceLevel,
     getStreakMessage,
     getSpeedRating,
     formatTime,
     getDetailedStats
   }
+}
+
+// A new type definition for GameStats
+export interface GameStats {
+  easy: number;
+  difficult: number;
+  reviewed: number;
+  correct: number;
+  incorrect: number;
+  total: number;
+  startTime: Date;
+  endTime: Date | null;
+  mode: string;
 }
