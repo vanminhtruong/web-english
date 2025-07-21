@@ -6,7 +6,7 @@
       :total-cards="currentFlashcards.length"
       :practice-mode="practiceMode"
       :shuffle-enabled="shuffleEnabled"
-      @go-back="goBack"
+      @go-back="handleExitPractice"
       @show-history="showHistory = true"
       @change-practice-mode="changePracticeMode"
       @show-settings="showSettingsDialog = true"
@@ -335,6 +335,9 @@ const confirmExit = () => {
   showExitWarning.value = false
   // End the practice session
   practiceStarted.value = false
+  if (practiceTimerRef.value) {
+    practiceTimerRef.value.resetPractice()
+  }
   // Remove navigation guard to allow exit
   removeNavigationGuard()
   // Navigate back or complete session
