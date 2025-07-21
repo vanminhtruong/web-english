@@ -26,7 +26,7 @@
             </svg>
             <span>{{ group.displayDate }}</span>
             <span class="text-xs text-gray-500 dark:text-gray-400">
-              ({{ group.topicsTotal || group.totalItems || group.vocabularies.length }} {{ t('vocabulary.words') }})
+              ({{ totalVocabularyCount }} {{ t('vocabulary.words') }})
             </span>
           </h4>
         </div>
@@ -186,7 +186,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, watch, onMounted, nextTick } from 'vue'
+import { defineAsyncComponent, ref, watch, onMounted, nextTick, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import type { GroupedVocabulary } from '../../../utils/dateUtils'
@@ -208,6 +208,25 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   defaultExpanded: false, // Changed to false for collapsed by default
   accordionState: () => ({})
+})
+
+// Computed property to calculate total vocabulary count (including paginated items)
+const totalVocabularyCount = computed(() => {
+  // Use totalItems if available (includes all paginated vocabularies)
+  if (props.group.totalItems && props.group.totalItems > 0) {
+    return props.group.totalItems
+  }
+  
+  // Fallback: calculate from current visible data
+  if (props.group.topics && props.group.topics.length > 0) {
+    // Sum up vocabularies from all topics
+    return props.group.topics.reduce((total, topicGroup) => {
+      return total + (topicGroup.vocabularies?.length || 0)
+    }, 0)
+  } else {
+    // Fallback to direct vocabularies array
+    return props.group.vocabularies?.length || 0
+  }
 })
 
 // Local state for accordion
