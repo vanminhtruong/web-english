@@ -326,8 +326,12 @@ export function useVocabularyStore() {
   }
   
   const addCustomTopic = (topic: {key: string, vi: string, en: string}) => {
-    customTopics.value.push(topic)
-    saveToLocalStorage()
+    // Check if topic already exists to avoid duplicates
+    const existingTopic = customTopics.value.find(t => t.key === topic.key)
+    if (!existingTopic) {
+      customTopics.value.push(topic)
+      saveToLocalStorage()
+    }
   }
   
   const updateCustomTopic = (oldKey: string, topic: {key: string, vi: string, en: string}) => {

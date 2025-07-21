@@ -2,6 +2,7 @@ import { ref, computed, watch, onUnmounted, defineAsyncComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast, POSITION } from 'vue-toastification';
 import { useVocabularyStore } from '../../../composables/useVocabularyStore';
+import { getCustomTopics } from '../../../utils/topicUtils';
 
 const ConfirmToast = defineAsyncComponent(() => import("../../../components/common/ConfirmToast.vue"));
 
@@ -81,13 +82,54 @@ export function useVocabularySaving() {
             return {};
         }
     };
+    
+    // Helper function to get category name without Vue composables
+    const getCategoryName = (categoryKey: string): string => {
+      // Check custom topics first
+      const customTopics = getCustomTopics()
+      const customTopic = customTopics.find(topic => topic.key === categoryKey)
+      
+      if (customTopic) {
+        // Default to English name for export
+        return customTopic.en
+      }
+      
+      // Built-in categories mapping
+      const builtInCategories: { [key: string]: string } = {
+        'technology': 'Technology',
+        'business': 'Business',
+        'travel': 'Travel',
+        'food': 'Food',
+        'health': 'Health',
+        'education': 'Education',
+        'sports': 'Sports',
+        'entertainment': 'Entertainment',
+        'science': 'Science',
+        'art': 'Art',
+        'music': 'Music',
+        'literature': 'Literature',
+        'politics': 'Politics',
+        'environment': 'Environment',
+        'fashion': 'Fashion',
+        'finance': 'Finance'
+      }
+      
+      return builtInCategories[categoryKey] || categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1)
+    }
+    
+    // Enhance vocabularies with category names
+    const enhancedVocabularies = vocabularyStore.allVocabularies.value.map(vocab => ({
+        ...vocab,
+        categoryName: getCategoryName(vocab.category) // Add category name alongside category key
+    }));
+    
     return {
-        vocabularies: vocabularyStore.allVocabularies.value,
+        vocabularies: enhancedVocabularies,
         customTopics: vocabularyStore.customTopics.value,
         groupTopics: getGroupTopics(),
         accordionState: JSON.parse(localStorage.getItem('vocabulary-accordion-state') || '{}'),
         exportDate: new Date().toISOString(),
-        version: '1.1',
+        version: '1.2', // Increment version to indicate enhanced format
         totalCount: vocabularyStore.totalCount.value
     };
   };
@@ -214,12 +256,48 @@ export function useVocabularySaving() {
                   return;
                 }
                 vocabularyStore.importVocabularies(data.vocabularies);
-                if (data.topics) {
-                  // Handle topic import separately if needed
-                  console.log("Importing topics:", data.topics);
-                }
-                isSaving.value = false;
-                toast.success(t('vocabulary.save.import.successMessage', { count: data.vocabularies.length }));
+              
+              // Import custom topics if they exist
+              if (data.customTopics && Array.isArray(data.customTopics)) {
+                // Import custom topics into the vocabulary store
+                data.customTopics.forEach((topic: any) => {
+                  vocabularyStore.addCustomTopic(topic);
+                });
+                console.log("Imported custom topics:", data.customTopics);
+              }
+              
+              // Also handle legacy 'topics' format for backward compatibility
+              if (data.topics && Array.isArray(data.topics)) {
+                data.topics.forEach((topic: any) => {
+                  vocabularyStore.addCustomTopic(topic);
+                });
+                console.log("Imported legacy topics:", data.topics);
+              }
+              
+              // Import group topics (date group topics)
+              if (data.groupTopics && typeof data.groupTopics === 'object') {
+                localStorage.setItem('vocabulary-group-topics', JSON.stringify(data.groupTopics));
+                console.log("Imported group topics:", data.groupTopics);
+              }
+              
+              // Import accordion state
+              if (data.accordionState && typeof data.accordionState === 'object') {
+                localStorage.setItem('vocabulary-accordion-state', JSON.stringify(data.accordionState));
+                console.log("Imported accordion state:", data.accordionState);
+              }
+              
+              isSaving.value = false;
+              
+              // Show detailed import success message
+              let importMessage = t('vocabulary.save.import.successMessage', { count: data.vocabularies.length });
+              if (data.customTopics?.length > 0) {
+                importMessage += ` + ${data.customTopics.length} custom categories`;
+              }
+              if (data.groupTopics && Object.keys(data.groupTopics).length > 0) {
+                importMessage += ` + ${Object.keys(data.groupTopics).length} group topics`;
+              }
+              
+              toast.success(importMessage);
                 if (autoSaveEnabled.value) {
                   debounceAutoSave();
                 }

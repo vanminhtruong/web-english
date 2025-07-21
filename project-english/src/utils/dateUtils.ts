@@ -111,14 +111,21 @@ export const groupVocabulariesByTopic = (vocabularies: any[]): TopicGroup[] => {
     grouped.get(topic)!.push(vocab)
   })
 
-  const result = Array.from(grouped.entries()).map(([topic, vocabs]) => ({
-    topic,
-    vocabularies: vocabs.sort((a, b) => {
-        const timeA = new Date(a.createdAt || '').getTime()
-        const timeB = new Date(b.createdAt || '').getTime()
-        return timeB - timeA
-      })
-  }))
+  const result = Array.from(grouped.entries()).map(([topic, vocabs]) => {
+    // Get category name from the first vocabulary item in the group (for imported data)
+    const firstVocab = vocabs[0]
+    const categoryName = firstVocab?.categoryName || null
+    
+    return {
+      topic,
+      categoryName, // Preserve category name from imported data
+      vocabularies: vocabs.sort((a, b) => {
+          const timeA = new Date(a.createdAt || '').getTime()
+          const timeB = new Date(b.createdAt || '').getTime()
+          return timeB - timeA
+        })
+    }
+  })
 
   return result.sort((a, b) => {
     if (a.topic === uncategorizedKey) return 1;

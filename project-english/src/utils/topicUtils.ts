@@ -8,9 +8,15 @@ export interface CustomTopic {
 
 /**
  * Get the translated name of a topic/category based on current locale
+ * Also accepts a vocabulary object with categoryName for imported data
  */
-export function getTopicName(categoryKey: string): string {
+export function getTopicName(categoryKey: string, vocabularyItem?: any): string {
   const { t, locale } = useI18n()
+  
+  // If vocabulary item has categoryName from imported data, use it first
+  if (vocabularyItem && vocabularyItem.categoryName) {
+    return vocabularyItem.categoryName
+  }
   
   // First check if it's a custom topic
   const customTopics = getCustomTopics()
