@@ -135,6 +135,8 @@ const handleFileSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.files && target.files.length > 0) {
     emit('import-file', target.files[0]);
+    // Reset input value to allow re-selecting the same file
+    target.value = '';
   }
 };
 </script> 
