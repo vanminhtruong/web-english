@@ -1,0 +1,675 @@
+{
+  "common": {
+    "easy": "Easy",
+    "difficult": "Difficult",
+    "reviewed": "Reviewed",
+    "correct": "Correct",
+    "incorrect": "Incorrect",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "back": "Back",
+    "restart": "Practice Again",
+    "vocabulary": "Vocabulary",
+    "grammar": "Grammar",
+    "practice": "Practice",
+    "dashboard": "Dashboard",
+    "save": "Save",
+    "saving": "Saving...",
+    "update": "Update",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "all": "All",
+    "title": "Title",
+    "previous": "Previous",
+    "next": "Next",
+    "minutes": "minutes",
+    "finish": "Finish"
+  },
+  "levels": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "vocabulary": {
+    "title": "Vocabulary",
+    "description": "Manage and learn English vocabulary",
+    "addNew": "Add New Word",
+    "addVocabulary": "Add New Vocabulary",
+    "editVocabulary": "Edit Vocabulary",
+    "saveVocabulary": "Save Vocabulary",
+    "deleteVocabulary": "Delete Vocabulary",
+    "vocabularyList": "Vocabulary List",
+    "word": "Word",
+    "pronunciation": "Pronunciation",
+    "meaning": "Meaning",
+    "category": "Category",
+    "level": "Level",
+    "wordType": "Word Type",
+    "note": "Note",
+    "favorite": "Favorite",
+    "isFavorite": "Mark as favorite vocabulary",
+    "showFavoritesOnly": "Show favorites only",
+    "searchPlaceholder": "Search vocabulary...",
+    "wordPlaceholder": "Enter word...",
+    "meaningPlaceholder": "Enter word meaning...",
+    "example": "Example",
+    "examplePlaceholder": "Enter example sentence...",
+    "synonyms": "Synonyms",
+    "antonyms": "Antonyms",
+    "separateByComma": "Separate by comma",
+    "notePlaceholder": "Additional notes about this word...",
+    "selectCategory": "Select category",
+    "selectLevel": "Select level",
+    "selectWordType": "Select word type",
+    "confirmDelete": "Are you sure you want to delete \"{word}\"?",
+    "confirmDeleteTitle": "Confirm Delete",
+    "confirmDeleteMessage": "Are you sure you want to delete this vocabulary? This action cannot be undone.",
+    "updateInfo": "Update vocabulary information",
+    "vocabInfo": "Vocabulary Information",
+    "updateSuccess": "Vocabulary has been updated successfully.",
+    "addSuccess": "Vocabulary added successfully!",
+    "words": "words",
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "grouping": {
+      "title": "Group by Date",
+      "description": "Display vocabulary grouped by creation date"
+    },
+    "accordion": {
+      "expand": "Expand group",
+      "collapse": "Collapse group"
+    },
+    "notFound": "Vocabulary not found!",
+    "updateError": "An error occurred while updating vocabulary. Please try again.",
+    "deleteError": "An error occurred while deleting vocabulary. Please try again.",
+    "showingResults": "Showing {start} to {end} of {total} results",
+    "categories": {
+      "technology": "Technology",
+      "business": "Business",
+      "travel": "Travel",
+      "food": "Food",
+      "health": "Health",
+      "education": "Education",
+      "sports": "Sports",
+      "entertainment": "Entertainment",
+      "science": "Science",
+      "art": "Art",
+      "music": "Music",
+      "literature": "Literature",
+      "politics": "Politics",
+      "environment": "Environment",
+      "fashion": "Fashion",
+      "finance": "Finance"
+    },
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "wordTypes": {
+      "noun": "Noun",
+      "verb": "Verb",
+      "adjective": "Adjective",
+      "adverb": "Adverb",
+      "preposition": "Preposition",
+      "conjunction": "Conjunction",
+      "interjection": "Interjection"
+    },
+    "image": {
+      "title": "Image",
+      "upload": "Upload",
+      "url": "URL",
+      "clickToUpload": "Click to upload",
+      "orDragDrop": " or drag and drop here",
+      "supportedFormats": "PNG, JPG, GIF, WebP up to 5MB",
+      "urlPlaceholder": "Paste image URL from the internet...",
+      "loadFromUrl": "Load from URL",
+      "loading": "Loading...",
+      "preview": "Image preview",
+      "change": "Change",
+      "changeUrl": "Change URL",
+      "remove": "Remove",
+      "fromUrl": "From URL",
+      "processing": "Processing...",
+      "errors": {
+        "unsupportedFormat": "Unsupported file format. Please choose PNG, JPG, GIF or WebP.",
+        "fileTooLarge": "File too large. Please choose a file under 5MB.",
+        "processingFailed": "Unable to process image. Please try again.",
+        "emptyUrl": "Please enter an image URL.",
+        "invalidUrl": "Invalid URL or not an image.",
+        "urlLoadFailed": "Unable to load image from URL. Please check the URL again.",
+        "corsWarning": "Image accepted but may not display due to the original website's security settings."
+      }
+    },
+    "save": {
+      "mode": "Save Mode:",
+      "auto": "Auto",
+      "manual": "Manual",
+      "saveNow": "Save Now",
+      "chooseAutoFile": "Choose Auto-save File",
+      "changeAutoFile": "Change Auto-save File",
+      "importFile": "Import File",
+      "lastSave": "Last saved: {time}",
+      "notSaved": "Not saved",
+      "status": {
+        "saving": "Saving...",
+        "autoSaving": "Auto-saving...",
+        "autoWithFile": "Auto (file saved)",
+        "autoLocalStorage": "Auto (localStorage)",
+        "autoFile": "Auto (file)",
+        "autoNoFile": "Auto (no file selected)",
+        "fileSaved": "File saved",
+        "error": "Save error"
+      },
+      "errors": {
+        "browserNotSupported": "Browser doesn't support this feature. Please use Chrome or Edge.",
+        "fileSelectError": "Error selecting file: {error}",
+        "invalidFile": "Please select a valid JSON file!",
+        "invalidFormat": "Invalid file format"
+      },
+      "import": {
+        "confirmMessage": "Do you want to import {count} vocabulary from file \"{filename}\"?\n\nCurrent data will be replaced!",
+        "successMessage": "Successfully imported {count} vocabulary!"
+      }
+    },
+    "details": {
+      "title": "Vocabulary Details",
+      "playAudio": "Play vocabulary audio",
+      "playExample": "Play example audio",
+      "addFavorite": "Add to favorites",
+      "removeFavorite": "Remove from favorites"
+    },
+    "topicManager": {
+      "title": "Topic Manager",
+      "addNewTopic": "Add New Topic",
+      "editTopic": "Edit Topic",
+      "topicKey": "Topic Key",
+      "topicKeyPlaceholder": "Example: cooking, programming...",
+      "keyDescription": "This key will be used in the system. Use only lowercase letters, numbers and underscores.",
+      "vietnameseName": "Vietnamese Name",
+      "vietnameseNamePlaceholder": "Ví dụ: Nấu ăn, Lập trình...",
+      "englishName": "English Name",
+      "englishNamePlaceholder": "Example: Cooking, Programming...",
+      "existingTopics": "Existing Topics",
+      "noCustomTopics": "No custom topics yet.",
+      "cannotDeleteInUse": "Cannot delete topic in use",
+      "confirmDeleteTitle": "Confirm Delete Topic",
+      "confirmDeleteMessage": "Are you sure you want to delete topic \"{topic}\"?",
+      "duplicateKey": "Topic key already exists!",
+      "builtInTopics": "Built-in Topics",
+      "builtInTopicsDescription": "The system has 16 built-in topics like Technology, Business, Travel... You can add custom topics here.",
+      "manageTopics": "Manage Topics"
+    }
+  },
+  "flashcard": {
+    "header": {
+      "history": "History",
+      "settings": "Settings",
+      "progress": "Progress",
+      "description": "Practice vocabulary with flashcards",
+      "exit": "Exit"
+    },
+    "empty": {
+      "title": "No flashcards",
+      "description": "Add vocabulary to start practicing.",
+      "action": "Add Vocabulary"
+    },
+    "settings": {
+      "title": "Flashcard Settings",
+      "category": "Category",
+      "level": "Level",
+      "all": "All",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "autoFlip": "Auto flip card after 3 seconds",
+      "shuffle": "Shuffle order"
+    },
+    "history": {
+      "title": "Practice History",
+      "empty": {
+        "title": "No history",
+        "description": "Start practicing to see your history."
+      },
+      "totalCards": "Total cards",
+      "correct": "Correct",
+      "incorrect": "Incorrect",
+      "duration": "Duration",
+      "categories": "Categories",
+      "accuracy": "Accuracy",
+      "result": "Result",
+      "pass": "Pass",
+      "fail": "Fail"
+    },
+    "completion": {
+      "title": "Completed!",
+      "description": "You have completed {count} flashcards.",
+      "correct": "Correct",
+      "incorrect": "Incorrect",
+      "accuracy": "Accuracy",
+      "result": "Result"
+    },
+    "modes": {
+      "flashcard": "Flashcard",
+      "quiz": "Quiz",
+      "typing": "Typing",
+      "listening": "Listening",
+      "image": "Image"
+    },
+    "image": {
+      "imageAlt": "Vocabulary image",
+      "imageError": "Cannot load image",
+      "noImage": "No image available",
+      "placeholder": "Type the word...",
+      "instruction": "Look at the image and type the corresponding word:",
+      "correctAnswer": "Correct answer"
+    },
+    "listening": {
+      "instruction": "Listen and type the word you hear:",
+      "placeholder": "Type the word you hear...",
+      "correct": "✓ Correct!",
+      "incorrect": "✗ Correct answer:"
+    },
+    "dateFilter": {
+      "enable": "Filter by creation date",
+      "allDates": "All dates",
+      "info": "Showing {count} vocabulary from {date}"
+    }
+  },
+  "grammar": {
+    "title": "Grammar",
+    "description": "Learn and practice English grammar",
+    "addLesson": "Add Lesson",
+    "addNewLesson": "Add New Lesson",
+    "editLesson": "Edit Lesson",
+    "deleteLesson": "Delete Lesson",
+    "confirmDelete": "Are you sure you want to delete the lesson \"{title}\"?",
+    "search": "Search grammar lessons...",
+    "level": "Level",
+    "category": "Category",
+    "duration": "minutes",
+    "durationLabel": "Duration (minutes)",
+    "progress": "Progress",
+    "continue": "Continue",
+    "start": "Start",
+    "emptyState": {
+      "title": "No lessons found",
+      "description": "Try changing your filters or add a new lesson."
+    },
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "selectCategory": "Select category",
+    "selectLevel": "Select level",
+    "titlePlaceholder": "Enter lesson title...",
+    "descriptionPlaceholder": "Enter a brief description of the lesson...",
+    "lessonContent": "Lesson Content",
+    "theory": "Theory",
+    "theoryPlaceholder": "Enter the theory content of the lesson...",
+    "structure": "Structure",
+    "structurePlaceholder": "Enter the grammar structure...",
+    "examples": "Examples",
+    "examplePlaceholder": "Example {index}",
+    "translationPlaceholder": "Translation {index}",
+    "addExample": "Add Example",
+    "usageRules": "Usage Rules",
+    "ruleTitlePlaceholder": "Rule title {index}",
+    "ruleDescriptionPlaceholder": "Rule description {index}",
+    "addRule": "Add Rule",
+    "commonMistakes": "Common Mistakes",
+    "wrongSentencePlaceholder": "Wrong sentence {index}",
+    "correctSentencePlaceholder": "Correct sentence {index}",
+    "explanationPlaceholder": "Explanation {index}",
+    "addMistake": "Add Common Mistake",
+    "markdownSupported": "Basic Markdown formatting is supported.",
+    "practice": {
+      "title": "Grammar Practice",
+      "subtitle": "Choose an exercise type to practice",
+      "chooseExercise": "Choose Exercise Type",
+      "chooseDescription": "Select an exercise type to start practicing",
+      "score": "Score",
+      "question": "Question",
+      "checkAnswer": "Check Answer",
+      "next": "Next",
+      "finish": "Finish",
+      "explanation": "Explanation",
+      "reading": {
+        "passage": "Passage",
+        "readingTime": "Reading Time",
+        "questions": "Questions",
+        "showHighlights": "Show Highlights"
+      },
+      "exercises": {
+        "multiple-choice": {
+          "title": "Multiple Choice",
+          "description": "Choose the correct answer from multiple options"
+        },
+        "fill-blank": {
+          "title": "Fill in the Blanks",
+          "description": "Complete sentences with the correct words"
+        },
+        "pronunciation": {
+          "title": "Pronunciation",
+          "description": "Practice speaking and pronunciation"
+        },
+        "reading": {
+          "title": "Reading Comprehension",
+          "description": "Read passages and answer questions",
+          "passage": "Passage",
+          "listen": "Listen",
+          "readingTime": "Reading Time",
+          "questions": "Questions",
+          "true": "True",
+          "false": "False",
+          "yourAnswer": "Your Answer",
+          "correctAnswer": "Correct Answer",
+          "correct": "Correct",
+          "incorrect": "Incorrect",
+          "accuracy": "Accuracy",
+          "showHighlights": "Show Highlights",
+          "hideHighlights": "Hide Highlights"
+        },
+        "listening": {
+          "title": "Listening",
+          "description": "Listen to audio and answer questions",
+          "instruction": "Listen to the audio and answer the questions:",
+          "speed": "Speed",
+          "playsLeft": "Plays Left",
+          "loading": "Loading...",
+          "questions": "Questions"
+        },
+        "writing": {
+          "title": "Writing",
+          "description": "Write essays and get feedback",
+          "instruction": "Write a paragraph about the following topic:",
+          "essay": "Essay",
+          "email": "Email",
+          "letter": "Letter",
+          "paragraph": "Paragraph",
+          "requirements": "Requirements",
+          "minWords": "Minimum Words",
+          "timeLimit": "Time Limit",
+          "yourResponse": "Your Response",
+          "words": "words",
+          "timeRemaining": "Time Remaining",
+          "paragraphPlaceholder": "Enter your paragraph here...",
+          "essayPlaceholder": "Write your essay here...",
+          "emailPlaceholder": "Write your email here...",
+          "letterPlaceholder": "Write your letter here...",
+          "tips": "Writing Tips",
+          "showTips": "Show Tips",
+          "hideTips": "Hide Tips",
+          "tip1": "Use varied sentence structures",
+          "tip2": "Check grammar and spelling",
+          "tip3": "Use connecting words to link ideas",
+          "tip4": "Ensure your writing has introduction, body, and conclusion",
+          "tip5": "Use vocabulary appropriate to the topic",
+          "saveDraft": "Save Draft",
+          "clear": "Clear",
+          "confirmClear": "Are you sure you want to clear all content?",
+          "submit": "Submit",
+          "analyzing": "Analyzing...",
+          "feedback": "Feedback",
+          "overallScore": "Overall Score",
+          "grammar": "Grammar",
+          "vocabulary": "Vocabulary",
+          "coherence": "Coherence",
+          "taskResponse": "Task Response",
+          "strengths": "Strengths",
+          "improvements": "Areas for Improvement",
+          "corrections": "Specific Corrections",
+          "original": "Original",
+          "corrected": "Corrected",
+          "explanation": "Explanation"
+        }
+      },
+      "fillBlank": {
+        "instruction": "Fill in the blanks with appropriate words:",
+        "clear": "Clear All"
+      },
+      "pronunciation": {
+        "instruction": "Listen and repeat the following sentence:",
+        "listen": "Listen",
+        "ready": "Ready",
+        "recording": "Recording...",
+        "recorded": "Recorded",
+        "processing": "Processing...",
+        "analyze": "Analyze",
+        "feedback": "Feedback",
+        "tips": "Tips",
+        "tryAgain": "Try Again",
+        "yourRecording": "Your Recording",
+        "microphoneError": "Microphone error! Please check microphone access permissions."
+      },
+      "settings": {
+        "title": "Exercise Settings",
+        "difficulty": "Difficulty",
+        "autoPlay": "Auto-play Audio",
+        "autoplayAudio": "Auto-play Audio",
+        "showExplanations": "Show Explanations",
+        "timeLimit": "Time Limit (minutes)",
+        "questionCount": "Number of Questions",
+        "close": "Close",
+        "save": "Save Settings",
+        "levels": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        }
+      },
+      "exerciseManager": {
+        "title": "Exercise Manager",
+        "addNew": "Add New Exercise",
+        "existing": "Existing Exercises",
+        "exerciseType": "Exercise Type",
+        "typePlaceholder": "Enter exercise type...",
+        "titlePlaceholder": "Enter exercise title...",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter exercise description...",
+        "difficulty": "Difficulty",
+        "duration": "Duration",
+        "durationPlaceholder": "e.g. 10-15 minutes",
+        "add": "Add Exercise",
+        "manageQuestions": "Manage Questions"
+      },
+      "questionManager": {
+        "title": "Question Manager",
+        "addNew": "Add New Question",
+        "editQuestion": "Edit Question",
+        "addQuestion": "Add Question",
+        "existingQuestions": "Existing Questions",
+        "noQuestions": "No questions yet",
+        "addFirstQuestion": "Add your first question",
+        "question": "Question",
+        "questionPlaceholder": "Enter question...",
+        "options": "Options",
+        "optionPlaceholder": "Enter option...",
+        "correctAnswer": "Correct Answer",
+        "explanation": "Explanation",
+        "explanationPlaceholder": "Enter explanation...",
+        "taskType": "Writing Type",
+        "prompt": "Prompt",
+        "promptPlaceholder": "Enter writing prompt...",
+        "requirements": "Requirements",
+        "addRequirement": "Add Requirement",
+        "requirementPlaceholder": "Enter requirement...",
+        "minWords": "Min Words",
+        "timeLimit": "Time Limit (minutes)"
+      },
+      "progress": {
+        "question": "Question",
+        "of": "of",
+        "score": "Score",
+        "timeRemaining": "Time Remaining"
+      },
+      "results": {
+        "title": "Exercise Results",
+        "score": "Your Score",
+        "correct": "Correct",
+        "total": "Total",
+        "accuracy": "Accuracy",
+        "timeSpent": "Time Spent",
+        "tryAgain": "Try Again",
+        "backToMenu": "Back to Menu",
+        "reviewAnswers": "Review Answers"
+      },
+      "common": {
+        "submit": "Submit",
+        "next": "Next",
+        "previous": "Previous",
+        "finish": "Finish",
+        "check": "Check Answer",
+        "checkAnswer": "Check Answer",
+        "showAnswer": "Show Answer",
+        "explanation": "Explanation",
+        "hint": "Hint",
+        "loading": "Loading...",
+        "noAnswer": "No answer provided",
+        "correct": "Correct!",
+        "incorrect": "Incorrect",
+        "skip": "Skip",
+        "retry": "Retry"
+      }
+    }
+  },
+  "categories": {
+    "technology": "Technology",
+    "business": "Business",
+    "travel": "Travel",
+    "food": "Food",
+    "health": "Health",
+    "education": "Education",
+    "sports": "Sports",
+    "entertainment": "Entertainment",
+    "science": "Science",
+    "art": "Art",
+    "music": "Music",
+    "literature": "Literature",
+    "politics": "Politics",
+    "environment": "Environment",
+    "fashion": "Fashion",
+    "finance": "Finance"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Overview of your learning progress",
+    "quickActions": "Quick Actions",
+    "recentActivity": "Recent Activity",
+    "stats": {
+      "vocabularyLearned": "Vocabulary Learned",
+      "grammarLessons": "Grammar Lessons",
+      "currentStreak": "Current Streak",
+      "totalTime": "Total Time",
+      "days": "days",
+      "hours": "hours"
+    },
+    "actions": {
+      "addVocabulary": "Add Vocabulary",
+      "practiceFlashcard": "Practice Flashcard",
+      "takeQuiz": "Take Quiz",
+      "learnGrammar": "Learn Grammar"
+    },
+    "activity": {
+      "updated": "Updated vocabulary \"{word}\" - {category}",
+      "added": "Added vocabulary \"{word}\" - {category}",
+      "justNow": "Just now",
+      "noActivity": "No vocabulary activity yet",
+      "addFirstVocab": "Add your first vocabulary!"
+    }
+  },
+  "practice": {
+    "controls": {
+      "next": "Next",
+      "complete": "Complete",
+      "difficult": "Difficult",
+      "easy": "Easy",
+      "exit": "Exit"
+    },
+    "timer": {
+      "startPractice": "Start Practice",
+      "timeLimit": "Time limit per question: {seconds} seconds",
+      "timeUp": "Time's Up!",
+      "timeUpMessage": "You've run out of time for this question. Try again or skip.",
+      "tryAgain": "Try Again",
+      "skip": "Skip"
+    },
+    "exitWarning": {
+      "title": "Exit Practice Warning",
+      "message": "You are currently in a practice session. If you leave now, you will lose your progress and score. Are you sure you want to exit?",
+      "continue": "Continue Practice",
+      "exit": "Exit Practice"
+    }
+  },
+  "quiz": {
+    "progress": {
+      "question": "Question"
+    },
+    "setup": {
+      "title": "Quiz Settings",
+      "description": "Customize your quiz preferences",
+      "type": "Quiz Type",
+      "level": "Difficulty Level",
+      "questionCount": "Number of Questions",
+      "timeLimit": "Time Limit (minutes)",
+      "start": "Start Quiz",
+      "allLevels": "All Levels",
+      "unlimited": "Unlimited"
+    },
+    "types": {
+      "vocabulary": "Vocabulary",
+      "grammar": "Grammar",
+      "mixed": "Mixed"
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "finish": "Finish"
+    },
+    "results": {
+      "completed": "Quiz Completed!",
+      "yourResults": "Your Results",
+      "score": "Score",
+      "correct": "Correct",
+      "accuracy": "Accuracy",
+      "passed": "Passed",
+      "failed": "Failed",
+      "above": "Above",
+      "below": "Below",
+      "reviewAnswers": "Review Answers",
+      "correctAnswer": "Correct Answer",
+      "yourAnswer": "Your Answer",
+      "noAnswer": "No Answer",
+      "explanation": "Explanation",
+      "restartQuiz": "Restart Quiz"
+    }
+  },
+  "voice": {
+    "selector": {
+      "title": "Voice Selection"
+    },
+    "gender": {
+      "female": "Female",
+      "male": "Male"
+    },
+    "types": {
+      "female_sweet": "Sweet Female",
+      "female_clear": "Clear Female",
+      "female_professional": "Professional Female",
+      "male_strong": "Strong Male",
+      "male_gentle": "Gentle Male",
+      "male_deep": "Deep Male"
+    },
+    "info": {
+      "name": "Voice Name",
+      "language": "Language",
+      "gender": "Gender"
+    },
+    "test": "Test Voice",
+    "testing": "Testing...",
+    "testText": "Hello, this is my English voice."
+  }
+} 

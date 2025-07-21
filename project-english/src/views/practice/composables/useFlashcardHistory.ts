@@ -1,0 +1,189 @@
+import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { GameStats } from './useFlashcardGame'
+
+export interface PracticeHistoryItem {
+  id: string
+  date: string
+  mode: string
+  totalCards: number
+  correctAnswers: number
+  incorrectAnswers: number
+  accuracy: number
+  duration: number
+  score: number
+  categories?: string[]
+}
+
+export function useFlashcardHistory() {
+  const showHistory = ref(false)
+  const practiceHistory = ref<PracticeHistoryItem[]>([])
+  const { t, locale } = useI18n()
+
+  // Load practice history from localStorage
+  const loadPracticeHistory = () => {
+    const saved = localStorage.getItem('flashcard-practice-history')
+    if (saved) {
+      practiceHistory.value = JSON.parse(saved)
+    }
+  }
+
+  // Save practice history to localStorage
+  const savePracticeHistory = () => {
+    localStorage.setItem('flashcard-practice-history', JSON.stringify(practiceHistory.value))
+  }
+
+  // Save current session to history
+  const saveSessionToHistory = (stats: GameStats, totalCards: number) => {
+    const duration = stats.endTime && stats.startTime 
+      ? Math.round((stats.endTime.getTime() - stats.startTime.getTime()) / 1000)
+      : 0
+    
+    const total = stats.correct + stats.incorrect
+    const accuracy = total > 0 ? Math.round((stats.correct / total) * 100) : 0
+    const score = Math.round(accuracy * (totalCards / 100))
+
+    const historyItem: PracticeHistoryItem = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      mode: stats.mode,
+      totalCards,
+      correctAnswers: stats.correct,
+      incorrectAnswers: stats.incorrect,
+      accuracy,
+      duration,
+      score,
+      categories: stats.categories || []
+    }
+
+    practiceHistory.value.unshift(historyItem)
+    
+    // Keep only last 50 sessions
+    if (practiceHistory.value.length > 50) {
+      practiceHistory.value = practiceHistory.value.slice(0, 50)
+    }
+    
+    savePracticeHistory()
+  }
+
+  // Helper functions for history display
+  const getModeColor = (mode: string) => {
+    switch (mode) {
+      case 'flashcard':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      case 'quiz':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      case 'typing':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+      case 'listening':
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+    }
+  }
+
+  const getModeText = (mode: string) => {
+    switch (mode) {
+      case 'flashcard':
+        return t('flashcard.modes.flashcard')
+      case 'quiz':
+        return t('flashcard.modes.quiz')
+      case 'typing':
+        return t('flashcard.modes.typing')
+      case 'listening':
+        return t('flashcard.modes.listening')
+      default:
+        return 'Unknown'
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = now.getTime() - date.getTime()
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    
+    // Use the browser's locale based on the current i18n locale
+    const currentLocale = locale.value === 'en' ? 'en-US' : 'vi-VN'
+    
+    if (diffDays === 0) {
+      return locale.value === 'en' ? 'Today' : 'Hôm nay'
+    } else if (diffDays === 1) {
+      return locale.value === 'en' ? 'Yesterday' : 'Hôm qua'
+    } else if (diffDays < 7) {
+      return locale.value === 'en' 
+        ? `${diffDays} days ago` 
+        : `${diffDays} ngày trước`
+    } else {
+      return date.toLocaleDateString(currentLocale)
+    }
+  }
+
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+  }
+
+  // Clear history
+  const clearHistory = () => {
+    practiceHistory.value = []
+    savePracticeHistory()
+  }
+
+  // Get statistics from history
+  const getHistoryStats = () => {
+    if (practiceHistory.value.length === 0) {
+      return {
+        totalSessions: 0,
+        averageAccuracy: 0,
+        totalCards: 0,
+        totalTime: 0,
+        bestScore: 0,
+        favoriteMode: ''
+      }
+    }
+
+    const totalSessions = practiceHistory.value.length
+    const totalCards = practiceHistory.value.reduce((sum, item) => sum + item.totalCards, 0)
+    const totalTime = practiceHistory.value.reduce((sum, item) => sum + item.duration, 0)
+    const averageAccuracy = Math.round(
+      practiceHistory.value.reduce((sum, item) => sum + item.accuracy, 0) / totalSessions
+    )
+    const bestScore = Math.max(...practiceHistory.value.map(item => item.score))
+    
+    // Find most used mode
+    const modeCount = practiceHistory.value.reduce((acc, item) => {
+      acc[item.mode] = (acc[item.mode] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+    
+    const favoriteMode = Object.entries(modeCount)
+      .sort(([, a], [, b]) => b - a)[0]?.[0] || ''
+
+    return {
+      totalSessions,
+      averageAccuracy,
+      totalCards,
+      totalTime,
+      bestScore,
+      favoriteMode
+    }
+  }
+
+  onMounted(() => {
+    loadPracticeHistory()
+  })
+
+  return {
+    showHistory,
+    practiceHistory,
+    saveSessionToHistory,
+    getModeColor,
+    getModeText,
+    formatDate,
+    formatDuration,
+    clearHistory,
+    getHistoryStats
+  }
+}
