@@ -44,6 +44,7 @@
                   required
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="t('vocabulary.wordPlaceholder')"
+                  @blur="validateWord"
                 />
               </div>
 
@@ -58,6 +59,7 @@
                   type="text"
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="/ˈeksəmpl/"
+                  @blur="validatePronunciation"
                 />
               </div>
 
@@ -71,6 +73,7 @@
                   v-model="form.partOfSpeech"
                   required
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @change="validatePartOfSpeech"
                 >
                   <option value="">{{ t('vocabulary.selectWordType') }}</option>
                   <option value="noun">{{ t('vocabulary.wordTypes.noun') }}</option>
@@ -93,6 +96,7 @@
                   v-model="form.category"
                   required
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @change="validateCategory"
                 >
                   <option value="">{{ t('vocabulary.selectCategory') }}</option>
                   <option v-for="key in categoryKeys" :key="key" :value="key">
@@ -111,6 +115,7 @@
                   v-model="form.level"
                   required
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @change="validateLevel"
                 >
                   <option value="">{{ t('vocabulary.selectLevel') }}</option>
                   <option value="beginner">{{ t('vocabulary.levels.beginner') }}</option>
@@ -129,8 +134,9 @@
                   v-model="form.meaning"
                   required
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   :placeholder="t('vocabulary.meaningPlaceholder')"
+                  @blur="validateMeaning"
                 ></textarea>
               </div>
 
@@ -145,6 +151,7 @@
                   rows="2"
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="t('vocabulary.examplePlaceholder')"
+                  @blur="validateExample"
                 ></textarea>
               </div>
 
@@ -159,6 +166,7 @@
                   type="text"
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="t('vocabulary.separateByComma')"
+                  @blur="validateSynonyms"
                 />
               </div>
 
@@ -173,6 +181,7 @@
                   type="text"
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="t('vocabulary.separateByComma')"
+                  @blur="validateAntonyms"
                 />
               </div>
 
@@ -184,9 +193,10 @@
                 <textarea
                   id="notes"
                   v-model="form.notes"
-                  rows="2"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   :placeholder="t('vocabulary.notePlaceholder')"
+                  @blur="validateNotes"
                 ></textarea>
               </div>
 
@@ -223,6 +233,7 @@
             >
               {{ t('common.cancel') }}
             </button>
+
             <button
               @click="submitForm"
               :disabled="isSubmitting"
@@ -239,24 +250,14 @@
       </div>
     </div>
 
-    <!-- Success Toast -->
-    <div 
-      v-if="showSuccessToast" 
-      class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-60 transform transition-all duration-300"
-    >
-      <div class="flex items-center space-x-2">
-        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-        </svg>
-        <span>{{ isEditing ? t('vocabulary.updateSuccess') : t('vocabulary.addSuccess') }}</span>
-      </div>
-    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, withDefaults, defineProps, defineEmits, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import { useVocabularyStore, type Vocabulary } from '../../../composables/useVocabularyStore'
 import { getTopicName } from '../../../utils/topicUtils'
 
@@ -269,8 +270,8 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'vocabulary-saved'): void
+  'update:modelValue': [value: boolean]
+  'vocabulary-saved': []
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -279,12 +280,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
+const toast = useToast()
+
+
 
 const vocabularyStore = useVocabularyStore()
 
 // Data
 const isSubmitting = ref(false)
-const showSuccessToast = ref(false)
 const refreshTrigger = ref(0) // Trigger to force re-computation
 
 // Define category keys - use computed to make it reactive
@@ -312,6 +315,127 @@ const form = reactive({
 
 // Computed
 const isEditing = computed(() => !!props.vocabulary)
+
+// Field-specific validation functions
+const validateWord = (): boolean => {
+  if (!form.word.trim()) {
+    toast.error(t('vocabulary.validation.wordRequired'))
+    return false
+  } else if (form.word.trim().length > 100) {
+    toast.error(t('vocabulary.validation.wordTooLong'))
+    return false
+  }
+  return true
+}
+
+const validateMeaning = (): boolean => {
+  if (!form.meaning.trim()) {
+    toast.error(t('vocabulary.validation.meaningRequired'))
+    return false
+  } else if (form.meaning.trim().length > 500) {
+    toast.error(t('vocabulary.validation.meaningTooLong'))
+    return false
+  }
+  return true
+}
+
+const validatePartOfSpeech = (): boolean => {
+  if (!form.partOfSpeech) {
+    toast.error(t('vocabulary.validation.partOfSpeechRequired'))
+    return false
+  }
+  return true
+}
+
+const validateCategory = (): boolean => {
+  if (!form.category) {
+    toast.error(t('vocabulary.validation.categoryRequired'))
+    return false
+  }
+  return true
+}
+
+const validateLevel = (): boolean => {
+  if (!form.level) {
+    toast.error(t('vocabulary.validation.levelRequired'))
+    return false
+  }
+  return true
+}
+
+const validateExample = (): boolean => {
+  if (form.example.length > 500) {
+    toast.error(t('vocabulary.validation.exampleTooLong'))
+    return false
+  }
+  return true
+}
+
+const validateNotes = (): boolean => {
+  if (form.notes.length > 500) {
+    toast.error(t('vocabulary.validation.notesTooLong'))
+    return false
+  }
+  return true
+}
+
+const validatePronunciation = (): boolean => {
+  if (form.pronunciation.length > 100) {
+    toast.error(t('vocabulary.validation.pronunciationTooLong'))
+    return false
+  }
+  return true
+}
+
+const validateSynonyms = (): boolean => {
+  if (form.synonyms && form.synonyms.trim()) {
+    const synonyms = form.synonyms.split(',').map(s => s.trim()).filter(s => s)
+    if (synonyms.length === 0) {
+      toast.error(t('vocabulary.validation.synonymsInvalid'))
+      return false
+    }
+  }
+  return true
+}
+
+const validateAntonyms = (): boolean => {
+  if (form.antonyms && form.antonyms.trim()) {
+    const antonyms = form.antonyms.split(',').map(s => s.trim()).filter(s => s)
+    if (antonyms.length === 0) {
+      toast.error(t('vocabulary.validation.antonymsInvalid'))
+      return false
+    }
+  }
+  return true
+}
+
+// Overall form validation (silent - no toasts, just returns boolean)
+const validateForm = (): boolean => {
+  const isWordValid = form.word.trim() && form.word.trim().length <= 100
+  const isMeaningValid = form.meaning.trim() && form.meaning.trim().length <= 500
+  const isPartOfSpeechValid = !!form.partOfSpeech
+  const isCategoryValid = !!form.category
+  const isLevelValid = !!form.level
+  const isExampleValid = form.example.length <= 500
+  const isNotesValid = form.notes.length <= 500
+  const isPronunciationValid = form.pronunciation.length <= 100
+  
+  let isSynonymsValid = true
+  if (form.synonyms && form.synonyms.trim()) {
+    const synonyms = form.synonyms.split(',').map(s => s.trim()).filter(s => s)
+    isSynonymsValid = synonyms.length > 0
+  }
+  
+  let isAntonymsValid = true
+  if (form.antonyms && form.antonyms.trim()) {
+    const antonyms = form.antonyms.split(',').map(s => s.trim()).filter(s => s)
+    isAntonymsValid = antonyms.length > 0
+  }
+
+  return isWordValid && isMeaningValid && isPartOfSpeechValid && isCategoryValid && 
+         isLevelValid && isExampleValid && isNotesValid && isPronunciationValid && 
+         isSynonymsValid && isAntonymsValid
+}
 
 // Methods
 const resetForm = () => {
@@ -401,6 +525,18 @@ const closeDialog = () => {
 const submitForm = async () => {
   if (isSubmitting.value) return
   
+  // Validate form before submission - show toast for first invalid field
+  if (!validateWord()) return
+  if (!validateMeaning()) return
+  if (!validatePartOfSpeech()) return
+  if (!validateCategory()) return
+  if (!validateLevel()) return
+  if (!validateExample()) return
+  if (!validateNotes()) return
+  if (!validatePronunciation()) return
+  if (!validateSynonyms()) return
+  if (!validateAntonyms()) return
+  
   isSubmitting.value = true
   
   try {
@@ -426,17 +562,15 @@ const submitForm = async () => {
       // Update existing vocabulary
       vocabularyStore.updateVocabulary(props.vocabulary.id, vocabularyData)
       console.log('Vocabulary updated:', props.vocabulary.id, vocabularyData)
+      // Show success toast for update
+      toast.success(t('vocabulary.validation.updateSuccess'))
     } else {
       // Add new vocabulary
       const newVocabulary = vocabularyStore.addVocabulary(vocabularyData)
       console.log('Vocabulary added:', newVocabulary)
+      // Show success toast for save
+      toast.success(t('vocabulary.validation.saveSuccess'))
     }
-
-    // Show success toast
-    showSuccessToast.value = true
-    setTimeout(() => {
-      showSuccessToast.value = false
-    }, 3000)
 
     // Emit success event
     emit('vocabulary-saved')
@@ -448,7 +582,8 @@ const submitForm = async () => {
     
   } catch (error) {
     console.error('Error saving vocabulary:', error)
-    alert('Có lỗi xảy ra khi lưu từ vựng. Vui lòng thử lại.')
+    // Show error toast instead of alert
+    toast.error(t('vocabulary.validation.saveError'))
   } finally {
     isSubmitting.value = false
   }

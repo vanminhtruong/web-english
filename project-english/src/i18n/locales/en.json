@@ -27,8 +27,7 @@
     "minutes": "minutes",
     "finish": "Finish",
     "close": "Close",
-    "confirm": "Confirm",
-    "cancel": "Cancel"
+    "confirm": "Confirm"
   },
   "levels": {
     "beginner": "Beginner",
@@ -182,6 +181,25 @@
         "confirmMessage": "Do you want to import {count} vocabulary from file \"{filename}\"?\n\nCurrent data will be replaced!",
         "successMessage": "Successfully imported {count} vocabulary!"
       }
+    },
+    "validation": {
+      "wordRequired": "Word is required",
+      "wordTooShort": "Word must be at least 1 character",
+      "wordTooLong": "Word must be less than 100 characters",
+      "meaningRequired": "Meaning is required",
+      "meaningTooShort": "Meaning must be at least 1 character",
+      "meaningTooLong": "Meaning must be less than 500 characters",
+      "partOfSpeechRequired": "Part of speech is required",
+      "categoryRequired": "Category is required",
+      "levelRequired": "Level is required",
+      "exampleTooLong": "Example must be less than 500 characters",
+      "notesTooLong": "Notes must be less than 500 characters",
+      "pronunciationTooLong": "Pronunciation must be less than 100 characters",
+      "synonymsInvalid": "Please enter valid synonyms separated by commas",
+      "antonymsInvalid": "Please enter valid antonyms separated by commas",
+      "saveError": "Error saving vocabulary. Please try again.",
+      "saveSuccess": "Vocabulary saved successfully!",
+      "updateSuccess": "Vocabulary updated successfully!"
     },
     "details": {
       "title": "Vocabulary Details",

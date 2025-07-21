@@ -27,8 +27,7 @@
     "minutes": "phút",
     "finish": "Hoàn thành",
     "close": "Đóng",
-    "confirm": "Xác nhận",
-    "cancel": "Hủy"
+    "confirm": "Xác nhận"
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -181,6 +180,25 @@
         "confirmMessage": "Bạn có muốn nhập {count} từ vựng từ file \"{filename}\"?\n\nDữ liệu hiện tại sẽ được thay thế!",
         "successMessage": "Đã nhập thành công {count} từ vựng!"
       }
+    },
+    "validation": {
+      "wordRequired": "Từ vựng là bắt buộc",
+      "wordTooShort": "Từ vựng phải có ít nhất 1 ký tự",
+      "wordTooLong": "Từ vựng phải ít hơn 100 ký tự",
+      "meaningRequired": "Nghĩa của từ là bắt buộc",
+      "meaningTooShort": "Nghĩa của từ phải có ít nhất 1 ký tự",
+      "meaningTooLong": "Nghĩa của từ phải ít hơn 500 ký tự",
+      "partOfSpeechRequired": "Loại từ là bắt buộc",
+      "categoryRequired": "Danh mục là bắt buộc",
+      "levelRequired": "Cấp độ là bắt buộc",
+      "exampleTooLong": "Ví dụ phải ít hơn 500 ký tự",
+      "notesTooLong": "Ghi chú phải ít hơn 500 ký tự",
+      "pronunciationTooLong": "Phiên âm phải ít hơn 100 ký tự",
+      "synonymsInvalid": "Vui lòng nhập từ đồng nghĩa hợp lệ, ngăn cách bằng dấu phẩy",
+      "antonymsInvalid": "Vui lòng nhập từ trái nghĩa hợp lệ, ngăn cách bằng dấu phẩy",
+      "saveError": "Có lỗi khi lưu từ vựng. Vui lòng thử lại.",
+      "saveSuccess": "Lưu từ vựng thành công!",
+      "updateSuccess": "Cập nhật từ vựng thành công!"
     },
     "details": {
       "title": "Chi tiết từ vựng",
