@@ -142,6 +142,7 @@
           :question="currentQuestion"
           :question-index="currentQuestionIndex"
           :total-questions="totalQuestions"
+          :difficulty="settings.difficulty"
           @answer="handleAnswer"
           @next="nextQuestion"
           @complete="completeExercise"
@@ -322,7 +323,7 @@
         <!-- Question Management -->
         <div class="space-y-6">
           <!-- Add New Question Form -->
-          <div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+          <div class="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
             <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">
               {{ editingQuestionIndex >= 0 ? t('grammar.practice.questionManager.editQuestion') : t('grammar.practice.questionManager.addNew') }}
             </h4>
@@ -336,7 +337,7 @@
                   </label>
                   <select
                     v-model="newQuestion.taskType"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="essay">{{ t('grammar.practice.exercises.writing.essay') }}</option>
                     <option value="email">{{ t('grammar.practice.exercises.writing.email') }}</option>
@@ -353,7 +354,7 @@
                       v-model.number="newQuestion.minWords"
                       type="number"
                       min="50"
-                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                   </div>
                   <div>
@@ -364,7 +365,7 @@
                       v-model.number="newQuestion.timeLimit"
                       type="number"
                       min="5"
-                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                   </div>
                 </div>
@@ -376,7 +377,7 @@
                 <textarea
                   v-model="newQuestion.prompt"
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   :placeholder="t('grammar.practice.questionManager.promptPlaceholder')"
                 ></textarea>
               </div>
@@ -427,7 +428,7 @@
                 <textarea
                   v-model="newQuestion.question"
                   rows="2"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   :placeholder="t('grammar.practice.questionManager.questionPlaceholder')"
                 ></textarea>
               </div>
@@ -453,7 +454,7 @@
                 </label>
                 <select
                   v-model="newQuestion.correctAnswer"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option v-for="(option, index) in newQuestion.options" :key="index" :value="option">
                     {{ String.fromCharCode(65 + index) }}. {{ option }}
@@ -467,9 +468,198 @@
                 <textarea
                   v-model="newQuestion.explanation"
                   rows="2"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   :placeholder="t('grammar.practice.questionManager.explanationPlaceholder')"
                 ></textarea>
+              </div>
+            </div>
+            
+            <!-- Listening Exercise Form -->
+            <div v-else-if="selectedExerciseTypeForQuestions === 'listening'" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {{ t('grammar.practice.exercises.listening.audioUrl') }}
+                </label>
+                <div class="relative">
+                  <input
+                    v-model="newQuestion.audioUrl"
+                    type="text"
+                    @input="handleAudioUrlChange"
+                    @paste="handleUrlPaste"
+                    class="w-full px-3 py-2 pr-20 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    :placeholder="t('grammar.practice.exercises.listening.audioUrlPlaceholder')"
+                  >
+                  <!-- Clear button -->
+                  <button
+                    v-if="newQuestion.audioUrl"
+                    @click="clearAudioUrl"
+                    type="button"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  {{ t('grammar.practice.exercises.listening.audioUrlHint') }}
+                </div>
+                <!-- YouTube URL Preview -->
+                <div v-if="isYouTubeUrl(newQuestion.audioUrl)" class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg">
+                  <div class="flex items-center space-x-2 text-sm text-blue-800 dark:text-blue-200">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    <span>{{ t('grammar.practice.exercises.listening.youtubeDetected') }}</span>
+                  </div>
+                  <div class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                    {{ t('grammar.practice.exercises.listening.youtubeNote') }}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ t('grammar.practice.exercises.listening.maxPlays') }}
+                  </label>
+                  <input
+                    v-model.number="newQuestion.maxPlays"
+                    type="number"
+                    min="1"
+                    max="10"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ t('grammar.practice.settings.difficulty') }}
+                  </label>
+                  <select
+                    v-model="newQuestion.difficulty"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="easy">{{ t('grammar.practice.settings.levels.easy') }}</option>
+                    <option value="medium">{{ t('grammar.practice.settings.levels.medium') }}</option>
+                    <option value="hard">{{ t('grammar.practice.settings.levels.hard') }}</option>
+                  </select>
+                </div>
+                <div class="flex items-center">
+                  <label class="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      v-model="newQuestion.allowNotes"
+                      type="checkbox"
+                      class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    >
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {{ t('grammar.practice.exercises.listening.allowNotes') }}
+                    </span>
+                  </label>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {{ t('grammar.practice.exercises.listening.transcript') }}
+                </label>
+                <textarea
+                  v-model="newQuestion.transcript"
+                  rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  :placeholder="t('grammar.practice.exercises.listening.transcriptPlaceholder')"
+                ></textarea>
+              </div>
+              
+              <!-- Questions about the audio -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {{ t('grammar.practice.exercises.listening.questions') }}
+                </label>
+                <div class="space-y-3">
+                  <div 
+                    v-for="(question, qIndex) in newQuestion.questions" 
+                    :key="qIndex"
+                    class="border border-gray-200 dark:border-gray-600 rounded-lg p-3"
+                  >
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ t('grammar.practice.exercises.listening.question') }} {{ qIndex + 1 }}
+                      </span>
+                      <button
+                        @click="removeListeningQuestion(qIndex)"
+                        class="p-1 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                        :disabled="newQuestion.questions.length === 1"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                    
+                    <div class="space-y-2">
+                      <div>
+                        <select
+                          v-model="question.type"
+                          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        >
+                          <option value="multiple-choice">{{ t('grammar.practice.exercises.listening.multipleChoice') }}</option>
+                          <option value="fill-blank">{{ t('grammar.practice.exercises.listening.fillBlank') }}</option>
+                          <option value="ordering">{{ t('grammar.practice.exercises.listening.ordering') }}</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <textarea
+                          v-model="question.question"
+                          rows="2"
+                          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                          :placeholder="t('grammar.practice.questionManager.questionPlaceholder')"
+                        ></textarea>
+                      </div>
+                      
+                      <!-- Multiple choice options -->
+                      <div v-if="question.type === 'multiple-choice'" class="space-y-1">
+                        <div v-for="(option, oIndex) in question.options" :key="oIndex" class="flex items-center space-x-2">
+                          <span class="text-xs font-medium text-gray-500 dark:text-gray-400 w-4">{{ String.fromCharCode(65 + oIndex) }}.</span>
+                          <input
+                            v-model="question.options[oIndex]"
+                            type="text"
+                            class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-transparent text-sm"
+                            :placeholder="t('grammar.practice.questionManager.optionPlaceholder')"
+                          >
+                        </div>
+                        <div>
+                          <select
+                            v-model="question.correctAnswer"
+                            class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-transparent text-sm"
+                          >
+                            <option value="">{{ t('grammar.practice.questionManager.selectCorrectAnswer') }}</option>
+                            <option v-for="(option, oIndex) in question.options" :key="oIndex" :value="oIndex">
+                              {{ String.fromCharCode(65 + oIndex) }}. {{ option }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <!-- Fill blank answer -->
+                      <div v-else-if="question.type === 'fill-blank'">
+                        <input
+                          v-model="question.correctAnswer"
+                          type="text"
+                          class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-transparent text-sm"
+                          :placeholder="t('grammar.practice.exercises.listening.correctAnswerPlaceholder')"
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button
+                    @click="addListeningQuestion"
+                    class="w-full px-3 py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-blue-400 hover:text-blue-500 transition-colors text-sm"
+                  >
+                    + {{ t('grammar.practice.exercises.listening.addQuestion') }}
+                  </button>
+                </div>
               </div>
             </div>
             
@@ -482,7 +672,7 @@
                 <textarea
                   v-model="newQuestion.question"
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   :placeholder="t('grammar.practice.questionManager.questionPlaceholder')"
                 ></textarea>
               </div>
@@ -493,7 +683,7 @@
                 <textarea
                   v-model="newQuestion.explanation"
                   rows="2"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   :placeholder="t('grammar.practice.questionManager.explanationPlaceholder')"
                 ></textarea>
               </div>
@@ -682,7 +872,14 @@ const newQuestion = ref({
   prompt: '',
   requirements: [''],
   minWords: 100,
-  timeLimit: 20
+  timeLimit: 20,
+  // Listening specific fields
+  audioUrl: '',
+  originalUrl: '',
+  maxPlays: 3,
+  allowNotes: false,
+  transcript: '',
+  questions: []
 })
 const editingQuestionIndex = ref(-1)
 
@@ -1046,19 +1243,66 @@ const closeQuestionManager = () => {
 }
 
 const resetNewQuestionForm = () => {
-  newQuestion.value = {
-    id: '',
-    type: selectedExerciseTypeForQuestions.value,
-    question: '',
-    options: ['', '', '', ''],
-    correctAnswer: '',
-    explanation: '',
-    // Writing specific fields
-    taskType: 'essay',
-    prompt: '',
-    requirements: [''],
-    minWords: 100,
-    timeLimit: 20
+  if (selectedExerciseTypeForQuestions.value === 'listening') {
+    newQuestion.value = {
+      id: '',
+      type: 'listening',
+      audioUrl: '',
+      maxPlays: 3,
+      allowNotes: true,
+      difficulty: 'medium',
+      transcript: '',
+      questions: [{
+        question: '',
+        type: 'multiple-choice',
+        options: ['', '', '', ''],
+        correctAnswer: ''
+      }]
+    } as any
+  } else if (selectedExerciseTypeForQuestions.value === 'writing') {
+    newQuestion.value = {
+      id: '',
+      type: 'writing',
+      question: '',
+      options: ['', '', '', ''],
+      correctAnswer: '',
+      explanation: '',
+      // Writing specific fields
+      taskType: 'essay',
+      prompt: '',
+      requirements: [''],
+      minWords: 100,
+      timeLimit: 20,
+      // Listening specific fields (default values)
+      audioUrl: '',
+      originalUrl: '',
+      maxPlays: 3,
+      allowNotes: false,
+      transcript: '',
+      questions: []
+    }
+  } else {
+    newQuestion.value = {
+      id: '',
+      type: selectedExerciseTypeForQuestions.value || '',
+      question: '',
+      options: ['', '', '', ''],
+      correctAnswer: '',
+      explanation: '',
+      // Add missing properties to satisfy TypeScript
+      taskType: 'essay',
+      prompt: '',
+      requirements: [''],
+      minWords: 100,
+      timeLimit: 20,
+      // Listening specific fields (default values)
+      audioUrl: '',
+      originalUrl: '',
+      maxPlays: 3,
+      allowNotes: false,
+      transcript: '',
+      questions: []
+    }
   }
 }
 
@@ -1127,6 +1371,98 @@ const removeRequirement = (index: number) => {
   }
 }
 
+// Listening question management
+const addListeningQuestion = () => {
+  const listeningQuestion = newQuestion.value as any
+  if (listeningQuestion.questions) {
+    listeningQuestion.questions.push({
+      question: '',
+      type: 'multiple-choice',
+      options: ['', '', '', ''],
+      correctAnswer: ''
+    })
+  }
+}
+
+const removeListeningQuestion = (index: number) => {
+  const listeningQuestion = newQuestion.value as any
+  if (listeningQuestion.questions && listeningQuestion.questions.length > 1) {
+    listeningQuestion.questions.splice(index, 1)
+  }
+}
+
+// YouTube URL handling functions
+const isYouTubeUrl = (url: string): boolean => {
+  if (!url) return false
+  const youtubeRegex = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/
+  return youtubeRegex.test(url)
+}
+
+const extractYouTubeVideoId = (url: string): string | null => {
+  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  const match = url.match(regex)
+  return match ? match[1] : null
+}
+
+const convertYouTubeToAudioUrl = (url: string): string => {
+  // For now, we'll store the YouTube URL and handle audio extraction in the ListeningExercise component
+  // This allows the Question Manager to accept YouTube URLs while keeping ListeningExercise audio-only
+  const videoId = extractYouTubeVideoId(url)
+  if (videoId) {
+    // Return a special format that the ListeningExercise can recognize and handle
+    return `youtube:${videoId}`
+  }
+  return url
+}
+
+const handleAudioUrlChange = () => {
+  // Auto-convert YouTube URLs to audio format when user inputs them
+  if (isYouTubeUrl(newQuestion.value.audioUrl)) {
+    const convertedUrl = convertYouTubeToAudioUrl(newQuestion.value.audioUrl)
+    newQuestion.value.originalUrl = newQuestion.value.audioUrl
+    newQuestion.value.audioUrl = convertedUrl
+  }
+}
+
+const handleUrlPaste = (event: ClipboardEvent) => {
+  const pastedText = event.clipboardData?.getData('text') || ''
+  if (pastedText) {
+    // Clean up common URL issues from share dialogs
+    let cleanUrl = pastedText.trim()
+    
+    // Remove query parameters that might interfere (like si= from YouTube)
+    if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
+      // For YouTube URLs, keep only essential parameters
+      const url = new URL(cleanUrl)
+      if (url.hostname.includes('youtube.com')) {
+        const videoId = url.searchParams.get('v')
+        if (videoId) {
+          cleanUrl = `https://www.youtube.com/watch?v=${videoId}`
+        }
+      } else if (url.hostname.includes('youtu.be')) {
+        const videoId = url.pathname.slice(1)
+        if (videoId) {
+          cleanUrl = `https://youtu.be/${videoId}`
+        }
+      }
+    }
+    
+    // Update the input value
+    newQuestion.value.audioUrl = cleanUrl
+    
+    // Prevent default paste behavior
+    event.preventDefault()
+    
+    // Trigger the change handler
+    handleAudioUrlChange()
+  }
+}
+
+const clearAudioUrl = () => {
+  newQuestion.value.audioUrl = ''
+  newQuestion.value.originalUrl = ''
+}
+
 const saveQuestionsToStorage = () => {
   localStorage.setItem('grammarExerciseQuestions', JSON.stringify(exerciseQuestions.value))
 }
@@ -1165,6 +1501,16 @@ watch(() => route.query.exercise, (newExercise) => {
     }
   } else {
     selectedExercise.value = null
+  }
+})
+
+// Watch for modal states to control body scroll
+watch([showQuestionManager, showSettings, showResults, showExerciseManager], ([questionManager, settings, results, exerciseManager]) => {
+  const anyModalOpen = questionManager || settings || results || exerciseManager
+  if (anyModalOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
   }
 })
 

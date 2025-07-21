@@ -25,7 +25,8 @@
     "previous": "Trước",
     "next": "Tiếp",
     "minutes": "phút",
-    "finish": "Hoàn thành"
+    "finish": "Hoàn thành",
+    "close": "Đóng"
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -344,6 +345,8 @@
         "showHighlights": "Hiển thị đánh dấu"
       },
       "exercises": {
+        "checkAnswer": "Kiểm tra đáp án",
+        "next": "Tiếp theo",
         "multiple-choice": {
           "title": "Trắc nghiệm",
           "description": "Chọn đáp án đúng từ nhiều lựa chọn"
@@ -380,7 +383,30 @@
           "speed": "Tốc độ",
           "playsLeft": "Lượt nghe còn lại",
           "loading": "Đang tải...",
-          "questions": "Câu hỏi"
+          "questions": "Câu hỏi",
+          "audioUrl": "URL âm thanh",
+          "audioUrlPlaceholder": "Nhập đường dẫn file âm thanh...",
+          "maxPlays": "Số lần nghe tối đa",
+          "allowNotes": "Cho phép ghi chú",
+          "transcript": "Bản ghi âm",
+          "transcriptPlaceholder": "Nhập nội dung bản ghi âm...",
+          "question": "Câu hỏi",
+          "multipleChoice": "Trắc nghiệm",
+          "fillBlank": "Điền vào chỗ trống",
+          "ordering": "Sắp xếp thứ tự",
+          "addQuestion": "Thêm câu hỏi",
+          "correctAnswerPlaceholder": "Nhập đáp án đúng...",
+          "notesAllowed": "Cho phép ghi chú",
+          "takeNotes": "Ghi chú",
+          "notesPlaceholder": "Viết ghi chú của bạn ở đây...",
+          "correct": "Đúng",
+          "incorrect": "Sai",
+          "accuracy": "Độ chính xác",
+          "showTranscript": "Hiện bản ghi âm",
+          "correctAnswer": "Đáp án đúng",
+          "audioUrlHint": "Nhập URL âm thanh trực tiếp hoặc URL video YouTube",
+          "youtubeDetected": "Phát hiện URL YouTube",
+          "youtubeNote": "Âm thanh sẽ được trích xuất từ video YouTube này để luyện nghe"
         },
         "writing": {
           "title": "Luyện viết",
@@ -498,7 +524,8 @@
         "addRequirement": "Thêm yêu cầu",
         "requirementPlaceholder": "Nhập yêu cầu...",
         "minWords": "Số từ tối thiểu",
-        "timeLimit": "Thời gian (phút)"
+        "timeLimit": "Thời gian (phút)",
+        "selectCorrectAnswer": "Chọn đáp án đúng"
       },
       "progress": {
         "question": "Câu hỏi",
@@ -523,6 +550,7 @@
         "previous": "Trước",
         "finish": "Hoàn thành",
         "check": "Kiểm tra đáp án",
+        "checkAnswer": "Kiểm tra đáp án",
         "showAnswer": "Hiện đáp án",
         "explanation": "Giải thích",
         "hint": "Gợi ý",

@@ -35,22 +35,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
             </button>
-            
-            <!-- Speed Control -->
-            <div class="flex items-center space-x-2">
-              <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.listening.speed') }}:</span>
-              <select
-                v-model="playbackSpeed"
-                @change="updatePlaybackSpeed"
-                class="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              >
-                <option value="0.5">0.5x</option>
-                <option value="0.75">0.75x</option>
-                <option value="1">1x</option>
-                <option value="1.25">1.25x</option>
-                <option value="1.5">1.5x</option>
-              </select>
-            </div>
+
           </div>
           
           <!-- Progress Bar -->
@@ -327,14 +312,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useVoiceStore } from '../../../stores/voiceStore'
-// Note: You'll need to install vue-draggable-next for ordering questions
-// import draggable from 'vuedraggable'
+import { VueDraggableNext as draggable } from 'vue-draggable-next'
 
 const { t } = useI18n()
 const { playAudio } = useVoiceStore()
+
+// YouTube player reference
+let youtubePlayer: any = null
+const isYouTubeAudio = ref(false)
+const youtubeEmbedUrl = ref('')
+
+// YouTube API type declarations
+declare global {
+  interface Window {
+    YT: any
+    onYouTubeIframeAPIReady: () => void
+  }
+}
 
 // Props
 interface Question {
@@ -353,9 +350,12 @@ interface Props {
     allowNotes?: boolean
     maxPlays?: number
     transcript?: string
+    playbackSpeed?: number
+    difficulty?: string
   }
   questionIndex: number
   totalQuestions: number
+  difficulty?: string
 }
 
 const props = defineProps<Props>()
@@ -377,10 +377,10 @@ const isPlaying = ref(false)
 const currentTime = ref(0)
 const duration = ref(0)
 const progress = ref(0)
-const playbackSpeed = ref(1)
 const playsRemaining = ref(3)
 const audio = ref<HTMLAudioElement | null>(null)
 const progressBar = ref<HTMLElement | null>(null)
+const youtubePlayerReady = ref(false)
 
 // Computed
 const hasAllAnswers = computed(() => {
@@ -406,6 +406,47 @@ const accuracy = computed(() => {
     : 0
 })
 
+const playbackSpeed = computed(() => {
+  // Priority: 
+  // 1. Explicit playbackSpeed from question
+  // 2. Question's individual difficulty setting
+  // 3. Global difficulty setting
+  // 4. Default speed
+  
+  // DEBUG: Log the values
+  console.log('DEBUG - Question difficulty:', props.question.difficulty)
+  console.log('DEBUG - Global difficulty:', props.difficulty)
+  console.log('DEBUG - Explicit playbackSpeed:', props.question.playbackSpeed)
+  
+  if (props.question.playbackSpeed) {
+    console.log('DEBUG - Using explicit playbackSpeed:', props.question.playbackSpeed)
+    return props.question.playbackSpeed
+  }
+  
+  // Use question's individual difficulty first, then global difficulty
+  const difficulty = props.question.difficulty || props.difficulty
+  console.log('DEBUG - Final difficulty used:', difficulty)
+  
+  // Map difficulty to playback speed
+  let speed
+  switch (difficulty) {
+    case 'easy':
+      speed = 0.75  // Slower for easier listening
+      break
+    case 'medium':
+      speed = 1     // Normal speed
+      break
+    case 'hard':
+      speed = 3.25  // Faster for challenge
+      break
+    default:
+      speed = 1     // Default to normal speed
+  }
+  
+  console.log('DEBUG - Computed playback speed:', speed)
+  return speed
+})
+
 // Methods
 const isAnswerCorrect = (index: number) => {
   const userAnswer = userAnswers.value[index]
@@ -422,40 +463,108 @@ const isAnswerCorrect = (index: number) => {
 }
 
 const togglePlayback = () => {
-  if (!audio.value || playsRemaining.value <= 0) return
+  // Check plays remaining first
+  if (playsRemaining.value <= 0) return
+  
+  // Handle YouTube audio
+  if (isYouTubeAudio.value) {
+    if (!youtubePlayerReady.value || !youtubePlayer || !youtubePlayer.playVideo || !youtubePlayer.pauseVideo) {
+      console.warn('YouTube player not ready yet')
+      return
+    }
+    
+    if (isPlaying.value) {
+      youtubePlayer.pauseVideo()
+    } else {
+      youtubePlayer.playVideo()
+      if (playsRemaining.value > 0) {
+        playsRemaining.value--
+      }
+    }
+    return
+  }
+  
+  // Handle regular audio
+  if (!audio.value) return
   
   if (isPlaying.value) {
     audio.value.pause()
   } else {
     audio.value.play()
-    if (currentTime.value === 0) {
+    if (playsRemaining.value > 0) {
       playsRemaining.value--
     }
   }
 }
 
 const restartAudio = () => {
-  if (!audio.value) return
-  audio.value.currentTime = 0
-  currentTime.value = 0
-  progress.value = 0
+  if (isYouTubeAudio.value) {
+    // Restart YouTube audio
+    if (youtubePlayer && youtubePlayer.seekTo) {
+      youtubePlayer.seekTo(0)
+      currentTime.value = 0
+      progress.value = 0
+    }
+  } else {
+    // Restart regular audio
+    if (!audio.value) return
+    
+    audio.value.currentTime = 0
+    currentTime.value = 0
+    progress.value = 0
+  }
 }
 
 const updatePlaybackSpeed = () => {
-  if (audio.value) {
+  console.log('DEBUG - updatePlaybackSpeed called!')
+  console.log('DEBUG - Current playbackSpeed.value:', playbackSpeed.value)
+  console.log('DEBUG - isYouTubeAudio.value:', isYouTubeAudio.value)
+  console.log('DEBUG - audio.value exists:', !!audio.value)
+  
+  if (isYouTubeAudio.value) {
+    if (youtubePlayer && youtubePlayer.setPlaybackRate) {
+      console.log('DEBUG - Setting YouTube playback rate to:', playbackSpeed.value)
+      youtubePlayer.setPlaybackRate(parseFloat(playbackSpeed.value.toString()))
+    } else {
+      console.log('DEBUG - YouTube player not ready for setPlaybackRate')
+    }
+  } else if (audio.value) {
+    console.log('DEBUG - Setting audio playback rate to:', playbackSpeed.value)
+    console.log('DEBUG - Audio playbackRate BEFORE setting:', audio.value.playbackRate)
     audio.value.playbackRate = parseFloat(playbackSpeed.value.toString())
+    console.log('DEBUG - Audio playbackRate AFTER setting:', audio.value.playbackRate)
+    
+    // Double-check after a short delay to see if it gets reset
+    setTimeout(() => {
+      console.log('DEBUG - Audio playbackRate after 100ms:', audio.value?.playbackRate)
+      // Force re-apply if it got reset
+      if (audio.value && audio.value.playbackRate !== parseFloat(playbackSpeed.value.toString())) {
+        console.log('DEBUG - Playback rate was reset! Force re-applying...')
+        audio.value.playbackRate = parseFloat(playbackSpeed.value.toString())
+        console.log('DEBUG - Force-applied playbackRate:', audio.value.playbackRate)
+      }
+    }, 100)
+  } else {
+    console.log('DEBUG - No audio element available to set playback rate')
   }
 }
 
 const seekAudio = (event: MouseEvent) => {
-  if (!audio.value || !progressBar.value) return
+  if (!progressBar.value) return
   
   const rect = progressBar.value.getBoundingClientRect()
   const clickX = event.clientX - rect.left
   const newTime = (clickX / rect.width) * duration.value
   
-  audio.value.currentTime = newTime
-  currentTime.value = newTime
+  if (isYouTubeAudio.value) {
+    if (youtubePlayer && youtubePlayer.seekTo) {
+      youtubePlayer.seekTo(newTime, true)
+      currentTime.value = newTime
+    }
+  } else if (audio.value) {
+    audio.value.currentTime = newTime
+    currentTime.value = newTime
+  }
 }
 
 const updateProgress = () => {
@@ -502,18 +611,132 @@ const formatTime = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
+// YouTube audio player creation using iframe with Player API
+const createYouTubeAudioPlayer = (videoId: string) => {
+  isYouTubeAudio.value = true
+  
+  // Create container for YouTube player
+  const playerContainer = document.createElement('div')
+  playerContainer.id = `youtube-player-${Date.now()}`
+  playerContainer.style.position = 'absolute'
+  playerContainer.style.left = '-9999px'
+  playerContainer.style.top = '-9999px'
+  playerContainer.style.width = '1px'
+  playerContainer.style.height = '1px'
+  document.body.appendChild(playerContainer)
+  
+  // Load YouTube Player API if not already loaded
+  if (!window.YT) {
+    const script = document.createElement('script')
+    script.src = 'https://www.youtube.com/iframe_api'
+    document.head.appendChild(script)
+    
+    // Wait for API to load
+    window.onYouTubeIframeAPIReady = () => {
+      initYouTubePlayer(videoId, playerContainer.id)
+    }
+  } else {
+    initYouTubePlayer(videoId, playerContainer.id)
+  }
+}
+
+// Initialize YouTube Player
+const initYouTubePlayer = (videoId: string, containerId: string) => {
+  youtubePlayer = new window.YT.Player(containerId, {
+    height: '1',
+    width: '1',
+    videoId: videoId,
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      iv_load_policy: 3,
+      modestbranding: 1,
+      rel: 0,
+      showinfo: 0
+    },
+    events: {
+      onReady: (event: any) => {
+        audioLoaded.value = true
+        youtubePlayerReady.value = true
+        duration.value = event.target.getDuration() || 0
+        // Apply playback speed after YouTube player is ready
+        updatePlaybackSpeed()
+      },
+      onStateChange: (event: any) => {
+        const state = event.data
+        if (state === window.YT.PlayerState.PLAYING) {
+          isPlaying.value = true
+        } else if (state === window.YT.PlayerState.PAUSED || state === window.YT.PlayerState.ENDED) {
+          isPlaying.value = false
+          if (state === window.YT.PlayerState.ENDED) {
+            currentTime.value = 0
+            progress.value = 0
+          }
+        }
+      }
+    }
+  })
+  
+  // Start progress tracking for YouTube
+  const updateYouTubeProgress = () => {
+    if (youtubePlayer && youtubePlayer.getCurrentTime && isPlaying.value) {
+      const current = youtubePlayer.getCurrentTime()
+      currentTime.value = current
+      if (duration.value > 0) {
+        progress.value = (current / duration.value) * 100
+      }
+    }
+  }
+  
+  // Update progress every second for YouTube
+  setInterval(updateYouTubeProgress, 1000)
+}
+
 const initializeAudio = () => {
-  audio.value = new Audio(props.question.audioUrl)
+  // Handle YouTube URLs by converting them to playable audio format
+  let audioUrl = props.question.audioUrl
+  
+  // Check if it's a YouTube format (youtube:videoId)
+  if (audioUrl.startsWith('youtube:')) {
+    const videoId = audioUrl.replace('youtube:', '')
+    createYouTubeAudioPlayer(videoId)
+    return
+  }
+  
+  // Check if it's a full YouTube URL
+  if (audioUrl.includes('youtube.com/watch') || audioUrl.includes('youtu.be/')) {
+    let videoId = ''
+    if (audioUrl.includes('youtube.com/watch')) {
+      const urlParams = new URLSearchParams(audioUrl.split('?')[1])
+      videoId = urlParams.get('v') || ''
+    } else if (audioUrl.includes('youtu.be/')) {
+      videoId = audioUrl.split('youtu.be/')[1].split('?')[0]
+    }
+    
+    if (videoId) {
+      createYouTubeAudioPlayer(videoId)
+      return
+    }
+  }
+  
+  // Handle regular audio URLs
+  audio.value = new Audio(audioUrl)
   
   audio.value.addEventListener('loadedmetadata', () => {
     duration.value = audio.value!.duration
     audioLoaded.value = true
+    // Apply playback speed after audio is loaded
+    updatePlaybackSpeed()
   })
   
   audio.value.addEventListener('timeupdate', updateProgress)
   
   audio.value.addEventListener('play', () => {
     isPlaying.value = true
+    // Apply playback speed every time audio starts playing
+    updatePlaybackSpeed()
   })
   
   audio.value.addEventListener('pause', () => {
@@ -526,6 +749,40 @@ const initializeAudio = () => {
     progress.value = 0
   })
 }
+
+// Watch for playback speed changes based on difficulty
+watch(playbackSpeed, (newSpeed) => {
+  // Update the audio speed when difficulty changes
+  updatePlaybackSpeed()
+}, { immediate: false })
+
+// Watch for question changes to reinitialize audio with new audioUrl
+watch(() => props.question, (newQuestion, oldQuestion) => {
+  if (newQuestion && oldQuestion && newQuestion.audioUrl !== oldQuestion.audioUrl) {
+    // Clean up old audio
+    if (audio.value) {
+      audio.value.pause()
+      audio.value = null
+    }
+    if (youtubePlayer) {
+      youtubePlayer.destroy()
+      youtubePlayer = null
+    }
+    
+    // Reset state
+    audioLoaded.value = false
+    isPlaying.value = false
+    currentTime.value = 0
+    duration.value = 0
+    progress.value = 0
+    playsRemaining.value = newQuestion.maxPlays || 3
+    isYouTubeAudio.value = false
+    youtubePlayerReady.value = false
+    
+    // Initialize new audio
+    initializeAudio()
+  }
+}, { deep: true })
 
 // Initialize
 onMounted(() => {

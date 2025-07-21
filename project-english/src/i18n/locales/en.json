@@ -25,7 +25,8 @@
     "previous": "Previous",
     "next": "Next",
     "minutes": "minutes",
-    "finish": "Finish"
+    "finish": "Finish",
+    "close": "Close"
   },
   "levels": {
     "beginner": "Beginner",
@@ -344,6 +345,8 @@
         "showHighlights": "Show Highlights"
       },
       "exercises": {
+        "checkAnswer": "Check Answer",
+        "next": "Next",
         "multiple-choice": {
           "title": "Multiple Choice",
           "description": "Choose the correct answer from multiple options"
@@ -380,7 +383,30 @@
           "speed": "Speed",
           "playsLeft": "Plays Left",
           "loading": "Loading...",
-          "questions": "Questions"
+          "questions": "Questions",
+          "audioUrl": "Audio URL",
+          "audioUrlPlaceholder": "Enter audio file URL or YouTube URL...",
+          "maxPlays": "Maximum Plays",
+          "allowNotes": "Allow Notes",
+          "transcript": "Transcript",
+          "transcriptPlaceholder": "Enter audio transcript...",
+          "question": "Question",
+          "multipleChoice": "Multiple Choice",
+          "fillBlank": "Fill in the Blank",
+          "ordering": "Ordering",
+          "addQuestion": "Add Question",
+          "correctAnswerPlaceholder": "Enter correct answer...",
+          "notesAllowed": "Notes Allowed",
+          "takeNotes": "Take Notes",
+          "notesPlaceholder": "Write your notes here...",
+          "correct": "Correct",
+          "incorrect": "Incorrect",
+          "accuracy": "Accuracy",
+          "showTranscript": "Show Transcript",
+          "correctAnswer": "Correct Answer",
+          "audioUrlHint": "Enter direct audio URL or YouTube video URL",
+          "youtubeDetected": "YouTube URL detected",
+          "youtubeNote": "Audio will be extracted from this YouTube video for listening practice"
         },
         "writing": {
           "title": "Writing",
@@ -498,7 +524,8 @@
         "addRequirement": "Add Requirement",
         "requirementPlaceholder": "Enter requirement...",
         "minWords": "Min Words",
-        "timeLimit": "Time Limit (minutes)"
+        "timeLimit": "Time Limit (minutes)",
+        "selectCorrectAnswer": "Select Correct Answer"
       },
       "progress": {
         "question": "Question",

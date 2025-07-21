@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, computed, ref } from 'vue'
+import { defineAsyncComponent, computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import { groupVocabulariesByDate, type GroupedVocabulary } from '../../../utils/dateUtils'
@@ -106,8 +106,36 @@ const DateGroupAccordion = defineAsyncComponent(
   loadComponentSafely(() => import('./DateGroupAccordion.vue'))
 )
 
-// Accordion state management
+// Accordion state management with localStorage persistence
 const accordionState = ref<Record<string, boolean>>({})
+
+// Local storage key for accordion state
+const ACCORDION_STATE_STORAGE_KEY = 'vocabulary-accordion-state'
+
+// Load accordion state from localStorage
+const getStoredAccordionState = (): Record<string, boolean> => {
+  try {
+    const stored = localStorage.getItem(ACCORDION_STATE_STORAGE_KEY)
+    return stored ? JSON.parse(stored) : {}
+  } catch (error) {
+    console.warn('Failed to load accordion state from localStorage:', error)
+    return {}
+  }
+}
+
+// Save accordion state to localStorage
+const setStoredAccordionState = (state: Record<string, boolean>) => {
+  try {
+    localStorage.setItem(ACCORDION_STATE_STORAGE_KEY, JSON.stringify(state))
+  } catch (error) {
+    console.warn('Failed to save accordion state to localStorage:', error)
+  }
+}
+
+// Initialize accordion state from localStorage
+onMounted(() => {
+  accordionState.value = getStoredAccordionState()
+})
 
 interface Word {
   id: string
@@ -169,9 +197,11 @@ const groupedWords = computed((): GroupedVocabulary[] => {
   return allGroups
 })
 
-// Handle accordion toggle
+// Handle accordion toggle with localStorage persistence
 const handleAccordionToggle = (date: string, expanded: boolean) => {
   accordionState.value[date] = expanded
+  // Save updated state to localStorage
+  setStoredAccordionState(accordionState.value)
   console.log(`Accordion for ${date} toggled to:`, expanded)
 }
 
