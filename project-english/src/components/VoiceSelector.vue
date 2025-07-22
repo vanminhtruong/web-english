@@ -58,9 +58,10 @@
     <div 
       v-if="showVoiceInfo && currentVoiceInfo"
       class="relative"
+      @mouseenter="showTooltip = true"
+      @mouseleave="showTooltip = false"
     >
       <button
-        @click="toggleVoiceInfo"
         class="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
       >
         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -211,9 +212,7 @@ const testVoice = async () => {
   }
 }
 
-const toggleVoiceInfo = () => {
-  showTooltip.value = !showTooltip.value
-}
+
 
 // Settings Modal Methods
 const openVoiceSettings = (option: { value: VoiceType; label: string; icon: string }) => {

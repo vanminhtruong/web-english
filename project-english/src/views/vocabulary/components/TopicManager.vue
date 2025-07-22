@@ -362,6 +362,7 @@ const saveTopic = () => {
       customTopics.value[index] = topic
       saveCustomTopics()
       emit('topic-updated', oldKey, topic)
+      notifyTopicsUpdated() // Notify about topic update
     }
     editingTopic.value = null
   } else {
@@ -374,6 +375,7 @@ const saveTopic = () => {
     customTopics.value.push(topic)
     saveCustomTopics()
     emit('topic-added', topic)
+    notifyTopicsUpdated() // Notify about topic addition
   }
 
   // Reset form
@@ -403,9 +405,17 @@ const deleteTopic = () => {
     customTopics.value.splice(index, 1)
     saveCustomTopics()
     emit('topic-deleted', key)
+    notifyTopicsUpdated() // Notify about topic deletion
   }
 
   topicToDelete.value = null
+}
+
+// Helper to notify about topic changes
+const notifyTopicsUpdated = () => {
+  // Dispatch a custom event to notify all components about topic changes
+  window.dispatchEvent(new CustomEvent('topics-updated'))
+  console.log('Topics updated, dispatching topics-updated event')
 }
 
 const getTopicUsageCount = (key: string): number => {

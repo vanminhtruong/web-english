@@ -315,7 +315,9 @@ const categoryKeys = computed(() => {
   // Use refreshTrigger to force re-computation when topics change
   refreshTrigger.value // This creates a dependency
   // Get categories from vocabulary store (includes custom topics)
-  return vocabularyStore.getCategories.value
+  const categories = vocabularyStore.getCategories.value
+  console.log('Category keys computed with refreshTrigger:', refreshTrigger.value, 'Categories:', categories)
+  return categories
 })
 
 const form = reactive({
@@ -519,11 +521,49 @@ const getTopicDisplayName = (category: string): string => {
   return getTopicName(category)
 }
 
+// Topic event handlers
+const onTopicAdded = (newTopic: any) => {
+  // Force re-computation of categories
+  refreshTrigger.value++
+  // Refresh custom topics from store
+  vocabularyStore.refreshCustomTopics()
+  // Update form category if it was empty
+  if (!form.category) {
+    form.category = newTopic.key
+  }
+  console.log('Topic added, refreshing categories:', newTopic.key)
+}
+
+const onTopicUpdated = () => {
+  // Force re-computation of categories
+  refreshTrigger.value++
+  // Refresh custom topics from store
+  vocabularyStore.refreshCustomTopics()
+  console.log('Topic updated, refreshing categories')
+}
+
+const onTopicDeleted = (deletedTopicId: string) => {
+  // Force re-computation of categories
+  refreshTrigger.value++
+  // Refresh custom topics from store
+  vocabularyStore.refreshCustomTopics()
+  // If the current category was deleted, reset it
+  if (form.category === deletedTopicId) {
+    form.category = ''
+  }
+  console.log('Topic deleted, refreshing categories:', deletedTopicId)
+}
+
 // Listen for topics-updated events to refresh categories
 const handleTopicsUpdated = () => {
-  // Force re-computation of categories by incrementing trigger
-  refreshTrigger.value++
-  console.log('Topics updated, refreshing categories in form dialog')
+  // Add a small delay to ensure localStorage has been updated
+  setTimeout(() => {
+    // Force re-computation of categories by incrementing trigger
+    refreshTrigger.value++
+    // Refresh custom topics from store
+    vocabularyStore.refreshCustomTopics()
+    console.log('Topics updated, refreshing categories in form dialog')
+  }, 100)
 }
 
 // Lifecycle hooks

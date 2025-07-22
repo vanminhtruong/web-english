@@ -273,16 +273,24 @@ const initialState = loadDateFilterState()
 const dateFilterEnabled = ref(initialState.enabled)
 const selectedDate = ref(initialState.selectedDate)
 
-// Filter flashcards by date if date filter is enabled
+// Filter flashcards by date and category
 const filteredVocabularies = computed(() => {
-  if (!dateFilterEnabled.value || !selectedDate.value) {
-    return allVocabularies.value
+  let vocabularies = allVocabularies.value
+
+  // Filter by date if enabled
+  if (dateFilterEnabled.value && selectedDate.value) {
+    vocabularies = vocabularies.filter((vocab: Vocabulary) => {
+      const vocabDateKey = getDateKey(vocab.createdAt)
+      return vocabDateKey === selectedDate.value
+    })
   }
-  
-  return allVocabularies.value.filter((vocab: Vocabulary) => {
-    const vocabDateKey = getDateKey(vocab.createdAt)
-    return vocabDateKey === selectedDate.value
-  })
+
+  // Filter by category if a category is selected
+  if (flashcardSettings.value.category) {
+    vocabularies = vocabularies.filter((vocab: Vocabulary) => vocab.category === flashcardSettings.value.category)
+  }
+
+  return vocabularies
 })
 
 // Practice Timer State
