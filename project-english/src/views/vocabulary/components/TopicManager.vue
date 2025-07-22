@@ -166,14 +166,49 @@
           </div>
         </div>
 
-        <!-- Built-in Topics Info -->
-        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-          <h4 class="text-sm font-medium text-blue-900 dark:text-blue-200 mb-2">
+        <!-- Built-in Topics List -->
+        <div class="mt-6">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
             {{ t('vocabulary.topicManager.builtInTopics') }}
-          </h4>
-          <p class="text-sm text-blue-700 dark:text-blue-300">
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
             {{ t('vocabulary.topicManager.builtInTopicsDescription') }}
           </p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div
+              v-for="topic in builtInTopics"
+              :key="topic.key"
+              class="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg border border-gray-200 dark:border-gray-600"
+            >
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-1">
+                  <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 
+                               text-xs font-medium rounded">
+                    {{ topic.key }}
+                  </span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">
+                    ({{ getTopicUsageCount(topic.key) }} {{ t('vocabulary.words') }})
+                  </span>
+                </div>
+                <div class="grid grid-cols-1 gap-1 text-sm">
+                  <div>
+                    <span class="font-medium">VI:</span> {{ topic.vi }}
+                  </div>
+                  <div>
+                    <span class="font-medium">EN:</span> {{ topic.en }}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="ml-4">
+                <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 
+                             text-xs font-medium rounded">
+                  {{ t('vocabulary.topicManager.builtIn') }}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -267,6 +302,27 @@ const canSaveTopic = computed(() => {
   return newTopic.value.key.trim() && 
          newTopic.value.vi.trim() && 
          newTopic.value.en.trim()
+})
+
+const builtInTopics = computed(() => {
+  return [
+    { key: 'technology', vi: 'Công nghệ', en: 'Technology' },
+    { key: 'business', vi: 'Kinh doanh', en: 'Business' },
+    { key: 'travel', vi: 'Du lịch', en: 'Travel' },
+    { key: 'food', vi: 'Ẩm thực', en: 'Food' },
+    { key: 'health', vi: 'Sức khỏe', en: 'Health' },
+    { key: 'education', vi: 'Giáo dục', en: 'Education' },
+    { key: 'sports', vi: 'Thể thao', en: 'Sports' },
+    { key: 'entertainment', vi: 'Giải trí', en: 'Entertainment' },
+    { key: 'science', vi: 'Khoa học', en: 'Science' },
+    { key: 'art', vi: 'Nghệ thuật', en: 'Art' },
+    { key: 'music', vi: 'Âm nhạc', en: 'Music' },
+    { key: 'literature', vi: 'Văn học', en: 'Literature' },
+    { key: 'politics', vi: 'Chính trị', en: 'Politics' },
+    { key: 'environment', vi: 'Môi trường', en: 'Environment' },
+    { key: 'fashion', vi: 'Thời trang', en: 'Fashion' },
+    { key: 'finance', vi: 'Tài chính', en: 'Finance' }
+  ]
 })
 
 // Methods

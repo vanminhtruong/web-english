@@ -229,6 +229,7 @@
       "duplicateKey": "Mã chủ đề đã tồn tại!",
       "builtInTopics": "Chủ đề có sẵn",
       "builtInTopicsDescription": "Hệ thống có sẵn 16 chủ đề cơ bản như Technology, Business, Travel... Bạn có thể thêm chủ đề tùy chỉnh ở đây.",
+      "builtIn": "Có sẵn",
       "manageTopics": "Quản lý chủ đề"
     },
     "deleteSuccess": "Đã xóa \"{word}\" thành công."

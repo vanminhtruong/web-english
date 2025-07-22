@@ -229,6 +229,7 @@
       "duplicateKey": "Topic key already exists!",
       "builtInTopics": "Built-in Topics",
       "builtInTopicsDescription": "The system has 16 built-in topics like Technology, Business, Travel... You can add custom topics here.",
+      "builtIn": "Built-in",
       "manageTopics": "Manage Topics"
     }
   },

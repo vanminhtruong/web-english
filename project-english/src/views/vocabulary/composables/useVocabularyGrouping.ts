@@ -23,6 +23,10 @@ export function useVocabularyGrouping() {
     // Resetting page state is handled in the main component
   };
   
+  const reloadGroupingState = () => {
+    useGrouping.value = getStoredUseGrouping();
+  };
+  
   const dateGroupPrevious = (date: string, filteredVocabulary: any[]) => {
     const currentPage = dateGroupPages.value[date] || 1;
     if (currentPage > 1) {
@@ -48,6 +52,7 @@ export function useVocabularyGrouping() {
     itemsPerPageGrouped,
     dateGroupPages,
     toggleGrouping,
+    reloadGroupingState,
     dateGroupPrevious,
     dateGroupNext,
     dateGroupGoToPage,

@@ -9,7 +9,7 @@
       <button
         @click="showDropdown = !showDropdown"
         ref="dropdownButton"
-        class="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+        class="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
       >
         <span>{{ currentVoiceOption?.icon }}</span>
         <span>{{ currentVoiceOption?.label }}</span>
@@ -25,7 +25,7 @@
         v-if="showDropdown"
         ref="dropdownMenu"
         :style="dropdownStyle"
-        class="w-56 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto z-[9998]"
+        class="w-56 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto z-[9998]"
       >
         <div
           v-for="option in voiceOptions"
@@ -35,7 +35,7 @@
             'flex items-center justify-between space-x-2 px-3 py-2 text-left text-sm transition-colors cursor-pointer',
             currentVoiceType === option.value
               ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
           ]"
         >
           <div class="flex items-center space-x-2">

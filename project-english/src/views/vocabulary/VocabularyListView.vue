@@ -40,7 +40,7 @@
         @manual-save="manualSave"
         @setup-auto-save="setupAutoSaveFile"
         @reset-auto-save="resetAutoSaveFile"
-        @import-file="handleFileImport"
+        @import-file="handleFileImportWithReload"
       />
 
       <!-- Vocabulary List -->
@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, defineAsyncComponent } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, defineAsyncComponent, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast, POSITION } from 'vue-toastification';
 import { useVoiceStore } from '../../stores/voiceStore';
@@ -149,6 +149,7 @@ const {
   itemsPerPageGrouped,
   dateGroupPages,
   toggleGrouping,
+  reloadGroupingState,
   dateGroupPrevious,
   dateGroupNext,
   dateGroupGoToPage,
@@ -311,7 +312,21 @@ onMounted(() => {
   }
 });
 
+const handleFileImportWithReload = (file: File) => {
+  const handleImportComplete = (event: CustomEvent) => {
+    nextTick(() => {
+      reloadGroupingState();
+      console.log('Grouping state reloaded after import');
+    });
+    window.removeEventListener('vocabularyImportComplete', handleImportComplete as EventListener);
+  };
+  
+  window.addEventListener('vocabularyImportComplete', handleImportComplete as EventListener);
+  
+  handleFileImport(file);
+};
+
 onUnmounted(() => {
-  // Clear timers
+  window.removeEventListener('vocabularyImportComplete', () => {});
 });
 </script>

@@ -91,18 +91,29 @@
                 <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   {{ t('vocabulary.category') }} <span class="text-red-500">*</span>
                 </label>
-                <select
-                  id="category"
-                  v-model="form.category"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  @change="validateCategory"
-                >
-                  <option value="">{{ t('vocabulary.selectCategory') }}</option>
-                  <option v-for="key in categoryKeys" :key="key" :value="key">
-                    {{ getTopicDisplayName(key) }}
-                  </option>
-                </select>
+                <div class="relative">
+                  <!-- Add Category Button -->
+                  <button
+                    type="button"
+                    @click="showTopicManager = true"
+                    class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-colors z-10"
+                    :title="t('vocabulary.addCategory')"
+                  >
+                    +
+                  </button>
+                  <select
+                    id="category"
+                    v-model="form.category"
+                    required
+                    class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    @change="validateCategory"
+                  >
+                    <option value="">{{ t('vocabulary.selectCategory') }}</option>
+                    <option v-for="key in categoryKeys" :key="key" :value="key">
+                      {{ getTopicDisplayName(key) }}
+                    </option>
+                  </select>
+                </div>
               </div>
 
               <!-- Level -->
@@ -250,7 +261,14 @@
       </div>
     </div>
 
-
+    <!-- Topic Manager Modal -->
+    <TopicManager
+      v-model="showTopicManager"
+      :vocabulary-usage="{}"
+      @topic-added="onTopicAdded"
+      @topic-updated="onTopicUpdated"
+      @topic-deleted="onTopicDeleted"
+    />
   </div>
 </template>
 
@@ -261,8 +279,9 @@ import { useToast } from 'vue-toastification'
 import { useVocabularyStore, type Vocabulary } from '../../../composables/useVocabularyStore'
 import { getTopicName } from '../../../utils/topicUtils'
 
-// Import ImageUpload component with defineAsyncComponent to avoid "has no default export" error
+// Import components with defineAsyncComponent to avoid "has no default export" error
 const ImageUpload = defineAsyncComponent(() => import('./ImageUpload.vue'))
+const TopicManager = defineAsyncComponent(() => import('./TopicManager.vue'))
 
 interface Props {
   modelValue: boolean
@@ -289,6 +308,7 @@ const vocabularyStore = useVocabularyStore()
 // Data
 const isSubmitting = ref(false)
 const refreshTrigger = ref(0) // Trigger to force re-computation
+const showTopicManager = ref(false) // State for TopicManager modal
 
 // Define category keys - use computed to make it reactive
 const categoryKeys = computed(() => {

@@ -128,8 +128,9 @@ export function useVocabularySaving() {
         customTopics: vocabularyStore.customTopics.value,
         groupTopics: getGroupTopics(),
         accordionState: JSON.parse(localStorage.getItem('vocabulary-accordion-state') || '{}'),
+        useGrouping: JSON.parse(localStorage.getItem('vocabulary-use-grouping') || 'false'), // Save grouping state
         exportDate: new Date().toISOString(),
-        version: '1.2', // Increment version to indicate enhanced format
+        version: '1.3', // Increment version to indicate enhanced format with grouping state
         totalCount: vocabularyStore.totalCount.value
     };
   };
@@ -256,23 +257,23 @@ export function useVocabularySaving() {
                   return;
                 }
                 vocabularyStore.importVocabularies(data.vocabularies);
-              
-              // Import custom topics if they exist
-              if (data.customTopics && Array.isArray(data.customTopics)) {
-                // Import custom topics into the vocabulary store
-                data.customTopics.forEach((topic: any) => {
-                  vocabularyStore.addCustomTopic(topic);
-                });
-                console.log("Imported custom topics:", data.customTopics);
-              }
-              
-              // Also handle legacy 'topics' format for backward compatibility
-              if (data.topics && Array.isArray(data.topics)) {
-                data.topics.forEach((topic: any) => {
-                  vocabularyStore.addCustomTopic(topic);
-                });
-                console.log("Imported legacy topics:", data.topics);
-              }
+                            // Import custom topics if they exist
+               if (data.customTopics && Array.isArray(data.customTopics)) {
+                 // Clear existing custom topics and replace with imported ones
+                 localStorage.setItem('customTopics', JSON.stringify(data.customTopics));
+                 // Refresh the vocabulary store's custom topics
+                 vocabularyStore.refreshCustomTopics();
+                 console.log("Imported custom topics:", data.customTopics);
+               }
+               
+               // Also handle legacy 'topics' format for backward compatibility
+               if (data.topics && Array.isArray(data.topics)) {
+                 // Clear existing custom topics and replace with imported ones (legacy format)
+                 localStorage.setItem('customTopics', JSON.stringify(data.topics));
+                 // Refresh the vocabulary store's custom topics
+                 vocabularyStore.refreshCustomTopics();
+                 console.log("Imported legacy topics:", data.topics);
+               }
               
               // Import group topics (date group topics)
               if (data.groupTopics && typeof data.groupTopics === 'object') {
@@ -286,6 +287,12 @@ export function useVocabularySaving() {
                 console.log("Imported accordion state:", data.accordionState);
               }
               
+              // Import grouping state
+              if (typeof data.useGrouping === 'boolean') {
+                localStorage.setItem('vocabulary-use-grouping', JSON.stringify(data.useGrouping));
+                console.log("Imported grouping state:", data.useGrouping);
+              }
+              
               isSaving.value = false;
               
               // Show detailed import success message
@@ -296,11 +303,20 @@ export function useVocabularySaving() {
               if (data.groupTopics && Object.keys(data.groupTopics).length > 0) {
                 importMessage += ` + ${Object.keys(data.groupTopics).length} group topics`;
               }
+              if (typeof data.useGrouping === 'boolean') {
+                importMessage += ` + grouping preference`;
+              }
               
               toast.success(importMessage);
-                if (autoSaveEnabled.value) {
-                  debounceAutoSave();
-                }
+              
+              // Emit custom event to signal import completion
+              window.dispatchEvent(new CustomEvent('vocabularyImportComplete', {
+                detail: { useGrouping: data.useGrouping }
+              }));
+              
+              if (autoSaveEnabled.value) {
+                debounceAutoSave();
+              }
               } catch (error) {
                 isSaving.value = false;
                 console.error(t('vocabulary.save.errors.invalidFile'), error);
