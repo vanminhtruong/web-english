@@ -1,0 +1,148 @@
+/* Lazy Loading Animation Styles */
+.lazy-component {
+  transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-origin: center;
+}
+
+.lazy-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lazy-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Staggered animation for multiple components */
+.lazy-component:nth-child(1) { transition-delay: 0ms; }
+.lazy-component:nth-child(2) { transition-delay: 100ms; }
+.lazy-component:nth-child(3) { transition-delay: 200ms; }
+.lazy-component:nth-child(4) { transition-delay: 300ms; }
+.lazy-component:nth-child(5) { transition-delay: 400ms; }
+.lazy-component:nth-child(6) { transition-delay: 500ms; }
+.lazy-component:nth-child(7) { transition-delay: 600ms; }
+.lazy-component:nth-child(8) { transition-delay: 700ms; }
+
+/* Fade-in-up animation */
+.lazy-fade-up {
+  transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lazy-fade-up.lazy-hidden {
+  opacity: 0;
+  transform: translateY(50px);
+  pointer-events: none;
+}
+
+.lazy-fade-up.lazy-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Default state for fade-up components */
+.lazy-fade-up:not(.lazy-visible) {
+  opacity: 0;
+  transform: translateY(50px);
+  pointer-events: none;
+}
+
+/* Slide in from left animation */
+.lazy-slide-left {
+  transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lazy-slide-left.lazy-hidden {
+  opacity: 0;
+  transform: translateX(-50px);
+  pointer-events: none;
+}
+
+.lazy-slide-left.lazy-visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Default state for slide-left components */
+.lazy-slide-left:not(.lazy-visible) {
+  opacity: 0;
+  transform: translateX(-50px);
+  pointer-events: none;
+}
+
+/* Slide in from right animation */
+.lazy-slide-right {
+  transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lazy-slide-right.lazy-hidden {
+  opacity: 0;
+  transform: translateX(50px);
+  pointer-events: none;
+}
+
+.lazy-slide-right.lazy-visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Default state for slide-right components */
+.lazy-slide-right:not(.lazy-visible) {
+  opacity: 0;
+  transform: translateX(50px);
+  pointer-events: none;
+}
+
+/* Scale animation */
+.lazy-scale {
+  transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lazy-scale.lazy-hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+.lazy-scale.lazy-visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* Default state for scale components */
+.lazy-scale:not(.lazy-visible) {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+/* Blur animation */
+.lazy-blur {
+  transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lazy-blur.lazy-hidden {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.lazy-blur.lazy-visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Default state for blur components */
+.lazy-blur:not(.lazy-visible) {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(20px);
+  pointer-events: none;
+}

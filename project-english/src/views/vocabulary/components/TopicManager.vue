@@ -2,7 +2,6 @@
   <div 
     v-if="modelValue" 
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-    @click.self="closeDialog"
   >
     <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
       <!-- Header -->

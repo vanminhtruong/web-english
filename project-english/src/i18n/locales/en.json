@@ -84,6 +84,11 @@
       "hoverToExpand": "Hover to Expand",
       "hoverDescription": "Open categories on hover when enabled"
     },
+    "lazyLoading": {
+      "loading": "Loading...",
+      "componentVisible": "Component is now visible",
+      "componentHidden": "Component is hidden"
+    },
     "accordion": {
       "expand": "Expand group",
       "collapse": "Collapse group",

@@ -1,79 +1,87 @@
 <template>
   <div>
     <!-- Header -->
-    <DashboardHeader />
+    <LazyLoadComponent animation-type="fade-up">
+      <DashboardHeader />
+    </LazyLoadComponent>
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <!-- Stats Overview -->
-      <DashboardStats :stats="stats" class="mb-8" />
+      <LazyLoadComponent animation-type="slide-up" :threshold="0.2">
+        <DashboardStats :stats="stats" class="mb-8" />
+      </LazyLoadComponent>
 
       <!-- Quick Actions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg border border-gray-200 dark:border-gray-800">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ $t('dashboard.quickActions') }}</h3>
-            <div class="grid grid-cols-2 gap-4">
-              <button @click="navigateTo('/vocabulary/add')" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-                <div class="text-center">
-                  <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
-                  </svg>
-                  <span class="text-sm">{{ $t('dashboard.actions.addVocabulary') }}</span>
-                </div>
-              </button>
-              
-              <button @click="navigateTo('/practice/flashcard')" class="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-                <div class="text-center">
-                  <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
-                  </svg>
-                  <span class="text-sm">{{ $t('dashboard.actions.practiceFlashcard') }}</span>
-                </div>
-              </button>
-              
-              <button @click="navigateTo('/practice/quiz')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-                <div class="text-center">
-                  <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
-                  </svg>
-                  <span class="text-sm">{{ $t('dashboard.actions.takeQuiz') }}</span>
-                </div>
-              </button>
-              
-              <button @click="navigateTo('/grammar')" class="bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-                <div class="text-center">
-                  <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
-                  </svg>
-                  <span class="text-sm">{{ $t('dashboard.actions.learnGrammar') }}</span>
-                </div>
-              </button>
+        <LazyLoadComponent animation-type="slide-left" :threshold="0.15">
+          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg border border-gray-200 dark:border-gray-800">
+            <div class="px-4 py-5 sm:p-6">
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ $t('dashboard.quickActions') }}</h3>
+              <div class="grid grid-cols-2 gap-4">
+                <button @click="navigateTo('/vocabulary/add')" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                  <div class="text-center">
+                    <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-sm">{{ $t('dashboard.actions.addVocabulary') }}</span>
+                  </div>
+                </button>
+                
+                <button @click="navigateTo('/practice/flashcard')" class="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                  <div class="text-center">
+                    <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                    </svg>
+                    <span class="text-sm">{{ $t('dashboard.actions.practiceFlashcard') }}</span>
+                  </div>
+                </button>
+                
+                <button @click="navigateTo('/practice/quiz')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                  <div class="text-center">
+                    <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-sm">{{ $t('dashboard.actions.takeQuiz') }}</span>
+                  </div>
+                </button>
+                
+                <button @click="navigateTo('/grammar')" class="bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                  <div class="text-center">
+                    <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                    </svg>
+                    <span class="text-sm">{{ $t('dashboard.actions.learnGrammar') }}</span>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </LazyLoadComponent>
 
         <!-- Recent Activity -->
-        <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg border border-gray-200 dark:border-gray-800">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ $t('dashboard.recentActivity') }}</h3>
-            <div class="space-y-3">
-              <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-3">
-                <div class="flex-shrink-0">
-                  <div :class="activity.iconColor" class="w-8 h-8 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
+        <LazyLoadComponent animation-type="slide-right" :threshold="0.15">
+          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg border border-gray-200 dark:border-gray-800">
+            <div class="px-4 py-5 sm:p-6">
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ $t('dashboard.recentActivity') }}</h3>
+              <div class="space-y-3">
+                <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-3">
+                  <div class="flex-shrink-0">
+                    <div :class="activity.iconColor" class="w-8 h-8 rounded-full flex items-center justify-center">
+                      <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
                   </div>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 dark:text-white">{{ activity.title }}</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{{ activity.time }}</p>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ activity.title }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ activity.time }}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </LazyLoadComponent>
       </div>
     </div>
   </div>
@@ -85,8 +93,10 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../utils/import-helper'
 import { useVocabularyStore } from '../../composables/useVocabularyStore'
-
 // Sử dụng defineAsyncComponent để import components an toàn
+const LazyLoadComponent = defineAsyncComponent(
+  loadComponentSafely(() => import('../../components/LazyLoadComponent.vue'))
+)
 const DashboardHeader = defineAsyncComponent(
   loadComponentSafely(() => import('./components/DashboardHeader.vue'))
 )

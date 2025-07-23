@@ -1,79 +1,93 @@
 <template>
   <div>
     <!-- Header -->
-    <VocabularyHeader @add-vocabulary="openAddDialog" />
+    <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="0px">
+      <VocabularyHeader @add-vocabulary="openAddDialog" />
+    </LazyLoadComponent>
 
     <!-- Filters and Search -->
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <VocabularyFilters
-        :search-query="searchQuery"
-        :selected-category="selectedCategory"
-        :selected-level="selectedLevel"
-        :categories="categories"
-        :show-favorites-only="showFavoritesOnly"
-        @update:searchQuery="updateSearchQuery"
-        @update:selectedCategory="updateSelectedCategory"
-        @update:selectedLevel="updateSelectedLevel"
-        @update:showFavoritesOnly="updateShowFavoritesOnly"
-      />
+      <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
+        <VocabularyFilters
+          :search-query="searchQuery"
+          :selected-category="selectedCategory"
+          :selected-level="selectedLevel"
+          :categories="categories"
+          :show-favorites-only="showFavoritesOnly"
+          @update:searchQuery="updateSearchQuery"
+          @update:selectedCategory="updateSelectedCategory"
+          @update:selectedLevel="updateSelectedLevel"
+          @update:showFavoritesOnly="updateShowFavoritesOnly"
+        />
+      </LazyLoadComponent>
       
       <!-- Date Grouping Toggle -->
-      <GroupingToggle 
-        :model-value="useGrouping" 
-        :hover-enabled="hoverToExpandEnabled"
-        @update:model-value="toggleGrouping" 
-        @update:hover-enabled="hoverToExpandEnabled = $event"
-      />
+      <LazyLoadComponent animation-type="slide-right" :threshold="0.1" root-margin="-50px">
+        <GroupingToggle 
+          :model-value="useGrouping" 
+          :hover-enabled="hoverToExpandEnabled"
+          @update:model-value="toggleGrouping" 
+          @update:hover-enabled="hoverToExpandEnabled = $event"
+        />
+      </LazyLoadComponent>
 
       <!-- Voice Settings Panel -->
-      <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-6">
-        <VoiceSelector :show-voice-info="true" />
-      </div>
+      <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
+        <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-6">
+          <VoiceSelector :show-voice-info="true" />
+        </div>
+      </LazyLoadComponent>
 
       <!-- Topic Management Panel -->
-      <TopicManagerPanel @open="openTopicManager" />
+      <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
+        <TopicManagerPanel @open="openTopicManager" />
+      </LazyLoadComponent>
 
       <!-- Save Control Panel -->
-      <SaveControlPanel
-        :auto-save-enabled="autoSaveEnabled"
-        @update:auto-save-enabled="autoSaveEnabled = $event"
-        :is-saving="isSaving"
-        :has-auto-save-file="hasAutoSaveFile"
-        :last-save-time="lastSaveTime"
-        :save-status-color="getSaveStatusColor"
-        :save-status-text="getSaveStatusText"
-        @manual-save="manualSave"
-        @setup-auto-save="setupAutoSaveFile"
-        @reset-auto-save="resetAutoSaveFile"
-        @import-file="handleFileImportWithReload"
-      />
+      <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
+        <SaveControlPanel
+          :auto-save-enabled="autoSaveEnabled"
+          @update:auto-save-enabled="autoSaveEnabled = $event"
+          :is-saving="isSaving"
+          :has-auto-save-file="hasAutoSaveFile"
+          :last-save-time="lastSaveTime"
+          :save-status-color="getSaveStatusColor"
+          :save-status-text="getSaveStatusText"
+          @manual-save="manualSave"
+          @setup-auto-save="setupAutoSaveFile"
+          @reset-auto-save="resetAutoSaveFile"
+          @import-file="handleFileImportWithReload"
+        />
+      </LazyLoadComponent>
 
       <!-- Vocabulary List -->
-      <VocabularyList
-        :paginated-words="useGrouping ? [] : paginatedVocabulary"
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        :total-count="filteredVocabulary.length"
-        :start-index="startIndex"
-        :end-index="endIndex"
-        :visible-pages="visiblePages"
-        :use-grouping="useGrouping"
-        :all-words="useGrouping ? filteredVocabulary : undefined"
-        :date-group-pages="dateGroupPages"
-        :items-per-page-grouped="itemsPerPageGrouped"
-        :hover-to-expand-enabled="hoverToExpandEnabled"
-        @play-audio="playAudio"
-        @edit-word="openEditDialog"
-        @delete-word="deleteWord"
-        @toggle-favorite="toggleFavorite"
-        @view-details="openDetailsDialog"
-        @previous-page="previousPage"
-        @next-page="nextPage"
-        @go-to-page="goToPage"
-        @date-group-previous="(date) => dateGroupPrevious(date, filteredVocabulary)"
-        @date-group-next="(date) => dateGroupNext(date, filteredVocabulary)"
-        @date-group-go-to-page="dateGroupGoToPage"
-      />
+      <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-100px">
+        <VocabularyList
+          :paginated-words="useGrouping ? [] : paginatedVocabulary"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :total-count="filteredVocabulary.length"
+          :start-index="startIndex"
+          :end-index="endIndex"
+          :visible-pages="visiblePages"
+          :use-grouping="useGrouping"
+          :all-words="useGrouping ? filteredVocabulary : undefined"
+          :date-group-pages="dateGroupPages"
+          :items-per-page-grouped="itemsPerPageGrouped"
+          :hover-to-expand-enabled="hoverToExpandEnabled"
+          @play-audio="playAudio"
+          @edit-word="openEditDialog"
+          @delete-word="deleteWord"
+          @toggle-favorite="toggleFavorite"
+          @view-details="openDetailsDialog"
+          @previous-page="previousPage"
+          @next-page="nextPage"
+          @go-to-page="goToPage"
+          @date-group-previous="(date) => dateGroupPrevious(date, filteredVocabulary)"
+          @date-group-next="(date) => dateGroupNext(date, filteredVocabulary)"
+          @date-group-go-to-page="dateGroupGoToPage"
+        />
+      </LazyLoadComponent>
     </div>
 
     <!-- Vocabulary Form Dialog -->
@@ -112,6 +126,7 @@ import { groupVocabulariesByDate } from '../../utils/dateUtils';
 import type { Vocabulary } from '../../composables/useVocabularyStore';
 
 // Local components
+const LazyLoadComponent = defineAsyncComponent(() => import('../../components/LazyLoadComponent.vue'));
 const GroupingToggle = defineAsyncComponent(() => import('./components/GroupingToggle.vue'));
 const TopicManagerPanel = defineAsyncComponent(() => import('./components/TopicManagerPanel.vue'));
 const SaveControlPanel = defineAsyncComponent(() => import('./components/SaveControlPanel.vue'));

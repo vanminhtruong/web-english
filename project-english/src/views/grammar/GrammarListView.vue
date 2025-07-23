@@ -1,39 +1,45 @@
 <template>
   <div>
     <!-- Header -->
-    <GrammarHeader @add-lesson="openAddDialog" />
+    <LazyLoadComponent animation-type="fade-up">
+      <GrammarHeader @add-lesson="openAddDialog" />
+    </LazyLoadComponent>
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <!-- Filters -->
-      <GrammarFilters
-        :searchQuery="searchQuery"
-        :selectedLevel="selectedLevel"
-        :selectedCategory="selectedCategory"
-        :categories="categories"
-        @update:searchQuery="searchQuery = $event"
-        @update:selectedLevel="selectedLevel = $event"
-        @update:selectedCategory="selectedCategory = $event"
-      />
-
-      <!-- Grammar Lessons Grid -->
-      <div v-if="filteredLessons.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <GrammarCard
-          v-for="lesson in filteredLessons"
-          :key="lesson.id"
-          :lesson="lesson"
-          @view-lesson="viewLesson"
-          @practice-lesson="practiceLesson"
-          @edit-lesson="openEditDialog"
-          @delete-lesson="deleteLesson"
+      <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
+        <GrammarFilters
+          :searchQuery="searchQuery"
+          :selectedLevel="selectedLevel"
+          :selectedCategory="selectedCategory"
+          :categories="categories"
+          @update:searchQuery="searchQuery = $event"
+          @update:selectedLevel="selectedLevel = $event"
+          @update:selectedCategory="selectedCategory = $event"
         />
-      </div>
+      </LazyLoadComponent>
 
-      <!-- Empty State -->
-      <GrammarEmptyState
-        v-else
-        @add-lesson="openAddDialog"
-      />
+      <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-100px">
+        <!-- Grammar Lessons Grid -->
+        <div v-if="filteredLessons.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <GrammarCard
+            v-for="lesson in filteredLessons"
+            :key="lesson.id"
+            :lesson="lesson"
+            @view-lesson="viewLesson"
+            @practice-lesson="practiceLesson"
+            @edit-lesson="openEditDialog"
+            @delete-lesson="deleteLesson"
+          />
+        </div>
+
+        <!-- Empty State -->
+        <GrammarEmptyState
+          v-else
+          @add-lesson="openAddDialog"
+        />
+      </LazyLoadComponent>
     </div>
 
     <!-- Grammar Form Dialog -->
@@ -53,6 +59,7 @@ import { loadComponentSafely } from '../../utils/import-helper'
 import { useGrammarStore } from '../../composables/useGrammarStore'
 
 // Sử dụng defineAsyncComponent để import components an toàn
+const LazyLoadComponent = defineAsyncComponent(() => import('../../components/LazyLoadComponent.vue'))
 const GrammarHeader = defineAsyncComponent(
   loadComponentSafely(() => import('./components/GrammarHeader.vue'))
 )

@@ -6,7 +6,6 @@
     "correct": "Đúng",
     "incorrect": "Sai",
     "cancel": "Hủy",
-    "apply": "Áp dụng",
     "back": "Quay lại",
     "restart": "Luyện tập lại",
     "vocabulary": "Từ vựng",
@@ -83,6 +82,11 @@
       "description": "Hiển thị từ vựng được nhóm theo ngày tạo",
       "hoverToExpand": "Di chuột để mở rộng",
       "hoverDescription": "Mở danh mục khi di chuột qua (khi bật)"
+    },
+    "lazyLoading": {
+      "loading": "Đang tải...",
+      "componentVisible": "Thành phần hiện đã hiển thị",
+      "componentHidden": "Thành phần đã ẩn"
     },
     "accordion": {
       "expand": "Mở rộng nhóm",
