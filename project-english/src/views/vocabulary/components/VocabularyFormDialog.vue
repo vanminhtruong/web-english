@@ -500,21 +500,30 @@ watch(
   { immediate: true }
 )
 
-// Watch for dialog open/close to reset form and handle body scroll
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue) {
-      // Dialog opened
-      if (!props.vocabulary) {
-        resetForm()
-      }
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+// Handle keyboard events
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    closeDialog()
   }
-)
+}
+
+// Watch for dialog open/close
+watch(() => props.modelValue, (newValue) => {
+  if (newValue) {
+    // Dialog opened
+    window.dispatchEvent(new CustomEvent('vocabulary-edit-word'))
+    // Reset form when dialog opens
+    if (!props.vocabulary) {
+      resetForm()
+    }
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', handleKeydown)
+  } else {
+    // Dialog closed
+    document.body.style.overflow = ''
+    document.removeEventListener('keydown', handleKeydown)
+  }
+})
 
 // Function to get topic display name
 const getTopicDisplayName = (category: string): string => {
@@ -575,10 +584,13 @@ onMounted(() => {
 // Cleanup on unmount
 onUnmounted(() => {
   document.body.style.overflow = ''
+  document.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('topics-updated', handleTopicsUpdated)
 })
 
 const closeDialog = () => {
+  // Dispatch modal closed event before emitting update
+  window.dispatchEvent(new CustomEvent('vocabulary-modal-closed'))
   emit('update:modelValue', false)
 }
 

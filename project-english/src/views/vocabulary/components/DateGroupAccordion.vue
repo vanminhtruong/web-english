@@ -125,7 +125,13 @@
       <div v-if="isExpanded" class="accordion-content">
         <!-- Topic-based sub-groups -->
         <div v-if="group.topics && group.topics.length > 0" class="divide-y divide-gray-200 dark:divide-gray-700">
-          <div v-for="topicGroup in group.topics" :key="topicGroup.topic" class="topic-group">
+          <div 
+            v-for="topicGroup in group.topics" 
+            :key="topicGroup.topic" 
+            class="topic-group"
+            @mouseenter="hoverToExpandEnabled ? handleTopicHover(topicGroup.topic, true) : null"
+            @mouseleave="hoverToExpandEnabled ? handleTopicHover(topicGroup.topic, false) : null"
+          >
             <!-- Topic header with accordion toggle -->
             <div 
               class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50"
@@ -141,7 +147,7 @@
                   <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                 </svg>
                 <h5 class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {{ topicGroup.categoryName || getTopicName(topicGroup.topic) }}
+                  {{ getTopicName(topicGroup.topic) }}
                   <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
                 </h5>
               </div>
@@ -186,7 +192,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, watch, onMounted, nextTick, computed } from 'vue'
+import { defineAsyncComponent, ref, watch, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import type { GroupedVocabulary } from '../../../utils/dateUtils'
@@ -203,11 +209,13 @@ interface Props {
   group: GroupedVocabulary
   defaultExpanded?: boolean
   accordionState?: Record<string, boolean>
+  hoverToExpandEnabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   defaultExpanded: false, // Changed to false for collapsed by default
-  accordionState: () => ({})
+  accordionState: () => ({}),
+  hoverToExpandEnabled: false
 })
 
 // Computed property to calculate total vocabulary count (including paginated items)
@@ -244,6 +252,90 @@ const toggleTopicAccordion = (topic: string) => {
 
 const isTopicExpanded = (topic: string) => {
   return expandedTopics.value[topic] || false
+}
+
+// Handle topic hover for expand/collapse
+const hoverTimeouts = ref<Record<string, number>>({})
+
+const handleTopicHover = (topic: string, isHovering: boolean) => {
+  if (props.hoverToExpandEnabled) {
+    // Clear any existing timeout for this topic
+    if (hoverTimeouts.value[topic]) {
+      clearTimeout(hoverTimeouts.value[topic])
+      delete hoverTimeouts.value[topic]
+    }
+    
+    if (isHovering) {
+      // Immediately expand on hover
+      expandedTopics.value[topic] = true
+    } else {
+      // Delay collapse to allow for modal interactions
+      hoverTimeouts.value[topic] = setTimeout(() => {
+        // Close the topic after delay, but check if modal opened during delay
+        if (!isModalOpen()) {
+          expandedTopics.value[topic] = false
+        }
+        delete hoverTimeouts.value[topic]
+      }, 200) // 200ms delay
+    }
+  }
+}
+
+// Track if mouse is outside vocabulary area
+const isMouseOutsideVocabulary = ref(false)
+
+// Handle vocabulary list mouse leave event
+const handleVocabularyListMouseLeave = () => {
+  if (props.hoverToExpandEnabled) {
+    isMouseOutsideVocabulary.value = true
+    
+    // If no modal is open, close immediately
+    if (!isModalOpen()) {
+      closeAllTopics()
+    }
+    // If modal is open, categories will close when modal closes (via watcher)
+  }
+}
+
+// Handle vocabulary list mouse enter event
+const handleVocabularyListMouseEnter = () => {
+  if (props.hoverToExpandEnabled) {
+    isMouseOutsideVocabulary.value = false
+  }
+}
+
+// Close all topics helper function
+const closeAllTopics = () => {
+  Object.keys(expandedTopics.value).forEach(topic => {
+    expandedTopics.value[topic] = false
+  })
+  // Clear any pending timeouts
+  Object.keys(hoverTimeouts.value).forEach(topic => {
+    if (hoverTimeouts.value[topic]) {
+      clearTimeout(hoverTimeouts.value[topic])
+      delete hoverTimeouts.value[topic]
+    }
+  })
+}
+
+// Check if any modal is currently open
+const isModalOpen = (): boolean => {
+  // Check for common modal/dialog selectors
+  const modalSelectors = [
+    '[role="dialog"]',
+    '.modal',
+    '.dialog',
+    '[data-headlessui-state="open"]', // HeadlessUI modals
+    '.fixed.inset-0', // Common modal backdrop pattern
+  ]
+  
+  return modalSelectors.some(selector => {
+    const elements = document.querySelectorAll(selector)
+    return Array.from(elements).some(el => {
+      const style = window.getComputedStyle(el)
+      return style.display !== 'none' && style.visibility !== 'hidden'
+    })
+  })
 }
 
 // Topic functionality state
@@ -368,10 +460,73 @@ watch(
   }
 )
 
+// Watch for modal state changes to close categories when modal closes
+const modalWatchInterval = ref<number | null>(null)
+
+// Start watching for modal changes when component mounts
+const startModalWatcher = () => {
+  if (modalWatchInterval.value) return
+  
+  modalWatchInterval.value = setInterval(() => {
+    if (props.hoverToExpandEnabled && isMouseOutsideVocabulary.value && !isModalOpen()) {
+      closeAllTopics()
+    }
+  }, 300) // Check every 300ms
+}
+
+// Stop modal watcher
+const stopModalWatcher = () => {
+  if (modalWatchInterval.value) {
+    clearInterval(modalWatchInterval.value)
+    modalWatchInterval.value = null
+  }
+}
+
 const toggleAccordion = () => {
   isExpanded.value = !isExpanded.value
   emit('accordion-toggle', props.group.date, isExpanded.value)
 }
+
+// Initialize component
+onMounted(async () => {
+  // Check if there's a saved state for this date group
+  if (props.accordionState && typeof props.accordionState[props.group.date] === 'boolean') {
+    isExpanded.value = props.accordionState[props.group.date]
+  }
+  
+  // Load saved topic for this group
+  const storedTopics = getStoredTopics()
+  if (storedTopics[props.group.date]) {
+    groupTopic.value = storedTopics[props.group.date]
+  }
+  
+  // Listen for vocabulary list mouse events
+  window.addEventListener('vocabulary-list-mouse-leave', handleVocabularyListMouseLeave)
+  window.addEventListener('vocabulary-list-mouse-enter', handleVocabularyListMouseEnter)
+  
+  // Start modal watcher
+  startModalWatcher()
+  
+  // Calculate height for smooth animation
+  await nextTick()
+  await calculateHeight()
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  window.removeEventListener('vocabulary-list-mouse-leave', handleVocabularyListMouseLeave)
+  window.removeEventListener('vocabulary-list-mouse-enter', handleVocabularyListMouseEnter)
+  
+  // Stop modal watcher
+  stopModalWatcher()
+  
+  // Clear any remaining timeouts
+  Object.keys(hoverTimeouts.value).forEach(topic => {
+    if (hoverTimeouts.value[topic]) {
+      clearTimeout(hoverTimeouts.value[topic])
+    }
+  })
+})
 
 const emit = defineEmits<{
   'play-audio': [word: string]

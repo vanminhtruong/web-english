@@ -80,7 +80,9 @@
     "updatedAt": "Updated at",
     "grouping": {
       "title": "Group by Date",
-      "description": "Display vocabulary grouped by creation date"
+      "description": "Display vocabulary grouped by creation date",
+      "hoverToExpand": "Hover to Expand",
+      "hoverDescription": "Open categories on hover when enabled"
     },
     "accordion": {
       "expand": "Expand group",

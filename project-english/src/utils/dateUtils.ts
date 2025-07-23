@@ -114,6 +114,8 @@ export const groupVocabulariesByTopic = (vocabularies: any[]): TopicGroup[] => {
   const result = Array.from(grouped.entries()).map(([topic, vocabs]) => {
     // Get category name from the first vocabulary item in the group (for imported data)
     const firstVocab = vocabs[0]
+    // If there's a categoryName from imported data, use it
+    // Otherwise, we'll let the component use getTopicName to get the proper translation
     const categoryName = firstVocab?.categoryName || null
     
     return {

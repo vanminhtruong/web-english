@@ -28,12 +28,37 @@ export function getTopicName(categoryKey: string, vocabularyItem?: any): string 
   }
   
   // Check if it's a built-in category with translation
+  // Correct translation path for categories
   const translationKey = `vocabulary.categories.${categoryKey}`
   const translatedName = t(translationKey)
   
   // If translation exists and is not the same as the key, return it
   if (translatedName && translatedName !== translationKey) {
     return translatedName
+  }
+  
+  // For built-in categories, use hardcoded fallback if translation fails
+  const builtInCategories: { [key: string]: { vi: string, en: string } } = {
+    'technology': { vi: 'Công nghệ', en: 'Technology' },
+    'business': { vi: 'Kinh doanh', en: 'Business' },
+    'travel': { vi: 'Du lịch', en: 'Travel' },
+    'food': { vi: 'Ẩm thực', en: 'Food' },
+    'health': { vi: 'Sức khỏe', en: 'Health' },
+    'education': { vi: 'Giáo dục', en: 'Education' },
+    'sports': { vi: 'Thể thao', en: 'Sports' },
+    'entertainment': { vi: 'Giải trí', en: 'Entertainment' },
+    'science': { vi: 'Khoa học', en: 'Science' },
+    'art': { vi: 'Nghệ thuật', en: 'Art' },
+    'music': { vi: 'Âm nhạc', en: 'Music' },
+    'literature': { vi: 'Văn học', en: 'Literature' },
+    'politics': { vi: 'Chính trị', en: 'Politics' },
+    'environment': { vi: 'Môi trường', en: 'Environment' },
+    'fashion': { vi: 'Thời trang', en: 'Fashion' },
+    'finance': { vi: 'Tài chính', en: 'Finance' }
+  }
+  
+  if (builtInCategories[categoryKey]) {
+    return locale.value === 'vi' ? builtInCategories[categoryKey].vi : builtInCategories[categoryKey].en
   }
   
   // Fallback to the category key itself (capitalized)

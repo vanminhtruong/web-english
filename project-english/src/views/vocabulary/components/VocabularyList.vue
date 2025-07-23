@@ -1,5 +1,9 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+  <div 
+    class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
+    @mouseleave="handleVocabularyListMouseLeave"
+    @mouseenter="handleVocabularyListMouseEnter"
+  >
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
       <h3 class="text-lg font-medium text-gray-900 dark:text-white">
         {{ t('vocabulary.vocabularyList') }} ({{ totalCount }})
@@ -14,6 +18,7 @@
         :group="group"
         :default-expanded="false"
         :accordion-state="accordionState"
+        :hover-to-expand-enabled="hoverToExpandEnabled"
         @play-audio="$emit('play-audio', $event)"
         @edit-word="$emit('edit-word', $event)"
         @delete-word="$emit('delete-word', $event)"
@@ -183,6 +188,7 @@ interface Props {
   allWords?: Word[] // Used for grouping when pagination is disabled
   dateGroupPages?: Record<string, number>
   itemsPerPageGrouped?: number
+  hoverToExpandEnabled?: boolean
 }
 
 const props = defineProps<Props>()
@@ -223,6 +229,22 @@ const handleAccordionToggle = (date: string, expanded: boolean) => {
   // Save updated state to localStorage
   setStoredAccordionState(accordionState.value)
   console.log(`Accordion for ${date} toggled to:`, expanded)
+}
+
+// Handle mouse leave from entire vocabulary list
+const handleVocabularyListMouseLeave = () => {
+  if (props.hoverToExpandEnabled) {
+    // Emit event to close all expanded topics when mouse leaves vocabulary area
+    window.dispatchEvent(new CustomEvent('vocabulary-list-mouse-leave'))
+  }
+}
+
+// Handle mouse enter to vocabulary list
+const handleVocabularyListMouseEnter = () => {
+  if (props.hoverToExpandEnabled) {
+    // Emit event when mouse enters vocabulary area
+    window.dispatchEvent(new CustomEvent('vocabulary-list-mouse-enter'))
+  }
 }
 
 defineEmits<{

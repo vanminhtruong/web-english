@@ -80,7 +80,9 @@
     "updatedAt": "Cập nhật",
     "grouping": {
       "title": "Nhóm theo ngày",
-      "description": "Hiển thị từ vựng được nhóm theo ngày tạo"
+      "description": "Hiển thị từ vựng được nhóm theo ngày tạo",
+      "hoverToExpand": "Di chuột để mở rộng",
+      "hoverDescription": "Mở danh mục khi di chuột qua (khi bật)"
     },
     "accordion": {
       "expand": "Mở rộng nhóm",

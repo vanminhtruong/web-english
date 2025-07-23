@@ -241,6 +241,8 @@ const playAudio = (text: string) => {
 
 // Dialog controls
 const closeDialog = () => {
+  // Dispatch modal closed event before emitting update
+  window.dispatchEvent(new CustomEvent('vocabulary-modal-closed'))
   emit('update:modelValue', false)
 }
 
@@ -289,12 +291,15 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 }
 
-// Watch for dialog open/close to handle body scroll
-watch(() => props.modelValue, (isOpen) => {
-  if (isOpen) {
+// Watch for dialog open/close
+watch(() => props.modelValue, (newValue) => {
+  if (newValue) {
+    // Dialog opened
+    window.dispatchEvent(new CustomEvent('vocabulary-view-details'))
     document.body.style.overflow = 'hidden'
     document.addEventListener('keydown', handleKeydown)
   } else {
+    // Dialog closed
     document.body.style.overflow = ''
     document.removeEventListener('keydown', handleKeydown)
   }

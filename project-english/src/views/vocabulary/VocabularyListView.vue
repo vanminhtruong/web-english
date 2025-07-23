@@ -18,7 +18,12 @@
       />
       
       <!-- Date Grouping Toggle -->
-      <GroupingToggle :model-value="useGrouping" @update:model-value="toggleGrouping" />
+      <GroupingToggle 
+        :model-value="useGrouping" 
+        :hover-enabled="hoverToExpandEnabled"
+        @update:model-value="toggleGrouping" 
+        @update:hover-enabled="hoverToExpandEnabled = $event"
+      />
 
       <!-- Voice Settings Panel -->
       <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-6">
@@ -56,6 +61,7 @@
         :all-words="useGrouping ? filteredVocabulary : undefined"
         :date-group-pages="dateGroupPages"
         :items-per-page-grouped="itemsPerPageGrouped"
+        :hover-to-expand-enabled="hoverToExpandEnabled"
         @play-audio="playAudio"
         @edit-word="openEditDialog"
         @delete-word="deleteWord"
@@ -154,6 +160,29 @@ const {
   dateGroupNext,
   dateGroupGoToPage,
 } = useVocabularyGrouping();
+
+// Hover to expand functionality with localStorage persistence
+const HOVER_EXPAND_STORAGE_KEY = 'vocabulary-hover-expand-enabled';
+
+const getStoredHoverState = (): boolean => {
+  try {
+    const stored = localStorage.getItem(HOVER_EXPAND_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : false;
+  } catch (error) {
+    console.warn('Failed to load hover expand state from localStorage:', error);
+    return false;
+  }
+};
+
+const setStoredHoverState = (enabled: boolean) => {
+  try {
+    localStorage.setItem(HOVER_EXPAND_STORAGE_KEY, JSON.stringify(enabled));
+  } catch (error) {
+    console.warn('Failed to save hover expand state to localStorage:', error);
+  }
+};
+
+const hoverToExpandEnabled = ref(getStoredHoverState());
 
 const filteredVocabulary = computed(() => {
   return vocabularyStore.allVocabularies.value.filter(word => {
@@ -303,6 +332,14 @@ watch(
     }
   },
   { deep: true }
+);
+
+// Watch hover expand state and save to localStorage
+watch(
+  hoverToExpandEnabled,
+  (newValue) => {
+    setStoredHoverState(newValue);
+  }
 );
 
 onMounted(() => {

@@ -10,11 +10,15 @@ export function useVocabularyDialogs() {
   const openAddDialog = () => {
     selectedVocabulary.value = null;
     showFormDialog.value = true;
+    // Dispatch edit word event
+    window.dispatchEvent(new CustomEvent('vocabulary-edit-word'));
   };
 
   const openEditDialog = (word: Vocabulary) => {
     selectedVocabulary.value = word;
     showFormDialog.value = true;
+    // Dispatch edit word event
+    window.dispatchEvent(new CustomEvent('vocabulary-edit-word'));
   };
 
   const onVocabularySaved = () => {
@@ -25,12 +29,16 @@ export function useVocabularyDialogs() {
   const openDetailsDialog = (word: Vocabulary) => {
     selectedVocabularyForDetail.value = word;
     showDetailDialog.value = true;
+    // Dispatch view details event
+    window.dispatchEvent(new CustomEvent('vocabulary-view-details'));
   };
 
   const openEditFromDetail = (word: Vocabulary) => {
     showDetailDialog.value = false;
     selectedVocabulary.value = word;
     showFormDialog.value = true;
+    // Dispatch edit word event
+    window.dispatchEvent(new CustomEvent('vocabulary-edit-word'));
   };
 
   return {
