@@ -3,7 +3,7 @@
     <div class="flex items-center justify-center min-h-screen p-4">
       <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" aria-hidden="true"></div>
       
-      <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all w-full max-w-2xl relative z-50">
+      <div class="bg-white dark:bg-[#0a0a0a] rounded-lg overflow-hidden shadow-xl transform transition-all w-full max-w-2xl relative z-50">
         <!-- Dialog header -->
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <h3 class="text-lg font-medium text-gray-900 dark:text-white flex items-center space-x-2">
@@ -35,7 +35,7 @@
               id="note-content"
               v-model="noteContent"
               rows="6"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f0f0f] focus:border-[#0f0f0f] bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-gray-100"
               :placeholder="t('vocabulary.notes.placeholder')"
             ></textarea>
           </div>
@@ -45,7 +45,7 @@
             <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {{ t('vocabulary.notes.wordsLearned') }} ({{ todayWords.length }})
             </h4>
-            <div class="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2">
+            <div class="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 dark:bg-[#0f0f0f]">
               <div v-if="todayWords.length === 0" class="p-4 text-center text-gray-500 dark:text-gray-400">
                 {{ t('vocabulary.notes.noWordsLearned') }}
               </div>
@@ -53,7 +53,7 @@
                 <div 
                   v-for="word in todayWords" 
                   :key="word.id" 
-                  class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-md"
+                  class="flex items-center justify-between p-2 bg-gray-50 dark:bg-[#0f0f0f] rounded-md"
                 >
                   <div>
                     <span class="font-medium text-gray-900 dark:text-white">{{ word.word }}</span>

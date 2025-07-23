@@ -1,6 +1,6 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { GameStats } from './useFlashcardGame'
+import type { GameStats } from './useFlashcardStats'
 
 export interface PracticeHistoryItem {
   id: string

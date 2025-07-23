@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6">
     <!-- Date group header with accordion toggle -->
-    <div class="sticky top-0 bg-gray-50 dark:bg-gray-800 px-6 py-3 border-b border-gray-200 dark:border-gray-700 z-10">
+    <div class="sticky top-0 bg-gray-50 dark:bg-[#0f0f0f] px-6 py-3 border-b border-gray-200 dark:border-gray-700 z-10">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <!-- Accordion toggle button -->

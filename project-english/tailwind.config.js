@@ -11,6 +11,7 @@ export default {
         'dark-bg': '#000000',
         'dark-bg-soft': '#0a0a0a',
         'dark-bg-mute': '#0f0f0f',
+        'gray-custom': '#0f0f0f',
       }
     },
   },

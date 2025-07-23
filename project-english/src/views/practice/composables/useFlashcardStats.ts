@@ -202,4 +202,5 @@ export interface GameStats {
   startTime: Date;
   endTime: Date | null;
   mode: string;
+  categories?: string[];
 }
