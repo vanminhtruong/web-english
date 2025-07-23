@@ -199,7 +199,7 @@ const groupedWords = computed((): GroupedVocabulary[] => {
 
   // Use allWords for grouping if provided, otherwise use paginatedWords
   const wordsToGroup = props.allWords || props.paginatedWords
-  const allGroups = groupVocabulariesByDateAndTopic(wordsToGroup, locale.value)
+  const allGroups = groupVocabulariesByDateAndTopic(wordsToGroup, locale.value, t)
 
   // Phân trang theo số lượng topic group (categories) cho mỗi group date
   if (props.dateGroupPages && props.itemsPerPageGrouped) {

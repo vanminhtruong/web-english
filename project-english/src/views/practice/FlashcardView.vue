@@ -163,17 +163,14 @@
     </div>
 
     <!-- Settings Modal -->
-    <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
-      <SettingsModal
-        :show="showSettingsDialog"
-        :settings="settings"
-        @update:settings="settings = $event"
-        :local-settings="localSettings"
-        @update:local-settings="localSettings = $event"
-        @cancel="cancelSettings"
-        @apply="applyGameSettings"
-      />
-    </LazyLoadComponent>
+    <SettingsModal
+      :show="showSettingsDialog"
+      :settings="settings"
+      :local-settings="localSettings"
+      @update:local-settings="localSettings = $event"
+      @cancel="cancelSettings"
+      @apply="applyGameSettings"
+    />
 
     <!-- History Modal -->
     <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
@@ -189,24 +186,20 @@
     </LazyLoadComponent>
 
     <!-- Completion Modal -->
-    <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
-      <CompletionModal
-        :show="showCompletionModal"
-        :stats="stats"
-        :card-count="flashcards.length"
-        @restart="handleRestartSession"
-        @go-back="goBack"
-      />
-    </LazyLoadComponent>
+    <CompletionModal
+      :show="showCompletionModal"
+      :stats="stats"
+      :card-count="flashcards.length"
+      @restart="handleRestartSession"
+      @go-back="goBack"
+    />
 
     <!-- Exit Warning Modal -->
-    <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
-      <ExitWarningModal
-        :show="showExitWarning"
-        @continue="continueSession"
-        @confirm="confirmExit"
-      />
-    </LazyLoadComponent>
+    <ExitWarningModal
+      :show="showExitWarning"
+      @continue="continueSession"
+      @confirm="confirmExit"
+    />
   </div>
 </template>
 

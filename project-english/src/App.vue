@@ -1,51 +1,21 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from './utils/import-helper'
 
 // Use defineAsyncComponent to import components
-const ThemeToggle = defineAsyncComponent(() => import('./components/ThemeToggle.vue'))
-const LanguageSwitcher = defineAsyncComponent(() => import('./components/LanguageSwitcher.vue'))
-
-const { t } = useI18n()
+const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLoadComponent.vue'))
+const AppHeader = defineAsyncComponent(
+  loadComponentSafely(() => import('./components/common/AppHeader.vue'))
+)
 </script>
 
 <template>
   <div id="app" class="min-h-screen">
-    <header class="bg-white dark:bg-black shadow-sm border-b border-gray-200 dark:border-gray-700">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center space-x-4">
-            <img alt="Vue logo" src="@/assets/logo.svg" class="h-8 w-8" />
-            <h1 class="text-xl font-bold text-gray-900 dark:text-white">English Learning App</h1>
-          </div>
-
-          <div class="flex items-center space-x-4">
-            <nav class="flex space-x-1">
-              <RouterLink to="/dashboard" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                {{ t('common.dashboard', 'Dashboard') }}
-              </RouterLink>
-              <RouterLink to="/vocabulary" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                {{ t('common.vocabulary', 'Từ vựng') }}
-              </RouterLink>
-              <RouterLink to="/grammar" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                {{ t('common.grammar', 'Ngữ pháp') }}
-              </RouterLink>
-              <RouterLink to="/practice/flashcard" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                {{ t('common.practice', 'Luyện tập') }}
-              </RouterLink>
-            </nav>
-
-            <!-- Language Switcher -->
-            <LanguageSwitcher />
-
-            <!-- Theme Toggle -->
-            <ThemeToggle />
-          </div>
-        </div>
-      </div>
-    </header>
+    <!-- Lazy loaded header -->
+    <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="0px">
+      <AppHeader />
+    </LazyLoadComponent>
 
     <main class="flex-1">
       <RouterView />

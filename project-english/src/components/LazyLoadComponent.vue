@@ -36,22 +36,23 @@ onMounted(() => {
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Kiểm tra tỷ lệ hiển thị
           const ratio = entry.intersectionRatio;
+          const showThreshold = props.threshold;
+          const hideThreshold = Math.max(0, props.threshold - 0.1); // Ẩn khi thấp hơn 10%
           
-          // Chỉ hiển thị khi tỷ lệ hiển thị đạt ngưỡng cao
-          if (ratio >= props.threshold) {
+          if (ratio >= showThreshold) {
             if (!isFullyVisible) {
               isFullyVisible = true;
               isVisible.value = true;
             }
-          } else {
-            // Nếu tỷ lệ hiển thị giảm xuống dưới ngưỡng, ẩn đi
+          } else if (ratio <= hideThreshold) {
+            // Chỉ ẩn khi tỷ lệ hiển thị thấp hơn ngưỡng ẩn
             if (isFullyVisible) {
               isFullyVisible = false;
               isVisible.value = false;
             }
           }
+          // Vùng giữa showThreshold và hideThreshold: giữ nguyên trạng thái
         })
       },
       {

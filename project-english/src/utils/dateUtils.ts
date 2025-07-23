@@ -139,8 +139,12 @@ export const groupVocabulariesByTopic = (vocabularies: any[]): TopicGroup[] => {
 /**
  * Group vocabularies by date and then by topic
  */
-export const groupVocabulariesByDateAndTopic = (vocabularies: any[], locale: string = 'vi-VN'): GroupedVocabulary[] => {
-  const groupedByDate = groupVocabulariesByDate(vocabularies, locale)
+export const groupVocabulariesByDateAndTopic = (
+  vocabularies: any[],
+  locale: string = 'vi-VN',
+  t?: (key: string) => string
+): GroupedVocabulary[] => {
+  const groupedByDate = groupVocabulariesByDate(vocabularies, locale, t)
 
   return groupedByDate.map(dateGroup => {
     return {
@@ -153,7 +157,11 @@ export const groupVocabulariesByDateAndTopic = (vocabularies: any[], locale: str
 /**
  * Group vocabularies by date
  */
-export const groupVocabulariesByDate = (vocabularies: any[], locale: string = 'vi-VN'): GroupedVocabulary[] => {
+export const groupVocabulariesByDate = (
+  vocabularies: any[],
+  locale: string = 'vi-VN',
+  t?: (key: string) => string
+): GroupedVocabulary[] => {
   const grouped = new Map<string, any[]>()
   
   // Group by date key
@@ -171,7 +179,7 @@ export const groupVocabulariesByDate = (vocabularies: any[], locale: string = 'v
   const result: GroupedVocabulary[] = Array.from(grouped.entries())
     .map(([dateKey, vocabs]) => ({
       date: dateKey,
-      displayDate: getGroupDisplayDate(dateKey, locale),
+      displayDate: getGroupDisplayDate(dateKey, locale, t),
       vocabularies: vocabs.sort((a, b) => {
         // Sort by creation time within the same date (newest first)
         const timeA = new Date(a.createdAt || '').getTime()
@@ -190,7 +198,7 @@ export const groupVocabulariesByDate = (vocabularies: any[], locale: string = 'v
 /**
  * Get display name for date group
  */
-export const getGroupDisplayDate = (dateKey: string, locale: string = 'vi-VN'): string => {
+export const getGroupDisplayDate = (dateKey: string, locale: string = 'vi-VN', t?: (key: string) => string): string => {
   try {
     const date = new Date(dateKey + 'T00:00:00')
     const today = new Date()
