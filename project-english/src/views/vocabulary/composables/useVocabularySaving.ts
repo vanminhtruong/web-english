@@ -21,6 +21,9 @@ export function useVocabularySaving() {
   let autoSaveTimer: number | null = null;
   let debounceTimer: number | null = null;
 
+  // Add a new ref to store the file path for debugging
+  const autoSaveFilePath = ref<string>('');
+
   const getStoredValue = (key: string, defaultValue: any) => {
     try {
       const stored = localStorage.getItem(key);
@@ -83,6 +86,26 @@ export function useVocabularySaving() {
         }
     };
     
+    // Get vocabulary notes
+    const getVocabularyNotes = (): Record<string, string> => {
+        try {
+            const stored = localStorage.getItem('vocabulary-notes');
+            return stored ? JSON.parse(stored) : {};
+        } catch (error) {
+            return {};
+        }
+    };
+    
+    // Get marked vocabulary words
+    const getMarkedWords = (): Record<string, string[]> => {
+        try {
+            const stored = localStorage.getItem('vocabulary-marked-words');
+            return stored ? JSON.parse(stored) : {};
+        } catch (error) {
+            return {};
+        }
+    };
+    
     // Helper function to get category name without Vue composables
     const getCategoryName = (categoryKey: string): string => {
       // Check custom topics first
@@ -127,10 +150,12 @@ export function useVocabularySaving() {
         vocabularies: enhancedVocabularies,
         customTopics: vocabularyStore.customTopics.value,
         groupTopics: getGroupTopics(),
+        vocabularyNotes: getVocabularyNotes(),
+        markedWords: getMarkedWords(),
         accordionState: JSON.parse(localStorage.getItem('vocabulary-accordion-state') || '{}'),
         useGrouping: JSON.parse(localStorage.getItem('vocabulary-use-grouping') || 'false'), // Save grouping state
         exportDate: new Date().toISOString(),
-        version: '1.3', // Increment version to indicate enhanced format with grouping state
+        version: '1.4', // Increment version to indicate enhanced format with notes
         totalCount: vocabularyStore.totalCount.value
     };
   };
@@ -165,38 +190,151 @@ export function useVocabularySaving() {
     try {
       saveStatus.value = 'saving';
       const vocabularyData = getVocabularyData();
+      
+      // First, save to localStorage
       vocabularyStore.saveToLocalStorage();
-      await tryAutoSaveToFile(vocabularyData);
+      
+      // Then, try to save to file if a file handle is available
+      let fileSaveSuccess = false;
+      if (hasAutoSaveFile.value) {
+        fileSaveSuccess = await tryAutoSaveToFile(vocabularyData);
+      }
+      
+      // Update timestamps and status
       const now = new Date().toLocaleString('vi-VN');
       lastSaveTime.value = now;
       setStoredValue('vocabulary-last-save-time', now);
+      
       saveStatus.value = 'success';
-      setTimeout(() => { if (saveStatus.value === 'success') saveStatus.value = 'idle'; }, 1000);
+      setTimeout(() => { 
+        if (saveStatus.value === 'success') {
+          saveStatus.value = 'idle';
+        }
+      }, 1000);
+      
+      return fileSaveSuccess;
     } catch (error) {
+      console.error("Auto-save error:", error);
       saveStatus.value = 'error';
-      setTimeout(() => { if (saveStatus.value === 'error') saveStatus.value = 'idle'; }, 2000);
+      setTimeout(() => { 
+        if (saveStatus.value === 'error') {
+          saveStatus.value = 'idle';
+        }
+      }, 2000);
+      return false;
     }
   };
 
   const tryAutoSaveToFile = async (data: any) => {
-    if ('showSaveFilePicker' in window && autoSaveFileHandle.value) {
-      try {
-        const writable = await autoSaveFileHandle.value.createWritable();
-        await writable.write(JSON.stringify(data, null, 2));
-        await writable.close();
-      } catch (error) {
+    if (!('showSaveFilePicker' in window)) {
+      console.log("Browser doesn't support File System Access API");
+      return false;
+    }
+    
+    if (!autoSaveFileHandle.value) {
+      console.log("No auto-save file handle available");
+      return false;
+    }
+    
+    try {
+      console.log("Attempting to auto-save to file...", autoSaveFilePath.value);
+      
+      // Verify the file handle is valid by checking permissions
+      const opts = { mode: 'readwrite' as const };
+      const permission = await autoSaveFileHandle.value.queryPermission(opts);
+      
+      if (permission !== 'granted') {
+        console.log("Requesting permission to write to file...");
+        const newPermission = await autoSaveFileHandle.value.requestPermission(opts);
+        if (newPermission !== 'granted') {
+          console.error("Permission to write to file denied");
+          toast.error(t('vocabulary.save.errors.permissionDenied'));
+          return false;
+        }
+      }
+      
+      // Create a writable stream
+      console.log("Creating writable stream...");
+      const writable = await autoSaveFileHandle.value.createWritable();
+      
+      // Convert data to JSON string
+      const jsonString = JSON.stringify(data, null, 2);
+      console.log(`Writing ${jsonString.length} characters to file...`);
+      
+      // Write the data
+      await writable.write(jsonString);
+      
+      // Close the stream
+      console.log("Closing writable stream...");
+      await writable.close();
+      
+      console.log("Auto-save to file completed successfully:", autoSaveFilePath.value);
+      
+      // Update last save time after successful file save
+      const now = new Date().toLocaleString('vi-VN');
+      lastSaveTime.value = now;
+      setStoredValue('vocabulary-last-save-time', now);
+      
+      return true;
+    } catch (error) {
+      console.error("Error auto-saving to file:", error);
+      
+      // Check if it's a permission error
+      if (error instanceof DOMException && error.name === 'NotAllowedError') {
+        toast.error(t('vocabulary.save.errors.permissionDenied'));
+      } else {
+        toast.error(t('vocabulary.save.errors.autoSaveFileFailed'));
+      }
+      
+      // Reset file handle only if it's not a permission error
+      if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
         autoSaveFileHandle.value = null;
         hasAutoSaveFile.value = false;
         setStoredValue('vocabulary-has-auto-save-file', false);
       }
+      
+      return false;
     }
   };
 
   const debounceAutoSave = () => {
-    if (!autoSaveEnabled.value) return;
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      performAutoSave();
+    if (!autoSaveEnabled.value) {
+      console.log("Auto-save is disabled, skipping debounce");
+      return;
+    }
+    
+    console.log("Setting up debounce auto-save timer...");
+    
+    // Clear any existing debounce timer
+    if (debounceTimer) {
+      console.log("Clearing existing debounce timer");
+      clearTimeout(debounceTimer);
+      debounceTimer = null;
+    }
+    
+    // Set a new debounce timer
+    console.log("Creating new debounce timer");
+    debounceTimer = setTimeout(async () => {
+      console.log("Debounce timer triggered, performing auto-save...");
+      
+      if (!hasAutoSaveFile.value) {
+        console.log("No auto-save file selected, saving to localStorage only");
+        vocabularyStore.saveToLocalStorage();
+        return;
+      }
+      
+      const result = await performAutoSave();
+      console.log("Auto-save result:", result ? "Success" : "Failed");
+      
+      if (!result) {
+        // If auto-save failed, try to prompt user to select a new file
+        toast.info(t('vocabulary.save.autoSaveRetry'), {
+          timeout: 5000,
+          onClick: () => {
+            setupAutoSaveFile();
+          }
+        });
+      }
     }, 500) as unknown as number;
   };
 
@@ -213,15 +351,43 @@ export function useVocabularySaving() {
   const setupAutoSaveFile = async () => {
     if ('showSaveFilePicker' in window) {
       try {
-        autoSaveFileHandle.value = await (window as any).showSaveFilePicker({
+        console.log("Setting up auto-save file...");
+        const fileHandle = await (window as any).showSaveFilePicker({
           suggestedName: autoSaveFileName,
           types: [{ description: 'JSON files', accept: { 'application/json': ['.json'] } }]
         });
+        
+        // Store the file handle
+        autoSaveFileHandle.value = fileHandle;
+        
+        // Try to get the file name/path for debugging
+        try {
+          const fileProps = await fileHandle.getFile();
+          autoSaveFilePath.value = fileProps.name;
+          console.log("Selected auto-save file:", fileProps.name);
+        } catch (e) {
+          console.log("Could not get file properties:", e);
+        }
+        
         hasAutoSaveFile.value = true;
         setStoredValue('vocabulary-has-auto-save-file', true);
-        await tryAutoSaveToFile(getVocabularyData());
+        
+        // Perform an immediate auto-save to verify the file handle works
+        const vocabularyData = getVocabularyData();
+        
+        console.log("Testing auto-save with file handle:", autoSaveFileHandle.value);
+        const saveResult = await tryAutoSaveToFile(vocabularyData);
+        
+        if (saveResult) {
+          toast.success(t('vocabulary.save.autoSaveFileSetup'));
+          console.log("Auto-save file setup successful!");
+        } else {
+          toast.error(t('vocabulary.save.errors.autoSaveFileFailed'));
+          console.error("Auto-save file setup failed!");
+        }
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
+          console.error("Error setting up auto-save file:", error);
           toast.error(t('vocabulary.save.errors.fileSelectError', { error: (error as Error).message }));
         }
       }
@@ -293,6 +459,18 @@ export function useVocabularySaving() {
                 console.log("Imported grouping state:", data.useGrouping);
               }
               
+              // Import vocabulary notes
+              if (data.vocabularyNotes && typeof data.vocabularyNotes === 'object') {
+                localStorage.setItem('vocabulary-notes', JSON.stringify(data.vocabularyNotes));
+                console.log("Imported vocabulary notes:", data.vocabularyNotes);
+              }
+              
+              // Import marked vocabulary words
+              if (data.markedWords && typeof data.markedWords === 'object') {
+                localStorage.setItem('vocabulary-marked-words', JSON.stringify(data.markedWords));
+                console.log("Imported marked words:", data.markedWords);
+              }
+              
               isSaving.value = false;
               
               // Show detailed import success message
@@ -305,6 +483,18 @@ export function useVocabularySaving() {
               }
               if (typeof data.useGrouping === 'boolean') {
                 importMessage += ` + grouping preference`;
+              }
+              if (data.vocabularyNotes && Object.keys(data.vocabularyNotes).length > 0) {
+                importMessage += ` + ${Object.keys(data.vocabularyNotes).length} vocabulary notes`;
+              }
+              if (data.markedWords && Object.keys(data.markedWords).length > 0) {
+                let totalMarkedWords = 0;
+                Object.values(data.markedWords).forEach(words => {
+                  if (Array.isArray(words)) {
+                    totalMarkedWords += words.length;
+                  }
+                });
+                importMessage += ` + ${totalMarkedWords} marked words`;
               }
               
               toast.success(importMessage);
@@ -389,6 +579,7 @@ export function useVocabularySaving() {
     isSaving,
     lastSaveTime,
     hasAutoSaveFile,
+    autoSaveFilePath,
     saveStatus,
     getSaveStatusColor,
     getSaveStatusText,

@@ -83,6 +83,19 @@
       "hoverToExpand": "Di chuột để mở rộng",
       "hoverDescription": "Mở danh mục khi di chuột qua (khi bật)"
     },
+    "notes": {
+      "title": "Ghi chú từ vựng",
+      "description": "Quản lý ghi chú cho các từ vựng đã học",
+      "manageNotes": "Quản lý ghi chú",
+      "noteLabel": "Ghi chú cho từ vựng",
+      "placeholder": "Viết ghi chú về buổi học từ vựng này của bạn...",
+      "wordsLearned": "Các từ trong nhóm này",
+      "noWordsLearned": "Chưa có từ vựng nào trong nhóm này",
+      "saveSuccess": "Đã lưu ghi chú thành công!",
+      "autoSaveNotice": "Đã bật lưu tự động. Ghi chú của bạn sẽ được đưa vào bản sao lưu tiếp theo.",
+      "today": "Hôm nay",
+      "yesterday": "Hôm qua"
+    },
     "lazyLoading": {
       "loading": "Đang tải...",
       "componentVisible": "Thành phần hiện đã hiển thị",
@@ -169,6 +182,8 @@
       "importFile": "Nhập file",
       "lastSave": "Lần cuối: {time}",
       "notSaved": "Chưa lưu",
+      "autoSaveFileSetup": "Thiết lập file lưu tự động thành công!",
+      "autoSaveRetry": "Nhấp vào đây để chọn file lưu tự động mới",
       "status": {
         "saving": "Đang lưu...",
         "autoSaving": "Đang lưu tự động...",
@@ -183,7 +198,9 @@
         "browserNotSupported": "Trình duyệt không hỗ trợ tính năng này. Vui lòng sử dụng Chrome hoặc Edge.",
         "fileSelectError": "Lỗi khi chọn file: {error}",
         "invalidFile": "Vui lòng chọn file JSON hợp lệ!",
-        "invalidFormat": "Định dạng file không hợp lệ"
+        "invalidFormat": "Định dạng file không hợp lệ",
+        "autoSaveFileFailed": "Lưu tự động vào file thất bại. Vui lòng chọn file mới.",
+        "permissionDenied": "Quyền ghi vào file bị từ chối. Vui lòng chọn file mới."
       },
       "import": {
         "confirmMessage": "Bạn có muốn nhập {count} từ vựng từ file \"{filename}\"?\n\nDữ liệu hiện tại sẽ được thay thế!",

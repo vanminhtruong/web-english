@@ -61,6 +61,13 @@
               </svg>
               <span>{{ t('vocabulary.accordion.addTopic') }}</span>
             </button>
+            
+            <!-- Note button for all vocabulary groups -->
+            <VocabularyNoteButton 
+              :date="group.date"
+              :is-today="isTodayGroup"
+              @open-note-dialog="openNoteDialog"
+            />
           </div>
           
           <!-- Topic input form -->
@@ -188,6 +195,14 @@
         </div>
       </div>
     </transition>
+    
+    <!-- Note Dialog -->
+    <VocabularyNoteDialog
+      v-model="showNoteDialog"
+      :date="group.date"
+      :today-words="group.vocabularies"
+      @save-note="onNoteSaved"
+    />
   </div>
 </template>
 
@@ -197,12 +212,22 @@ import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import type { GroupedVocabulary } from '../../../utils/dateUtils'
 import { getTopicName } from '../../../utils/topicUtils'
+import { getDateKey } from '../../../utils/dateUtils'
 
 const { t } = useI18n()
 
 // Sử dụng defineAsyncComponent để import components an toàn
 const VocabularyCard = defineAsyncComponent(
   loadComponentSafely(() => import('./VocabularyCard.vue'))
+)
+
+// Import the new components
+const VocabularyNoteButton = defineAsyncComponent(
+  loadComponentSafely(() => import('./VocabularyNoteButton.vue'))
+)
+
+const VocabularyNoteDialog = defineAsyncComponent(
+  loadComponentSafely(() => import('./VocabularyNoteDialog.vue'))
 )
 
 interface Props {
@@ -236,6 +261,13 @@ const totalVocabularyCount = computed(() => {
     return props.group.vocabularies?.length || 0
   }
 })
+
+// Check if this group is today's vocabulary
+const isTodayGroup = computed(() => {
+  const today = new Date();
+  const todayKey = getDateKey(today.toISOString());
+  return props.group.date === todayKey;
+});
 
 // Local state for accordion
 const isExpanded = ref(props.defaultExpanded)
@@ -399,6 +431,18 @@ const cancelTopicInput = () => {
   topicInputValue.value = ''
 }
 
+// Note functionality
+const showNoteDialog = ref(false);
+
+const openNoteDialog = (date: string) => {
+  showNoteDialog.value = true;
+};
+
+const onNoteSaved = (note: string, markedWords: string[]) => {
+  // You can emit an event here if you need to notify the parent component
+  emit('note-saved', props.group.date, note, markedWords);
+};
+
 // Calculate accordion content height for smooth animation
 const calculateHeight = async () => {
   if (!accordionContent.value) return
@@ -537,6 +581,7 @@ const emit = defineEmits<{
   'date-group-previous': [date: string]
   'date-group-next': [date: string]
   'accordion-toggle': [date: string, expanded: boolean]
+  'note-saved': [date: string, note: string, markedWords: string[]]
 }>()
 </script>
 

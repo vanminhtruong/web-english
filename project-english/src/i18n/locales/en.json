@@ -84,6 +84,19 @@
       "hoverToExpand": "Hover to Expand",
       "hoverDescription": "Open categories on hover when enabled"
     },
+    "notes": {
+      "title": "Vocabulary Notes",
+      "description": "Manage notes for vocabulary words learned today",
+      "manageNotes": "Manage Notes",
+      "noteLabel": "Notes for vocabulary",
+      "placeholder": "Write your notes about this vocabulary learning session...",
+      "wordsLearned": "Words in this group",
+      "noWordsLearned": "No vocabulary words in this group",
+      "saveSuccess": "Notes saved successfully!",
+      "autoSaveNotice": "Auto-save enabled. Your notes will be included in the next backup.",
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
     "lazyLoading": {
       "loading": "Loading...",
       "componentVisible": "Component is now visible",
@@ -170,6 +183,8 @@
       "importFile": "Import File",
       "lastSave": "Last saved: {time}",
       "notSaved": "Not saved",
+      "autoSaveFileSetup": "Auto-save file setup successfully!",
+      "autoSaveRetry": "Click here to select a new auto-save file",
       "status": {
         "saving": "Saving...",
         "autoSaving": "Auto-saving...",
@@ -184,7 +199,9 @@
         "browserNotSupported": "Browser doesn't support this feature. Please use Chrome or Edge.",
         "fileSelectError": "Error selecting file: {error}",
         "invalidFile": "Please select a valid JSON file!",
-        "invalidFormat": "Invalid file format"
+        "invalidFormat": "Invalid file format",
+        "autoSaveFileFailed": "Auto-save to file failed. Please select a new file.",
+        "permissionDenied": "Permission to write to file denied. Please select a new file."
       },
       "import": {
         "confirmMessage": "Do you want to import {count} vocabulary from file \"{filename}\"?\n\nCurrent data will be replaced!",

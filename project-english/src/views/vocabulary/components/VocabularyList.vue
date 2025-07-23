@@ -27,6 +27,7 @@
         @date-group-previous="$emit('date-group-previous', $event)"
         @date-group-next="$emit('date-group-next', $event)"
         @accordion-toggle="handleAccordionToggle"
+        @note-saved="handleNoteSaved"
       />
     </div>
     
@@ -99,8 +100,10 @@ import { defineAsyncComponent, computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import { groupVocabulariesByDateAndTopic, type GroupedVocabulary } from '../../../utils/dateUtils'
+import { useToast } from 'vue-toastification'
 
 const { t, locale } = useI18n()
+const toast = useToast()
 
 // Sử dụng defineAsyncComponent để import components an toàn
 const VocabularyCard = defineAsyncComponent(
@@ -230,6 +233,24 @@ const handleAccordionToggle = (date: string, expanded: boolean) => {
   setStoredAccordionState(accordionState.value)
   console.log(`Accordion for ${date} toggled to:`, expanded)
 }
+
+// Handle note saved event
+const handleNoteSaved = (date: string, note: string, markedWords: string[]) => {
+  toast.success(t('vocabulary.notes.saveSuccess'), {
+    timeout: 2000,
+  });
+  
+  // Check if auto-save is enabled
+  const autoSaveEnabled = localStorage.getItem('vocabulary-auto-save-enabled');
+  if (autoSaveEnabled === 'true') {
+    toast.info(t('vocabulary.notes.autoSaveNotice'), {
+      timeout: 3000,
+    });
+  }
+  
+  // You can emit an event to the parent component if needed
+  console.log(`Note saved for ${date} with ${markedWords.length} marked words`);
+};
 
 // Handle mouse leave from entire vocabulary list
 const handleVocabularyListMouseLeave = () => {

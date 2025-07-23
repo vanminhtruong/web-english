@@ -50,6 +50,7 @@
           @update:auto-save-enabled="autoSaveEnabled = $event"
           :is-saving="isSaving"
           :has-auto-save-file="hasAutoSaveFile"
+          :auto-save-file-path="autoSaveFilePath"
           :last-save-time="lastSaveTime"
           :save-status-color="getSaveStatusColor"
           :save-status-text="getSaveStatusText"
@@ -249,6 +250,7 @@ const {
   setupAutoSaveFile,
   handleFileImport,
   resetAutoSaveFile,
+  autoSaveFilePath,
 } = useVocabularySaving();
 
 const {
@@ -362,6 +364,13 @@ onMounted(() => {
   if (autoSaveEnabled.value) {
     scheduleAutoSave();
   }
+  
+  // Listen for vocabulary notes updates
+  window.addEventListener('vocabulary-notes-updated', () => {
+    if (autoSaveEnabled.value) {
+      debounceAutoSave();
+    }
+  });
 });
 
 const handleFileImportWithReload = (file: File) => {
@@ -380,5 +389,6 @@ const handleFileImportWithReload = (file: File) => {
 
 onUnmounted(() => {
   window.removeEventListener('vocabularyImportComplete', () => {});
+  window.removeEventListener('vocabulary-notes-updated', () => {});
 });
 </script>
