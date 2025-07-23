@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+  <div class="bg-white dark:bg-[#0f0f0f] border-b border-gray-200 dark:border-gray-700">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <!-- Date Filter Section -->

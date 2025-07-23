@@ -9,7 +9,7 @@
       <button
         @click="showDropdown = !showDropdown"
         ref="dropdownButton"
-        class="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+        class="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
       >
         <span>{{ currentVoiceOption?.icon }}</span>
         <span>{{ currentVoiceOption?.label }}</span>
@@ -25,8 +25,9 @@
         v-if="showDropdown"
         ref="dropdownMenu"
         :style="dropdownStyle"
-        class="w-56 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto z-[9998]"
+        class="w-[270px] translate-x-[-40px] bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden z-[9998]"
       >
+        <div class="overflow-y-auto max-h-60">
         <div
           v-for="option in voiceOptions"
           :key="option.value"
@@ -34,7 +35,7 @@
           :class="[
             'flex items-center justify-between space-x-2 px-3 py-2 text-left text-sm transition-colors cursor-pointer',
             currentVoiceType === option.value
-              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+              ? 'bg-blue-50 dark:bg-[#2d3436] text-blue-600 dark:text-blue-400'
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
           ]"
         >
@@ -50,6 +51,7 @@
               <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
         </button>
           </div>
+        </div>
         </div>
       </div>
     </Teleport>

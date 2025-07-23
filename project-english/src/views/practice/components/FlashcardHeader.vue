@@ -50,7 +50,7 @@
             <select
               :value="practiceMode"
               @change="$emit('change-practice-mode', $event.target.value)"
-              class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0f0f0f] cursor-pointer text-gray-900 dark:text-white"
             >
               <option value="flashcard">{{ $t('flashcard.modes.flashcard') }}</option>
               <option value="quiz">{{ $t('flashcard.modes.quiz') }}</option>
