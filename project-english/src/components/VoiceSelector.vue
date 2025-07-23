@@ -9,11 +9,11 @@
       <button
         @click="showDropdown = !showDropdown"
         ref="dropdownButton"
-        class="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
+        class="flex w-[230px] items-center space-x-2 px-3 py-2 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
       >
         <span>{{ currentVoiceOption?.icon }}</span>
         <span>{{ currentVoiceOption?.label }}</span>
-        <svg class="w-4 h-4 ml-1" :class="{ 'rotate-180': showDropdown }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 ml-1 translate-x-[9px]" :class="{ 'rotate-180': showDropdown }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
@@ -25,7 +25,7 @@
         v-if="showDropdown"
         ref="dropdownMenu"
         :style="dropdownStyle"
-        class="w-[270px] translate-x-[-40px] bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden z-[9998]"
+        class="w-[230px]  bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden z-[9998]"
       >
         <div class="overflow-y-auto max-h-60">
         <div
