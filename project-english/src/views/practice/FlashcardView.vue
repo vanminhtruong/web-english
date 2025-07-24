@@ -173,17 +173,15 @@
     />
 
     <!-- History Modal -->
-    <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
-      <HistoryModal
-        :show="showHistory"
-        :history="practiceHistory"
-        :get-mode-color="getModeColor"
-        :get-mode-text="getModeText"
-        :format-date="formatDate"
-        :format-duration="formatDuration"
-        @close="showHistory = false"
-      />
-    </LazyLoadComponent>
+    <HistoryModal
+      :show="showHistory"
+      :history="practiceHistory"
+      :get-mode-color="getModeColor"
+      :get-mode-text="getModeText"
+      :format-date="formatDate"
+      :format-duration="formatDuration"
+      @close="showHistory = false"
+    />
 
     <!-- Completion Modal -->
     <CompletionModal
@@ -681,6 +679,15 @@ watch(showCompletionModal, (newValue) => {
 })
 
 // Prevent body scroll when modal is open
+watch(showHistory, (newValue) => {
+  if (newValue) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
+})
+
+// Prevent body scroll when history modal is open
 watch(showHistory, (newValue) => {
   if (newValue) {
     document.body.classList.add('modal-open')
