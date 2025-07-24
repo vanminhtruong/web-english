@@ -57,20 +57,40 @@
 import { useI18n } from 'vue-i18n';
 import { useVocabularyStore } from '../../../composables/useVocabularyStore';
 import { getTopicName } from '../../../utils/topicUtils';
+import { computed } from 'vue';
 
 const props = defineProps<{
   show: boolean;
   settings: any;
   localSettings: any;
+  dateFilterEnabled?: boolean;
+  selectedDate?: string;
 }>();
 
 const emit = defineEmits(['update:settings', 'update:local-settings', 'cancel', 'apply']);
 
 const { t } = useI18n();
-const { getCategories, getLevels } = useVocabularyStore();
+const { getCategories, getLevels, allVocabularies } = useVocabularyStore();
 
-const categories = getCategories;
 const levels = getLevels;
+
+// Filter categories based on selected date
+const categories = computed(() => {
+  if (!props.dateFilterEnabled || !props.selectedDate) {
+    return getCategories.value;
+  }
+  
+  // Get vocabularies for the selected date
+  const vocabulariesForDate = allVocabularies.value.filter(vocab => {
+    return vocab.createdAt && vocab.createdAt.startsWith(props.selectedDate!);
+  });
+  
+  // Get unique categories from vocabularies for this date
+  const categoriesForDate = new Set(vocabulariesForDate.map(vocab => vocab.category));
+  
+  // Filter the available categories to only include ones used on this date
+  return getCategories.value.filter(category => categoriesForDate.has(category));
+});
 
 const updateLocalSetting = (key: string, event: Event) => {
   const target = event.target as HTMLInputElement | HTMLSelectElement;

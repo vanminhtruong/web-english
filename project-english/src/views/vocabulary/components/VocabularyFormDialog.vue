@@ -584,6 +584,7 @@ onMounted(() => {
 // Cleanup on unmount
 onUnmounted(() => {
   document.body.style.overflow = ''
+  document.body.classList.remove('modal-open')
   document.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('topics-updated', handleTopicsUpdated)
 })

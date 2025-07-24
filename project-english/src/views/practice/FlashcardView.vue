@@ -167,6 +167,8 @@
       :show="showSettingsDialog"
       :settings="settings"
       :local-settings="localSettings"
+      :date-filter-enabled="dateFilterEnabled"
+      :selected-date="selectedDate"
       @update:local-settings="localSettings = $event"
       @cancel="cancelSettings"
       @apply="applyGameSettings"

@@ -87,6 +87,7 @@
           @date-group-previous="(date) => dateGroupPrevious(date, filteredVocabulary)"
           @date-group-next="(date) => dateGroupNext(date, filteredVocabulary)"
           @date-group-go-to-page="dateGroupGoToPage"
+          @open-note-dialog="openNoteDialog"
         />
       </LazyLoadComponent>
     </div>
@@ -114,6 +115,14 @@
       @topic-updated="onTopicUpdated"
       @topic-deleted="onTopicDeleted"
     />
+
+    <!-- Vocabulary Note Dialog -->
+    <VocabularyNoteDialog
+      v-model="showNoteDialog"
+      :date="noteDialogDate"
+      :today-words="noteDialogWords"
+      @save-note="handleNoteSaved"
+    />
   </div>
 </template>
 
@@ -136,6 +145,7 @@ const VocabularyFilters = defineAsyncComponent(() => import('./components/Vocabu
 const VocabularyList = defineAsyncComponent(() => import('./components/VocabularyList.vue'));
 const VocabularyFormDialog = defineAsyncComponent(() => import('./components/VocabularyFormDialog.vue'));
 const VocabularyDetailDialog = defineAsyncComponent(() => import('./components/VocabularyDetailDialog.vue'));
+const VocabularyNoteDialog = defineAsyncComponent(() => import('./components/VocabularyNoteDialog.vue'));
 const VoiceSelector = defineAsyncComponent(() => import('../../components/VoiceSelector.vue'));
 const TopicManager = defineAsyncComponent(() => import('./components/TopicManager.vue'));
 const ConfirmToast = defineAsyncComponent(() => import('../../components/common/ConfirmToast.vue'));
@@ -199,6 +209,11 @@ const setStoredHoverState = (enabled: boolean) => {
 };
 
 const hoverToExpandEnabled = ref(getStoredHoverState());
+
+// Note dialog state
+const showNoteDialog = ref(false);
+const noteDialogDate = ref('');
+const noteDialogWords = ref<any[]>([]);
 
 const filteredVocabulary = computed(() => {
   return vocabularyStore.allVocabularies.value.filter(word => {
@@ -359,6 +374,30 @@ watch(
   }
 );
 
+// Prevent body scroll when dialogs are open
+watch(showNoteDialog, (newValue) => {
+  if (newValue) {
+    document.body.classList.add('modal-open');
+  } else {
+    // Only remove if form dialog is also closed
+    if (!showFormDialog.value) {
+      document.body.classList.remove('modal-open');
+    }
+  }
+});
+
+// Prevent body scroll when form dialog is open
+watch(showFormDialog, (newValue) => {
+  if (newValue) {
+    document.body.classList.add('modal-open');
+  } else {
+    // Only remove if note dialog is also closed
+    if (!showNoteDialog.value) {
+      document.body.classList.remove('modal-open');
+    }
+  }
+});
+
 onMounted(() => {
   vocabularyStore.initializeStore();
   if (autoSaveEnabled.value) {
@@ -387,8 +426,40 @@ const handleFileImportWithReload = (file: File) => {
   handleFileImport(file);
 };
 
+// Note dialog handlers
+const openNoteDialog = (date: string, words: any[]) => {
+  noteDialogDate.value = date;
+  noteDialogWords.value = words;
+  showNoteDialog.value = true;
+};
+
+const handleNoteSaved = (note: string, markedWords: string[]) => {
+  toast.success(t('vocabulary.notes.saveSuccess'), {
+    timeout: 2000,
+  });
+  
+  // Check if auto-save is enabled
+  if (autoSaveEnabled.value) {
+    toast.info(t('vocabulary.notes.autoSaveNotice'), {
+      timeout: 3000,
+    });
+    debounceAutoSave();
+  }
+  
+  console.log(`Note saved for ${noteDialogDate.value} with ${markedWords.length} marked words`);
+};
+
 onUnmounted(() => {
   window.removeEventListener('vocabularyImportComplete', () => {});
   window.removeEventListener('vocabulary-notes-updated', () => {});
+  // Clean up modal-open class
+  document.body.classList.remove('modal-open');
 });
 </script>
+
+<style>
+/* Global styles for modal */
+body.modal-open {
+  overflow: hidden !important;
+}
+</style>

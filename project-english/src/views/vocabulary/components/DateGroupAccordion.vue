@@ -66,7 +66,7 @@
             <VocabularyNoteButton 
               :date="group.date"
               :is-today="isTodayGroup"
-              @open-note-dialog="openNoteDialog"
+              @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
             />
           </div>
           
@@ -195,14 +195,6 @@
         </div>
       </div>
     </transition>
-    
-    <!-- Note Dialog -->
-    <VocabularyNoteDialog
-      v-model="showNoteDialog"
-      :date="group.date"
-      :today-words="group.vocabularies"
-      @save-note="onNoteSaved"
-    />
   </div>
 </template>
 
@@ -226,9 +218,7 @@ const VocabularyNoteButton = defineAsyncComponent(
   loadComponentSafely(() => import('./VocabularyNoteButton.vue'))
 )
 
-const VocabularyNoteDialog = defineAsyncComponent(
-  loadComponentSafely(() => import('./VocabularyNoteDialog.vue'))
-)
+
 
 interface Props {
   group: GroupedVocabulary
@@ -431,17 +421,9 @@ const cancelTopicInput = () => {
   topicInputValue.value = ''
 }
 
-// Note functionality
-const showNoteDialog = ref(false);
 
-const openNoteDialog = (date: string) => {
-  showNoteDialog.value = true;
-};
 
-const onNoteSaved = (note: string, markedWords: string[]) => {
-  // You can emit an event here if you need to notify the parent component
-  emit('note-saved', props.group.date, note, markedWords);
-};
+
 
 // Calculate accordion content height for smooth animation
 const calculateHeight = async () => {
@@ -582,6 +564,7 @@ const emit = defineEmits<{
   'date-group-next': [date: string]
   'accordion-toggle': [date: string, expanded: boolean]
   'note-saved': [date: string, note: string, markedWords: string[]]
+  'open-note-dialog': [payload: { date: string, words: any[] }]
 }>()
 </script>
 

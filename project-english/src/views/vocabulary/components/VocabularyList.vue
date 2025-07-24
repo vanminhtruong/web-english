@@ -28,6 +28,7 @@
         @date-group-next="$emit('date-group-next', $event)"
         @accordion-toggle="handleAccordionToggle"
         @note-saved="handleNoteSaved"
+        @open-note-dialog="$emit('open-note-dialog', $event.date, $event.words)"
       />
     </div>
     
@@ -281,5 +282,6 @@ defineEmits<{
   'date-group-next': [date: string]
   'date-group-go-to-page': [date: string, page: number]
   'accordion-toggle': [date: string, expanded: boolean]
+  'open-note-dialog': [date: string, words: any[]]
 }>()
 </script>
