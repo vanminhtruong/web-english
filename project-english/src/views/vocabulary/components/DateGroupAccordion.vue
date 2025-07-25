@@ -2,7 +2,136 @@
   <div class="mb-3 xs:mb-4 sm:mb-6">
     <!-- Date group header with accordion toggle -->
     <div class="sticky top-0 bg-gray-50 dark:bg-[#0f0f0f] px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-2.5 sm:py-3 border-b border-gray-200 dark:border-gray-700 z-10">
-      <div class="flex items-center justify-between flex-wrap gap-1">
+      <!-- Mobile layout: Block/Vertical -->
+      <div class="max-xs:block xs:hidden">
+        <!-- First row: Date header -->
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center space-x-1">
+            <!-- Accordion toggle button -->
+            <button
+              @click="toggleAccordion"
+              class="p-0.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :aria-label="isExpanded ? t('vocabulary.accordion.collapse') : t('vocabulary.accordion.expand')"
+            >
+              <svg
+                class="w-2.5 h-2.5 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                :class="{ 'transform rotate-90': isExpanded }"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+
+            <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-1">
+              <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+              </svg>
+              <span>{{ group.displayDate }}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">
+                ({{ totalVocabularyCount }})
+              </span>
+            </h4>
+          </div>
+
+          <!-- Pagination on mobile (if needed) -->
+          <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="flex items-center space-x-1">
+            <button
+              @click="$emit('date-group-previous', group.date)"
+              :disabled="(group.currentPage || 1) === 1"
+              class="px-1 py-0.5 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ‹
+            </button>
+
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              {{ group.currentPage || 1 }}/{{ group.totalPages }}
+            </span>
+
+            <button
+              @click="$emit('date-group-next', group.date)"
+              :disabled="(group.currentPage || 1) === group.totalPages"
+              class="px-1 py-0.5 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+
+        <!-- Second row: Topic and Note buttons -->
+        <div class="flex items-center justify-center space-x-2">
+          <div v-if="!showTopicInput" class="flex items-center space-x-2">
+            <!-- Topic display or add button -->
+            <div v-if="groupTopic" class="flex items-center space-x-1 px-2 py-1 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
+              <svg class="w-2 h-2 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-xs font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px]">{{ groupTopic }}</span>
+              <button
+                @click="editTopic"
+                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
+                :aria-label="t('vocabulary.accordion.editTopic')"
+              >
+                <svg class="w-2 h-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                </svg>
+              </button>
+            </div>
+            <button
+              v-else
+              @click="showTopicInput = true"
+              class="flex items-center space-x-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :aria-label="t('vocabulary.accordion.addTopic')"
+            >
+              <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>{{ t('vocabulary.accordion.addTopic') }}</span>
+            </button>
+
+            <!-- Note button -->
+            <VocabularyNoteButton
+              :date="group.date"
+              :is-today="isTodayGroup"
+              @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
+            />
+          </div>
+
+          <!-- Topic input form -->
+          <div v-else class="flex items-center space-x-1 w-full max-w-[250px]">
+            <input
+              ref="topicInput"
+              v-model="topicInputValue"
+              @keyup.enter="saveTopic"
+              @keyup.escape="cancelTopicInput"
+              type="text"
+              :placeholder="t('vocabulary.accordion.topicPlaceholder')"
+              class="flex-1 px-2 py-1 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button
+              @click="saveTopic"
+              class="px-1.5 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              :aria-label="t('vocabulary.accordion.saveTopic')"
+            >
+              <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button
+              @click="cancelTopicInput"
+              class="px-1.5 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+              :aria-label="t('vocabulary.accordion.cancelTopic')"
+            >
+              <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop/Tablet layout: Horizontal -->
+      <div class="hidden xs:flex items-center justify-between flex-wrap gap-1">
         <div class="flex items-center space-x-2">
           <!-- Accordion toggle button -->
           <button
@@ -10,10 +139,10 @@
             class="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             :aria-label="isExpanded ? t('vocabulary.accordion.collapse') : t('vocabulary.accordion.expand')"
           >
-            <svg 
+            <svg
               class="w-3 xs:w-3.5 sm:w-4 h-3 xs:h-3.5 sm:h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200"
               :class="{ 'transform rotate-90': isExpanded }"
-              fill="currentColor" 
+              fill="currentColor"
               viewBox="0 0 20 20"
             >
               <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
@@ -30,16 +159,16 @@
             </span>
           </h4>
         </div>
-        
+
         <!-- Center topic section -->
         <div class="flex-1 flex justify-center mx-1 xs:mx-2 sm:mx-4 min-w-0">
-          <div v-if="!showTopicInput" class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 flex-wrap gap-1">
+          <div v-if="!showTopicInput" class="flex items-center space-x-1.5 xs:space-x-1.5 sm:space-x-2 flex-nowrap">
             <!-- Topic display or add button -->
-            <div v-if="groupTopic" class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-1.5 px-2 xs:px-2.5 sm:px-3 py-0.5 xs:py-1 sm:py-1 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
+            <div v-if="groupTopic" class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-1.5 px-2 xs:px-2.5 sm:px-3 py-0.5 xs:py-1 sm:py-1 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700 flex-shrink-0">
               <svg class="w-2.5 xs:w-3 sm:w-3 h-2.5 xs:h-3 sm:h-3 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
               </svg>
-              <span class="text-xs font-medium text-blue-700 dark:text-blue-300 truncate max-w-[60px] xs:max-w-[80px] sm:max-w-none">{{ groupTopic }}</span>
+              <span class="text-xs font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px] sm:max-w-none">{{ groupTopic }}</span>
               <button
                 @click="editTopic"
                 class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
@@ -53,25 +182,27 @@
             <button
               v-else
               @click="showTopicInput = true"
-              class="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1 px-2 xs:px-2.5 sm:px-3 py-0.5 xs:py-1 sm:py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1 px-2 xs:px-2.5 sm:px-3 py-0.5 xs:py-1 sm:py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 flex-shrink-0"
               :aria-label="t('vocabulary.accordion.addTopic')"
             >
               <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
               </svg>
-              <span>{{ t('vocabulary.accordion.addTopic') }}</span>
+              <span class="whitespace-nowrap">{{ t('vocabulary.accordion.addTopic') }}</span>
             </button>
-            
+
             <!-- Note button for all vocabulary groups -->
-            <VocabularyNoteButton 
-              :date="group.date"
-              :is-today="isTodayGroup"
-              @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
-            />
+            <div class="flex-shrink-0">
+              <VocabularyNoteButton
+                :date="group.date"
+                :is-today="isTodayGroup"
+                @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
+              />
+            </div>
           </div>
-          
+
           <!-- Topic input form -->
-          <div v-else class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 w-full max-w-[120px] xs:max-w-[150px] sm:max-w-xs">
+          <div v-else class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 w-full max-w-[150px] xs:max-w-[200px] sm:max-w-xs">
             <input
               ref="topicInput"
               v-model="topicInputValue"
@@ -79,7 +210,7 @@
               @keyup.escape="cancelTopicInput"
               type="text"
               :placeholder="t('vocabulary.accordion.topicPlaceholder')"
-              class="flex-1 px-1.5 xs:px-2 sm:px-2 py-0.5 xs:py-1 sm:py-1 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="flex-1 px-2 xs:px-2 sm:px-2 py-0.5 xs:py-1 sm:py-1 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
               @click="saveTopic"
@@ -101,22 +232,22 @@
             </button>
           </div>
         </div>
-        
+
         <!-- Date group pagination (only show when expanded) -->
         <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="flex items-center space-x-2">
-          <button 
+          <button
             @click="$emit('date-group-previous', group.date)"
             :disabled="(group.currentPage || 1) === 1"
             class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {{ t('common.previous') }}
           </button>
-          
+
           <span class="text-xs text-gray-500 dark:text-gray-400">
             {{ group.currentPage || 1 }} / {{ group.totalPages }}
           </span>
-          
-          <button 
+
+          <button
             @click="$emit('date-group-next', group.date)"
             :disabled="(group.currentPage || 1) === group.totalPages"
             class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
