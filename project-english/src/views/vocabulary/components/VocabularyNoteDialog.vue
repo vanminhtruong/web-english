@@ -1,18 +1,18 @@
 <template>
   <div v-if="modelValue" class="fixed inset-0 z-50 overflow-y-auto" @click.self="close">
-    <div class="flex items-center justify-center min-h-screen p-2 md:p-4">
+    <div class="flex items-center justify-center min-h-screen p-4">
       <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" aria-hidden="true"></div>
       
-      <div class="bg-white dark:bg-[#0a0a0a] rounded-lg overflow-hidden shadow-xl transform transition-all w-full max-w-2xl relative z-50 mx-2 md:mx-4">
+      <div class="bg-white dark:bg-[#0a0a0a] rounded-lg overflow-hidden shadow-xl transform transition-all w-full max-w-2xl relative z-50">
         <!-- Dialog header -->
-        <div class="px-4 md:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <h3 class="text-base md:text-lg font-medium text-gray-900 dark:text-white flex items-center space-x-2 min-w-0">
-            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white flex items-center space-x-2">
+            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
             </svg>
-            <span class="truncate">{{ t('vocabulary.notes.title') }} - {{ formattedDate }}</span>
+            <span>{{ t('vocabulary.notes.title') }} - {{ formattedDate }}</span>
           </h3>
-          <button @click="close" class="text-gray-400 hover:text-gray-500 focus:outline-none flex-shrink-0">
+          <button @click="close" class="text-gray-400 hover:text-gray-500 focus:outline-none">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -20,7 +20,7 @@
         </div>
         
         <!-- Dialog content -->
-        <div class="px-4 md:px-6 py-4">
+        <div class="px-6 py-4">
           <div class="mb-4">
             <p class="text-sm text-gray-600 dark:text-gray-400">
               {{ t('vocabulary.notes.description') }}
@@ -35,7 +35,7 @@
               id="note-content"
               v-model="noteContent"
               rows="6"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f0f0f] focus:border-[#0f0f0f] bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-gray-100 text-sm md:text-base h-24 md:h-32"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f0f0f] focus:border-[#0f0f0f] bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-gray-100"
               :placeholder="t('vocabulary.notes.placeholder')"
             ></textarea>
           </div>
@@ -45,7 +45,7 @@
             <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {{ t('vocabulary.notes.wordsLearned') }} ({{ todayWords.length }})
             </h4>
-            <div class="max-h-48 md:max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 dark:bg-[#0f0f0f]">
+            <div class="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 dark:bg-[#0f0f0f]">
               <div v-if="todayWords.length === 0" class="p-4 text-center text-gray-500 dark:text-gray-400">
                 {{ t('vocabulary.notes.noWordsLearned') }}
               </div>
@@ -53,13 +53,13 @@
                 <div 
                   v-for="word in todayWords" 
                   :key="word.id" 
-                  class="flex items-start sm:items-center justify-between p-2 bg-gray-50 dark:bg-[#0f0f0f] rounded-md gap-2"
+                  class="flex items-center justify-between p-2 bg-gray-50 dark:bg-[#0f0f0f] rounded-md"
                 >
-                  <div class="min-w-0 flex-1">
-                    <span class="font-medium text-gray-900 dark:text-white block sm:inline">{{ word.word }}</span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400 block sm:inline sm:ml-2">{{ word.meaning }}</span>
+                  <div>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ word.word }}</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">{{ word.meaning }}</span>
                   </div>
-                  <div class="flex items-center space-x-2 flex-shrink-0">
+                  <div class="flex items-center space-x-2">
                     <button 
                       @click="toggleWordMarked(word.id)"
                       class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -78,16 +78,16 @@
         </div>
         
         <!-- Dialog footer -->
-        <div class="px-4 md:px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
           <button 
             @click="close" 
-            class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full sm:w-auto order-2 sm:order-1"
+            class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             {{ t('common.cancel') }}
           </button>
           <button 
             @click="saveNote" 
-            class="px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full sm:w-auto order-1 sm:order-2"
+            class="px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             {{ t('common.save') }}
           </button>

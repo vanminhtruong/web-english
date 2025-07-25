@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-    <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+  <div class="flex items-center space-x-3">
+    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
       {{ t('voice.selector.title') }}
     </span>
     
@@ -9,13 +9,13 @@
       <button
         @click="showDropdown = !showDropdown"
         ref="dropdownButton"
-        class="flex w-full sm:w-[230px] items-center justify-between px-3 py-2 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
+        class="flex w-[230px] items-center justify-between px-3 py-2 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
       >
-        <div class="flex items-center space-x-2 min-w-0">
-          <span class="flex-shrink-0">{{ currentVoiceOption?.icon }}</span>
-          <span class="truncate">{{ currentVoiceOption?.label }}</span>
+        <div class="flex items-center space-x-2">
+          <span>{{ currentVoiceOption?.icon }}</span>
+          <span>{{ currentVoiceOption?.label }}</span>
         </div>
-        <svg class="w-4 h-4 flex-shrink-0" :class="{ 'rotate-180': showDropdown }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4" :class="{ 'rotate-180': showDropdown }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
@@ -90,11 +90,11 @@
     <button
       @click="testVoice"
       :disabled="isTesting"
-      class="flex items-center justify-center space-x-1 px-3 py-2 text-sm bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg transition-colors w-full sm:w-auto"
+      class="flex items-center space-x-1 px-3 py-2 text-sm bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg transition-colors"
     >
       <svg 
         v-if="isTesting" 
-        class="animate-spin w-4 h-4 flex-shrink-0" 
+        class="animate-spin w-4 h-4" 
         fill="none" 
         viewBox="0 0 24 24"
       >
@@ -103,13 +103,13 @@
       </svg>
       <svg 
         v-else
-        class="w-4 h-4 flex-shrink-0" 
+        class="w-4 h-4" 
         fill="currentColor" 
         viewBox="0 0 20 20"
       >
         <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.817L4.5 13.5H2a1 1 0 01-1-1v-5a1 1 0 011-1h2.5l3.883-3.317zm5.94 2.045a1 1 0 011.32.663A6.977 6.977 0 0118 10c0 1.688-.57 3.24-1.357 4.216a1 1 0 11-1.644-1.132A4.987 4.987 0 0016 10c0-1.092-.36-2.099-.923-2.907a1 1 0 01.246-1.372z" clip-rule="evenodd"/>
       </svg>
-      <span class="whitespace-nowrap">{{ isTesting ? t('voice.testing') : t('voice.test') }}</span>
+      <span>{{ isTesting ? t('voice.testing') : t('voice.test') }}</span>
     </button>
 
     <!-- Voice Settings Modal -->

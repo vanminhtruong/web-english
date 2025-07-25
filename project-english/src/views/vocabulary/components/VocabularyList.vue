@@ -4,8 +4,8 @@
     @mouseleave="handleVocabularyListMouseLeave"
     @mouseenter="handleVocabularyListMouseEnter"
   >
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+    <div class="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-700">
+      <h3 class="text-base sm:text-lg font-medium text-gray-900 dark:text-white">
         {{ t('vocabulary.vocabularyList') }} ({{ totalCount }})
       </h3>
     </div>
@@ -47,25 +47,19 @@
     </div>
     
     <!-- Pagination (hidden when grouping is enabled) -->
-    <div v-if="!useGrouping" class="bg-white dark:bg-[#0a0a0a] px-4 py-3 border-t border-gray-200 dark:border-gray-700 md:px-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-        <!-- Mobile pagination -->
-        <div class="flex justify-between sm:hidden">
-          <button @click="$emit('previous-page')" :disabled="currentPage === 1" class="relative inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+    <div v-if="!useGrouping" class="bg-white dark:bg-[#0a0a0a] px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
+      <div class="flex items-center justify-between">
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button @click="$emit('previous-page')" :disabled="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600">
             {{ t('common.previous') }}
           </button>
-          <span class="text-sm text-gray-700 dark:text-gray-300 self-center">
-            {{ currentPage }} / {{ totalPages }}
-          </span>
-          <button @click="$emit('next-page')" :disabled="currentPage === totalPages" class="relative inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+          <button @click="$emit('next-page')" :disabled="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600">
             {{ t('common.next') }}
           </button>
         </div>
-        
-        <!-- Desktop pagination -->
-        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
-            <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+            <p class="text-sm text-gray-700 dark:text-gray-300">
               {{ t('vocabulary.showingResults', { start: startIndex, end: endIndex, total: totalCount }) }}
             </p>
           </div>
@@ -73,7 +67,7 @@
             <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
               <button @click="$emit('previous-page')" :disabled="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="sr-only">{{ t('common.previous') }}</span>
-                <svg class="h-4 w-4 md:h-5 md:w-5" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
                 </svg>
               </button>
@@ -84,13 +78,13 @@
                 :class="page === currentPage 
                   ? 'bg-blue-50 dark:bg-blue-900 border-blue-500 dark:border-blue-400 text-blue-600 dark:text-blue-300' 
                   : 'bg-white dark:bg-[#0a0a0a] border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'" 
-                class="relative inline-flex items-center px-3 md:px-4 py-2 border text-sm font-medium"
+                class="relative inline-flex items-center px-4 py-2 border text-sm font-medium"
               >
                 {{ page }}
               </button>
               <button @click="$emit('next-page')" :disabled="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="sr-only">{{ t('common.next') }}</span>
-                <svg class="h-4 w-4 md:h-5 md:w-5" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                 </svg>
               </button>

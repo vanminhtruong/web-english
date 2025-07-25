@@ -1,28 +1,28 @@
 <template>
   <div class="bg-white dark:bg-[#0f0f0f] border-b border-gray-200 dark:border-gray-700">
-    <div class="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <!-- Date Filter Section -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-          <div class="flex items-center gap-1.5 sm:gap-2">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div class="flex items-center gap-2">
             <input
               id="enableDateFilter"
               v-model="localEnabled"
               type="checkbox"
-              class="h-3.5 sm:h-4 w-3.5 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800"
             />
-            <label for="enableDateFilter" class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label for="enableDateFilter" class="text-sm font-medium text-gray-700 dark:text-gray-300">
               {{ t('flashcard.dateFilter.enable') }}
             </label>
           </div>
 
-          <div v-if="localEnabled" class="flex items-center gap-1.5 sm:gap-2">
+          <div v-if="localEnabled" class="flex items-center gap-2">
             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
             </svg>
             <select
               v-model="localSelectedDate"
-              class="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-white focus:ring-1 sm:focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               :disabled="!localEnabled"
             >
               <option value="">{{ t('flashcard.dateFilter.allDates') }}</option>
@@ -34,7 +34,7 @@
         </div>
 
         <!-- Info Section -->
-        <div v-if="localEnabled && localSelectedDate" class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+        <div v-if="localEnabled && localSelectedDate" class="text-sm text-gray-600 dark:text-gray-400">
           <span class="flex items-center gap-1">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>

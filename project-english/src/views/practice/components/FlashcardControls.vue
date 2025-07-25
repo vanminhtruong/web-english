@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-3 lg:gap-4 mt-6 sm:mt-8">
+  <div class="flex justify-center items-center gap-4 mt-8">
     <!-- Flashcard Mode Controls -->
     <template v-if="practiceMode === 'flashcard'">
       <button
         @click="$emit('mark-difficult')"
-        class="bg-red-500 hover:bg-red-600 text-white p-2 sm:p-3 rounded-full transition-colors"
+        class="bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-colors"
         :title="t('practice.controls.difficult')"
       >
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -24,14 +24,14 @@
 
       <button
         @click="$emit('next-card')"
-        class="bg-blue-500 hover:bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
+        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition-colors"
       >
         {{ currentIndex === totalCards - 1 ? t('practice.controls.complete') : t('practice.controls.next') }}
       </button>
 
       <button
         @click="$emit('mark-easy')"
-        class="bg-green-500 hover:bg-green-600 text-white p-2 sm:p-3 rounded-full transition-colors"
+        class="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors"
         :title="t('practice.controls.easy')"
       >
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -67,7 +67,7 @@
       <button
         @click="$emit('next-card')"
         :disabled="!canProceed"
-        class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base md:text-lg lg:text-xl"
+        class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-6 py-3 rounded-full font-medium transition-colors"
       >
         {{ currentIndex === totalCards - 1 ? t('practice.controls.complete') : t('practice.controls.next') }}
       </button>

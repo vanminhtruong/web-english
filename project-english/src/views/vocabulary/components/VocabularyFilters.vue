@@ -1,25 +1,25 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-4 md:p-6 mb-6 border border-gray-200 dark:border-gray-700">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 border border-gray-200 dark:border-gray-700">
+    <div class="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 xs:gap-3 sm:gap-4 lg:gap-6">
       <!-- Search -->
-      <div class="sm:col-span-2 lg:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('common.search') }}</label>
+      <div class="col-span-1 xs:col-span-1 sm:col-span-2 md:col-span-2">
+        <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 xs:mb-1.5 sm:mb-2">{{ t('common.search') }}</label>
         <input
           :value="searchQuery"
           @input="$emit('update:searchQuery', $event.target.value)"
           type="text"
           :placeholder="t('vocabulary.searchPlaceholder')"
-          class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+          class="w-full px-2 py-1.5 xs:px-2.5 xs:py-2 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
       <!-- Category Filter -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('vocabulary.category') }}</label>
+      <div class="col-span-1">
+        <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 xs:mb-1.5 sm:mb-2">{{ t('vocabulary.category') }}</label>
         <select 
           :value="selectedCategory" 
           @change="$emit('update:selectedCategory', $event.target.value)"
-          class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+          class="w-full px-2 py-1.5 xs:px-2.5 xs:py-2 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{{ t('common.all') }}</option>
           <option v-for="category in categories" :key="category" :value="category">{{ getTopicDisplayName(category) }}</option>
@@ -27,12 +27,12 @@
       </div>
 
       <!-- Level Filter -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('vocabulary.level') }}</label>
+      <div class="col-span-1">
+        <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 xs:mb-1.5 sm:mb-2">{{ t('vocabulary.level') }}</label>
         <select 
           :value="selectedLevel" 
           @change="$emit('update:selectedLevel', $event.target.value)"
-          class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+          class="w-full px-2 py-1.5 xs:px-2.5 xs:py-2 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{{ t('common.all') }}</option>
           <option value="beginner">{{ t('vocabulary.levels.beginner') }}</option>
@@ -43,15 +43,15 @@
     </div>
     
     <!-- Favorites Filter -->
-    <div class="mt-4">
-      <label class="inline-flex items-center">
+    <div class="mt-2 xs:mt-3 sm:mt-4">
+      <label class="inline-flex items-center cursor-pointer">
         <input 
           type="checkbox" 
           :checked="showFavoritesOnly" 
           @change="$emit('update:showFavoritesOnly', $event.target.checked)"
-          class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-[#0a0a0a] dark:border-gray-600"
+          class="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-[#0a0a0a] dark:border-gray-600"
         >
-        <span class="ml-2 text-sm md:text-base text-gray-700 dark:text-gray-300">{{ t('vocabulary.showFavoritesOnly') }}</span>
+        <span class="ml-1.5 xs:ml-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300">{{ t('vocabulary.showFavoritesOnly') }}</span>
       </label>
     </div>
   </div>

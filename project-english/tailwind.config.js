@@ -6,19 +6,22 @@ export default {
   ],
   darkMode: 'class',
   theme: {
-    // Configure responsive breakpoints (max-width only - design from large to small)
+    // Configure responsive breakpoints (mobile-first approach with min-width)
     screens: {
-      // Max-width breakpoints for designing from large to small
-      '2xl': {'max': '1535px'}, // @media (max-width: 1535px) - Extra large screens
-      'xl': {'max': '1279px'},  // @media (max-width: 1279px) - Large desktops
-      'lg': {'max': '1023px'},  // @media (max-width: 1023px) - Desktops
-      'md': {'max': '767px'},   // @media (max-width: 767px) - Tablets & Mobile
-      'sm': {'max': '639px'},   // @media (max-width: 639px) - Large phones
-      'xs': {'max': '479px'},   // @media (max-width: 479px) - Small phones
+      // Min-width breakpoints for mobile-first design
+      'sm': '640px',   // @media (min-width: 640px) - Large phones and up
+      'md': '768px',   // @media (min-width: 768px) - Tablets and up  
+      'lg': '1024px',  // @media (min-width: 1024px) - Desktops and up
+      'xl': '1280px',  // @media (min-width: 1280px) - Large desktops and up
+      '2xl': '1536px', // @media (min-width: 1536px) - Extra large screens and up
       
-      // Portrait and landscape orientations
-      'portrait': {'raw': '(orientation: portrait)'},
-      'landscape': {'raw': '(orientation: landscape)'},
+      // Max-width breakpoints for designing from large to small (use with max- prefix)
+      'max-2xl': {'max': '1535px'}, // @media (max-width: 1535px)
+      'max-xl': {'max': '1279px'},  // @media (max-width: 1279px)
+      'max-lg': {'max': '1023px'},  // @media (max-width: 1023px)
+      'max-md': {'max': '767px'},   // @media (max-width: 767px)
+      'max-sm': {'max': '639px'},   // @media (max-width: 639px)
+      'max-xs': {'max': '479px'},   // @media (max-width: 479px)
     },
     extend: {
       colors: {

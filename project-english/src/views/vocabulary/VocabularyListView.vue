@@ -6,59 +6,67 @@
     </LazyLoadComponent>
 
     <!-- Filters and Search -->
-    <div class="max-w-7xl mx-auto py-6 px-4 md:px-6 lg:px-8 xl:px-4 2xl:px-2">
+    <div class="max-w-7xl mx-auto py-3 px-2 xs:py-4 xs:px-3 sm:py-6 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12">
       <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
-        <VocabularyFilters
-          :search-query="searchQuery"
-          :selected-category="selectedCategory"
-          :selected-level="selectedLevel"
-          :categories="categories"
-          :show-favorites-only="showFavoritesOnly"
-          @update:searchQuery="updateSearchQuery"
-          @update:selectedCategory="updateSelectedCategory"
-          @update:selectedLevel="updateSelectedLevel"
-          @update:showFavoritesOnly="updateShowFavoritesOnly"
-        />
+        <div class="mb-3 xs:mb-4 sm:mb-6">
+          <VocabularyFilters
+            :search-query="searchQuery"
+            :selected-category="selectedCategory"
+            :selected-level="selectedLevel"
+            :categories="categories"
+            :show-favorites-only="showFavoritesOnly"
+            @update:searchQuery="updateSearchQuery"
+            @update:selectedCategory="updateSelectedCategory"
+            @update:selectedLevel="updateSelectedLevel"
+            @update:showFavoritesOnly="updateShowFavoritesOnly"
+          />
+        </div>
       </LazyLoadComponent>
       
       <!-- Date Grouping Toggle -->
       <LazyLoadComponent animation-type="slide-right" :threshold="0.1" root-margin="-50px">
-        <GroupingToggle 
-          :model-value="useGrouping" 
-          :hover-enabled="hoverToExpandEnabled"
-          @update:model-value="toggleGrouping" 
-          @update:hover-enabled="hoverToExpandEnabled = $event"
-        />
+        <div class="mb-3 xs:mb-4 sm:mb-6">
+          <GroupingToggle 
+            :model-value="useGrouping" 
+            :hover-enabled="hoverToExpandEnabled"
+            @update:model-value="toggleGrouping" 
+            @update:hover-enabled="hoverToExpandEnabled = $event"
+          />
+        </div>
       </LazyLoadComponent>
 
       <!-- Voice Settings Panel -->
       <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-        <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-6">
+        <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 mb-3 xs:mb-4 sm:mb-6">
           <VoiceSelector :show-voice-info="true" />
         </div>
       </LazyLoadComponent>
 
       <!-- Topic Management Panel -->
       <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
-        <TopicManagerPanel @open="openTopicManager" />
+        <div class="mb-3 xs:mb-4 sm:mb-6">
+          <TopicManagerPanel @open="openTopicManager" />
+        </div>
       </LazyLoadComponent>
 
       <!-- Save Control Panel -->
       <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
-        <SaveControlPanel
-          :auto-save-enabled="autoSaveEnabled"
-          @update:auto-save-enabled="autoSaveEnabled = $event"
-          :is-saving="isSaving"
-          :has-auto-save-file="hasAutoSaveFile"
-          :auto-save-file-path="autoSaveFilePath"
-          :last-save-time="lastSaveTime"
-          :save-status-color="getSaveStatusColor"
-          :save-status-text="getSaveStatusText"
-          @manual-save="manualSave"
-          @setup-auto-save="setupAutoSaveFile"
-          @reset-auto-save="resetAutoSaveFile"
-          @import-file="handleFileImportWithReload"
-        />
+        <div class="mb-3 xs:mb-4 sm:mb-6">
+          <SaveControlPanel
+            :auto-save-enabled="autoSaveEnabled"
+            @update:auto-save-enabled="autoSaveEnabled = $event"
+            :is-saving="isSaving"
+            :has-auto-save-file="hasAutoSaveFile"
+            :auto-save-file-path="autoSaveFilePath"
+            :last-save-time="lastSaveTime"
+            :save-status-color="getSaveStatusColor"
+            :save-status-text="getSaveStatusText"
+            @manual-save="manualSave"
+            @setup-auto-save="setupAutoSaveFile"
+            @reset-auto-save="resetAutoSaveFile"
+            @import-file="handleFileImportWithReload"
+          />
+        </div>
       </LazyLoadComponent>
 
       <!-- Vocabulary List -->
