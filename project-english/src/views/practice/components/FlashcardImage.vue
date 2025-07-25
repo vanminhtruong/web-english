@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6 min-h-96 max-h-[500px]">
+  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-4 sm:p-6 min-h-72 sm:min-h-80 lg:min-h-96 max-h-96 sm:max-h-[500px]">
     <div class="h-full flex flex-col overflow-hidden">
       <!-- Category Badge -->
       <div class="mb-4 text-center">
-        <span class="px-3 py-1 bg-purple-100 dark:bg-gray-800 text-purple-800 dark:text-purple-300 text-sm font-medium rounded-full">
+        <span class="px-2 sm:px-3 py-1 bg-purple-100 dark:bg-gray-800 text-purple-800 dark:text-purple-300 text-xs sm:text-sm font-medium rounded-full">
           {{ currentCard?.category ? getTopicName(currentCard.category) : '' }}
         </span>
       </div>
@@ -14,26 +14,26 @@
           <img 
             :src="currentCard.image" 
             :alt="$t('flashcard.image.imageAlt')"
-            class="max-w-full max-h-40 object-contain rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+            class="max-w-full max-h-32 sm:max-h-40 lg:max-h-48 object-contain rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
             @error="handleImageError"
           />
           <div v-if="imageError" class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
             <div class="text-center">
-              <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="mx-auto h-10 sm:h-12 w-10 sm:w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ $t('flashcard.image.imageError') }}</p>
+              <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">{{ $t('flashcard.image.imageError') }}</p>
             </div>
           </div>
         </div>
         
         <!-- No Image State -->
-        <div v-else class="flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg p-8 w-full max-w-sm">
+        <div v-else class="flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8 w-full max-w-xs sm:max-w-sm">
           <div class="text-center">
-            <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="mx-auto h-12 sm:h-14 lg:h-16 w-12 sm:w-14 lg:w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ $t('flashcard.image.noImage') }}</p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">{{ $t('flashcard.image.noImage') }}</p>
           </div>
         </div>
       </div>

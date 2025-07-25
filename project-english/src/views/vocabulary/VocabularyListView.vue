@@ -6,7 +6,7 @@
     </LazyLoadComponent>
 
     <!-- Filters and Search -->
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto py-6 px-4 md:px-6 lg:px-8 xl:px-4 2xl:px-2">
       <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
         <VocabularyFilters
           :search-query="searchQuery"

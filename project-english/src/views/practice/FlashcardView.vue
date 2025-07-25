@@ -22,8 +22,8 @@
 
     <!-- Voice Settings -->
     <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div class="max-w-4xl mx-auto px-2 md:px-4 sm:px-6 lg:px-8 py-2 md:py-4">
+        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 md:p-4">
           <VoiceSelector :show-voice-info="false" />
         </div>
       </div>
@@ -31,8 +31,8 @@
 
     <!-- Date Filter -->
     <LazyLoadComponent animation-type="slide-right" :threshold="0.1" root-margin="-50px">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div class="max-w-4xl mx-auto px-2 md:px-4 sm:px-6 lg:px-8 py-2 md:py-4">
+        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 md:p-4">
           <FlashcardDateFilter
             :vocabularies="allVocabularies"
             :enabled="dateFilterEnabled"
@@ -45,7 +45,7 @@
     </LazyLoadComponent>
 
     <!-- Practice Container -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-4xl mx-auto px-2 md:px-4 sm:px-6 lg:px-8 py-4 md:py-8">
       <div v-if="currentFlashcards.length > 0" class="relative">
         <!-- Practice Timer -->
         <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">

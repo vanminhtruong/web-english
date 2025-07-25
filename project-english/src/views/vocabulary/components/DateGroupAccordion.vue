@@ -1,13 +1,13 @@
 <template>
   <div class="mb-6">
     <!-- Date group header with accordion toggle -->
-    <div class="sticky top-0 bg-gray-50 dark:bg-[#0f0f0f] px-6 py-3 border-b border-gray-200 dark:border-gray-700 z-10">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
+    <div class="sticky top-0 bg-gray-50 dark:bg-[#0f0f0f] px-4 md:px-6 py-3 border-b border-gray-200 dark:border-gray-700 z-10">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-3 lg:space-y-0">
+        <div class="flex items-center space-x-2 min-w-0">
           <!-- Accordion toggle button -->
           <button
             @click="toggleAccordion"
-            class="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 flex-shrink-0"
             :aria-label="isExpanded ? t('vocabulary.accordion.collapse') : t('vocabulary.accordion.expand')"
           >
             <svg 
@@ -20,29 +20,29 @@
             </svg>
           </button>
 
-          <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <h4 class="text-sm md:text-base font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-2 min-w-0">
+            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
             </svg>
-            <span>{{ group.displayDate }}</span>
-            <span class="text-xs text-gray-500 dark:text-gray-400">
+            <span class="truncate">{{ group.displayDate }}</span>
+            <span class="text-xs md:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
               ({{ totalVocabularyCount }} {{ t('vocabulary.words') }})
             </span>
           </h4>
         </div>
         
         <!-- Center topic section -->
-        <div class="flex-1 flex justify-center mx-4">
-          <div v-if="!showTopicInput" class="flex items-center space-x-2">
+        <div class="flex-1 flex justify-center lg:justify-center mx-2 lg:mx-4">
+          <div v-if="!showTopicInput" class="flex flex-wrap items-center justify-center gap-2">
             <!-- Topic display or add button -->
-            <div v-if="groupTopic" class="flex items-center space-x-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
-              <svg class="w-3 h-3 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <div v-if="groupTopic" class="flex items-center space-x-2 px-2 md:px-3 py-1 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
+              <svg class="w-3 h-3 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
               </svg>
-              <span class="text-xs font-medium text-blue-700 dark:text-blue-300">{{ groupTopic }}</span>
+              <span class="text-xs font-medium text-blue-700 dark:text-blue-300 truncate max-w-[120px] md:max-w-none">{{ groupTopic }}</span>
               <button
                 @click="editTopic"
-                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none"
+                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
                 :aria-label="t('vocabulary.accordion.editTopic')"
               >
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -53,13 +53,13 @@
             <button
               v-else
               @click="showTopicInput = true"
-              class="flex items-center space-x-1 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex items-center space-x-1 px-2 md:px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               :aria-label="t('vocabulary.accordion.addTopic')"
             >
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
               </svg>
-              <span>{{ t('vocabulary.accordion.addTopic') }}</span>
+              <span class="hidden sm:inline">{{ t('vocabulary.accordion.addTopic') }}</span>
             </button>
             
             <!-- Note button for all vocabulary groups -->
@@ -71,7 +71,7 @@
           </div>
           
           <!-- Topic input form -->
-          <div v-else class="flex items-center space-x-2 w-full max-w-xs">
+          <div v-else class="flex items-center space-x-2 w-full max-w-xs md:max-w-sm">
             <input
               ref="topicInput"
               v-model="topicInputValue"
@@ -79,11 +79,11 @@
               @keyup.escape="cancelTopicInput"
               type="text"
               :placeholder="t('vocabulary.accordion.topicPlaceholder')"
-              class="flex-1 px-2 py-1 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="flex-1 px-2 py-1 text-xs md:text-sm border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
               @click="saveTopic"
-              class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors flex-shrink-0"
               :aria-label="t('vocabulary.accordion.saveTopic')"
             >
               <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -92,7 +92,7 @@
             </button>
             <button
               @click="cancelTopicInput"
-              class="px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+              class="px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors flex-shrink-0"
               :aria-label="t('vocabulary.accordion.cancelTopic')"
             >
               <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -103,25 +103,27 @@
         </div>
         
         <!-- Date group pagination (only show when expanded) -->
-        <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="flex items-center space-x-2">
+        <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="flex items-center justify-center lg:justify-end space-x-2 mt-3 lg:mt-0">
           <button 
             @click="$emit('date-group-previous', group.date)"
             :disabled="(group.currentPage || 1) === 1"
-            class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-2 md:px-3 py-1 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ t('common.previous') }}
+            <span class="hidden sm:inline">{{ t('common.previous') }}</span>
+            <span class="sm:hidden">‹</span>
           </button>
           
-          <span class="text-xs text-gray-500 dark:text-gray-400">
+          <span class="text-xs md:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
             {{ group.currentPage || 1 }} / {{ group.totalPages }}
           </span>
           
           <button 
             @click="$emit('date-group-next', group.date)"
             :disabled="(group.currentPage || 1) === group.totalPages"
-            class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-2 md:px-3 py-1 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ t('common.next') }}
+            <span class="hidden sm:inline">{{ t('common.next') }}</span>
+            <span class="sm:hidden">›</span>
           </button>
         </div>
       </div>
