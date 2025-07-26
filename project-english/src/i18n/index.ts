@@ -5,9 +5,20 @@ import vi from './locales/vi.json'
 // Type definitions for messages
 type MessageSchema = typeof en
 
+// Safe locale getter with fallback
+function getInitialLocale(): 'en' | 'vi' {
+  try {
+    const savedLocale = localStorage.getItem('locale')
+    return (savedLocale === 'en' || savedLocale === 'vi') ? savedLocale : 'vi'
+  } catch (error) {
+    console.warn('localStorage not available, using default locale:', error)
+    return 'vi'
+  }
+}
+
 const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
-  locale: localStorage.getItem('locale') || 'vi', // set default locale
+  locale: getInitialLocale(), // set default locale
   fallbackLocale: 'en', // set fallback locale
   messages: {
     en,
@@ -20,7 +31,11 @@ export default i18n
 // Utility function to change locale
 export function setLocale(locale: 'en' | 'vi') {
   i18n.global.locale.value = locale
-  localStorage.setItem('locale', locale)
+  try {
+    localStorage.setItem('locale', locale)
+  } catch (error) {
+    console.warn('Could not save locale to localStorage:', error)
+  }
   document.querySelector('html')?.setAttribute('lang', locale)
 }
 
