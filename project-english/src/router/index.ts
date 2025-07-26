@@ -1,88 +1,68 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { ROUTE_CONFIG, createComponentImport } from '../constants/routes'
+
+// Static imports
+import DashboardView from '../views/dashboard/DashboardView.vue'
+import VocabularyListView from '../views/vocabulary/VocabularyListView.vue'
+import GrammarListView from '../views/grammar/GrammarListView.vue'
+import GrammarDetailView from '../views/grammar/GrammarDetailView.vue'
+import GrammarPracticeView from '../views/grammar/GrammarPracticeView.vue'
+import FlashcardView from '../views/practice/FlashcardView.vue'
+import QuizView from '../views/practice/QuizView.vue'
+import TailwindTest from '../components/TailwindTest.vue'
+import NotFoundView from '../views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
-    // Redirect root to dashboard
     {
       path: '/',
       redirect: '/dashboard'
     },
-
-    // Dashboard
     {
-      path: ROUTE_CONFIG.DASHBOARD.path,
-      name: ROUTE_CONFIG.DASHBOARD.name,
-      component: createComponentImport(ROUTE_CONFIG.DASHBOARD.componentPath),
-    },
-
-    // Vocabulary Routes
-    {
-      path: ROUTE_CONFIG.VOCABULARY_LIST.path,
-      name: ROUTE_CONFIG.VOCABULARY_LIST.name,
-      component: createComponentImport(ROUTE_CONFIG.VOCABULARY_LIST.componentPath),
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView,
     },
     {
-      path: ROUTE_CONFIG.VOCABULARY_ADD.path,
-      name: ROUTE_CONFIG.VOCABULARY_ADD.name,
-      component: createComponentImport(ROUTE_CONFIG.VOCABULARY_ADD.componentPath),
+      path: '/vocabulary',
+      name: 'vocabulary-list',
+      component: VocabularyListView,
     },
     {
-      path: ROUTE_CONFIG.VOCABULARY_EDIT.path,
-      name: ROUTE_CONFIG.VOCABULARY_EDIT.name,
-      component: createComponentImport(ROUTE_CONFIG.VOCABULARY_EDIT.componentPath),
-    },
-
-    // Grammar Routes
-    {
-      path: ROUTE_CONFIG.GRAMMAR_LIST.path,
-      name: ROUTE_CONFIG.GRAMMAR_LIST.name,
-      component: createComponentImport(ROUTE_CONFIG.GRAMMAR_LIST.componentPath),
+      path: '/grammar',
+      name: 'grammar-list',
+      component: GrammarListView,
     },
     {
-      path: ROUTE_CONFIG.GRAMMAR_DETAIL.path,
-      name: ROUTE_CONFIG.GRAMMAR_DETAIL.name,
-      component: createComponentImport(ROUTE_CONFIG.GRAMMAR_DETAIL.componentPath),
+      path: '/grammar/:id',
+      name: 'grammar-detail',
+      component: GrammarDetailView,
     },
     {
-      path: ROUTE_CONFIG.GRAMMAR_PRACTICE.path,
-      name: ROUTE_CONFIG.GRAMMAR_PRACTICE.name,
-      component: createComponentImport(ROUTE_CONFIG.GRAMMAR_PRACTICE.componentPath),
-    },
-    {
-      path: ROUTE_CONFIG.GRAMMAR_ADD.path,
-      name: ROUTE_CONFIG.GRAMMAR_ADD.name,
-      component: createComponentImport(ROUTE_CONFIG.GRAMMAR_ADD.componentPath),
-    },
-    {
-      path: ROUTE_CONFIG.GRAMMAR_EDIT.path,
-      name: ROUTE_CONFIG.GRAMMAR_EDIT.name,
-      component: createComponentImport(ROUTE_CONFIG.GRAMMAR_EDIT.componentPath),
-    },
-
-    // Practice Routes
-    {
-      path: ROUTE_CONFIG.PRACTICE_FLASHCARD.path,
-      name: ROUTE_CONFIG.PRACTICE_FLASHCARD.name,
-      component: createComponentImport(ROUTE_CONFIG.PRACTICE_FLASHCARD.componentPath),
-    },
-    {
-      path: ROUTE_CONFIG.PRACTICE_QUIZ.path,
-      name: ROUTE_CONFIG.PRACTICE_QUIZ.name,
-      component: createComponentImport(ROUTE_CONFIG.PRACTICE_QUIZ.componentPath),
+      path: '/grammar/:id/practice',
+      name: 'grammar-practice',
+      component: GrammarPracticeView,
     },
 
     {
-      path: ROUTE_CONFIG.TAILWIND_TEST.path,
-      name: ROUTE_CONFIG.TAILWIND_TEST.name,
-      component: createComponentImport(ROUTE_CONFIG.TAILWIND_TEST.componentPath),
+      path: '/practice/flashcard',
+      name: 'practice-flashcard',
+      component: FlashcardView,
     },
-
+    {
+      path: '/practice/quiz',
+      name: 'practice-quiz',
+      component: QuizView,
+    },
+    {
+      path: '/test',
+      name: 'tailwind-test',
+      component: TailwindTest,
+    },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: () => import('../views/NotFoundView.vue')
+      component: NotFoundView
     }
   ],
 })
