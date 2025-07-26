@@ -9,7 +9,7 @@
         <div class="bg-white dark:bg-[#0a0a0a] px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-              {{ isEdit ? $t('grammar.editLesson') : $t('grammar.addNewLesson') }}
+              {{ isEdit ? t('grammar.editLesson') : t('grammar.addNewLesson') }}
             </h3>
             <button @click="closeDialog" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -22,13 +22,13 @@
           <form @submit.prevent="submitForm" class="space-y-6 mt-4 max-h-[calc(100vh-200px)] overflow-y-auto px-2">
             <!-- Basic Information -->
             <div class="bg-white dark:bg-[#0f0f0f] shadow rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-              <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6">{{ $t('common.title') }}</h3>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6">{{ t('common.title') }}</h3>
               
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Title -->
                 <div class="md:col-span-2">
                   <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('common.title') }} <span class="text-red-500">*</span>
+                    {{ t('common.title') }} <span class="text-red-500">*</span>
                   </label>
                   <input
                     id="title"
@@ -36,14 +36,14 @@
                     type="text"
                     required
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    :placeholder="$t('grammar.titlePlaceholder')"
+                    :placeholder="t('grammar.titlePlaceholder')"
                   />
                 </div>
 
                 <!-- Category -->
                 <div>
                   <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.category') }} <span class="text-red-500">*</span>
+                    {{ t('grammar.category') }} <span class="text-red-500">*</span>
                   </label>
                   <select
                     id="category"
@@ -51,7 +51,7 @@
                     required
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">{{ $t('grammar.selectCategory') }}</option>
+                    <option value="">{{ t('grammar.selectCategory') }}</option>
                     <option v-for="category in categories" :key="category" :value="category">
                       {{ category }}
                     </option>
@@ -61,7 +61,7 @@
                 <!-- Level -->
                 <div>
                   <label for="level" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.level') }} <span class="text-red-500">*</span>
+                    {{ t('grammar.level') }} <span class="text-red-500">*</span>
                   </label>
                   <select
                     id="level"
@@ -69,17 +69,17 @@
                     required
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">{{ $t('grammar.selectLevel') }}</option>
-                    <option value="beginner">{{ $t('grammar.levels.beginner') }}</option>
-                    <option value="intermediate">{{ $t('grammar.levels.intermediate') }}</option>
-                    <option value="advanced">{{ $t('grammar.levels.advanced') }}</option>
+                    <option value="">{{ t('grammar.selectLevel') }}</option>
+                    <option value="beginner">{{ t('grammar.levels.beginner') }}</option>
+                    <option value="intermediate">{{ t('grammar.levels.intermediate') }}</option>
+                    <option value="advanced">{{ t('grammar.levels.advanced') }}</option>
                   </select>
                 </div>
 
                 <!-- Duration -->
                 <div>
                   <label for="duration" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.durationLabel') }} <span class="text-red-500">*</span>
+                    {{ t('grammar.durationLabel') }} <span class="text-red-500">*</span>
                   </label>
                   <input
                     id="duration"
@@ -95,7 +95,7 @@
                 <!-- Description -->
                 <div class="md:col-span-2">
                   <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.description') }} <span class="text-red-500">*</span>
+                    {{ t('grammar.description') }} <span class="text-red-500">*</span>
                   </label>
                   <textarea
                     id="description"
@@ -103,7 +103,7 @@
                     rows="3"
                     required
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    :placeholder="$t('grammar.descriptionPlaceholder')"
+                    :placeholder="t('grammar.descriptionPlaceholder')"
                   ></textarea>
                 </div>
               </div>
@@ -111,13 +111,13 @@
 
             <!-- Content -->
             <div class="bg-white dark:bg-[#0f0f0f] shadow rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-              <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6">{{ $t('grammar.lessonContent') }}</h3>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6">{{ t('grammar.lessonContent') }}</h3>
               
               <div class="space-y-6">
                 <!-- Theory -->
                 <div>
                   <label for="theory" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.theory') }} <span class="text-red-500">*</span>
+                    {{ t('grammar.theory') }} <span class="text-red-500">*</span>
                   </label>
                   <textarea
                     id="theory"
@@ -125,15 +125,15 @@
                     rows="6"
                     required
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    :placeholder="$t('grammar.theoryPlaceholder')"
+                    :placeholder="t('grammar.theoryPlaceholder')"
                   ></textarea>
-                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $t('grammar.markdownSupported') }}</p>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ t('grammar.markdownSupported') }}</p>
                 </div>
 
                 <!-- Structure -->
                 <div>
                   <label for="structure" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.structure') }} <span class="text-red-500">*</span>
+                    {{ t('grammar.structure') }} <span class="text-red-500">*</span>
                   </label>
                   <textarea
                     id="structure"
@@ -141,14 +141,14 @@
                     rows="4"
                     required
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    :placeholder="$t('grammar.structurePlaceholder')"
+                    :placeholder="t('grammar.structurePlaceholder')"
                   ></textarea>
                 </div>
 
                 <!-- Examples -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.examples') }} <span class="text-red-500">*</span>
+                    {{ t('grammar.examples') }} <span class="text-red-500">*</span>
                   </label>
                   
                   <div class="space-y-2">
@@ -158,14 +158,14 @@
                           v-model="example.text"
                           type="text"
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          :placeholder="$t('grammar.examplePlaceholder', { index: index + 1 })"
+                          :placeholder="t('grammar.examplePlaceholder', { index: index + 1 })"
                           required
                         />
                         <input
                           v-model="example.translation"
                           type="text"
                           class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          :placeholder="$t('grammar.translationPlaceholder', { index: index + 1 })"
+                          :placeholder="t('grammar.translationPlaceholder', { index: index + 1 })"
                           required
                         />
                       </div>
@@ -190,14 +190,14 @@
                     <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                     </svg>
-                    {{ $t('grammar.addExample') }}
+                    {{ t('grammar.addExample') }}
                   </button>
                 </div>
 
                 <!-- Usage Rules -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.usageRules') }}
+                    {{ t('grammar.usageRules') }}
                   </label>
                   
                   <div class="space-y-2">
@@ -207,13 +207,13 @@
                           v-model="rule.title"
                           type="text"
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          :placeholder="$t('grammar.ruleTitlePlaceholder', { index: index + 1 })"
+                          :placeholder="t('grammar.ruleTitlePlaceholder', { index: index + 1 })"
                         />
                         <textarea
                           v-model="rule.description"
                           rows="2"
                           class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          :placeholder="$t('grammar.ruleDescriptionPlaceholder', { index: index + 1 })"
+                          :placeholder="t('grammar.ruleDescriptionPlaceholder', { index: index + 1 })"
                         ></textarea>
                       </div>
                       <button 
@@ -236,14 +236,14 @@
                     <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                     </svg>
-                    {{ $t('grammar.addRule') }}
+                    {{ t('grammar.addRule') }}
                   </button>
                 </div>
 
                 <!-- Common Mistakes -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {{ $t('grammar.commonMistakes') }}
+                    {{ t('grammar.commonMistakes') }}
                   </label>
                   
                   <div class="space-y-2">
@@ -253,19 +253,19 @@
                           v-model="mistake.wrong"
                           type="text"
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          :placeholder="$t('grammar.wrongSentencePlaceholder', { index: index + 1 })"
+                          :placeholder="t('grammar.wrongSentencePlaceholder', { index: index + 1 })"
                         />
                         <input
                           v-model="mistake.correct"
                           type="text"
                           class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          :placeholder="$t('grammar.correctSentencePlaceholder', { index: index + 1 })"
+                          :placeholder="t('grammar.correctSentencePlaceholder', { index: index + 1 })"
                         />
                         <textarea
                           v-model="mistake.explanation"
                           rows="2"
                           class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          :placeholder="$t('grammar.explanationPlaceholder', { index: index + 1 })"
+                          :placeholder="t('grammar.explanationPlaceholder', { index: index + 1 })"
                         ></textarea>
                       </div>
                       <button 
@@ -288,7 +288,7 @@
                     <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                     </svg>
-                    {{ $t('grammar.addMistake') }}
+                    {{ t('grammar.addMistake') }}
                   </button>
                 </div>
               </div>
@@ -304,14 +304,14 @@
             :disabled="isSubmitting"
             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
           >
-            {{ isSubmitting ? $t('common.saving') : (isEdit ? $t('common.update') : $t('common.save')) }}
+            {{ isSubmitting ? t('common.saving') : (isEdit ? t('common.update') : t('common.save')) }}
           </button>
           <button 
             type="button" 
             @click="closeDialog"
             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-[#0a0a0a] text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
           >
-            {{ $t('common.cancel') }}
+            {{ t('common.cancel') }}
           </button>
         </div>
       </div>
@@ -321,6 +321,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useGrammarStore } from '../../../composables/useGrammarStore'
 
 const props = defineProps({
@@ -336,6 +337,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'saved'])
 
+const { t } = useI18n()
 const grammarStore = useGrammarStore()
 const isSubmitting = ref(false)
 const isEdit = computed(() => !!props.editId)

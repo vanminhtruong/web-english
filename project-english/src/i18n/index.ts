@@ -5,7 +5,7 @@ import vi from './locales/vi.json'
 // Type definitions for messages
 type MessageSchema = typeof en
 
-const i18n = createI18n<[MessageSchema], 'en' | 'vi'>({
+const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
   locale: localStorage.getItem('locale') || 'vi', // set default locale
   fallbackLocale: 'en', // set fallback locale
@@ -39,4 +39,4 @@ export function toggleLocale(): 'en' | 'vi' {
   const newLocale = i18n.global.locale.value === 'en' ? 'vi' : 'en'
   setLocale(newLocale)
   return newLocale
-} 
+}

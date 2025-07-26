@@ -177,7 +177,7 @@ const currentVoiceOption = computed(() => {
 })
 
 // Dropdown positioning - calculated once when dropdown opens
-const dropdownStyle = computed(() => {
+const dropdownStyle = computed((): Record<string, string> => {
   if (!showDropdown.value || !dropdownButton.value) {
     return { display: 'none' }
   }

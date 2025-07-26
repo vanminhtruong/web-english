@@ -17,14 +17,14 @@
         <LazyLoadComponent animation-type="slide-left" :threshold="0.15">
           <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg border border-gray-200 dark:border-gray-800">
             <div class="px-4 py-5 sm:p-6">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ $t('dashboard.quickActions') }}</h3>
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ t('dashboard.quickActions') }}</h3>
               <div class="grid grid-cols-2 gap-4">
                 <button @click="navigateTo('/vocabulary/add')" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
                   <div class="text-center">
                     <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="text-sm">{{ $t('dashboard.actions.addVocabulary') }}</span>
+                    <span class="text-sm">{{ t('dashboard.actions.addVocabulary') }}</span>
                   </div>
                 </button>
                 
@@ -33,7 +33,7 @@
                     <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
                     </svg>
-                    <span class="text-sm">{{ $t('dashboard.actions.practiceFlashcard') }}</span>
+                    <span class="text-sm">{{ t('dashboard.actions.practiceFlashcard') }}</span>
                   </div>
                 </button>
                 
@@ -42,7 +42,7 @@
                     <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="text-sm">{{ $t('dashboard.actions.takeQuiz') }}</span>
+                    <span class="text-sm">{{ t('dashboard.actions.takeQuiz') }}</span>
                   </div>
                 </button>
                 
@@ -51,7 +51,7 @@
                     <svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
                     </svg>
-                    <span class="text-sm">{{ $t('dashboard.actions.learnGrammar') }}</span>
+                    <span class="text-sm">{{ t('dashboard.actions.learnGrammar') }}</span>
                   </div>
                 </button>
               </div>
@@ -63,7 +63,7 @@
         <LazyLoadComponent animation-type="slide-right" :threshold="0.15">
           <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg border border-gray-200 dark:border-gray-800">
             <div class="px-4 py-5 sm:p-6">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ $t('dashboard.recentActivity') }}</h3>
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">{{ t('dashboard.recentActivity') }}</h3>
               <div class="space-y-3">
                 <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-3">
                   <div class="flex-shrink-0">

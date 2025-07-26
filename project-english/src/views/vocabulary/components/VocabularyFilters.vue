@@ -6,7 +6,7 @@
         <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 xs:mb-1.5 sm:mb-2">{{ t('common.search') }}</label>
         <input
           :value="searchQuery"
-          @input="$emit('update:searchQuery', $event.target.value)"
+          @input="handleSearchInput"
           type="text"
           :placeholder="t('vocabulary.searchPlaceholder')"
           class="w-full px-2 py-1.5 xs:px-2.5 xs:py-2 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -18,7 +18,7 @@
         <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 xs:mb-1.5 sm:mb-2">{{ t('vocabulary.category') }}</label>
         <select 
           :value="selectedCategory" 
-          @change="$emit('update:selectedCategory', $event.target.value)"
+          @change="handleCategoryChange"
           class="w-full px-2 py-1.5 xs:px-2.5 xs:py-2 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{{ t('common.all') }}</option>
@@ -31,7 +31,7 @@
         <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 xs:mb-1.5 sm:mb-2">{{ t('vocabulary.level') }}</label>
         <select 
           :value="selectedLevel" 
-          @change="$emit('update:selectedLevel', $event.target.value)"
+          @change="handleLevelChange"
           class="w-full px-2 py-1.5 xs:px-2.5 xs:py-2 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{{ t('common.all') }}</option>
@@ -48,7 +48,7 @@
         <input 
           type="checkbox" 
           :checked="showFavoritesOnly" 
-          @change="$emit('update:showFavoritesOnly', $event.target.checked)"
+          @change="handleFavoritesChange"
           class="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-[#0a0a0a] dark:border-gray-600"
         >
         <span class="ml-1.5 xs:ml-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300">{{ t('vocabulary.showFavoritesOnly') }}</span>
@@ -74,7 +74,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-defineEmits<{
+const emit = defineEmits<{
   'update:searchQuery': [value: string]
   'update:selectedCategory': [value: string]
   'update:selectedLevel': [value: string]
@@ -84,6 +84,27 @@ defineEmits<{
 // Function to get topic display name
 const getTopicDisplayName = (category: string): string => {
   return getTopicName(category)
+}
+
+// Event handlers
+const handleCategoryChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  emit('update:selectedCategory', target.value)
+}
+
+const handleLevelChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  emit('update:selectedLevel', target.value)
+}
+
+const handleSearchInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  emit('update:searchQuery', target.value)
+}
+
+const handleFavoritesChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  emit('update:showFavoritesOnly', target.checked)
 }
 
 

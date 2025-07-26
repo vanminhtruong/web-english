@@ -1,11 +1,14 @@
 <template>
   <div class="bg-white dark:bg-black shadow border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $t('dashboard.title') }}</h1>
-      <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ $t('dashboard.description') }}</p>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ t('dashboard.title') }}</h1>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ t('dashboard.description') }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>

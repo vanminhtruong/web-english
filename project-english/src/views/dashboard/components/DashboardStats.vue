@@ -12,7 +12,7 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ $t('dashboard.stats.vocabularyLearned') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.vocabularyLearned') }}</dt>
               <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.vocabularyLearned }}</dd>
             </dl>
           </div>
@@ -32,7 +32,7 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ $t('dashboard.stats.grammarLessons') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.grammarLessons') }}</dt>
               <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.grammarLessons }}</dd>
             </dl>
           </div>
@@ -52,8 +52,8 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ $t('dashboard.stats.currentStreak') }}</dt>
-              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.currentStreak }} {{ $t('dashboard.stats.days') }}</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.currentStreak') }}</dt>
+              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.currentStreak }} {{ t('dashboard.stats.days') }}</dd>
             </dl>
           </div>
         </div>
@@ -72,8 +72,8 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ $t('dashboard.stats.totalTime') }}</dt>
-              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.totalTime }} {{ $t('dashboard.stats.hours') }}</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.totalTime') }}</dt>
+              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.totalTime }} {{ t('dashboard.stats.hours') }}</dd>
             </dl>
           </div>
         </div>
@@ -83,6 +83,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 interface Stats {
   vocabularyLearned: number
   grammarLessons: number

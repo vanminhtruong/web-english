@@ -795,6 +795,72 @@ const route = useRoute()
 const router = useRouter()
 const { playAudio } = useVoiceStore()
 
+// TypeScript Interfaces
+interface ListeningQuestion {
+  question: string
+  type: 'multiple-choice' | 'fill-blank' | 'ordering'
+  options?: string[]
+  correctAnswer: string | number
+  explanation?: string
+}
+
+interface BaseQuestion {
+  id: string
+  type: string
+  question: string
+  options: string[]
+  correctAnswer: string
+  explanation: string
+  difficulty: string
+}
+
+interface ListeningExercise extends BaseQuestion {
+  type: 'listening'
+  audioUrl: string
+  originalUrl: string
+  maxPlays: number
+  allowNotes: boolean
+  transcript: string
+  questions: ListeningQuestion[]
+  // Include all other properties for compatibility
+  taskType: string
+  prompt: string
+  requirements: string[]
+  minWords: number
+  timeLimit: number
+}
+
+interface WritingExercise extends BaseQuestion {
+  type: 'writing'
+  taskType: string
+  prompt: string
+  requirements: string[]
+  minWords: number
+  timeLimit: number
+  audioUrl: string
+  originalUrl: string
+  maxPlays: number
+  allowNotes: boolean
+  transcript: string
+  questions: any[]
+}
+
+interface OtherExercise extends BaseQuestion {
+  taskType: string
+  prompt: string
+  requirements: string[]
+  minWords: number
+  timeLimit: number
+  audioUrl: string
+  originalUrl: string
+  maxPlays: number
+  allowNotes: boolean
+  transcript: string
+  questions: any[]
+}
+
+type QuestionType = ListeningExercise | WritingExercise | OtherExercise
+
 // Exercise Components (lazy loaded)
 const MultipleChoiceExercise = defineAsyncComponent(() => import('./components/MultipleChoiceExercise.vue'))
 const FillBlankExercise = defineAsyncComponent(() => import('./components/FillBlankExercise.vue'))
@@ -835,8 +901,13 @@ const grammarId = computed(() => route.params.id as string)
 const selectedExercise = ref<string | null>(null)
 const currentQuestionIndex = ref(0)
 const totalQuestions = ref(10)
-const currentQuestion = ref(null)
-const exerciseResults = ref({
+const currentQuestion = ref<any>(null)
+const exerciseResults = ref<{
+  correct: number
+  incorrect: number
+  percentage: number
+  answers: any[]
+}>({
   correct: 0,
   incorrect: 0,
   percentage: 0,
@@ -857,16 +928,17 @@ const newExercise = ref({
 })
 
 // Question Management State
-const exerciseQuestions = ref({})
+const exerciseQuestions = ref<Record<string, any[]>>({})
 const showQuestionManager = ref(false)
 const selectedExerciseTypeForQuestions = ref('')
-const newQuestion = ref({
+const newQuestion = ref<QuestionType>({
   id: '',
   type: '',
   question: '',
   options: ['', '', '', ''],
   correctAnswer: '',
   explanation: '',
+  difficulty: 'medium',
   // Writing specific fields
   taskType: 'essay',
   prompt: '',
@@ -950,7 +1022,7 @@ const exerciseTypes = ref([
 
 // Computed
 const currentExerciseComponent = computed(() => {
-  const componentMap = {
+  const componentMap: Record<string, any> = {
     'multiple-choice': MultipleChoiceExercise,
     'fill-blank': FillBlankExercise,
     'pronunciation': PronunciationExercise,
@@ -958,7 +1030,7 @@ const currentExerciseComponent = computed(() => {
     'listening': ListeningExercise,
     'writing': WritingExercise
   }
-  return componentMap[selectedExercise.value] || null
+  return selectedExercise.value ? componentMap[selectedExercise.value] || null : null
 })
 
 // Methods
@@ -980,6 +1052,7 @@ const startExercise = (exerciseType: string) => {
 
 const generateQuestions = () => {
   // Get questions from localStorage or use default data
+  if (!selectedExercise.value) return
   const savedQuestions = exerciseQuestions.value[selectedExercise.value] || []
   
   if (savedQuestions.length > 0) {
@@ -1267,6 +1340,7 @@ const resetNewQuestionForm = () => {
       options: ['', '', '', ''],
       correctAnswer: '',
       explanation: '',
+      difficulty: 'medium',
       // Writing specific fields
       taskType: 'essay',
       prompt: '',
@@ -1289,6 +1363,7 @@ const resetNewQuestionForm = () => {
       options: ['', '', '', ''],
       correctAnswer: '',
       explanation: '',
+      difficulty: 'medium',
       // Add missing properties to satisfy TypeScript
       taskType: 'essay',
       prompt: '',

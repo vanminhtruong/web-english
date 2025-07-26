@@ -1,9 +1,9 @@
+/* Import lazy loading animations */
+@import './lazy-loading.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import lazy loading animations */
-@import './lazy-loading.css';
 
 .custom-toast {
   @apply bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white rounded-lg shadow-lg border border-gray-200 dark:border-gray-700;

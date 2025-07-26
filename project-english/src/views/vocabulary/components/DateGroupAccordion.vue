@@ -477,7 +477,7 @@ const loadActionButtonsState = () => {
 const saveActionButtonsState = () => {
   try {
     const saved = localStorage.getItem(SHOW_ACTION_BUTTONS_KEY)
-    let allStates = {}
+    let allStates: Record<string, boolean> = {}
     
     if (saved !== null) {
       allStates = JSON.parse(saved)

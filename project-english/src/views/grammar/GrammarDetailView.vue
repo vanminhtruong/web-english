@@ -30,13 +30,13 @@
               <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
-              {{ $t('grammar.practice.title') }}
+              {{ t('grammar.practice.title') }}
             </button>
             <button @click="openEditDialog" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
               <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
               </svg>
-              {{ $t('common.edit') }}
+              {{ t('common.edit') }}
             </button>
           </div>
         </div>
@@ -51,14 +51,14 @@
             <span :class="getLevelColor(lesson.level)" class="px-3 py-1 text-sm font-medium rounded-full">
               {{ getLevelText(lesson.level) }}
             </span>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ lesson.duration }} {{ $t('grammar.duration') }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ lesson.duration }} {{ t('grammar.duration') }}</p>
           </div>
         </div>
         
         <!-- Progress Bar -->
         <div class="mt-6">
           <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
-            <span>{{ $t('grammar.progress') }}</span>
+            <span>{{ t('grammar.progress') }}</span>
             <span>{{ lesson.progress }}%</span>
           </div>
           <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3">

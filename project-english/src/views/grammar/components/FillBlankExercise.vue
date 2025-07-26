@@ -90,7 +90,7 @@
           <span v-for="(part, index) in sentenceParts" :key="`user-${index}`">
             <span v-if="part.type === 'text'">{{ part.content }}</span>
             <span 
-              v-else-if="part.type === 'blank'"
+              v-else-if="isBlankPart(part)"
               :class="[
                 'inline-block mx-1 px-2 py-1 rounded border font-medium',
                 isAnswerCorrect(part.index)
@@ -210,11 +210,20 @@ const showAnswer = ref(false)
 const showHint = ref(false)
 const focusedBlankIndex = ref<number | null>(null)
 
+// Types for sentence parts
+type SentencePart = {
+  type: 'text'
+  content: string
+} | {
+  type: 'blank'
+  index: number
+}
+
 // Computed
-const sentenceParts = computed(() => {
+const sentenceParts = computed((): SentencePart[] => {
   if (!props.question?.sentence) return []
   
-  const parts = []
+  const parts: SentencePart[] = []
   const regex = /___+/g
   let lastIndex = 0
   let match
@@ -270,6 +279,10 @@ const correctCount = computed(() => {
 })
 
 // Methods
+const isBlankPart = (part: SentencePart): part is { type: 'blank'; index: number } => {
+  return part.type === 'blank'
+}
+
 const isAnswerCorrect = (index: number) => {
   if (!showAnswer.value || !userAnswers.value[index] || !props.question?.correctAnswers?.[index]) return false
   return userAnswers.value[index].toLowerCase().trim() === 

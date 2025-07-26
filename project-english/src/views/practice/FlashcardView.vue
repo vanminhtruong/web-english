@@ -555,7 +555,7 @@ const {
 // Override resetCurrentCard to use modes composable
 const handleQuizAnswer = (answer: string) => {
   const isCorrect = selectQuizAnswer(answer)
-  recordAnswer(isCorrect)
+  recordAnswer(!!isCorrect)
 }
 
 const handleTypingAnswer = () => {

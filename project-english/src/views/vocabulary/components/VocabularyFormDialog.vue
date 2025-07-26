@@ -435,8 +435,8 @@ const validateAntonyms = (): boolean => {
 
 // Overall form validation (silent - no toasts, just returns boolean)
 const validateForm = (): boolean => {
-  const isWordValid = form.word.trim() && form.word.trim().length <= 100
-  const isMeaningValid = form.meaning.trim() && form.meaning.trim().length <= 500
+  const isWordValid = !!(form.word.trim() && form.word.trim().length <= 100)
+  const isMeaningValid = !!(form.meaning.trim() && form.meaning.trim().length <= 500)
   const isPartOfSpeechValid = !!form.partOfSpeech
   const isCategoryValid = !!form.category
   const isLevelValid = !!form.level
@@ -492,7 +492,7 @@ watch(
       form.synonyms = newVocabulary.synonyms?.join(', ') || ''
       form.antonyms = newVocabulary.antonyms?.join(', ') || ''
       form.notes = newVocabulary.notes || ''
-      form.favorite = newVocabulary.favorite
+      form.favorite = !!newVocabulary.favorite
       form.image = newVocabulary.image || null
     } else {
       // Reset form for new vocabulary

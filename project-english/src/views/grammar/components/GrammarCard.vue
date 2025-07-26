@@ -16,7 +16,7 @@
         <span :class="getLevelColor(lesson.level)" class="px-2 py-1 text-xs font-medium rounded-full">
           {{ getLevelText(lesson.level) }}
         </span>
-        <span class="text-sm text-gray-500 dark:text-gray-400">{{ lesson.duration }} {{ $t('grammar.duration') }}</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400">{{ lesson.duration }} {{ t('grammar.duration') }}</span>
       </div>
       
       <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{{ lesson.description }}</p>
@@ -34,7 +34,7 @@
       <!-- Progress Bar -->
       <div class="mb-4">
         <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-1">
-          <span>{{ $t('grammar.progress') }}</span>
+          <span>{{ t('grammar.progress') }}</span>
           <span>{{ lesson.progress }}%</span>
         </div>
         <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
@@ -45,7 +45,7 @@
       <!-- Action Buttons -->
       <div class="flex space-x-2">
         <button @click="$emit('view-lesson', lesson)" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors">
-          {{ lesson.progress > 0 ? $t('grammar.continue') : $t('grammar.start') }}
+          {{ lesson.progress > 0 ? t('grammar.continue') : t('grammar.start') }}
         </button>
         <button @click="$emit('practice-lesson', lesson)" class="bg-green-500 hover:bg-green-600 text-white text-sm font-medium py-2 px-3 rounded-md transition-colors">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
