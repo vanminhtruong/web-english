@@ -249,7 +249,7 @@ const restoreGroupTopics = (topics: Record<string, string>) => {
 }
 
 interface Word {
-  id: string
+  id: number
   word: string
   pronunciation: string
   partOfSpeech: string

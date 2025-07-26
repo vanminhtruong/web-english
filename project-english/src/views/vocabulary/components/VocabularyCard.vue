@@ -110,7 +110,7 @@ const closeImageModal = () => {
 }
 
 interface Word {
-  id: string
+  id: number
   word: string
   pronunciation: string
   partOfSpeech: string
