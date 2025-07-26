@@ -8,7 +8,7 @@ export interface Vocabulary {
   pronunciation: string
   partOfSpeech: string
   meaning: string
-  example: string
+  example?: string
   category: string
   level: string
   synonyms?: string[]
