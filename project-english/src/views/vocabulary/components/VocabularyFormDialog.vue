@@ -286,6 +286,7 @@ const TopicManager = defineAsyncComponent(() => import('./TopicManager.vue'))
 interface Props {
   modelValue: boolean
   vocabulary?: Vocabulary | null
+  targetDate?: string | null
 }
 
 interface Emits {
@@ -294,7 +295,8 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  vocabulary: null
+  vocabulary: null,
+  targetDate: null
 })
 
 const emit = defineEmits<Emits>()
@@ -616,7 +618,7 @@ const submitForm = async () => {
     await new Promise(resolve => setTimeout(resolve, 500))
 
     // Process form data
-    const vocabularyData = {
+    const vocabularyData: any = {
       word: form.word.trim(),
       pronunciation: form.pronunciation.trim(),
       partOfSpeech: form.partOfSpeech,
@@ -639,6 +641,13 @@ const submitForm = async () => {
       toast.success(t('vocabulary.validation.updateSuccess'))
     } else {
       // Add new vocabulary
+      // If targetDate is provided, use it for createdAt and updatedAt
+      if (props.targetDate) {
+        const targetDateObj = new Date(props.targetDate)
+        vocabularyData.createdAt = targetDateObj.toISOString()
+        vocabularyData.updatedAt = targetDateObj.toISOString()
+      }
+      
       const newVocabulary = vocabularyStore.addVocabulary(vocabularyData)
       console.log('Vocabulary added:', newVocabulary)
       // Show success toast for save

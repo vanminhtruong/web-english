@@ -29,7 +29,8 @@
     "confirm": "Xác nhận",
     "reset": "Đặt lại",
     "apply": "Áp dụng",
-    "resetToDefault": "Về mặc định"
+    "resetToDefault": "Về mặc định",
+    "actions": "Thao tác"
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -40,6 +41,7 @@
     "title": "Từ vựng",
     "description": "Quản lý và học từ vựng tiếng Anh",
     "addNew": "Thêm từ mới",
+    "addWord": "Thêm từ",
     "addVocabulary": "Thêm từ vựng mới",
     "editVocabulary": "Chỉnh sửa từ vựng",
     "saveVocabulary": "Lưu từ vựng",
@@ -113,7 +115,8 @@
     "notFound": "Không tìm thấy từ vựng!",
     "updateError": "Có lỗi xảy ra khi cập nhật từ vựng. Vui lòng thử lại.",
     "deleteError": "Có lỗi xảy ra khi xóa từ vựng. Vui lòng thử lại.",
-    "showingResults": "Hiển thị {start} đến {end} trong {total} kết quả",
+    "showingResults": "Hiển thị {start} đến {end} của {total} kết quả",
+    "showingDateGroups": "Hiển thị {start} đến {end} của {total} nhóm ngày",
     "categories": {
       "technology": "Công nghệ",
       "business": "Kinh doanh",
@@ -178,8 +181,11 @@
       "manual": "Thủ công",
       "saveNow": "Lưu ngay",
       "chooseAutoFile": "Chọn file auto-save",
+      "setup": "Thiết lập",
       "changeAutoFile": "Đổi file auto-save",
+      "change": "Đổi",
       "importFile": "Nhập file",
+      "importShort": "Nhập",
       "lastSave": "Lần cuối: {time}",
       "notSaved": "Chưa lưu",
       "autoSaveFileSetup": "Thiết lập file lưu tự động thành công!",

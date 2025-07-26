@@ -22,8 +22,8 @@
 
     <!-- Voice Settings -->
     <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
+        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 md:p-5">
           <VoiceSelector :show-voice-info="false" />
         </div>
       </div>
@@ -31,8 +31,8 @@
 
     <!-- Date Filter -->
     <LazyLoadComponent animation-type="slide-right" :threshold="0.1" root-margin="-50px">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
+        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 md:p-5">
           <FlashcardDateFilter
             :vocabularies="allVocabularies"
             :enabled="dateFilterEnabled"
@@ -45,7 +45,7 @@
     </LazyLoadComponent>
 
     <!-- Practice Container -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       <div v-if="currentFlashcards.length > 0" class="relative">
         <!-- Practice Timer -->
         <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
@@ -327,7 +327,7 @@ const handleExitPractice = () => {
   if (practiceStarted.value && !allowExit.value) {
     showExitWarning.value = true
   } else {
-    goBack()
+    router.push('/')
   }
 }
 
@@ -343,8 +343,14 @@ const handleTimerRestart = () => {
 
 const handleSkip = () => {
   console.log('Skip current card')
-  // Move to next card
-  enhancedNextCard()
+  // If this is the last card, complete session and go to practice page
+  if (currentIndex.value >= currentFlashcards.value.length - 1) {
+    handleSessionComplete()
+    router.push('/practice/flashcard')
+  } else {
+    // Move to next card
+    enhancedNextCard()
+  }
 }
 
 // Exit Warning Handlers
@@ -362,8 +368,8 @@ const confirmExit = () => {
   }
   // Remove navigation guard to allow exit
   removeNavigationGuard()
-  // Navigate back or complete session
-  goBack()
+  // Navigate back to home page
+  router.push('/')
 }
 
 // Navigation guard to prevent leaving page during practice

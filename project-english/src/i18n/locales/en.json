@@ -29,7 +29,8 @@
     "close": "Close",
     "confirm": "Confirm",
     "reset": "Reset",
-    "resetToDefault": "Reset to Default"
+    "resetToDefault": "Reset to Default",
+    "actions": "Actions"
   },
   "levels": {
     "beginner": "Beginner",
@@ -40,6 +41,7 @@
     "title": "Vocabulary",
     "description": "Manage and learn English vocabulary",
     "addNew": "Add New Word",
+    "addWord": "Add Word",
     "addVocabulary": "Add New Vocabulary",
     "editVocabulary": "Edit Vocabulary",
     "saveVocabulary": "Save Vocabulary",
@@ -115,6 +117,7 @@
     "updateError": "An error occurred while updating vocabulary. Please try again.",
     "deleteError": "An error occurred while deleting vocabulary. Please try again.",
     "showingResults": "Showing {start} to {end} of {total} results",
+    "showingDateGroups": "Showing {start} to {end} of {total} date groups",
     "categories": {
       "technology": "Technology",
       "business": "Business",
@@ -179,8 +182,11 @@
       "manual": "Manual",
       "saveNow": "Save Now",
       "chooseAutoFile": "Choose Auto-save File",
+      "setup": "Setup",
       "changeAutoFile": "Change Auto-save File",
+      "change": "Change",
       "importFile": "Import File",
+      "importShort": "Import",
       "lastSave": "Last saved: {time}",
       "notSaved": "Not saved",
       "autoSaveFileSetup": "Auto-save file setup successfully!",

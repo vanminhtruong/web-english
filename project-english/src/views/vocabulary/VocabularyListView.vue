@@ -96,6 +96,7 @@
           @date-group-next="(date) => dateGroupNext(date, filteredVocabulary)"
           @date-group-go-to-page="dateGroupGoToPage"
           @open-note-dialog="openNoteDialog"
+          @open-add-vocabulary-dialog="openAddVocabularyForDate"
         />
       </LazyLoadComponent>
     </div>
@@ -104,6 +105,7 @@
     <VocabularyFormDialog
       v-model="showFormDialog"
       :vocabulary="selectedVocabulary"
+      :target-date="targetDateForNewVocabulary"
       @vocabulary-saved="onVocabularySaved"
     />
 
@@ -254,10 +256,24 @@ const {
   selectedVocabularyForDetail,
   openAddDialog,
   openEditDialog,
-  onVocabularySaved,
+  onVocabularySaved: originalOnVocabularySaved,
   openDetailsDialog,
   openEditFromDetail,
 } = useVocabularyDialogs();
+
+// Override onVocabularySaved to reset target date and reload grouping
+const onVocabularySaved = () => {
+  originalOnVocabularySaved();
+  targetDateForNewVocabulary.value = null;
+  
+  // Reload grouping state to ensure new vocabulary appears in correct date group
+  if (useGrouping.value) {
+    nextTick(() => {
+      reloadGroupingState();
+      console.log('Grouping state reloaded after vocabulary saved');
+    });
+  }
+};
 
 const {
   autoSaveEnabled,
@@ -360,6 +376,14 @@ watch(
       saveStatus.value = 'saving';
       debounceAutoSave();
     }
+    
+    // Reload grouping state when vocabulary count changes (new vocabulary added)
+    if (useGrouping.value && newCount !== oldCount && newCount > 0) {
+      nextTick(() => {
+        reloadGroupingState();
+        console.log('Grouping state reloaded due to vocabulary count change');
+      });
+    }
   },
   { deep: true, immediate: false }
 );
@@ -439,6 +463,22 @@ const openNoteDialog = (date: string, words: any[]) => {
   noteDialogDate.value = date;
   noteDialogWords.value = words;
   showNoteDialog.value = true;
+};
+
+// Store the target date for new vocabulary
+const targetDateForNewVocabulary = ref<string | null>(null);
+
+// Open add vocabulary dialog with specific date
+const openAddVocabularyForDate = (date: string) => {
+  // Store the target date
+  targetDateForNewVocabulary.value = date;
+  
+  // Use the standard add dialog approach
+  selectedVocabulary.value = null;
+  showFormDialog.value = true;
+  
+  // Dispatch edit word event
+  window.dispatchEvent(new CustomEvent('vocabulary-edit-word'));
 };
 
 const handleNoteSaved = (note: string, markedWords: string[]) => {

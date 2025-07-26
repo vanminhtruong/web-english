@@ -144,11 +144,11 @@ export function useFlashcardGame(flashcards: Ref<Vocabulary[]>) {
   }
 
   const goBack = () => {
-    router.back()
+    router.push('/')
   }
 
   const goToVocabulary = () => {
-    router.push('/vocabulary')
+    router.push('/practice/flashcard')
   }
 
   const markEasy = () => {

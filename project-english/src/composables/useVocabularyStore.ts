@@ -143,11 +143,11 @@ export function useVocabularyStore() {
   }
   
   // Add new vocabulary
-  const addVocabulary = (vocabularyData: Omit<Vocabulary, 'id' | 'createdAt'>): Vocabulary => {
+  const addVocabulary = (vocabularyData: Omit<Vocabulary, 'id'> & { createdAt?: string }): Vocabulary => {
     const newVocabulary: Vocabulary = {
       ...vocabularyData,
       id: nextId++,
-      createdAt: new Date().toISOString()
+      createdAt: vocabularyData.createdAt || new Date().toISOString()
     }
     
     vocabularies.value.unshift(newVocabulary) // Add to beginning of array
