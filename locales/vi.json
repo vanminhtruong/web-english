@@ -117,6 +117,7 @@
     "deleteError": "Có lỗi xảy ra khi xóa từ vựng. Vui lòng thử lại.",
     "showingResults": "Hiển thị {start} đến {end} của {total} kết quả",
     "showingDateGroups": "Hiển thị {start} đến {end} của {total} nhóm ngày",
+    "showingCategoryItems": "Hiển thị {start} đến {end} của {total} mục",
     "categories": {
       "technology": "Công nghệ",
       "business": "Kinh doanh",
