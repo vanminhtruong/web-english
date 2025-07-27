@@ -361,24 +361,112 @@
             @mouseenter="hoverToExpandEnabled ? handleTopicHover(topicGroup.topic, true) : null"
             @mouseleave="hoverToExpandEnabled ? handleTopicHover(topicGroup.topic, false) : null"
           >
-            <!-- Topic header with accordion toggle -->
-            <div 
-              class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50"
-              @click="toggleTopicAccordion(topicGroup.topic)"
-            >
-              <div class="flex items-center space-x-2">
-                <svg 
-                  class="w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform duration-200"
-                  :class="{ 'transform rotate-90': isTopicExpanded(topicGroup.topic) }"
-                  fill="currentColor" 
-                  viewBox="0 0 20 20"
-                >
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                </svg>
-                <h5 class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {{ getTopicName(topicGroup.topic) }}
-                  <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
-                </h5>
+            <!-- Topic header with accordion toggle and pagination -->
+            <div class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+              <!-- Topic name and toggle -->
+              <div 
+                class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                @click="toggleTopicAccordion(topicGroup.topic)"
+              >
+                <div class="flex items-center space-x-2">
+                  <svg 
+                    class="w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform duration-200"
+                    :class="{ 'transform rotate-90': isTopicExpanded(topicGroup.topic) }"
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                  <h5 class="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {{ getTopicName(topicGroup.topic) }}
+                    <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
+                  </h5>
+                </div>
+              </div>
+              
+              <!-- Category pagination (only show when expanded and has multiple pages) -->
+              <div 
+                v-if="isTopicExpanded(topicGroup.topic) && getPaginatedTopicVocabularies(topicGroup).totalPages > 1" 
+                class="px-6 pb-3" 
+                @click.stop
+              >
+                <div class="flex items-center justify-between text-xs">
+                  <!-- Mobile pagination -->
+                  <div class="flex-1 flex justify-between sm:hidden">
+                    <button 
+                      @click="previousTopicPage(topicGroup.topic)" 
+                      :disabled="!getPaginatedTopicVocabularies(topicGroup).hasPrevious" 
+                      class="relative inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {{ t('common.previous') }}
+                    </button>
+                    <button 
+                      @click="nextTopicPage(topicGroup.topic)" 
+                      :disabled="!getPaginatedTopicVocabularies(topicGroup).hasNext" 
+                      class="ml-2 relative inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {{ t('common.next') }}
+                    </button>
+                  </div>
+                  
+                  <!-- Desktop pagination -->
+                  <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                      <p class="text-xs text-gray-700 dark:text-gray-300">
+                        {{ t('vocabulary.showingCategoryItems', { 
+                          start: getPaginatedTopicVocabularies(topicGroup).startIndex, 
+                          end: getPaginatedTopicVocabularies(topicGroup).endIndex, 
+                          total: getPaginatedTopicVocabularies(topicGroup).totalItems 
+                        }) }}
+                      </p>
+                    </div>
+                    <div>
+                      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                        <!-- Previous button -->
+                        <button 
+                          @click="previousTopicPage(topicGroup.topic)" 
+                          :disabled="!getPaginatedTopicVocabularies(topicGroup).hasPrevious" 
+                          class="relative inline-flex items-center px-1.5 py-1 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-xs font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <span class="sr-only">{{ t('common.previous') }}</span>
+                          <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                          </svg>
+                        </button>
+                        
+                        <!-- Page numbers -->
+                        <button
+                          v-for="page in getVisibleTopicPages(getPaginatedTopicVocabularies(topicGroup).currentPage, getPaginatedTopicVocabularies(topicGroup).totalPages)"
+                          :key="`${topicGroup.topic}-${page}`"
+                          @click="page > 0 ? goToTopicPage(topicGroup.topic, page) : null"
+                          :disabled="page === -1"
+                          :class="[
+                            page === getPaginatedTopicVocabularies(topicGroup).currentPage
+                              ? 'z-10 bg-blue-50 dark:bg-blue-900 border-blue-500 dark:border-blue-400 text-blue-600 dark:text-blue-300'
+                              : page === -1
+                              ? 'bg-white dark:bg-[#0a0a0a] border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 cursor-default'
+                              : 'bg-white dark:bg-[#0a0a0a] border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600',
+                            'relative inline-flex items-center px-2 py-1 border text-xs font-medium'
+                          ]"
+                        >
+                          {{ page === -1 ? '...' : page }}
+                        </button>
+                        
+                        <!-- Next button -->
+                        <button 
+                          @click="nextTopicPage(topicGroup.topic)" 
+                          :disabled="!getPaginatedTopicVocabularies(topicGroup).hasNext" 
+                          class="relative inline-flex items-center px-1.5 py-1 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-xs font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <span class="sr-only">{{ t('common.next') }}</span>
+                          <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                          </svg>
+                        </button>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -387,7 +475,7 @@
               <div v-if="isTopicExpanded(topicGroup.topic)" class="topic-accordion-content py-2">
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                   <VocabularyCard
-                    v-for="word in topicGroup.vocabularies"
+                    v-for="word in getPaginatedTopicVocabularies(topicGroup).vocabularies"
                     :key="word.id"
                     :word="word"
                     @play-audio="$emit('play-audio', $event)"
@@ -551,13 +639,121 @@ watch(showActionButtons, () => {
 // State for topic accordions
 const expandedTopics = ref<Record<string, boolean>>({})
 
+// State for topic pagination (5 words per page)
+const topicPaginationState = ref<Record<string, { currentPage: number }>>({}) 
+const itemsPerCategoryPage = 5
+const TOPIC_PAGINATION_STORAGE_KEY = 'vocabulary-topic-pagination-state'
+
+// Load topic pagination state from localStorage
+const loadTopicPaginationState = (): Record<string, { currentPage: number }> => {
+  try {
+    const stored = localStorage.getItem(TOPIC_PAGINATION_STORAGE_KEY)
+    return stored ? JSON.parse(stored) : {}
+  } catch (error) {
+    console.warn('Failed to load topic pagination state from localStorage:', error)
+    return {}
+  }
+}
+
+// Save topic pagination state to localStorage
+const saveTopicPaginationState = (state: Record<string, { currentPage: number }>) => {
+  try {
+    localStorage.setItem(TOPIC_PAGINATION_STORAGE_KEY, JSON.stringify(state))
+  } catch (error) {
+    console.warn('Failed to save topic pagination state to localStorage:', error)
+  }
+}
+
 // Toggle topic accordion
 const toggleTopicAccordion = (topic: string) => {
   expandedTopics.value[topic] = !expandedTopics.value[topic]
+  
+  // Initialize pagination state for this topic if not exists
+  if (!topicPaginationState.value[topic]) {
+    topicPaginationState.value[topic] = { currentPage: 1 }
+  }
 }
 
 const isTopicExpanded = (topic: string) => {
   return expandedTopics.value[topic] || false
+}
+
+// Get current page for a topic
+const getTopicCurrentPage = (topic: string): number => {
+  return topicPaginationState.value[topic]?.currentPage || 1
+}
+
+// Set current page for a topic
+const setTopicCurrentPage = (topic: string, page: number) => {
+  if (!topicPaginationState.value[topic]) {
+    topicPaginationState.value[topic] = { currentPage: 1 }
+  }
+  topicPaginationState.value[topic].currentPage = page
+  // Save to localStorage
+  saveTopicPaginationState(topicPaginationState.value)
+}
+
+// Get paginated vocabularies for a topic
+const getPaginatedTopicVocabularies = (topicGroup: any) => {
+  const currentPage = getTopicCurrentPage(topicGroup.topic)
+  const totalItems = topicGroup.vocabularies.length
+  const startIndex = (currentPage - 1) * itemsPerCategoryPage
+  const endIndex = startIndex + itemsPerCategoryPage
+  
+  return {
+    vocabularies: topicGroup.vocabularies.slice(startIndex, endIndex),
+    currentPage,
+    totalPages: Math.ceil(totalItems / itemsPerCategoryPage),
+    totalItems,
+    startIndex: startIndex + 1,
+    endIndex: Math.min(endIndex, totalItems),
+    hasNext: currentPage < Math.ceil(totalItems / itemsPerCategoryPage),
+    hasPrevious: currentPage > 1
+  }
+}
+
+// Category pagination functions
+const goToTopicPage = (topic: string, page: number) => {
+  const totalItems = props.group.topics?.find(t => t.topic === topic)?.vocabularies.length || 0
+  const totalPages = Math.ceil(totalItems / itemsPerCategoryPage)
+  
+  if (page >= 1 && page <= totalPages) {
+    setTopicCurrentPage(topic, page)
+  }
+}
+
+const nextTopicPage = (topic: string) => {
+  const currentPage = getTopicCurrentPage(topic)
+  const totalItems = props.group.topics?.find(t => t.topic === topic)?.vocabularies.length || 0
+  const totalPages = Math.ceil(totalItems / itemsPerCategoryPage)
+  
+  if (currentPage < totalPages) {
+    setTopicCurrentPage(topic, currentPage + 1)
+  }
+}
+
+const previousTopicPage = (topic: string) => {
+  const currentPage = getTopicCurrentPage(topic)
+  if (currentPage > 1) {
+    setTopicCurrentPage(topic, currentPage - 1)
+  }
+}
+
+// Generate visible page numbers for topic pagination (smart pagination)
+const getVisibleTopicPages = (currentPage: number, totalPages: number): number[] => {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1)
+  }
+  
+  if (currentPage <= 4) {
+    return [1, 2, 3, 4, 5, -1, totalPages]
+  }
+  
+  if (currentPage >= totalPages - 3) {
+    return [1, -1, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
+  }
+  
+  return [1, -1, currentPage - 1, currentPage, currentPage + 1, -1, totalPages]
 }
 
 // Handle topic hover for expand/collapse
@@ -809,6 +1005,9 @@ const openAddVocabularyDialog = () => {
 onMounted(async () => {
   // Load action buttons state from localStorage
   loadActionButtonsState()
+  
+  // Load topic pagination state from localStorage
+  topicPaginationState.value = loadTopicPaginationState()
   
   // Check if there's a saved state for this date group
   if (props.accordionState && typeof props.accordionState[props.group.date] === 'boolean') {

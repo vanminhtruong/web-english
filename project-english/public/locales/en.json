@@ -118,6 +118,7 @@
     "deleteError": "An error occurred while deleting vocabulary. Please try again.",
     "showingResults": "Showing {start} to {end} of {total} results",
     "showingDateGroups": "Showing {start} to {end} of {total} date groups",
+    "showingCategoryItems": "Showing {start} to {end} of {total} items",
     "categories": {
       "technology": "Technology",
       "business": "Business",
