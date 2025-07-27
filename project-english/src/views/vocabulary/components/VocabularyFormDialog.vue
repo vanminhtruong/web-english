@@ -2,17 +2,17 @@
   <!-- Backdrop -->
   <div 
     v-if="modelValue" 
-    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50"
   >
     <!-- Dialog Container -->
-    <div class="relative top-10 mx-auto p-5 w-full max-w-4xl">
+    <div class="w-full max-w-4xl max-h-[90vh] flex flex-col">
       <!-- Dialog Content -->
       <div 
-        class="bg-white dark:bg-[#0a0a0a] shadow-xl rounded-lg border border-gray-200 dark:border-gray-700"
+        class="bg-white dark:bg-[#0a0a0a] shadow-xl rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col h-full overflow-hidden"
         @click.stop
       >
         <!-- Header -->
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
               {{ isEditing ? t('vocabulary.editVocabulary') : t('vocabulary.addVocabulary') }}
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Form -->
-        <div class="px-6 py-4">
+        <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
           <form @submit.prevent="submitForm" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Word -->
@@ -235,7 +235,7 @@
         </div>
 
         <!-- Footer Actions -->
-        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div class="flex justify-end space-x-3">
             <button
               type="button"

@@ -362,7 +362,7 @@
             @mouseleave="hoverToExpandEnabled ? handleTopicHover(topicGroup.topic, false) : null"
           >
             <!-- Topic header with accordion toggle and pagination -->
-            <div class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+            <div class="bg-gray-50 dark:bg-gray-custom border-b border-gray-200 dark:border-gray-700">
               <!-- Topic name and toggle -->
               <div 
                 class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50"
