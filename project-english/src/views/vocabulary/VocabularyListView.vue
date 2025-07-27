@@ -133,6 +133,38 @@
       :today-words="noteDialogWords"
       @save-note="handleNoteSaved"
     />
+    
+    <!-- Sticky Floating Add Button -->
+    <Transition name="fade-scale">
+      <div 
+        v-show="showStickyButton"
+        class="fixed bottom-6 right-6 z-50"
+      >
+        <button 
+          @click="openAddDialog"
+          @mouseenter="showStickyTooltip = true"
+          @mouseleave="showStickyTooltip = false"
+          class="relative bg-blue-500 hover:bg-blue-600 text-white font-medium w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+        >
+          <svg 
+            class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+          </svg>
+          
+          <!-- Tooltip -->
+          <div
+            v-if="showStickyTooltip"
+            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-black dark:text-white dark:border dark:border-gray-600 rounded shadow-lg whitespace-nowrap z-50"
+          >
+            {{ t('vocabulary.addNew') }}
+            <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-black"></div>
+          </div>
+        </button>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -442,6 +474,12 @@ onMounted(() => {
       debounceAutoSave();
     }
   });
+  
+  // Add scroll event listener for sticky button
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // Initial call to set button state
+  handleScroll();
 });
 
 const handleFileImportWithReload = (file: File) => {
@@ -456,6 +494,33 @@ const handleFileImportWithReload = (file: File) => {
   window.addEventListener('vocabularyImportComplete', handleImportComplete as EventListener);
   
   handleFileImport(file);
+};
+
+// Sticky button state
+const showStickyButton = ref(false);
+const showStickyTooltip = ref(false);
+const headerHeight = ref(0);
+const isScrollingDown = ref(false);
+const lastScrollY = ref(0);
+
+// Scroll handler for sticky button
+const handleScroll = () => {
+  const scrollY = window.scrollY;
+  const headerElement = document.querySelector('[data-vocabulary-header]') || document.querySelector('header');
+  
+  // Get header height if not cached
+  if (headerHeight.value === 0 && headerElement) {
+    headerHeight.value = (headerElement as HTMLElement).offsetHeight;
+  }
+  
+  // Determine scroll direction
+  isScrollingDown.value = scrollY > lastScrollY.value;
+  lastScrollY.value = scrollY;
+  
+  // Show/hide sticky button based on scroll position
+  // Show when scrolled past header (approximately 120px)
+  const shouldShow = scrollY > (headerHeight.value || 120);
+  showStickyButton.value = shouldShow;
 };
 
 // Note dialog handlers
@@ -500,6 +565,7 @@ const handleNoteSaved = (note: string, markedWords: string[]) => {
 onUnmounted(() => {
   window.removeEventListener('vocabularyImportComplete', () => {});
   window.removeEventListener('vocabulary-notes-updated', () => {});
+  window.removeEventListener('scroll', handleScroll);
   // Clean up modal-open class
   document.body.classList.remove('modal-open');
 });
@@ -509,5 +575,23 @@ onUnmounted(() => {
 /* Global styles for modal */
 body.modal-open {
   overflow: hidden !important;
+}
+
+/* Sticky button fade-scale transition */
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+}
+
+.fade-scale-enter-to,
+.fade-scale-leave-from {
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
 </style>
