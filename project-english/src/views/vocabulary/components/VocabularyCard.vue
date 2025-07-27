@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="p-3 sm:p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer" @click="viewDetails">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-3 lg:space-y-0">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between xl:items-center xl:justify-between 2xl:items-center 2xl:justify-between space-y-3 lg:space-y-0">
         <div class="flex-1">
-          <div class="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
+          <div class="flex flex-col sm:flex-row sm:items-start xl:items-center 2xl:items-center space-y-3 sm:space-y-0 sm:space-x-4">
             <!-- Image Display -->
-            <div v-if="word.image" class="flex-shrink-0 self-center sm:self-start">
+            <div v-if="word.image" class="flex-shrink-0 self-center sm:self-start xl:self-center 2xl:self-center">
               <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600">
                 <img
                   :src="word.image"
@@ -54,7 +54,7 @@
           </div>
         </div>
         
-        <div class="flex items-center space-x-2 ml-4">
+        <div class="flex items-center space-x-2 ml-4 xl:items-center 2xl:items-center">
           <button @click.stop="$emit('toggle-favorite', word)" class="text-gray-500 hover:text-yellow-500" :class="{ 'text-yellow-500': word.favorite }">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path v-if="word.favorite" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />

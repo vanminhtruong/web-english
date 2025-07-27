@@ -1,4 +1,9 @@
 import { createI18n } from 'vue-i18n'
+import en from './locales/en.json'
+import vi from './locales/vi.json'
+
+// Type definitions for messages
+type MessageSchema = typeof en
 
 // Safe locale getter with fallback
 function getInitialLocale(): 'en' | 'vi' {
@@ -11,41 +16,20 @@ function getInitialLocale(): 'en' | 'vi' {
   }
 }
 
-// Create i18n instance with empty messages initially
 const i18n = createI18n({
-  legacy: false,
-  locale: getInitialLocale(),
-  fallbackLocale: 'en',
+  legacy: false, // you must set `false`, to use Composition API
+  locale: getInitialLocale(), // set default locale
+  fallbackLocale: 'en', // set fallback locale
   messages: {
-    en: {},
-    vi: {}
+    en,
+    vi
   }
 })
-
-// Load messages from public folder
-async function loadMessages(locale: 'en' | 'vi') {
-  try {
-    const baseUrl = import.meta.env.PROD ? '/web-english' : ''
-    const response = await fetch(`${baseUrl}/locales/${locale}.json`)
-    if (!response.ok) {
-      throw new Error(`Failed to load ${locale}.json: ${response.status}`)
-    }
-    const data = await response.json()
-    i18n.global.setLocaleMessage(locale, data)
-    console.log(`✅ Loaded ${locale} translations`)
-  } catch (error) {
-    console.error(`❌ Failed to load ${locale} messages:`, error)
-  }
-}
-
-// Load initial locale on startup
-loadMessages(getInitialLocale())
 
 export default i18n
 
 // Utility function to change locale
-export async function setLocale(locale: 'en' | 'vi') {
-  await loadMessages(locale)
+export function setLocale(locale: 'en' | 'vi') {
   i18n.global.locale.value = locale
   try {
     localStorage.setItem('locale', locale)
@@ -66,8 +50,8 @@ export function isEnglish(): boolean {
 }
 
 // Utility function to toggle locale
-export async function toggleLocale(): Promise<'en' | 'vi'> {
+export function toggleLocale(): 'en' | 'vi' {
   const newLocale = i18n.global.locale.value === 'en' ? 'vi' : 'en'
-  await setLocale(newLocale)
+  setLocale(newLocale)
   return newLocale
 }
