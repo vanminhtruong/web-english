@@ -6,7 +6,7 @@
           <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ t('vocabulary.title') }}</h1>
           <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ t('vocabulary.description') }}</p>
         </div>
-        <button @click="$emit('add-vocabulary')" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+        <button @click="$emit('add-vocabulary')" data-original-add-button class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
           <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
           </svg>

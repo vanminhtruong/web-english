@@ -137,7 +137,7 @@
     <!-- Sticky Floating Add Button -->
     <Transition name="fade-scale">
       <div 
-        v-show="showStickyButtonVisible"
+        v-show="showStickyButton"
         class="fixed bottom-6 right-6 z-50"
       >
         <button 
@@ -520,14 +520,24 @@ const handleScroll = () => {
     headerHeight.value = (headerElement as HTMLElement).offsetHeight;
   }
   
-  // Determine scroll direction
-  isScrollingDown.value = scrollY > lastScrollY.value;
-  lastScrollY.value = scrollY;
+  // Find the original add button position
+  const originalAddButton = document.querySelector('[data-original-add-button]') || 
+                           document.querySelector('.vocabulary-header button');
   
-  // Show/hide sticky button based on scroll position
-  // Show when scrolled past header (approximately 120px)
-  const shouldShow = scrollY > (headerHeight.value || 120);
-  showStickyButton.value = shouldShow;
+  let originalButtonVisible = false;
+  if (originalAddButton) {
+    const rect = originalAddButton.getBoundingClientRect();
+    // Button is visible if it's in viewport (top part of screen)
+    originalButtonVisible = rect.top >= 0 && rect.top < window.innerHeight / 2;
+  }
+  
+  // Show sticky button when scrolled past header and original button is not visible
+  // Hide when original button becomes visible again (even partially)
+  const headerBottom = headerHeight.value || 120;
+  const shouldShowSticky = scrollY > headerBottom && !originalButtonVisible;
+  showStickyButton.value = shouldShowSticky;
+  
+  lastScrollY.value = scrollY;
 };
 
 // Note dialog handlers
