@@ -56,7 +56,7 @@
             isDragOver 
               ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
               : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500',
-            'bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50'
+            'bg-gray-50 dark:bg-[#0a0a0a]/50 hover:bg-gray-100 dark:hover:bg-gray-700/50'
           ]"
         >
           <div class="flex flex-col items-center space-y-2">
@@ -85,7 +85,7 @@
             @keyup.enter="handleUrlInput"
             type="url"
             :placeholder="t('vocabulary.image.urlPlaceholder')"
-            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
         <button
@@ -165,7 +165,7 @@
       
       <!-- URL Edit Modal -->
       <div v-if="showUrlEdit" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+        <div class="bg-white dark:bg-[#0a0a0a] rounded-lg p-6 w-full max-w-md mx-4">
           <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
             {{ t('vocabulary.image.changeUrl') }}
           </h3>
@@ -175,7 +175,7 @@
               @keyup.enter="handleUrlChange"
               type="url"
               :placeholder="t('vocabulary.image.urlPlaceholder')"
-              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             />
             <div class="flex justify-end space-x-3">
               <button
@@ -199,7 +199,7 @@
       </div>
       
       <!-- Loading State -->
-      <div v-if="isProcessing" class="absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-lg">
+      <div v-if="isProcessing" class="absolute inset-0 bg-white dark:bg-[#0a0a0a] bg-opacity-75 flex items-center justify-center rounded-lg">
         <div class="flex items-center space-x-2 text-blue-600 dark:text-blue-400">
           <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
