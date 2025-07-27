@@ -137,7 +137,7 @@
     <!-- Sticky Floating Add Button -->
     <Transition name="fade-scale">
       <div 
-        v-show="showStickyButton"
+        v-show="showStickyButtonVisible"
         class="fixed bottom-6 right-6 z-50"
       >
         <button 
@@ -335,6 +335,11 @@ const {
 const categories = computed(() => vocabularyStore.getCategories.value);
 const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value);
 
+// Computed property to control sticky button visibility
+const showStickyButtonVisible = computed(() => {
+  return showStickyButton.value && !showFormDialog.value;
+});
+
 const deleteWord = (word: any) => {
   const toastId = toast(
     {
@@ -454,6 +459,8 @@ watch(showNoteDialog, (newValue) => {
 watch(showFormDialog, (newValue) => {
   if (newValue) {
     document.body.classList.add('modal-open');
+    // Hide sticky tooltip when dialog opens
+    showStickyTooltip.value = false;
   } else {
     // Only remove if note dialog is also closed
     if (!showNoteDialog.value) {
