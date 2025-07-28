@@ -552,6 +552,134 @@ const {
   resetPronunciationMode,
 } = useFlashcardModes(currentShuffledCard, currentFlashcards)
 
+// Card state storage for preserving answers when navigating back/forward
+interface CardState {
+  // Quiz mode
+  quizAnswer?: string;
+  quizAnswered?: boolean;
+  quizOptions?: string[]; // The options shown for the quiz
+  
+  // Typing mode  
+  typingAnswer?: string
+  typingAnswered?: boolean
+  typingCorrect?: boolean
+  
+  // Listening mode
+  listeningAnswer?: string
+  listeningAnswered?: boolean
+  listeningCorrect?: boolean
+  
+  // Image mode
+  imageAnswer?: string
+  imageAnswered?: boolean
+  imageCorrect?: boolean
+  
+  // Pronunciation mode
+  pronunciationResult?: string
+  pronunciationAnswered?: boolean
+  pronunciationCorrect?: boolean
+}
+
+const cardStateStorage = ref<Record<number, CardState>>({})
+
+// Save current card state before navigation
+const saveCurrentCardState = () => {
+  if (!currentShuffledCard.value) return
+  
+  const cardId = currentShuffledCard.value.id
+  cardStateStorage.value[cardId] = {
+    // Quiz mode
+    quizAnswer: selectedAnswer.value,
+    quizAnswered: quizAnswered.value,
+    quizOptions: quizOptions.value,
+    
+    // Typing mode
+    typingAnswer: typingAnswer.value || undefined,
+    typingAnswered: typingAnswered.value || undefined,
+    typingCorrect: typingCorrect.value || undefined,
+    
+    // Listening mode
+    listeningAnswer: listeningAnswer.value || undefined,
+    listeningAnswered: listeningAnswered.value || undefined,
+    listeningCorrect: listeningCorrect.value || undefined,
+    
+    // Image mode
+    imageAnswer: imageAnswer.value || undefined,
+    imageAnswered: imageAnswered.value || undefined,
+    imageCorrect: imageCorrect.value || undefined,
+    
+    // Pronunciation mode
+    pronunciationResult: pronunciationResult.value || undefined,
+    pronunciationAnswered: pronunciationAnswered.value || undefined,
+    pronunciationCorrect: pronunciationCorrect.value || undefined,
+  }
+}
+
+// Restore card state when navigating to a card
+const restoreCardState = () => {
+  if (!currentShuffledCard.value) return
+  
+  const cardId = currentShuffledCard.value.id
+  const savedState = cardStateStorage.value[cardId]
+  
+  if (savedState) {
+    // Restore quiz mode
+    if (savedState.quizOptions) {
+      quizOptions.value = savedState.quizOptions;
+    }
+    if (savedState.quizAnswer !== undefined) {
+      selectedAnswer.value = savedState.quizAnswer;
+    }
+    if (savedState.quizAnswered !== undefined) {
+      quizAnswered.value = savedState.quizAnswered;
+    }
+    
+    // Restore typing mode
+    if (savedState.typingAnswer !== undefined) {
+      typingAnswer.value = savedState.typingAnswer
+    }
+    if (savedState.typingAnswered !== undefined) {
+      typingAnswered.value = savedState.typingAnswered
+    }
+    if (savedState.typingCorrect !== undefined) {
+      typingCorrect.value = savedState.typingCorrect
+    }
+    
+    // Restore listening mode
+    if (savedState.listeningAnswer !== undefined) {
+      listeningAnswer.value = savedState.listeningAnswer
+    }
+    if (savedState.listeningAnswered !== undefined) {
+      listeningAnswered.value = savedState.listeningAnswered
+    }
+    if (savedState.listeningCorrect !== undefined) {
+      listeningCorrect.value = savedState.listeningCorrect
+    }
+    
+    // Restore image mode
+    if (savedState.imageAnswer !== undefined) {
+      imageAnswer.value = savedState.imageAnswer
+    }
+    if (savedState.imageAnswered !== undefined) {
+      imageAnswered.value = savedState.imageAnswered
+    }
+    if (savedState.imageCorrect !== undefined) {
+      imageCorrect.value = savedState.imageCorrect
+    }
+    
+    // Restore pronunciation mode
+    if (savedState.pronunciationResult !== undefined) {
+      pronunciationResult.value = savedState.pronunciationResult
+    }
+    if (savedState.pronunciationAnswered !== undefined) {
+      pronunciationAnswered.value = savedState.pronunciationAnswered
+    }
+    if (savedState.pronunciationCorrect !== undefined) {
+      pronunciationCorrect.value = savedState.pronunciationCorrect
+    }
+  }
+}
+
 // Override resetCurrentCard to use modes composable
 const handleQuizAnswer = (answer: string) => {
   const isCorrect = selectQuizAnswer(answer)
@@ -567,21 +695,23 @@ const handleListeningAnswer = () => {
   checkListeningAnswer()
   recordAnswer(listeningCorrect.value)
 }
+const resetAndRestoreCard = () => {
+  // First, reset all modes to ensure a clean slate from the previous card.
+  resetAllModes();
 
-// Override resetCurrentCard to use modes composable
-const resetCurrentCardWithModes = () => {
-  resetCurrentCard()
-  resetQuizMode()
-  resetTypingMode()
-  resetListeningMode()
-  resetImageMode()  // Fix: Reset image mode state when moving to next card
-  resetPronunciationMode()
-  
-  // Generate quiz options after reset if in quiz mode
-  if (practiceMode.value === 'quiz') {
-    generateQuizOptions()
+  // Second, restore the state for the new current card, if it exists.
+  restoreCardState();
+
+  // Third, generate new quiz options if needed (i.e., for a card seen for the first time).
+  if (practiceMode.value === 'quiz' && currentShuffledCard.value) {
+    const cardId = currentShuffledCard.value.id;
+    const savedState = cardStateStorage.value[cardId];
+    // Only generate options if the card hasn't been answered in a quiz before.
+    if (!savedState || savedState.quizAnswer === undefined) {
+      generateQuizOptions();
+    }
   }
-}
+};
 
 const toggleShuffle = () => {
   // Update settings through the settings composable to ensure localStorage persistence
@@ -595,13 +725,17 @@ const toggleShuffle = () => {
     shuffledFlashcards.value = []
   }
   
-  // Reset to first card after shuffle
+  // Reset to first card after shuffle and clear state (order changed)
+  cardStateStorage.value = {}
   currentIndex.value = 0
-  resetCurrentCardWithModes()
+  resetAndRestoreCard() // Will reset and generate new quiz options as there's no state
 }
 
 // Override navigation functions to work with shuffled cards
 const enhancedNextCard = () => {
+  // Save current card state before navigation
+  saveCurrentCardState()
+  
   // For pronunciation mode, record the answer just before proceeding.
   if (practiceMode.value === 'pronunciation' && pronunciationAnswered.value) {
     recordAnswer(pronunciationCorrect.value)
@@ -609,7 +743,7 @@ const enhancedNextCard = () => {
 
   if (currentIndex.value < currentFlashcards.value.length - 1) {
     currentIndex.value++
-    resetCurrentCardWithModes()
+    resetAndRestoreCard()
     // Reset timer for next card if practice started
     if (practiceStarted.value && practiceTimerRef.value) {
       practiceTimerRef.value.nextCard()
@@ -620,9 +754,12 @@ const enhancedNextCard = () => {
 }
 
 const enhancedPreviousCard = () => {
+  // Save current card state before navigation
+  saveCurrentCardState()
+  
   if (currentIndex.value > 0) {
     currentIndex.value--
-    resetCurrentCardWithModes()
+    resetAndRestoreCard()
     // Reset timer for previous card if practice started
     if (practiceStarted.value && practiceTimerRef.value) {
       practiceTimerRef.value.nextCard()
@@ -650,6 +787,18 @@ const handleSessionComplete = () => {
 const handleRestartSession = () => {
   restartSession() // Call the original function from the composable
   practiceStarted.value = false
+  
+  // Clear all card state storage when restarting
+  cardStateStorage.value = {}
+  
+  // Re-shuffle cards if shuffle is enabled to get new random order
+  if (flashcardSettings.value.shuffleCards && baseFlashcards.value.length > 0) {
+    shuffleFlashcards()
+  }
+  
+  // Force reset without restoring state (new session)
+  resetAndRestoreCard()
+  
   if (practiceTimerRef.value) {
     practiceTimerRef.value.resetPractice()
   }
@@ -672,12 +821,12 @@ watch([currentIndex, isFlipped], () => {
 
 // Watch for practice mode changes
 watch(practiceMode, () => {
-  resetCurrentCardWithModes()
+  // When practice mode changes, reset the card.
+  // No state will be restored because we are changing modes.
+  resetAndRestoreCard();
 })
 
-watch(currentIndex, () => {
-  resetCurrentCardWithModes()
-})
+
 
 // Save session to history when completed
 watch(showCompletionModal, (newValue) => {
@@ -729,7 +878,7 @@ watch(baseFlashcards, (newCards) => {
     shuffleFlashcards(newCards)
     // Reset to first card after re-shuffle
     currentIndex.value = 0
-    resetCurrentCardWithModes()
+    resetAndRestoreCard()
   }
   // If no cards and shuffle was enabled, clear shuffled array
   else if (flashcardSettings.value.shuffleCards && newCards.length === 0) {

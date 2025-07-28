@@ -137,7 +137,7 @@
     <!-- Sticky Floating Add Button -->
     <Transition name="fade-scale">
       <div 
-        v-show="showStickyButton"
+        v-show="showStickyButtonVisible"
         class="fixed bottom-6 right-6 z-50"
       >
         <button 

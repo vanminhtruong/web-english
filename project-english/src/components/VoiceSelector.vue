@@ -9,7 +9,7 @@
       <button
         @click="showDropdown = !showDropdown"
         ref="dropdownButton"
-        class="flex w-full sm:w-[200px] md:w-[220px] lg:w-[240px] items-center justify-between px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
+        class="flex w-full sm:w-[200px] md:w-[220px] lg:w-[240px] xl:w-[240px] 2xl:w-[280px] items-center justify-between px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
       >
         <div class="flex items-center space-x-2">
           <span class="text-sm md:text-base lg:text-lg">{{ currentVoiceOption?.icon }}</span>
@@ -27,7 +27,7 @@
         v-if="showDropdown"
         ref="dropdownMenu"
         :style="dropdownStyle"
-        class="bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden z-[9998]"
+        class="bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden z-[9998] xl:w-[200px] 2xl:w-[200px]"
       >
         <div class="overflow-y-auto max-h-60">
         <div
