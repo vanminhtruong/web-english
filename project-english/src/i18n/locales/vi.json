@@ -286,7 +286,8 @@
       "intermediate": "Trung cấp",
       "advanced": "Nâng cao",
       "autoFlip": "Tự động lật thẻ sau 3 giây",
-      "shuffle": "Xáo trộn thứ tự"
+      "shuffle": "Xáo trộn thứ tự",
+      "shuffle_disabled_during_practice": "Không thể xáo trộn trong quá trình luyện tập"
     },
     "history": {
       "title": "Lịch sử luyện tập",

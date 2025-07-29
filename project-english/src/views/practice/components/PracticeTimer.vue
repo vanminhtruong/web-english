@@ -123,7 +123,7 @@ const startTimer = () => {
 }
 
 const stopTimer = () => {
-  isActive.value = false
+  // Only stop the interval but keep isActive true to continue showing the timer
   if (timerId) {
     clearInterval(timerId)
     timerId = null

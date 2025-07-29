@@ -1,19 +1,18 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-black dark:to-gray-900">
     <!-- Header -->
-    <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="0px">
-      <FlashcardHeader
-        :current-index="currentIndex"
-        :total-cards="currentFlashcards.length"
-        :practice-mode="practiceMode"
-        :shuffle-enabled="shuffleEnabled"
-        @go-back="handleExitPractice"
-        @show-history="showHistory = true"
-        @change-practice-mode="changePracticeMode"
-        @show-settings="showSettingsDialog = true"
-        @toggle-shuffle="toggleShuffle"
-      />
-    </LazyLoadComponent>
+    <FlashcardHeader
+      :current-index="currentIndex"
+      :total-cards="currentFlashcards.length"
+      :practice-mode="practiceMode"
+      :shuffle-enabled="shuffleEnabled"
+      :practice-started="practiceStarted"
+      @go-back="handleExitPractice"
+      @show-history="showHistory = true"
+      @change-practice-mode="changePracticeMode"
+      @show-settings="showSettingsDialog = true"
+      @toggle-shuffle="toggleShuffle"
+    />
 
     <!-- Progress Bar -->
     <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
@@ -744,7 +743,7 @@ const enhancedNextCard = () => {
   if (currentIndex.value < currentFlashcards.value.length - 1) {
     currentIndex.value++
     resetAndRestoreCard()
-    // Reset timer for next card if practice started
+    // Resume timer when moving to next card
     if (practiceStarted.value && practiceTimerRef.value) {
       practiceTimerRef.value.nextCard()
     }
@@ -760,9 +759,9 @@ const enhancedPreviousCard = () => {
   if (currentIndex.value > 0) {
     currentIndex.value--
     resetAndRestoreCard()
-    // Reset timer for previous card if practice started
+    // Pause timer when going back to review previous card (timer display remains visible)
     if (practiceStarted.value && practiceTimerRef.value) {
-      practiceTimerRef.value.nextCard()
+      practiceTimerRef.value.stopTimer()
     }
   }
 }

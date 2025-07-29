@@ -286,7 +286,8 @@
       "intermediate": "Intermediate",
       "advanced": "Advanced",
       "autoFlip": "Auto flip card after 3 seconds",
-      "shuffle": "Shuffle order"
+      "shuffle": "Shuffle order",
+      "shuffle_disabled_during_practice": "Cannot shuffle during practice"
     },
     "history": {
       "title": "Practice History",

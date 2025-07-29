@@ -3,21 +3,20 @@ import { RouterView } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
 import { loadComponentSafely } from './utils/import-helper'
 
-// Use defineAsyncComponent to import components
-const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLoadComponent.vue'))
+// Import components - use direct import for header to ensure proper positioning
 const AppHeader = defineAsyncComponent(
-  loadComponentSafely(() => import('./components/common/AppHeader.vue'))
+  () => import('./components/common/AppHeader.vue')
 )
+const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLoadComponent.vue'))
 </script>
 
 <template>
   <div id="app" class="min-h-screen">
-    <!-- Lazy loaded header -->
-    <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="0px">
-      <AppHeader />
-    </LazyLoadComponent>
+    <!-- Fixed header - positioned outside container constraints -->
+    <AppHeader />
 
-    <main class="flex-1">
+    <!-- Main content with proper padding for fixed header -->
+    <main class="flex-1 pt-16">
       <RouterView />
     </main>
   </div>

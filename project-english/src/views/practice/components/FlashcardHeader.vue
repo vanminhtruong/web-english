@@ -57,11 +57,13 @@
             <!-- Shuffle Toggle -->
             <button
               @click="$emit('toggle-shuffle')"
+              :disabled="practiceStarted"
               :class="[
                 'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
-                shuffleEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                shuffleEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600',
+                practiceStarted ? 'opacity-50 cursor-not-allowed' : ''
               ]"
-              :title="t('flashcard.settings.shuffle')"
+              :title="practiceStarted ? t('flashcard.settings.shuffle_disabled_during_practice') : t('flashcard.settings.shuffle')"
             >
               <span
                 :class="[
@@ -101,12 +103,14 @@
             <span class="text-sm md:text-base text-gray-600 dark:text-gray-300">{{ t('flashcard.settings.shuffle') }}</span>
             <button
               @click="$emit('toggle-shuffle')"
+              :disabled="practiceStarted"
               :class="[
                 'relative inline-flex items-center rounded-full transition-colors',
                 'h-6 w-11 md:h-7 md:w-12',
-                shuffleEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                shuffleEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600',
+                practiceStarted ? 'opacity-50 cursor-not-allowed' : ''
               ]"
-              :title="t('flashcard.settings.shuffle')"
+              :title="practiceStarted ? t('flashcard.settings.shuffle_disabled_during_practice') : t('flashcard.settings.shuffle')"
             >
               <span
                 :class="[
@@ -157,6 +161,7 @@ interface Props {
   totalCards: number
   practiceMode: PracticeMode
   shuffleEnabled: boolean
+  practiceStarted?: boolean
 }
 
 defineProps<Props>()

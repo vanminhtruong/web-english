@@ -15,7 +15,7 @@ export function useFlashcardGame(flashcards: Ref<Vocabulary[]>) {
   const loadPracticeModeFromStorage = (): string => {
     try {
       const saved = localStorage.getItem(PRACTICE_MODE_STORAGE_KEY)
-      if (saved && ['flashcard', 'quiz', 'typing', 'image', 'listening'].includes(saved)) {
+      if (saved && ['flashcard', 'quiz', 'typing', 'image', 'listening', 'pronunciation'].includes(saved)) {
         return saved
       }
     } catch (error) {
@@ -36,7 +36,7 @@ export function useFlashcardGame(flashcards: Ref<Vocabulary[]>) {
   // Game state
   const currentIndex = ref(0)
   const isFlipped = ref(false)
-  const practiceMode = ref<PracticeMode>('flashcard')
+  const practiceMode = ref<PracticeMode>(loadPracticeModeFromStorage() as PracticeMode)
   const showSettings = ref(false)
   const showCompletionModal = ref(false)
   const isCompleted = ref(false)
@@ -52,15 +52,8 @@ export function useFlashcardGame(flashcards: Ref<Vocabulary[]>) {
     showPronunciation: true,
     shuffleCards: false,
     voiceType: 'female',
-    practiceMode: 'flashcard',
+    practiceMode: loadPracticeModeFromStorage() as PracticeMode,
   })
-
-  watch(settings, (newSettings) => {
-    if (newSettings.practiceMode) {
-      practiceMode.value = newSettings.practiceMode;
-    }
-  }, { immediate: true });
-
 
   // Game stats
   const stats = ref<GameStats>({
