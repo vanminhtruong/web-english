@@ -39,23 +39,38 @@
           <nav class="flex space-x-1">
             <RouterLink
               to="/dashboard"
-              class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black"
+              :class="[
+                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
+                $route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              ]"
             >
               {{ t('common.dashboard', 'Dashboard') }}
             </RouterLink>
             <RouterLink
               to="/vocabulary"
-              class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black"
+              :class="[
+                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
+                $route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              ]"
             >
               {{ t('common.vocabulary', 'Từ vựng') }}
             </RouterLink>
             <RouterLink
               to="/grammar"
-              class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black"
+              :class="[
+                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
+                $route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              ]"
             >
               {{ t('common.grammar', 'Ngữ pháp') }}
             </RouterLink>
-            <RouterLink to="/practice/flashcard" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            <RouterLink
+              to="/practice/flashcard"
+              :class="[
+                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none',
+                $route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              ]"
+            >
               {{ t('common.practice', 'Luyện tập') }}
             </RouterLink>
           </nav>
@@ -116,28 +131,40 @@
           <RouterLink
             to="/dashboard"
             @click="closeMobileMenu"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ease-out transform hover:translate-x-1 hover:scale-105"
+            :class="[
+              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ease-out transform hover:translate-x-1 hover:scale-105 focus:outline-none',
+              $route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+            ]"
           >
             {{ t('common.dashboard', 'Dashboard') }}
           </RouterLink>
           <RouterLink
             to="/vocabulary"
             @click="closeMobileMenu"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            :class="[
+              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
+              $route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+            ]"
           >
             {{ t('common.vocabulary', 'Từ vựng') }}
           </RouterLink>
           <RouterLink
             to="/grammar"
             @click="closeMobileMenu"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            :class="[
+              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
+              $route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+            ]"
           >
             {{ t('common.grammar', 'Ngữ pháp') }}
           </RouterLink>
           <RouterLink
             to="/practice/flashcard"
             @click="closeMobileMenu"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            :class="[
+              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
+              $route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+            ]"
           >
             {{ t('common.practice', 'Luyện tập') }}
           </RouterLink>
@@ -257,7 +284,6 @@ header {
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
-  
   /* Smooth transitions for slide animation */
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
               opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -278,5 +304,14 @@ header {
 .container {
   max-width: none !important;
   width: 100vw !important;
+}
+
+/* Remove border/outline/box-shadow for active/focus tab menu */
+:deep(.router-link-active),
+:deep(.router-link-exact-active),
+:deep(a:focus) {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 </style>

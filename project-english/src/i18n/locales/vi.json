@@ -30,7 +30,8 @@
     "reset": "Đặt lại",
     "apply": "Áp dụng",
     "resetToDefault": "Về mặc định",
-    "actions": "Thao tác"
+    "actions": "Thao tác",
+    "backToTop": "Lên đầu trang"
   },
   "levels": {
     "beginner": "Cơ bản",

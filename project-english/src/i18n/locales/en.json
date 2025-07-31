@@ -30,7 +30,8 @@
     "confirm": "Confirm",
     "reset": "Reset",
     "resetToDefault": "Reset to Default",
-    "actions": "Actions"
+    "actions": "Actions",
+    "backToTop": "Back to Top"
   },
   "levels": {
     "beginner": "Beginner",

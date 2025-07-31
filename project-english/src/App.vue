@@ -7,6 +7,9 @@ import { loadComponentSafely } from './utils/import-helper'
 const AppHeader = defineAsyncComponent(
   () => import('./components/common/AppHeader.vue')
 )
+const BackToTop = defineAsyncComponent(
+  () => import('./components/common/BackToTop.vue')
+)
 const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLoadComponent.vue'))
 </script>
 
@@ -19,6 +22,9 @@ const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLo
     <main class="flex-1 pt-16">
       <RouterView />
     </main>
+
+    <!-- Back to Top Button - Fixed position -->
+    <BackToTop />
   </div>
 </template>
 
