@@ -133,16 +133,16 @@
       <div class="flex items-center justify-between">
         <div class="flex-1 flex justify-between sm:hidden">
           <button @click="$emit('previous-page')" :disabled="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600">
-            {{ t('common.previous') }}
+            {{ t('common.previous', 'Previous') }}
           </button>
           <button @click="$emit('next-page')" :disabled="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600">
-            {{ t('common.next') }}
+            {{ t('common.next', 'Next') }}
           </button>
         </div>
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
             <p class="text-sm text-gray-700 dark:text-gray-300">
-              {{ t('vocabulary.showingResults', { start: startIndex, end: endIndex, total: totalCount }) }}
+              {{ t('vocabulary.showingResults', { start: startIndex, end: endIndex, total: totalCount }, `Showing ${startIndex} to ${endIndex} of ${totalCount} results`) }}
             </p>
           </div>
           <div>
