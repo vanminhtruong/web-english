@@ -6,8 +6,8 @@
           <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
         </svg>
         <div>
-          <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ t('vocabulary.topicManager.title') }}</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('vocabulary.topicManager.builtInTopicsDescription') }}</p>
+          <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ t('vocabulary.topicManager.title', 'Topic Manager') }}</h3>
+          <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('vocabulary.topicManager.builtInTopicsDescription', 'Manage built-in topics and categories') }}</p>
         </div>
       </div>
       <button
@@ -17,7 +17,7 @@
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
-        <span>{{ t('vocabulary.topicManager.manageTopics') }}</span>
+        <span>{{ t('vocabulary.topicManager.manageTopics', 'Manage Topics') }}</span>
       </button>
     </div>
   </div>

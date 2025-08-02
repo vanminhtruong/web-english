@@ -29,7 +29,7 @@
               <div class="flex-1 min-w-0">
                 <h2 class="text-lg sm:text-xl md:text-2xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-2 flex items-center space-x-2">
                   <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                  <span>{{ t('vocabulary.topicManager.title') }}</span>
+                  <span>{{ t('vocabulary.topicManager.title', 'Topic Manager') }}</span>
                 </h2>
                 <p class="text-sm sm:text-base md:text-base lg:text-lg text-gray-600 dark:text-gray-400 leading-relaxed pr-0 sm:pr-4">
                   The system has {{ builtInTopics.length }} built-in topics like Technology, Business, Travel... You can add custom topics here.
@@ -51,20 +51,20 @@
               <div class="mb-4 sm:mb-6 md:mb-5 lg:mb-6 p-3 sm:p-4 md:p-4 lg:p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg animate-fade-in-up" style="animation-delay: 0.1s">
                 <h3 class="text-base sm:text-lg md:text-base lg:text-lg font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 md:mb-3 lg:mb-4 flex items-center">
                   <span class="w-1 h-4 bg-blue-500 rounded mr-2"></span>
-                  {{ editingTopic ? t('vocabulary.topicManager.editTopic') : t('vocabulary.topicManager.addNewTopic') }}
+                  {{ editingTopic ? t('vocabulary.topicManager.editTopic', 'Edit Topic') : t('vocabulary.topicManager.addNewTopic', 'Add New Topic') }}
                 </h3>
                 
                 <div class="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
                   <div class="animate-fade-in-up" style="animation-delay: 0.2s">
                     <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                       <span class="w-1 h-3 bg-green-500 rounded mr-2"></span>
-                      {{ t('vocabulary.topicManager.topicKey') }}
+                      {{ t('vocabulary.topicManager.topicKey', 'Topic Key') }}
                     </label>
                     <input
                       v-model="newTopic.key"
                       :disabled="editingTopic !== null"
                       type="text"
-                      :placeholder="t('vocabulary.topicManager.topicKeyPlaceholder')"
+                      :placeholder="t('vocabulary.topicManager.topicKeyPlaceholder', 'e.g., technology, business, travel')"
                       class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
                              bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
                              focus:ring-2 focus:ring-green-500 focus:border-transparent
@@ -72,7 +72,7 @@
                              transition-all duration-300 hover:border-green-400 dark:hover:border-green-500 transform hover:scale-[1.02]"
                     />
                     <p class="mt-1 text-xs md:text-xs lg:text-sm text-gray-500 dark:text-gray-400">
-                      {{ t('vocabulary.topicManager.keyDescription') }}
+                      {{ t('vocabulary.topicManager.keyDescription', 'Unique identifier for this topic (lowercase, no spaces)') }}
                     </p>
                   </div>
 
@@ -80,12 +80,12 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.3s">
                       <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-3 bg-purple-500 rounded mr-2"></span>
-                        {{ t('vocabulary.topicManager.vietnameseName') }}
+                        {{ t('vocabulary.topicManager.vietnameseName', 'Vietnamese Name') }}
                       </label>
                       <input
                         v-model="newTopic.vi"
                         type="text"
-                        :placeholder="t('vocabulary.topicManager.vietnameseNamePlaceholder')"
+                        :placeholder="t('vocabulary.topicManager.vietnameseNamePlaceholder', 'Tên tiếng Việt')"
                         class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
                                bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
                                focus:ring-2 focus:ring-purple-500 focus:border-transparent
@@ -96,12 +96,12 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.4s">
                       <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-3 bg-orange-500 rounded mr-2"></span>
-                        {{ t('vocabulary.topicManager.englishName') }}
+                        {{ t('vocabulary.topicManager.englishName', 'English Name') }}
                       </label>
                       <input
                         v-model="newTopic.en"
                         type="text"
-                        :placeholder="t('vocabulary.topicManager.englishNamePlaceholder')"
+                        :placeholder="t('vocabulary.topicManager.englishNamePlaceholder', 'English name')"
                         class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
                                bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
                                focus:ring-2 focus:ring-orange-500 focus:border-transparent
@@ -117,7 +117,7 @@
                       class="px-3 py-1.5 sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-4 lg:py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 
                              text-white text-sm md:text-sm lg:text-base rounded-lg transition-all duration-300 disabled:cursor-not-allowed hover:scale-105 hover:shadow-lg font-medium"
                     >
-                      {{ editingTopic ? t('common.update') : t('common.add') }}
+                      {{ editingTopic ? t('common.update', 'Update') : t('common.add', 'Add') }}
                     </button>
                     
                     <button
@@ -125,7 +125,7 @@
                       @click="cancelEdit"
                       class="px-3 py-1.5 sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-4 lg:py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm md:text-sm lg:text-base rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
                     >
-                      {{ t('common.cancel') }}
+                      {{ t('common.cancel', 'Cancel') }}
                     </button>
                   </div>
                 </div>
@@ -135,11 +135,11 @@
               <div class="animate-fade-in-up" style="animation-delay: 0.6s">
                 <h3 class="text-base sm:text-lg md:text-base lg:text-lg font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 md:mb-3 lg:mb-4 flex items-center">
                   <span class="w-1 h-4 bg-indigo-500 rounded mr-2"></span>
-                  {{ t('vocabulary.topicManager.existingTopics') }}
+                  {{ t('vocabulary.topicManager.existingTopics', 'Custom Topics') }}
                 </h3>
 
                 <div v-if="customTopics.length === 0" class="text-center py-6 sm:py-8 md:py-6 lg:py-8 text-sm md:text-sm lg:text-base text-gray-500 dark:text-gray-400">
-                  {{ t('vocabulary.topicManager.noCustomTopics') }}
+                  {{ t('vocabulary.topicManager.noCustomTopics', 'No custom topics created yet') }}
                 </div>
 
                 <div v-else class="space-y-2 sm:space-y-3 md:space-y-2 lg:space-y-3">
@@ -156,7 +156,7 @@
                           {{ topic.key }}
                         </span>
                         <span class="text-sm text-gray-600 dark:text-gray-400">
-                          ({{ getTopicUsageCount(topic.key) }} {{ t('vocabulary.words') }})
+                          ({{ getTopicUsageCount(topic.key) }} {{ t('vocabulary.words', 'words') }})
                         </span>
                       </div>
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
@@ -174,7 +174,7 @@
                         @click="editTopic(topic)"
                         class="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200 
                                hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-all duration-300 hover:scale-110"
-                        :title="t('common.edit')"
+                        :title="t('common.edit', 'Edit')"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -188,7 +188,7 @@
                         class="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200 
                                hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-all duration-300 hover:scale-110
                                disabled:text-gray-400 disabled:cursor-not-allowed"
-                        :title="getTopicUsageCount(topic.key) > 0 ? t('vocabulary.topicManager.cannotDeleteInUse') : t('common.delete')"
+                        :title="getTopicUsageCount(topic.key) > 0 ? t('vocabulary.topicManager.cannotDeleteInUse', 'Cannot delete topic in use') : t('common.delete', 'Delete')"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -204,10 +204,10 @@
               <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.8s">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
                   <span class="w-1 h-4 bg-teal-500 rounded mr-2"></span>
-                  {{ t('vocabulary.topicManager.builtInTopics') }}
+                  {{ t('vocabulary.topicManager.builtInTopics', 'Built-in Topics') }}
                 </h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  {{ t('vocabulary.topicManager.builtInTopicsDescription') }}
+                  {{ t('vocabulary.topicManager.builtInTopicsDescription', 'These are system-provided topics that cannot be modified') }}
                 </p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -224,7 +224,7 @@
                           {{ topic.key }}
                         </span>
                         <span class="text-sm text-gray-600 dark:text-gray-400">
-                          ({{ getTopicUsageCount(topic.key) }} {{ t('vocabulary.words') }})
+                          ({{ getTopicUsageCount(topic.key) }} {{ t('vocabulary.words', 'words') }})
                         </span>
                       </div>
                       <div class="grid grid-cols-1 gap-1 text-sm">
@@ -240,7 +240,7 @@
                     <div class="ml-4">
                       <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 
                                    text-xs font-medium rounded">
-                        {{ t('vocabulary.topicManager.builtIn') }}
+                        {{ t('vocabulary.topicManager.builtIn', 'Built-in') }}
                       </span>
                     </div>
                   </div>
@@ -273,7 +273,7 @@
                    @click="closeDialog"
                    class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
                  >
-                   {{ t('common.finish') }}
+                   {{ t('common.finish', 'Finish') }}
                  </button>
                </div>
             </div>
@@ -318,7 +318,7 @@
                   @click="topicToDelete = null"
                   class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
                 >
-                  {{ t('common.cancel') }}
+                  {{ t('common.cancel', 'Cancel') }}
                 </button>
                 <button
                   @click="deleteTopic"

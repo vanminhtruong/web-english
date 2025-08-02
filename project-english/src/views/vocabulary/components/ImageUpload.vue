@@ -3,7 +3,7 @@
     <!-- Upload Area -->
     <div class="relative">
       <label for="image-upload" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        {{ t('vocabulary.image.title') }}
+        {{ t('vocabulary.image.title', 'Image') }}
       </label>
       
       <!-- Method Toggle -->
@@ -18,7 +18,7 @@
               : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
           ]"
         >
-          {{ t('vocabulary.image.upload') }}
+          {{ t('vocabulary.image.upload', 'Upload') }}
         </button>
         <button
           @click="inputMethod = 'url'"
@@ -30,7 +30,7 @@
               : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
           ]"
         >
-          {{ t('vocabulary.image.url') }}
+          {{ t('vocabulary.image.url', 'URL') }}
         </button>
       </div>
       
@@ -65,12 +65,12 @@
             </svg>
             <div class="text-sm text-gray-600 dark:text-gray-400">
               <span class="font-medium text-blue-600 dark:text-blue-400">
-                {{ t('vocabulary.image.clickToUpload') }}
+                {{ t('vocabulary.image.clickToUpload', 'Click to upload') }}
               </span>
-              {{ t('vocabulary.image.orDragDrop') }}
+              {{ t('vocabulary.image.orDragDrop', ' or drag and drop') }}
             </div>
             <p class="text-xs text-gray-500 dark:text-gray-500">
-              {{ t('vocabulary.image.supportedFormats') }}
+              {{ t('vocabulary.image.supportedFormats', 'PNG, JPG, GIF up to 10MB') }}
             </p>
           </div>
         </div>
@@ -84,7 +84,7 @@
             @blur="handleUrlInput"
             @keyup.enter="handleUrlInput"
             type="url"
-            :placeholder="t('vocabulary.image.urlPlaceholder')"
+            :placeholder="t('vocabulary.image.urlPlaceholder', 'Enter image URL')"
             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
@@ -98,7 +98,7 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span>{{ isProcessing ? t('vocabulary.image.loading') : t('vocabulary.image.loadFromUrl') }}</span>
+          <span>{{ isProcessing ? t('vocabulary.image.loading', 'Loading...') : t('vocabulary.image.loadFromUrl', 'Load from URL') }}</span>
         </button>
       </div>
       
@@ -107,7 +107,7 @@
         <div class="border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
           <img
             :src="imagePreview"
-            :alt="t('vocabulary.image.preview')"
+            :alt="t('vocabulary.image.preview', 'Image preview')"
             class="w-full h-48 object-cover"
           />
         </div>
@@ -124,7 +124,7 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
               </svg>
-              <span>{{ t('vocabulary.image.change') }}</span>
+              <span>{{ t('vocabulary.image.changeFile', 'Change Image') }}</span>
             </button>
             
             <button
@@ -136,7 +136,7 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
               </svg>
-              <span>{{ t('vocabulary.image.changeUrl') }}</span>
+              <span>{{ t('vocabulary.image.changeUrl', 'Change URL') }}</span>
             </button>
             
             <button
@@ -147,7 +147,7 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
               </svg>
-              <span>{{ t('vocabulary.image.remove') }}</span>
+              <span>{{ t('vocabulary.image.remove', 'Remove') }}</span>
             </button>
           </div>
           
@@ -157,7 +157,7 @@
               {{ formatFileSize(imageInfo.size) }}
             </div>
             <div v-if="inputMethod === 'url'">
-              {{ t('vocabulary.image.fromUrl') }}
+              {{ t('vocabulary.image.fromUrl', 'From URL') }}
             </div>
           </div>
         </div>
@@ -167,14 +167,14 @@
       <div v-if="showUrlEdit" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white dark:bg-[#0a0a0a] rounded-lg p-6 w-full max-w-md mx-4">
           <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            {{ t('vocabulary.image.changeUrl') }}
+            {{ t('vocabulary.image.changeUrl', 'Change URL') }}
           </h3>
           <div class="space-y-4">
             <input
               v-model="newImageUrl"
               @keyup.enter="handleUrlChange"
               type="url"
-              :placeholder="t('vocabulary.image.urlPlaceholder')"
+              :placeholder="t('vocabulary.image.urlPlaceholder', 'Enter image URL')"
               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             />
             <div class="flex justify-end space-x-3">
@@ -183,7 +183,7 @@
                 type="button"
                 class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
-                {{ t('common.cancel') }}
+                {{ t('common.cancel', 'Cancel') }}
               </button>
               <button
                 @click="handleUrlChange"
@@ -191,7 +191,7 @@
                 type="button"
                 class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
               >
-                {{ isProcessing ? t('vocabulary.image.loading') : t('common.update') }}
+                {{ isProcessing ? t('vocabulary.image.loading', 'Loading...') : t('common.update', 'Update') }}
               </button>
             </div>
           </div>
@@ -205,7 +205,7 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span class="text-sm">{{ t('vocabulary.image.processing') }}</span>
+          <span class="text-sm">{{ t('vocabulary.image.processing', 'Processing...') }}</span>
         </div>
       </div>
     </div>
@@ -296,13 +296,13 @@ const processFile = async (file: File) => {
   
   // Validate file type
   if (!SUPPORTED_TYPES.includes(file.type)) {
-    errorMessage.value = t('vocabulary.image.errors.unsupportedFormat')
+    errorMessage.value = t('vocabulary.image.errors.unsupportedFormat', 'Unsupported file format')
     return
   }
   
   // Validate file size
   if (file.size > MAX_FILE_SIZE) {
-    errorMessage.value = t('vocabulary.image.errors.fileTooLarge')
+    errorMessage.value = t('vocabulary.image.errors.fileTooLarge', 'File size too large')
     return
   }
   
@@ -323,7 +323,7 @@ const processFile = async (file: File) => {
     
   } catch (error) {
     console.error('Error processing image:', error)
-    errorMessage.value = t('vocabulary.image.errors.processingFailed')
+    errorMessage.value = t('vocabulary.image.errors.processingFailed', 'Failed to process image')
   } finally {
     isProcessing.value = false
   }

@@ -8,7 +8,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          {{ t('vocabulary.details.title') }}
+          {{ t('vocabulary.details.title', 'Vocabulary Details') }}
         </h3>
         <button 
           @click="closeDialog"
@@ -31,7 +31,7 @@
             <button 
               @click="playAudio(vocabulary.word)"
               class="flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors"
-              :title="t('vocabulary.details.playAudio')"
+              :title="t('vocabulary.details.playAudio', 'Play Audio')"
             >
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.816L4.846 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.846l3.537-3.816a1 1 0 011.617.816zM16 8a2 2 0 11-4 0 2 2 0 014 0zM14 8a2 2 0 012-2v4a2 2 0 01-2-2z" clip-rule="evenodd"/>
@@ -41,7 +41,7 @@
               @click="toggleFavorite"
               class="flex items-center justify-center w-10 h-10 rounded-full transition-colors"
               :class="vocabulary.favorite ? 'text-yellow-500 hover:text-yellow-600' : 'text-gray-400 hover:text-yellow-500'"
-              :title="vocabulary.favorite ? t('vocabulary.details.removeFavorite') : t('vocabulary.details.addFavorite')"
+              :title="vocabulary.favorite ? t('vocabulary.details.removeFavorite', 'Remove from favorites') : t('vocabulary.details.addFavorite', 'Add to favorites')"
             >
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path v-if="vocabulary.favorite" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -70,7 +70,7 @@
         <!-- Image Display -->
         <div class="mb-6" v-if="vocabulary.image">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-            {{ t('vocabulary.image.title') }}
+            {{ t('vocabulary.image.title', 'Image') }}
           </h3>
           <div class="flex justify-center">
             <div class="max-w-md w-full">
@@ -95,7 +95,7 @@
         <!-- Meaning -->
         <div class="mb-6">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {{ t('vocabulary.meaning') }}
+            {{ t('vocabulary.meaning', 'Meaning') }}
           </h3>
           <p class="text-gray-700 dark:text-gray-300 text-lg">
             {{ vocabulary.meaning }}
@@ -105,7 +105,7 @@
         <!-- Example -->
         <div class="mb-6" v-if="vocabulary.example">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {{ t('vocabulary.example') }}
+            {{ t('vocabulary.example', 'Example') }}
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
             <div class="flex items-start space-x-3">
@@ -130,7 +130,7 @@
         <!-- Synonyms -->
         <div class="mb-6" v-if="vocabulary.synonyms && vocabulary.synonyms.length > 0">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {{ t('vocabulary.synonyms') }}
+            {{ t('vocabulary.synonyms', 'Synonyms') }}
           </h3>
           <div class="flex flex-wrap gap-2">
             <span 
@@ -146,7 +146,7 @@
         <!-- Antonyms -->
         <div class="mb-6" v-if="vocabulary.antonyms && vocabulary.antonyms.length > 0">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {{ t('vocabulary.antonyms') }}
+            {{ t('vocabulary.antonyms', 'Antonyms') }}
           </h3>
           <div class="flex flex-wrap gap-2">
             <span 
@@ -162,7 +162,7 @@
         <!-- Notes -->
         <div class="mb-6" v-if="vocabulary.notes">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {{ t('vocabulary.note') }}
+            {{ t('vocabulary.note', 'Notes') }}
           </h3>
           <div class="bg-yellow-50 dark:bg-yellow-900/10 border-l-4 border-yellow-400 dark:border-yellow-500 p-4">
             <p class="text-gray-700 dark:text-gray-300">
@@ -178,13 +178,13 @@
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
               </svg>
-              <span>{{ t('vocabulary.createdAt') }}: {{ getRelativeTime(vocabulary.createdAt, locale) }}</span>
+              <span>{{ t('vocabulary.createdAt', 'Created') }}: {{ getRelativeTime(vocabulary.createdAt, locale) }}</span>
             </div>
             <div class="flex items-center space-x-2" v-if="vocabulary.updatedAt && vocabulary.updatedAt !== vocabulary.createdAt">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"/>
               </svg>
-              <span>{{ t('vocabulary.updatedAt') }}: {{ getRelativeTime(vocabulary.updatedAt, locale) }}</span>
+              <span>{{ t('vocabulary.updatedAt', 'Updated') }}: {{ getRelativeTime(vocabulary.updatedAt, locale) }}</span>
             </div>
           </div>
         </div>
@@ -196,13 +196,13 @@
           @click="editVocabulary"
           class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
         >
-          {{ t('common.edit') }}
+          {{ t('common.edit', 'Edit') }}
         </button>
         <button 
           @click="closeDialog"
           class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
         >
-          {{ t('common.cancel') }}
+          {{ t('common.cancel', 'Cancel') }}
         </button>
       </div>
     </div>

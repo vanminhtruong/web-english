@@ -101,10 +101,10 @@
                         <option value="noun">{{ t('vocabulary.wordTypes.noun', 'Noun') }}</option>
                         <option value="verb">{{ t('vocabulary.wordTypes.verb', 'Verb') }}</option>
                         <option value="adjective">{{ t('vocabulary.wordTypes.adjective', 'Adjective') }}</option>
-                        <option value="adverb">{{ t('vocabulary.wordTypes.adverb') }}</option>
-                        <option value="preposition">{{ t('vocabulary.wordTypes.preposition') }}</option>
-                        <option value="conjunction">{{ t('vocabulary.wordTypes.conjunction') }}</option>
-                        <option value="interjection">{{ t('vocabulary.wordTypes.interjection') }}</option>
+                        <option value="adverb">{{ t('vocabulary.wordTypes.adverb', 'Adverb') }}</option>
+                        <option value="preposition">{{ t('vocabulary.wordTypes.preposition', 'Preposition') }}</option>
+                        <option value="conjunction">{{ t('vocabulary.wordTypes.conjunction', 'Conjunction') }}</option>
+                        <option value="interjection">{{ t('vocabulary.wordTypes.interjection', 'Interjection') }}</option>
                       </select>
                     </div>
 

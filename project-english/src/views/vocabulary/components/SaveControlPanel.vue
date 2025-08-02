@@ -3,7 +3,7 @@
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
       <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 md:space-x-5 lg:space-x-6">
         <div class="flex items-center space-x-2 md:space-x-3">
-          <span class="text-sm md:text-base lg:text-base font-medium text-gray-700 dark:text-gray-300">{{ t('vocabulary.save.mode') }}</span>
+          <span class="text-sm md:text-base lg:text-base font-medium text-gray-700 dark:text-gray-300">{{ t('vocabulary.save.mode', 'Save Mode')}}</span>
           <button
             @click="emit('update:autoSaveEnabled', !autoSaveEnabled)"
             :class="[
@@ -19,7 +19,7 @@
             />
           </button>
           <span class="text-sm md:text-base lg:text-base text-gray-600 dark:text-gray-400">
-            {{ autoSaveEnabled ? t('vocabulary.save.auto') : t('vocabulary.save.manual') }}
+            {{ autoSaveEnabled ? t('vocabulary.save.auto', 'Auto') : t('vocabulary.save.manual', 'Manual') }}
           </span>
         </div>
 
@@ -38,7 +38,7 @@
             <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
             </svg>
-            <span>{{ isSaving ? t('common.saving') : t('vocabulary.save.saveNow') }}</span>
+            <span>{{ isSaving ? t('common.saving', 'Saving...') : t('vocabulary.save.saveNow', 'Save Now') }}</span>
           </button>
 
           <!-- Auto-save setup button -->
@@ -50,8 +50,8 @@
             <svg class="h-3 w-3 sm:h-4 sm:w-4 md:h-4 md:w-4 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
-            <span class="hidden sm:inline">{{ t('vocabulary.save.chooseAutoFile') }}</span>
-            <span class="sm:hidden">{{ t('vocabulary.save.setup') }}</span>
+            <span class="hidden sm:inline">{{ t('vocabulary.save.chooseAutoFile', 'Choose Auto File') }}</span>
+            <span class="sm:hidden">{{ t('vocabulary.save.setup', 'Setup') }}</span>
           </button>
 
           <!-- Reset auto-save file button -->
@@ -63,8 +63,8 @@
             <svg class="h-4 w-4 md:h-4 md:w-4 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
-            <span class="hidden sm:inline">{{ t('vocabulary.save.changeAutoFile') }}</span>
-            <span class="sm:hidden">{{ t('vocabulary.save.change') }}</span>
+            <span class="hidden sm:inline">{{ t('vocabulary.save.changeAutoFile', 'Change Auto File') }}</span>
+            <span class="sm:hidden">{{ t('vocabulary.save.change', 'Change') }}</span>
           </button>
 
           <!-- Import button -->
@@ -83,8 +83,8 @@
               <svg class="h-4 w-4 md:h-4 md:w-4 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
               </svg>
-              <span class="hidden sm:inline">{{ t('vocabulary.save.importFile') }}</span>
-              <span class="sm:hidden">{{ t('vocabulary.save.importShort') }}</span>
+              <span class="hidden sm:inline">{{ t('vocabulary.save.importFile', 'Import File') }}</span>
+              <span class="sm:hidden">{{ t('vocabulary.save.importShort', 'Import') }}</span>
             </button>
           </div>
         </div>
@@ -95,7 +95,7 @@
           <svg class="h-3 w-3 sm:h-4 sm:w-4 md:h-4 md:w-4 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span class="truncate">{{ t('vocabulary.save.lastSave', { time: lastSaveTime || t('vocabulary.save.notSaved') }) }}</span>
+          <span class="truncate">{{ t('vocabulary.save.lastSave', { time: lastSaveTime || t('vocabulary.save.notSaved', 'Not saved') }, 'Last save: {time}') }}</span>
         </div>
         <div class="flex items-center space-x-1">
           <div :class="['h-2 w-2 rounded-full', saveStatusColor]" />
