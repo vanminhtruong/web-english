@@ -56,13 +56,13 @@
           
           <div class="flex items-center space-x-3">
             <span :class="getLevelColor(vocabulary.level)" class="px-3 py-1 text-sm font-medium rounded-full">
-              {{ t(`vocabulary.levels.${vocabulary.level}`) || vocabulary.level }}
+              {{ t(`vocabulary.levels.${vocabulary.level}`, vocabulary.level) }}
             </span>
             <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
               {{ getTopicName(vocabulary.category) }}
             </span>
             <span class="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full">
-              {{ t(`vocabulary.wordTypes.${vocabulary.partOfSpeech}`) || vocabulary.partOfSpeech }}
+              {{ t(`vocabulary.wordTypes.${vocabulary.partOfSpeech}`, vocabulary.partOfSpeech) }}
             </span>
           </div>
         </div>
