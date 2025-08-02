@@ -308,10 +308,10 @@
             <div class="p-6">
               <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
                 <span class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                {{ t('vocabulary.topicManager.confirmDeleteTitle') }}
+                {{ t('vocabulary.topicManager.confirmDeleteTitle') || 'Confirm Delete' }}
               </h3>
               <p class="text-gray-600 dark:text-gray-300 mb-6">
-                {{ t('vocabulary.topicManager.confirmDeleteMessage', { topic: topicToDelete.vi }) }}
+                {{ t('vocabulary.topicManager.confirmDeleteMessage', { topic: topicToDelete?.vi || topicToDelete?.en || 'this topic' }) || `Are you sure you want to delete "${topicToDelete?.vi || topicToDelete?.en || 'this topic'}"?` }}
               </p>
               <div class="flex gap-3 justify-end">
                 <button
@@ -324,7 +324,7 @@
                   @click="deleteTopic"
                   class="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
                 >
-                  {{ t('common.delete') }}
+                  {{ t('common.delete') || 'Delete' }}
                 </button>
               </div>
             </div>

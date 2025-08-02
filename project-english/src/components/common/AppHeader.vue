@@ -41,37 +41,37 @@
               to="/dashboard"
               :class="[
                 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
-                $route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+                route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.dashboard', 'Dashboard') }}
+              {{ t('common.dashboard') || 'Dashboard' }}
             </RouterLink>
             <RouterLink
               to="/vocabulary"
               :class="[
                 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
-                $route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+                route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.vocabulary', 'Từ vựng') }}
+              {{ t('common.vocabulary') || 'Vocabulary' }}
             </RouterLink>
             <RouterLink
               to="/grammar"
               :class="[
                 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
-                $route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+                route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.grammar', 'Ngữ pháp') }}
+              {{ t('common.grammar') || 'Grammar' }}
             </RouterLink>
             <RouterLink
               to="/practice/flashcard"
               :class="[
                 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none',
-                $route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+                route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.practice', 'Luyện tập') }}
+              {{ t('common.practice') || 'Practice' }}
             </RouterLink>
           </nav>
 
@@ -133,7 +133,7 @@
             @click="closeMobileMenu"
             :class="[
               'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ease-out transform hover:translate-x-1 hover:scale-105 focus:outline-none',
-              $route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
             ]"
           >
             {{ t('common.dashboard', 'Dashboard') }}
@@ -143,7 +143,7 @@
             @click="closeMobileMenu"
             :class="[
               'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
-              $route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
             ]"
           >
             {{ t('common.vocabulary', 'Từ vựng') }}
@@ -153,7 +153,7 @@
             @click="closeMobileMenu"
             :class="[
               'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
-              $route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
             ]"
           >
             {{ t('common.grammar', 'Ngữ pháp') }}
@@ -163,7 +163,7 @@
             @click="closeMobileMenu"
             :class="[
               'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
-              $route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
             ]"
           >
             {{ t('common.practice', 'Luyện tập') }}
@@ -177,7 +177,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { loadComponentSafely } from '../../utils/import-helper'
 
 // Use defineAsyncComponent to import components
@@ -189,6 +189,7 @@ const LanguageSwitcher = defineAsyncComponent(
 )
 
 const { t } = useI18n()
+const route = useRoute()
 
 // Mobile menu state
 const isMobileMenuOpen = ref(false)
