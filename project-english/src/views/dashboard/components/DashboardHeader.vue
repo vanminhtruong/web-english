@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white dark:bg-black shadow border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ t('dashboard.title') }}</h1>
-      <p class="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">{{ t('dashboard.description') }}</p>
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ t('dashboard.title', 'Dashboard') }}</h1>
+      <p class="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">{{ t('dashboard.description', 'Here is a summary of your learning progress.') }}</p>
     </div>
   </div>
 </template>

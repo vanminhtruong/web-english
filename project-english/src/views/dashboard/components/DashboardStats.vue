@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-    <div class="bg-white dark:bg-[#0a0a0a] overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
+    <div class="bg-white dark:bg-dark-bg-soft overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
       <div class="p-4 sm:p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -12,7 +12,7 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.vocabularyLearned') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.vocabularyLearned', 'Vocabulary Learned') }}</dt>
               <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.vocabularyLearned }}</dd>
             </dl>
           </div>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="bg-white dark:bg-[#0a0a0a] overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
+    <div class="bg-white dark:bg-dark-bg-soft overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
       <div class="p-4 sm:p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -32,7 +32,7 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.grammarLessons') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.grammarLessons', 'Grammar Lessons') }}</dt>
               <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.grammarLessons }}</dd>
             </dl>
           </div>
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="bg-white dark:bg-[#0a0a0a] overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
+    <div class="bg-white dark:bg-dark-bg-soft overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
       <div class="p-4 sm:p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -52,15 +52,15 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.currentStreak') }}</dt>
-              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.currentStreak }} {{ t('dashboard.stats.days') }}</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.currentStreak', 'Current Streak') }}</dt>
+              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.currentStreak }} {{ t('dashboard.stats.days', 'days') }}</dd>
             </dl>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white dark:bg-[#0a0a0a] overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
+    <div class="bg-white dark:bg-dark-bg-soft overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-800">
       <div class="p-4 sm:p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -72,8 +72,8 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.totalTime') }}</dt>
-              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.totalTime }} {{ t('dashboard.stats.hours') }}</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{{ t('dashboard.stats.totalTime', 'Total Time') }}</dt>
+              <dd class="text-lg font-medium text-gray-900 dark:text-white">{{ stats.totalTime }} {{ t('dashboard.stats.hours', 'hours') }}</dd>
             </dl>
           </div>
         </div>
