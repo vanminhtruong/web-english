@@ -47,7 +47,7 @@
             </h4>
             <div class="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 dark:bg-[#0f0f0f]">
               <div v-if="todayWords.length === 0" class="p-4 text-center text-gray-500 dark:text-gray-400">
-                {{ t('vocabulary.notes.noWordsLearned') || 'No vocabulary words in this group' }}
+                {{ t('vocabulary.notes.noWordsLearned', 'No vocabulary words in this group') }}
               </div>
               <div v-else class="space-y-2">
                 <div 
@@ -83,13 +83,13 @@
             @click="close" 
             class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
-            {{ t('common.cancel') || 'Cancel' }}
+            {{ t('common.cancel', 'Cancel') }}
           </button>
           <button 
             @click="saveNote" 
             class="px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
-            {{ t('common.save') || 'Save' }}
+            {{ t('common.save', 'Save') }}
           </button>
         </div>
       </div>
@@ -131,9 +131,9 @@ const formattedDate = computed(() => {
   const yesterdayKey = getDateKey(yesterday.toISOString());
   
   if (props.date === todayKey) {
-    return t('vocabulary.notes.today') || 'Today';
+    return t('vocabulary.notes.today', 'Today');
   } else if (props.date === yesterdayKey) {
-    return t('vocabulary.notes.yesterday') || 'Yesterday';
+    return t('vocabulary.notes.yesterday', 'Yesterday');
   } else {
     return formatDate(props.date, locale.value);
   }

@@ -35,9 +35,9 @@
           class="w-full px-2 py-1.5 xs:px-2.5 xs:py-2 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{{ t('common.all', 'All') }}</option>
-          <option value="beginner">{{ t('vocabulary.levels.beginner') || 'Beginner' }}</option>
-          <option value="intermediate">{{ t('vocabulary.levels.intermediate') || 'Intermediate' }}</option>
-          <option value="advanced">{{ t('vocabulary.levels.advanced') || 'Advanced' }}</option>
+          <option value="beginner">{{ t('vocabulary.levels.beginner', 'Beginner') }}</option>
+          <option value="intermediate">{{ t('vocabulary.levels.intermediate', 'Intermediate') }}</option>
+          <option value="advanced">{{ t('vocabulary.levels.advanced', 'Advanced') }}</option>
         </select>
       </div>
     </div>

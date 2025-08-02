@@ -199,7 +199,7 @@
             </svg>
             <span>{{ group.displayDate }}</span>
             <span class="text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
-              ({{ totalVocabularyCount }} {{ t('vocabulary.words') || 'words' }})
+              ({{ totalVocabularyCount }} {{ t('vocabulary.words', 'words') }})
             </span>
           </h4>
         </div>
@@ -249,7 +249,7 @@
               <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
               </svg>
-              <span class="whitespace-nowrap xl:text-sm 2xl:text-base">{{ t('vocabulary.accordion.addTopic') || 'Add Topic' }}</span>
+              <span class="whitespace-nowrap xl:text-sm 2xl:text-base">{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
             </button>
 
             <!-- Action buttons (Note and Add Vocabulary) - controlled by toggle -->
@@ -268,12 +268,12 @@
                 <button
                   @click="openAddVocabularyDialog"
                   class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  :aria-label="t('vocabulary.addWord') || 'Add Word'"
+                  :aria-label="t('vocabulary.addWord', 'Add Word')"
                 >
                   <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                   </svg>
-                  <span>{{ t('vocabulary.addWord') || 'Add Word' }}</span>
+                  <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
                 </button>
               </div>
             </template>

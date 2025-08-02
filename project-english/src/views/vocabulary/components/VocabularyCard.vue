@@ -9,7 +9,7 @@
               <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600">
                 <img
                   :src="word.image"
-                  :alt="`${t('vocabulary.image.preview') || 'Image preview'} - ${word.word}`"
+                  :alt="`${t('vocabulary.image.preview', 'Image preview')} - ${word.word}`"
                   class="w-full h-full object-cover cursor-pointer"
                   @error="handleImageError"
                   @click.stop="openImageModal"
@@ -27,13 +27,13 @@
                   <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                   </svg>
-                  <span>{{ t('vocabulary.createdAt') || 'Created at' }}: {{ getRelativeTime(word.createdAt, locale) }}</span>
+                  <span>{{ t('vocabulary.createdAt', 'Created at') }}: {{ getRelativeTime(word.createdAt, locale) }}</span>
                 </div>
                 <div class="flex items-center space-x-1" v-if="word.updatedAt && word.updatedAt !== word.createdAt">
                   <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"/>
                   </svg>
-                  <span>{{ t('vocabulary.updatedAt') || 'Updated at' }}: {{ getRelativeTime(word.updatedAt, locale) }}</span>
+                  <span>{{ t('vocabulary.updatedAt', 'Updated at') }}: {{ getRelativeTime(word.updatedAt, locale) }}</span>
                 </div>
               </div>
             </div>
@@ -41,7 +41,7 @@
             <div class="flex-2">
               <p class="text-gray-700 dark:text-gray-300">{{ word.meaning }}</p>
               <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="word.example">
-                <span class="font-medium">{{ t('vocabulary.example') || 'Example' }}:</span> {{ word.example }}
+                <span class="font-medium">{{ t('vocabulary.example', 'Example') }}:</span> {{ word.example }}
               </p>
             </div>
             
@@ -83,7 +83,7 @@
     <!-- Image Zoom Modal -->
     <div v-if="isImageModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75" @click="closeImageModal">
         <div class="max-w-4xl max-h-4xl">
-            <img :src="word.image" :alt="`${t('vocabulary.image.preview') || 'Image preview'} - ${word.word}`" class="max-w-full max-h-full rounded-lg">
+            <img :src="word.image" :alt="`${t('vocabulary.image.preview', 'Image preview')} - ${word.word}`" class="max-w-full max-h-full rounded-lg">
         </div>
     </div>
   </div>

@@ -6,7 +6,7 @@
   >
     <div class="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-700">
       <h3 class="text-base sm:text-lg font-medium text-gray-900 dark:text-white">
-        {{ t('vocabulary.vocabularyList') || 'Vocabulary List' }} ({{ totalCount }})
+        {{ t('vocabulary.vocabularyList', 'Vocabulary List') }} ({{ totalCount }})
       </h3>
     </div>
 
@@ -42,14 +42,14 @@
               :disabled="!dateGroupPaginationInfo.hasPrevious" 
               class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ t('common.previous') || 'Previous' }}
+              {{ t('common.previous', 'Previous') }}
             </button>
             <button 
               @click="nextDateGroupPage" 
               :disabled="!dateGroupPaginationInfo.hasNext" 
               class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ t('common.next') || 'Next' }}
+              {{ t('common.next', 'Next') }}
             </button>
           </div>
           
@@ -72,7 +72,7 @@
                   :disabled="!dateGroupPaginationInfo.hasPrevious" 
                   class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span class="sr-only">{{ t('common.previous') || 'Previous' }}</span>
+                  <span class="sr-only">{{ t('common.previous', 'Previous') }}</span>
                   <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
                   </svg>

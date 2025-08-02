@@ -34,7 +34,7 @@
                 <div class="flex items-center justify-between">
                   <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
                     <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                    <span>{{ isEditing ? t('vocabulary.editVocabulary') : t('vocabulary.addVocabulary') }}</span>
+                    <span>{{ isEditing ? t('vocabulary.editVocabulary', 'Edit Vocabulary') : t('vocabulary.addVocabulary', 'Add Vocabulary') }}</span>
                   </h2>
                   <button 
                     @click="closeDialog"
@@ -55,7 +55,7 @@
                     <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 0.1s">
                       <label for="word" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-blue-500 rounded mr-2"></span>
-                        {{ t('vocabulary.word') }} <span class="text-red-500 ml-1">*</span>
+                        {{ t('vocabulary.word', 'Word') }} <span class="text-red-500 ml-1">*</span>
                       </label>
                       <input
                         id="word"
@@ -63,7 +63,7 @@
                         type="text"
                         required
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500 transform hover:scale-[1.02]"
-                        :placeholder="t('vocabulary.wordPlaceholder')"
+                        :placeholder="t('vocabulary.wordPlaceholder', 'Enter English word')"
                         @blur="validateWord"
                       />
                     </div>
@@ -72,7 +72,7 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.2s">
                       <label for="pronunciation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-green-500 rounded mr-2"></span>
-                        {{ t('vocabulary.pronunciation') }}
+                        {{ t('vocabulary.pronunciation', 'Pronunciation') }}
                       </label>
                       <input
                         id="pronunciation"
@@ -88,7 +88,7 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.3s">
                       <label for="partOfSpeech" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-purple-500 rounded mr-2"></span>
-                        {{ t('vocabulary.wordType') }} <span class="text-red-500 ml-1">*</span>
+                        {{ t('vocabulary.wordType', 'Word Type') }} <span class="text-red-500 ml-1">*</span>
                       </label>
                       <select
                         id="partOfSpeech"
@@ -97,10 +97,10 @@
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:border-purple-400 dark:hover:border-purple-500 transform hover:scale-[1.02] cursor-pointer"
                         @change="validatePartOfSpeech"
                       >
-                        <option value="">{{ t('vocabulary.selectWordType') }}</option>
-                        <option value="noun">{{ t('vocabulary.wordTypes.noun') }}</option>
-                        <option value="verb">{{ t('vocabulary.wordTypes.verb') }}</option>
-                        <option value="adjective">{{ t('vocabulary.wordTypes.adjective') }}</option>
+                        <option value="">{{ t('vocabulary.selectWordType', 'Select word type') }}</option>
+                        <option value="noun">{{ t('vocabulary.wordTypes.noun', 'Noun') }}</option>
+                        <option value="verb">{{ t('vocabulary.wordTypes.verb', 'Verb') }}</option>
+                        <option value="adjective">{{ t('vocabulary.wordTypes.adjective', 'Adjective') }}</option>
                         <option value="adverb">{{ t('vocabulary.wordTypes.adverb') }}</option>
                         <option value="preposition">{{ t('vocabulary.wordTypes.preposition') }}</option>
                         <option value="conjunction">{{ t('vocabulary.wordTypes.conjunction') }}</option>
@@ -112,7 +112,7 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.4s">
                       <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-orange-500 rounded mr-2"></span>
-                        {{ t('vocabulary.category') }} <span class="text-red-500 ml-1">*</span>
+                        {{ t('vocabulary.category', 'Category') }} <span class="text-red-500 ml-1">*</span>
                       </label>
                       <div class="relative">
                         <!-- Add Category Button -->
@@ -120,7 +120,7 @@
                           type="button"
                           @click="showTopicManager = true"
                           class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 hover:rotate-90 z-10 shadow-lg"
-                          :title="t('vocabulary.addCategory')"
+                          :title="t('vocabulary.addCategory', 'Add Category')"
                         >
                           +
                         </button>
@@ -131,7 +131,7 @@
                           class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 hover:border-orange-400 dark:hover:border-orange-500 transform hover:scale-[1.02] cursor-pointer"
                           @change="validateCategory"
                         >
-                          <option value="">{{ t('vocabulary.selectCategory') }}</option>
+                          <option value="">{{ t('vocabulary.selectCategory', 'Select category') }}</option>
                           <option v-for="key in categoryKeys" :key="key" :value="key">
                             {{ getTopicDisplayName(key) }}
                           </option>
@@ -143,7 +143,7 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.5s">
                       <label for="level" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-red-500 rounded mr-2"></span>
-                        {{ t('vocabulary.level') }} <span class="text-red-500 ml-1">*</span>
+                        {{ t('vocabulary.level', 'Level') }} <span class="text-red-500 ml-1">*</span>
                       </label>
                       <select
                         id="level"
@@ -152,10 +152,10 @@
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 hover:border-red-400 dark:hover:border-red-500 transform hover:scale-[1.02] cursor-pointer"
                         @change="validateLevel"
                       >
-                        <option value="">{{ t('vocabulary.selectLevel') }}</option>
-                        <option value="beginner">{{ t('vocabulary.levels.beginner') }}</option>
-                        <option value="intermediate">{{ t('vocabulary.levels.intermediate') }}</option>
-                        <option value="advanced">{{ t('vocabulary.levels.advanced') }}</option>
+                        <option value="">{{ t('vocabulary.selectLevel', 'Select level') }}</option>
+                        <option value="beginner">{{ t('vocabulary.levels.beginner', 'Beginner') }}</option>
+                        <option value="intermediate">{{ t('vocabulary.levels.intermediate', 'Intermediate') }}</option>
+                        <option value="advanced">{{ t('vocabulary.levels.advanced', 'Advanced') }}</option>
                       </select>
                     </div>
 
@@ -163,7 +163,7 @@
                     <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 0.6s">
                       <label for="meaning" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-indigo-500 rounded mr-2"></span>
-                        {{ t('vocabulary.meaning') }} <span class="text-red-500 ml-1">*</span>
+                        {{ t('vocabulary.meaning', 'Meaning') }} <span class="text-red-500 ml-1">*</span>
                       </label>
                       <textarea
                         id="meaning"
@@ -171,7 +171,7 @@
                         required
                         rows="3"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none transition-all duration-300 hover:border-indigo-400 dark:hover:border-indigo-500 transform hover:scale-[1.02]"
-                        :placeholder="t('vocabulary.meaningPlaceholder')"
+                        :placeholder="t('vocabulary.meaningPlaceholder', 'Enter meaning in Vietnamese')"
                         @blur="validateMeaning"
                       ></textarea>
                     </div>
@@ -180,14 +180,14 @@
                     <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 0.7s">
                       <label for="example" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-teal-500 rounded mr-2"></span>
-                        {{ t('vocabulary.example') }}
+                        {{ t('vocabulary.example', 'Example') }}
                       </label>
                       <textarea
                         id="example"
                         v-model="form.example"
                         rows="2"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300 hover:border-teal-400 dark:hover:border-teal-500 transform hover:scale-[1.02]"
-                        :placeholder="t('vocabulary.examplePlaceholder')"
+                        :placeholder="t('vocabulary.examplePlaceholder', 'Enter example sentence')"
                         @blur="validateExample"
                       ></textarea>
                     </div>
@@ -196,14 +196,14 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.8s">
                       <label for="synonyms" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-pink-500 rounded mr-2"></span>
-                        {{ t('vocabulary.synonyms') }}
+                        {{ t('vocabulary.synonyms', 'Synonyms') }}
                       </label>
                       <input
                         id="synonyms"
                         v-model="form.synonyms"
                         type="text"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 hover:border-pink-400 dark:hover:border-pink-500 transform hover:scale-[1.02]"
-                        :placeholder="t('vocabulary.separateByComma')"
+                        :placeholder="t('vocabulary.separateByComma', 'Separate by comma')"
                         @blur="validateSynonyms"
                       />
                     </div>
@@ -212,31 +212,31 @@
                     <div class="animate-fade-in-up" style="animation-delay: 0.9s">
                       <label for="antonyms" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-yellow-500 rounded mr-2"></span>
-                        {{ t('vocabulary.antonyms') }}
+                        {{ t('vocabulary.antonyms', 'Antonyms') }}
                       </label>
                       <input
                         id="antonyms"
                         v-model="form.antonyms"
                         type="text"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300 hover:border-yellow-400 dark:hover:border-yellow-500 transform hover:scale-[1.02]"
-                        :placeholder="t('vocabulary.separateByComma')"
+                        :placeholder="t('vocabulary.separateByComma', 'Separate by comma')"
                         @blur="validateAntonyms"
                       />
                     </div>
 
-                    <!-- Notes -->
+                    <!-- Image URL -->
                     <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 1.0s">
-                      <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label for="imageUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-cyan-500 rounded mr-2"></span>
-                        {{ t('vocabulary.note') }}
+                        {{ t('vocabulary.imageUrl', 'Image URL') }}
                       </label>
                       <textarea
-                        id="notes"
-                        v-model="form.notes"
+                        id="imageUrl"
+                        v-model="form.image"
                         rows="3"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-none transition-all duration-300 hover:border-cyan-400 dark:hover:border-cyan-500 transform hover:scale-[1.02]"
-                        :placeholder="t('vocabulary.notePlaceholder')"
-                        @blur="validateNotes"
+                        :placeholder="t('vocabulary.imageUrlPlaceholder', 'Enter image URL (optional)')"
+
                       ></textarea>
                     </div>
 
@@ -255,7 +255,7 @@
                           class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded transition-all duration-300 hover:scale-110 cursor-pointer"
                         />
                         <label for="favorite" class="ml-3 block text-sm text-gray-700 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
-                          {{ t('vocabulary.isFavorite') }}
+                          {{ t('vocabulary.isFavorite', 'Mark as favorite') }}
                         </label>
                       </div>
                     </div>
@@ -271,7 +271,7 @@
                     @click="closeDialog"
                     class="px-6 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
                   >
-                    {{ t('common.cancel') }}
+                    {{ t('common.cancel', 'Cancel') }}
                   </button>
 
                   <button
@@ -283,7 +283,7 @@
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span>{{ isSubmitting ? t('common.saving') : (isEditing ? t('common.update') : t('vocabulary.saveVocabulary')) }}</span>
+                    <span>{{ isSubmitting ? t('common.saving', 'Saving...') : (isEditing ? t('common.update', 'Update') : t('vocabulary.saveVocabulary', 'Save Vocabulary')) }}</span>
                   </button>
                 </div>
               </div>
@@ -375,10 +375,10 @@ const isEditing = computed(() => !!props.vocabulary)
 // Field-specific validation functions
 const validateWord = (): boolean => {
   if (!form.word.trim()) {
-    toast.error(t('vocabulary.validation.wordRequired'))
+    toast.error(t('vocabulary.validation.wordRequired', 'Word is required'))
     return false
   } else if (form.word.trim().length > 100) {
-    toast.error(t('vocabulary.validation.wordTooLong'))
+    toast.error(t('vocabulary.validation.wordTooLong', 'Word is too long'))
     return false
   }
   return true
@@ -386,10 +386,10 @@ const validateWord = (): boolean => {
 
 const validateMeaning = (): boolean => {
   if (!form.meaning.trim()) {
-    toast.error(t('vocabulary.validation.meaningRequired'))
+    toast.error(t('vocabulary.validation.meaningRequired', 'Meaning is required'))
     return false
   } else if (form.meaning.trim().length > 500) {
-    toast.error(t('vocabulary.validation.meaningTooLong'))
+    toast.error(t('vocabulary.validation.meaningTooLong', 'Meaning is too long'))
     return false
   }
   return true
@@ -397,7 +397,7 @@ const validateMeaning = (): boolean => {
 
 const validatePartOfSpeech = (): boolean => {
   if (!form.partOfSpeech) {
-    toast.error(t('vocabulary.validation.partOfSpeechRequired'))
+    toast.error(t('vocabulary.validation.partOfSpeechRequired', 'Part of speech is required'))
     return false
   }
   return true
@@ -405,7 +405,7 @@ const validatePartOfSpeech = (): boolean => {
 
 const validateCategory = (): boolean => {
   if (!form.category) {
-    toast.error(t('vocabulary.validation.categoryRequired'))
+    toast.error(t('vocabulary.validation.categoryRequired', 'Category is required'))
     return false
   }
   return true
@@ -413,7 +413,7 @@ const validateCategory = (): boolean => {
 
 const validateLevel = (): boolean => {
   if (!form.level) {
-    toast.error(t('vocabulary.validation.levelRequired'))
+    toast.error(t('vocabulary.validation.levelRequired', 'Level is required'))
     return false
   }
   return true
@@ -421,7 +421,7 @@ const validateLevel = (): boolean => {
 
 const validateExample = (): boolean => {
   if (form.example.length > 500) {
-    toast.error(t('vocabulary.validation.exampleTooLong'))
+    toast.error(t('vocabulary.validation.exampleTooLong', 'Example is too long'))
     return false
   }
   return true
@@ -429,7 +429,7 @@ const validateExample = (): boolean => {
 
 const validateNotes = (): boolean => {
   if (form.notes.length > 500) {
-    toast.error(t('vocabulary.validation.notesTooLong'))
+    toast.error(t('vocabulary.validation.notesTooLong', 'Notes are too long'))
     return false
   }
   return true
@@ -437,7 +437,7 @@ const validateNotes = (): boolean => {
 
 const validatePronunciation = (): boolean => {
   if (form.pronunciation.length > 100) {
-    toast.error(t('vocabulary.validation.pronunciationTooLong'))
+    toast.error(t('vocabulary.validation.pronunciationTooLong', 'Pronunciation is too long'))
     return false
   }
   return true
@@ -447,7 +447,7 @@ const validateSynonyms = (): boolean => {
   if (form.synonyms && form.synonyms.trim()) {
     const synonyms = form.synonyms.split(',').map(s => s.trim()).filter(s => s)
     if (synonyms.length === 0) {
-      toast.error(t('vocabulary.validation.synonymsInvalid'))
+      toast.error(t('vocabulary.validation.synonymsInvalid', 'Synonyms are invalid'))
       return false
     }
   }
@@ -458,7 +458,7 @@ const validateAntonyms = (): boolean => {
   if (form.antonyms && form.antonyms.trim()) {
     const antonyms = form.antonyms.split(',').map(s => s.trim()).filter(s => s)
     if (antonyms.length === 0) {
-      toast.error(t('vocabulary.validation.antonymsInvalid'))
+      toast.error(t('vocabulary.validation.antonymsInvalid', 'Antonyms are invalid'))
       return false
     }
   }
