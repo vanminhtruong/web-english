@@ -11,7 +11,7 @@
     >
              <div 
          v-if="modelValue" 
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 xs:p-3 sm:p-4 md:p-6 lg:p-4 z-50 backdrop-blur-sm"
          @click.self="closeDialog"
        >
         <!-- Dialog Container -->
@@ -23,11 +23,11 @@
           leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
           leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
         >
-          <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+          <div class="bg-white dark:bg-[#0a0a0a] rounded-lg xs:rounded-xl sm:rounded-xl md:rounded-2xl lg:rounded-xl shadow-2xl max-w-sm xs:max-w-md sm:max-w-2xl md:max-w-4xl lg:max-w-4xl w-full max-h-[95vh] xs:max-h-[92vh] sm:max-h-[90vh] md:max-h-[88vh] lg:max-h-[90vh] overflow-hidden">
             <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between p-4 sm:p-6 md:p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 space-y-4 sm:space-y-0 sm:space-x-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+            <div class="flex flex-col sm:flex-row lg:flex-row sm:items-start lg:items-start sm:justify-between lg:justify-between p-3 xs:p-4 sm:p-6 md:p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 space-y-3 xs:space-y-4 sm:space-y-0 lg:space-y-0 sm:space-x-6 lg:space-x-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
               <div class="flex-1 min-w-0">
-                <h2 class="text-lg sm:text-xl md:text-2xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-2 flex items-center space-x-2">
+                <h2 class="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-2 xs:mb-3 sm:mb-2 lg:mb-3 flex items-center space-x-1 xs:space-x-2 lg:space-x-2">
                   <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                   <span>{{ t('vocabulary.topicManager.title', 'Topic Manager') }}</span>
                 </h2>
@@ -114,7 +114,7 @@
                     <button
                       @click="saveTopic"
                       :disabled="!canSaveTopic"
-                      class="px-3 py-1.5 sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-4 lg:py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 
+                      class="flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-4 lg:py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 
                              text-white text-sm md:text-sm lg:text-base rounded-lg transition-all duration-300 disabled:cursor-not-allowed hover:scale-105 hover:shadow-lg font-medium"
                     >
                       {{ editingTopic ? t('common.update', 'Update') : t('common.add', 'Add') }}
@@ -338,6 +338,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useScrollStore } from '../../../stores/scroll'
 
 interface Topic {
   key: string
@@ -364,6 +365,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
+const scrollStore = useScrollStore()
 
 // State
 const customTopics = ref<Topic[]>([])
@@ -598,9 +600,11 @@ onUnmounted(() => {
 // Watch for dialog open/close
 watch(() => props.modelValue, (newValue) => {
   if (newValue) {
+    scrollStore.setModalOpen(true)
     document.body.style.overflow = 'hidden'
     loadCustomTopics()
   } else {
+    scrollStore.setModalOpen(false)
     // Always restore body scroll when closing
     document.body.style.overflow = ''
     // Reset form when closing
@@ -612,7 +616,6 @@ watch(() => props.modelValue, (newValue) => {
 </script>
 
 <style scoped>
-/* Fade in up animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;

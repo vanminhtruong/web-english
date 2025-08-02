@@ -70,7 +70,7 @@
       </LazyLoadComponent>
 
       <!-- Vocabulary List -->
-      <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-100px">
+      <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="0px">
         <VocabularyList
           :paginated-words="useGrouping ? [] : paginatedVocabulary"
           :current-page="currentPage"
@@ -138,7 +138,7 @@
     <Transition name="fade-scale">
       <div 
         v-show="showStickyButtonVisible"
-        class="fixed bottom-6 right-6 z-50"
+        class="fixed bottom-6 z-50 right-6 max-xs:right-6 xs:right-auto xs:left-1/2 xs:transform xs:translate-x-4 max-sm:right-auto max-sm:left-1/2 max-sm:transform max-sm:translate-x-4 sm:right-auto sm:left-1/2 sm:transform sm:translate-x-1 lg:right-6 lg:left-auto lg:transform-none lg:translate-x-0"
       >
         <button 
           @click="openAddDialog"
@@ -337,7 +337,7 @@ const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value);
 
 // Computed property to control sticky button visibility
 const showStickyButtonVisible = computed(() => {
-  return showStickyButton.value && !showFormDialog.value;
+  return showStickyButton.value && !showFormDialog.value && !showTopicManager.value && !showNoteDialog.value && !showDetailDialog.value;
 });
 
 const deleteWord = (word: any) => {
@@ -603,12 +603,14 @@ body.modal-open {
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   opacity: 0;
-  transform: scale(0.8) translateY(10px);
+  scale: 0.8;
+  translate: 0 10px;
 }
 
 .fade-scale-enter-to,
 .fade-scale-leave-from {
   opacity: 1;
-  transform: scale(1) translateY(0);
+  scale: 1;
+  translate: 0 0;
 }
 </style>

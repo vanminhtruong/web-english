@@ -87,7 +87,7 @@
           </button>
           <button 
             @click="saveNote" 
-            class="px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            class="flex items-center justify-center px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             {{ t('common.save', 'Save') }}
           </button>
@@ -102,6 +102,7 @@ import { ref, watch, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { formatDate, getDateKey } from '../../../utils/dateUtils';
 import { useToast } from 'vue-toastification';
+import { useScrollStore } from '../../../stores/scroll';
 
 const { t, locale } = useI18n();
 const toast = useToast();

@@ -8,7 +8,7 @@
   >
     <div
       v-show="showBackToTop"
-      class="fixed bottom-6 left-6 z-50"
+      class="fixed bottom-6 z-50 left-6 max-xs:left-6 xs:left-1/2 xs:transform xs:-translate-x-[calc(100%+1rem)] max-sm:left-1/2 max-sm:transform max-sm:-translate-x-[calc(100%+1rem)] sm:left-1/2 sm:-translate-x-[calc(100%+4px)] lg:left-6 lg:transform-none lg:translate-x-0"
     >
       <!-- Tooltip -->
       <Transition
@@ -106,7 +106,7 @@ const scrollStore = useScrollStore()
 const showTooltip = ref(false)
 
 // Computed
-const showBackToTop = computed(() => scrollStore.showBackToTop)
+const showBackToTop = computed(() => scrollStore.showBackToTop && !scrollStore.isModalOpen)
 const scrollPercentage = computed(() => scrollStore.scrollPercentage())
 
 // For progress ring calculation
@@ -137,6 +137,7 @@ onUnmounted(() => {
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   opacity: 0;
-  transform: scale(0.8) translateY(10px);
+  scale: 0.8;
+  translate: 0 10px;
 }
 </style>

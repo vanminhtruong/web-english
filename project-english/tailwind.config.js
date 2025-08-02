@@ -9,6 +9,7 @@ export default {
     // Configure responsive breakpoints (mobile-first approach with min-width)
     screens: {
       // Min-width breakpoints for mobile-first design
+      'xs': '480px',
       'sm': '640px',   // @media (min-width: 640px) - Large phones and up
       'md': '768px',   // @media (min-width: 768px) - Tablets and up  
       'lg': '1024px',  // @media (min-width: 1024px) - Desktops and up
