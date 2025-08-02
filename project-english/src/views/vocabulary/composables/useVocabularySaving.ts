@@ -248,7 +248,7 @@ export function useVocabularySaving() {
         const newPermission = await autoSaveFileHandle.value.requestPermission(opts);
         if (newPermission !== 'granted') {
           console.error("Permission to write to file denied");
-          toast.error(t('vocabulary.save.errors.permissionDenied'));
+          toast.error(t('vocabulary.save.errors.permissionDenied', 'Permission denied'));
           return false;
         }
       }
@@ -281,9 +281,9 @@ export function useVocabularySaving() {
       
       // Check if it's a permission error
       if (error instanceof DOMException && error.name === 'NotAllowedError') {
-        toast.error(t('vocabulary.save.errors.permissionDenied'));
+        toast.error(t('vocabulary.save.errors.permissionDenied', 'Permission denied'));
       } else {
-        toast.error(t('vocabulary.save.errors.autoSaveFileFailed'));
+        toast.error(t('vocabulary.save.errors.autoSaveFileFailed', 'Auto save file failed'));
       }
       
       // Reset file handle only if it's not a permission error
@@ -328,7 +328,7 @@ export function useVocabularySaving() {
       
       if (!result) {
         // If auto-save failed, try to prompt user to select a new file
-        toast.info(t('vocabulary.save.autoSaveRetry'), {
+        toast.info(t('vocabulary.save.autoSaveRetry', 'Auto save failed. Click to select a new file.') || 'Auto save failed. Click to select a new file.', {
           timeout: 5000,
           onClick: () => {
             setupAutoSaveFile();
@@ -379,10 +379,10 @@ export function useVocabularySaving() {
         const saveResult = await tryAutoSaveToFile(vocabularyData);
         
         if (saveResult) {
-          toast.success(t('vocabulary.save.autoSaveFileSetup'));
+          toast.success(t('vocabulary.save.autoSaveFileSetup', 'Auto save file setup'));
           console.log("Auto-save file setup successful!");
         } else {
-          toast.error(t('vocabulary.save.errors.autoSaveFileFailed'));
+          toast.error(t('vocabulary.save.errors.autoSaveFileFailed', 'Auto save file failed'));
           console.error("Auto-save file setup failed!");
         }
       } catch (error) {
@@ -392,13 +392,13 @@ export function useVocabularySaving() {
         }
       }
     } else {
-      toast.error(t('vocabulary.save.errors.browserNotSupported'));
+      toast.error(t('vocabulary.save.errors.browserNotSupported', 'Browser not supported'));
     }
   };
 
   const handleFileImport = (file: File) => {
     if (!file || !file.name.endsWith('.json')) {
-      toast.error(t('vocabulary.save.errors.invalidFile'));
+      toast.error(t('vocabulary.save.errors.invalidFile', 'Invalid file'));
       return;
     }
 
@@ -406,9 +406,9 @@ export function useVocabularySaving() {
       {
         component: ConfirmToast,
         props: {
-          message: t('vocabulary.save.import.confirmMessage', { count: '-', filename: file.name }),
-          confirmText: t('common.confirm'),
-          cancelText: t('common.cancel'),
+          message: t('vocabulary.save.import.confirmMessage', { count: '-', filename: file.name }) || `Import ${file.name}? This will replace all current vocabulary.`,
+          confirmText: t('common.confirm', 'Confirm'),
+          cancelText: t('common.cancel', 'Cancel'),
           onConfirm: () => {
             // Read the file after confirmation
             const reader = new FileReader();
@@ -418,7 +418,7 @@ export function useVocabularySaving() {
                 const text = e.target?.result as string;
                 const data = JSON.parse(text);
                 if (!data.vocabularies || !Array.isArray(data.vocabularies)) {
-                  toast.error(t('vocabulary.save.errors.invalidFile'));
+                  toast.error(t('vocabulary.save.errors.invalidFile', 'Invalid file'));
                   isSaving.value = false;
                   return;
                 }
@@ -474,7 +474,7 @@ export function useVocabularySaving() {
               isSaving.value = false;
               
               // Show detailed import success message
-              let importMessage = t('vocabulary.save.import.successMessage', { count: data.vocabularies.length });
+              let importMessage = t('vocabulary.save.import.successMessage', { count: data.vocabularies.length }) || `Successfully imported ${data.vocabularies.length} vocabulary words`;
               if (data.customTopics?.length > 0) {
                 importMessage += ` + ${data.customTopics.length} custom categories`;
               }
@@ -510,13 +510,13 @@ export function useVocabularySaving() {
               } catch (error) {
                 isSaving.value = false;
                 console.error(t('vocabulary.save.errors.invalidFile'), error);
-                toast.error(t('vocabulary.save.errors.invalidFile'));
+                toast.error(t('vocabulary.save.errors.invalidFile', 'Invalid file'));
               }
             };
             reader.onerror = () => {
               isSaving.value = false;
-              console.error('Lỗi khi nhập file');
-              toast.error('Lỗi khi nhập file: ' + reader.error?.message);
+              console.error('Error reading file');
+              toast.error(t('vocabulary.save.errors.fileReadError', { error: reader.error?.message || 'Unknown error' }) || `Error reading file: ${reader.error?.message || 'Unknown error'}`);
             };
             reader.readAsText(file);
             toast.dismiss(toastId);

@@ -110,12 +110,12 @@
               v-else
               @click.stop="showTopicInput = true"
               class="flex items-center space-x-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-              :aria-label="t('vocabulary.accordion.addTopic')"
+              :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
             >
               <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
               </svg>
-              <span class="xl:text-sm 2xl:text-base">{{ t('vocabulary.accordion.addTopic') }}</span>
+              <span class="xl:text-sm 2xl:text-base">{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
             </button>
 
             <!-- Action buttons (Note and Add Vocabulary) - controlled by toggle -->
@@ -131,12 +131,12 @@
               <button
                 @click.stop="openAddVocabularyDialog"
                 class="flex items-center space-x-1 px-2 py-1 text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :aria-label="t('vocabulary.addWord')"
+                :aria-label="t('vocabulary.addWord', 'Add Word')"
               >
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                 </svg>
-                <span>{{ t('vocabulary.addWord') }}</span>
+                <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
               </button>
             </template>
           </div>
@@ -244,7 +244,7 @@
               v-else
               @click.stop="showTopicInput = true"
               class="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 rounded-md border border-blue-200 dark:border-blue-800 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-800/30 transition-colors duration-150"
-              :aria-label="t('vocabulary.accordion.addTopic')"
+              :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
             >
               <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
