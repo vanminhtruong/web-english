@@ -19,10 +19,10 @@
         <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 inline-block mr-1 sm:mr-2 md:mr-3" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
         </svg>
-        {{ t('practice.timer.startPractice') }}
+        {{ t('practice.timer.startPractice', 'Start Practice') }}
       </button>
       <div class="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400 mt-2">
-        {{ t('practice.timer.timeLimit', { seconds: maxTime }) }}
+        {{ t('practice.timer.timeLimit', { seconds: maxTime, default: 'Time limit: {seconds} seconds' }) }}
       </div>
     </div>
 

@@ -85,7 +85,7 @@
             </svg>
           </button>
           <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('flashcard.modes.flashcard') }}</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</h1>
             <p class="mt-1 md:mt-2 text-sm md:text-base text-gray-600 dark:text-gray-300">{{ t('flashcard.header.description', 'Practice vocabulary with flashcards') }}</p>
           </div>
         </div>
