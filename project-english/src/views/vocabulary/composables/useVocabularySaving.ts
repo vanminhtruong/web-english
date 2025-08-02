@@ -554,18 +554,18 @@ export function useVocabularySaving() {
 
   const getSaveStatusText = computed(() => {
     switch (saveStatus.value) {
-      case 'saving': return autoSaveEnabled.value ? t('vocabulary.save.status.autoSaving') : t('vocabulary.save.status.saving');
+      case 'saving': return autoSaveEnabled.value ? t('vocabulary.save.status.autoSaving', 'Auto Saving...') : t('vocabulary.save.status.saving', 'Saving...');
       case 'success':
         if (autoSaveEnabled.value) {
-          return hasAutoSaveFile.value ? t('vocabulary.save.status.autoWithFile') : t('vocabulary.save.status.autoLocalStorage');
+          return hasAutoSaveFile.value ? t('vocabulary.save.status.autoWithFile', 'Auto saved to file') : t('vocabulary.save.status.autoLocalStorage', 'Auto saved locally');
         }
-        return t('vocabulary.save.status.fileSaved');
-      case 'error': return t('vocabulary.save.status.error');
+        return t('vocabulary.save.status.fileSaved', 'Saved to file');
+      case 'error': return t('vocabulary.save.status.error', 'Save error');
       default:
         if (autoSaveEnabled.value) {
-          return hasAutoSaveFile.value ? t('vocabulary.save.status.autoFile') : t('vocabulary.save.status.autoNoFile');
+          return hasAutoSaveFile.value ? t('vocabulary.save.status.autoFile', 'Auto save ready') : t('vocabulary.save.status.autoNoFile', 'Auto save (no file)');
         }
-        return t('vocabulary.save.manual');
+        return t('vocabulary.save.manual', 'Manual save');
     }
   });
 
