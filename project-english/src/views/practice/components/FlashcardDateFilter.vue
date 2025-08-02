@@ -12,7 +12,7 @@
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800"
             />
             <label for="enableDateFilter" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {{ t('flashcard.dateFilter.enable') }}
+              {{ t('flashcard.dateFilter.enable', 'Filter by date') }}
             </label>
           </div>
 
@@ -25,7 +25,7 @@
               class="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               :disabled="!localEnabled"
             >
-              <option value="">{{ t('flashcard.dateFilter.allDates') }}</option>
+              <option value="">{{ t('flashcard.dateFilter.allDates', 'All dates') }}</option>
               <option v-for="group in availableDates" :key="group.date" :value="group.date">
                 {{ group.displayDate }} ({{ group.count }})
               </option>
@@ -105,10 +105,11 @@ const getFilterInfo = () => {
   const selectedGroup = availableDates.value.find(g => g.date === localSelectedDate.value)
   if (!selectedGroup) return ''
   
-  return t('flashcard.dateFilter.info', {
-    count: selectedGroup.count,
-    date: selectedGroup.displayDate
-  })
+  return t(
+    'flashcard.dateFilter.info',
+    { count: selectedGroup.count, date: selectedGroup.displayDate },
+    `Showing ${selectedGroup.count} words from ${selectedGroup.displayDate}`
+  )
 }
 
 // Reset selected date when disabled

@@ -12,7 +12,7 @@
       <div class="text-center mb-4 flex-shrink-0">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ currentCard.word }}</h2>
         <p class="text-sm text-gray-600 dark:text-gray-300">{{ currentCard.pronunciation }}</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Chọn nghĩa đúng:</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ t('flashcard.quiz.instruction', 'Choose the correct meaning:') }}</p>
       </div>
 
       <!-- Options -->
@@ -63,7 +63,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { getTopicName } from '../../../utils/topicUtils'
+
+const { t } = useI18n()
 
 interface FlashcardData {
   word: string

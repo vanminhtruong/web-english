@@ -20,7 +20,7 @@
             {{ currentCard.pronunciation }}
           </p>
           <p class="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400">
-            Nhấn để xem nghĩa
+            {{ t('flashcard.card.flip_to_meaning', 'Click to see meaning') }}
           </p>
         </div>
       </div>
@@ -32,13 +32,13 @@
             {{ currentCard.meaning }}
           </h3>
           <p class="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-5" v-if="currentCard.partOfSpeech">
-            {{ currentCard.partOfSpeech }}
+            {{ t(`vocabulary.wordTypes.${currentCard.partOfSpeech}`, currentCard.partOfSpeech) }}
           </p>
           <p class="text-xs sm:text-sm md:text-base mb-3 sm:mb-4 md:mb-5 leading-relaxed" v-if="currentCard.example">
             {{ currentCard.example }}
           </p>
           <p class="text-xs sm:text-sm md:text-base opacity-75">
-            Nhấn để quay lại
+            {{ t('flashcard.card.flip_back', 'Click to flip back') }}
           </p>
         </div>
       </div>
@@ -48,6 +48,7 @@
 
 <script setup lang="ts">
 import { getTopicName } from '../../../utils/topicUtils'
+import { useI18n } from 'vue-i18n'
 
 interface FlashcardData {
   word: string
@@ -62,6 +63,8 @@ interface Props {
   currentCard: FlashcardData
   isFlipped: boolean
 }
+
+const { t } = useI18n()
 
 const props = defineProps<Props>()
 

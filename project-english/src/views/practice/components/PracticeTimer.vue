@@ -163,10 +163,12 @@ const nextCard = () => {
 }
 
 const resetPractice = () => {
-  stopTimer()
-  hasStarted.value = false
-  remainingTime.value = props.maxTime
-}
+  stopTimer();
+  isActive.value = false; // Add this line to hide the timer
+  hasStarted.value = false;
+  remainingTime.value = props.maxTime;
+  showTimeoutModal.value = false; // Hide timeout modal if open
+};
 
 const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60)

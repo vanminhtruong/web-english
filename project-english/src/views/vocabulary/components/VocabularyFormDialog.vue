@@ -670,7 +670,7 @@ const submitForm = async () => {
       vocabularyStore.updateVocabulary(props.vocabulary.id, vocabularyData)
       console.log('Vocabulary updated:', props.vocabulary.id, vocabularyData)
       // Show success toast for update
-      toast.success(t('vocabulary.validation.updateSuccess'))
+      toast.success(t('vocabulary.validation.updateSuccess', 'Vocabulary updated successfully!'))
     } else {
       // Add new vocabulary
       // If targetDate is provided, use it for createdAt and updatedAt
@@ -683,7 +683,7 @@ const submitForm = async () => {
       const newVocabulary = vocabularyStore.addVocabulary(vocabularyData)
       console.log('Vocabulary added:', newVocabulary)
       // Show success toast for save
-      toast.success(t('vocabulary.validation.saveSuccess'))
+      toast.success(t('vocabulary.validation.saveSuccess', 'Vocabulary added successfully!'))
     }
 
     // Emit success event
@@ -697,7 +697,7 @@ const submitForm = async () => {
   } catch (error) {
     console.error('Error saving vocabulary:', error)
     // Show error toast instead of alert
-    toast.error(t('vocabulary.validation.saveError'))
+    toast.error(t('vocabulary.validation.saveError', 'Error saving vocabulary'))
   } finally {
     isSubmitting.value = false
   }

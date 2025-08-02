@@ -13,7 +13,7 @@
         <div v-if="currentCard?.image" class="relative">
           <img 
             :src="currentCard.image" 
-            :alt="t('flashcard.image.imageAlt')"
+            :alt="t('flashcard.image.imageAlt', 'Flashcard image')"
             class="max-w-full max-h-40 object-contain rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
             @error="handleImageError"
           />
@@ -22,7 +22,7 @@
               <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ t('flashcard.image.imageError') }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ t('flashcard.image.imageError', 'Could not load image.') }}</p>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
             <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ t('flashcard.image.noImage') }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ t('flashcard.image.noImage', 'No image available for this card.') }}</p>
           </div>
         </div>
       </div>
@@ -46,7 +46,7 @@
             @keyup.enter="checkAnswer"
             type="text"
             :disabled="imageAnswered"
-            :placeholder="t('flashcard.image.placeholder')"
+            :placeholder="t('flashcard.image.placeholder', 'Enter your answer...')"
             class="w-full px-4 py-3 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
@@ -67,13 +67,13 @@
             <svg v-else class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
-            {{ imageCorrect ? t('common.correct') : t('common.incorrect') }}
+            {{ imageCorrect ? t('common.correct', 'Correct') : t('common.incorrect', 'Incorrect') }}
           </div>
           
           <!-- Show correct answer if wrong -->
           <div v-if="!imageCorrect" class="text-center">
             <p class="text-sm text-gray-600 dark:text-gray-400">
-              {{ t('flashcard.image.correctAnswer') }}: 
+              {{ t('flashcard.image.correctAnswer', 'Correct answer') }}: 
               <span class="font-semibold text-gray-900 dark:text-white">{{ currentCard?.word }}</span>
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
@@ -91,7 +91,7 @@
 
         <!-- Instruction text -->
         <p v-if="!imageAnswered" class="text-center text-sm text-gray-500 dark:text-gray-400">
-          {{ t('flashcard.image.instruction') }}
+          {{ t('flashcard.image.instruction', 'Type the word for the image above and press Enter.') }}
         </p>
       </div>
     </div>
