@@ -271,12 +271,12 @@ const getVoiceTypeOptions = (): Array<{value: VoiceType, label: string, icon: st
   const { t } = useI18n()
   
   return [
-    { value: 'female-sweet', label: t('voice.types.female_sweet'), icon: '👩💖' },
-    { value: 'female-clear', label: t('voice.types.female_clear'), icon: '👩💼' },
-    { value: 'female-professional', label: t('voice.types.female_professional'), icon: '👩🎯' },
-    { value: 'male-strong', label: t('voice.types.male_strong'), icon: '👨💪' },
-    { value: 'male-gentle', label: t('voice.types.male_gentle'), icon: '👨😊' },
-    { value: 'male-deep', label: t('voice.types.male_deep'), icon: '👨🎭' }
+    { value: 'female-sweet', label: t('voice.types.female_sweet', 'Female Sweet'), icon: '👩💖' },
+    { value: 'female-clear', label: t('voice.types.female_clear', 'Female Clear'), icon: '👩💼' },
+    { value: 'female-professional', label: t('voice.types.female_professional', 'Female Professional'), icon: '👩🎯' },
+    { value: 'male-strong', label: t('voice.types.male_strong', 'Male Strong'), icon: '👨💪' },
+    { value: 'male-gentle', label: t('voice.types.male_gentle', 'Male Gentle'), icon: '👨😊' },
+    { value: 'male-deep', label: t('voice.types.male_deep', 'Male Deep'), icon: '👨🎭' }
   ]
 }
 
