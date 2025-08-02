@@ -22,7 +22,7 @@
         {{ t('practice.timer.startPractice', 'Start Practice') }}
       </button>
       <div class="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400 mt-2">
-        {{ t('practice.timer.timeLimit', { seconds: maxTime, default: 'Time limit: {seconds} seconds' }) }}
+        {{ timeLimitText }}
       </div>
     </div>
 
@@ -88,6 +88,14 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+
+const timeLimitText = computed(() => {
+  return t(
+    'practice.timer.timeLimit',
+    { seconds: props.maxTime },
+    'Time limit: {seconds} seconds'
+  )
+})
 
 // Timer state
 const remainingTime = ref(props.maxTime)
