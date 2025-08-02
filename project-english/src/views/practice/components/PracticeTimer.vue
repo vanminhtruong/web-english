@@ -90,11 +90,15 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const timeLimitText = computed(() => {
-  return t(
-    'practice.timer.timeLimit',
-    { seconds: props.maxTime },
-    'Time limit: {seconds} seconds'
-  )
+  // First, try to translate. If the key exists, it will be interpolated.
+  const translated = t('practice.timer.timeLimit', { seconds: props.maxTime })
+
+  // If translation fails, t() returns the key. In that case, use a manual fallback.
+  if (translated === 'practice.timer.timeLimit') {
+    return `Time limit: ${props.maxTime} seconds`
+  }
+
+  return translated
 })
 
 // Timer state
