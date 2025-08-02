@@ -44,7 +44,7 @@
                 route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.dashboard') || 'Dashboard' }}
+              {{ t('common.dashboard', 'Dashboard') }}
             </RouterLink>
             <RouterLink
               to="/vocabulary"
@@ -53,7 +53,7 @@
                 route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.vocabulary') || 'Vocabulary' }}
+              {{ t('common.vocabulary', 'Vocabulary') }}
             </RouterLink>
             <RouterLink
               to="/grammar"
@@ -62,7 +62,7 @@
                 route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.grammar') || 'Grammar' }}
+              {{ t('common.grammar', 'Grammar') }}
             </RouterLink>
             <RouterLink
               to="/practice/flashcard"
@@ -71,7 +71,7 @@
                 route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
               ]"
             >
-              {{ t('common.practice') || 'Practice' }}
+              {{ t('common.practice', 'Practice') }}
             </RouterLink>
           </nav>
 

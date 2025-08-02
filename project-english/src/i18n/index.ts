@@ -20,6 +20,11 @@ const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
   locale: getInitialLocale(), // set default locale
   fallbackLocale: 'en', // set fallback locale
+  globalInjection: true, // Enable global $t function
+  missingWarn: false, // Disable missing translation warnings
+  fallbackWarn: false, // Disable fallback warnings
+  silentTranslationWarn: true, // Silence translation warnings
+  silentFallbackWarn: true, // Silence fallback warnings
   messages: {
     en,
     vi
