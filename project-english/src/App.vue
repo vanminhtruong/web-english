@@ -25,6 +25,7 @@ const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLo
 
     <!-- Back to Top Button - Fixed position -->
     <BackToTop />
+    1
   </div>
 </template>
 
