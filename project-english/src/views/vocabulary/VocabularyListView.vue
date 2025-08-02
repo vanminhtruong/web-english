@@ -159,7 +159,7 @@
             v-if="showStickyTooltip"
             class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-black dark:text-white dark:border dark:border-gray-600 rounded shadow-lg whitespace-nowrap z-50"
           >
-            {{ t('vocabulary.addNew') }}
+            {{ t('vocabulary.addNew') || 'Add New Word' }}
             <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-black"></div>
           </div>
         </button>
