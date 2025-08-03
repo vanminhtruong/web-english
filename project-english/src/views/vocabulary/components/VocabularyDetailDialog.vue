@@ -213,11 +213,13 @@
 import { computed, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useVoiceStore } from '../../../stores/voiceStore'
+import { useModalStore } from '../../../stores/modalStore'
 import { getRelativeTime } from '../../../utils/dateUtils'
 import { getTopicName } from '../../../utils/topicUtils'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 
 const { t, locale } = useI18n()
+const modalStore = useModalStore()
 
 interface Props {
   modelValue: boolean
@@ -238,6 +240,11 @@ const { playAudio: playVoiceAudio } = useVoiceStore()
 const playAudio = (text: string) => {
   playVoiceAudio(text)
 }
+
+// Watch for modal open/close to update modalStore
+watch(() => props.modelValue, (newValue) => {
+  modalStore.showVocabularyDetail = newValue
+})
 
 // Dialog controls
 const closeDialog = () => {

@@ -11,11 +11,11 @@ export const useModalStore = defineStore('modal', () => {
 
   // Computed properties to determine what should be hidden
   const shouldHideBackToTop = computed(() => {
-    return showVocabularyForm.value || showTopicManager.value || showNoteDialog.value || showGrammarManager.value
+    return showVocabularyForm.value || showTopicManager.value || showNoteDialog.value || showGrammarManager.value || showVocabularyDetail.value
   })
 
   const shouldHideAddNewWord = computed(() => {
-    return showTopicManager.value || showNoteDialog.value || showGrammarManager.value
+    return showTopicManager.value || showNoteDialog.value || showGrammarManager.value || showVocabularyDetail.value
   })
 
   // Actions to update modal states
