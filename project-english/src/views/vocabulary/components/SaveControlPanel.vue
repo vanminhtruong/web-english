@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-3 sm:p-4 md:p-5 lg:p-6 mb-4 sm:mb-6">
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-      <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 md:space-x-5 lg:space-x-6">
+  <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-3 sm:p-4 md:p-5 lg:p-6 mb-4 sm:mb-6 overflow-hidden">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 min-w-0">
+      <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 md:space-x-5 lg:space-x-6 min-w-0 flex-1">
         <div class="flex items-center space-x-2 md:space-x-3">
           <span class="text-sm md:text-base lg:text-base font-medium text-gray-700 dark:text-gray-300">{{ t('vocabulary.save.mode', 'Save Mode')}}</span>
           <button
@@ -23,7 +23,7 @@
           </span>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 sm:gap-2 md:gap-3 lg:gap-3">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-2 md:gap-3 lg:gap-3 min-w-0">
           <!-- Manual save button -->
           <button
             v-if="!autoSaveEnabled"

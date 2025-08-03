@@ -23,21 +23,21 @@
           leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
           leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
         >
-          <div class="w-full max-h-[90vh] flex flex-col max-w-2xl">
+          <div class="w-full max-h-[90vh] flex flex-col max-w-[95vw] sm:max-w-lg md:max-w-xl lg:max-w-2xl">
             <!-- Dialog Content -->
             <div 
               class="bg-white dark:bg-[#0a0a0a] shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col h-full overflow-hidden transform"
               @click.stop
             >
               <!-- Header -->
-              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+              <div class="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
                 <div class="flex items-center justify-between">
-                  <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white flex items-center space-x-1 sm:space-x-2 flex-1 min-w-0">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></span>
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                     </svg>
-                    <span>{{ t('vocabulary.notes.title', 'Vocabulary Notes') }} - {{ formattedDate }}</span>
+                    <span class="truncate">{{ t('vocabulary.notes.title', 'Vocabulary Notes') }} - {{ formattedDate }}</span>
                   </h2>
                   <button 
                     @click="close"
@@ -51,7 +51,7 @@
               </div>
               
               <!-- Form -->
-              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
+              <div class="px-3 sm:px-6 py-3 sm:py-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
                 <div class="space-y-6">
                   <!-- Description -->
                   <div class="animate-fade-in-up" style="animation-delay: 0.1s">
@@ -95,20 +95,20 @@
                         <div 
                           v-for="(word, index) in todayWords" 
                           :key="word.id" 
-                          class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white dark:hover:bg-[#0f0f0f] transition-all duration-300 border border-transparent hover:border-green-200 cursor-pointer hover:shadow-md hover:scale-[1.02] animate-fade-in-up"
+                          class="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-lg hover:bg-white dark:hover:bg-[#0f0f0f] transition-all duration-300 border border-transparent hover:border-green-200 cursor-pointer hover:shadow-md hover:scale-[1.02] animate-fade-in-up"
                           :style="`animation-delay: ${0.4 + index * 0.1}s`"
                         >
                           <div class="flex-1 min-w-0">
-                            <div class="flex items-center space-x-2 mb-1">
-                              <span class="font-medium text-gray-900 dark:text-white">{{ word.word }}</span>
-                              <span class="text-sm text-gray-500 dark:text-gray-400 font-mono">{{ word.pronunciation }}</span>
+                            <div class="flex items-center space-x-1 sm:space-x-2 mb-1">
+                              <span class="font-medium text-gray-900 dark:text-white truncate">{{ word.word }}</span>
+                              <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-mono truncate">{{ word.pronunciation }}</span>
                             </div>
                             <div class="text-sm text-gray-600 dark:text-gray-300 truncate">{{ word.meaning }}</div>
                           </div>
-                          <div class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+                          <div class="text-xs px-1 sm:px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full whitespace-nowrap">
                             {{ word.level }}
                           </div>
-                          <div class="flex items-center space-x-2">
+                          <div class="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                             <button 
                               @click="speakWord(word.word)"
                               class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 hover:scale-110 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800"

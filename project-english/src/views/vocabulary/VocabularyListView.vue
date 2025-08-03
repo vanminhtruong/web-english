@@ -6,7 +6,7 @@
     </LazyLoadComponent>
 
     <!-- Filters and Search -->
-    <div class="max-w-7xl mx-auto py-3 px-2 xs:py-4 xs:px-3 sm:py-6 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12">
+    <div class="max-w-full sm:max-w-full md:max-w-full lg:max-w-7xl mx-auto py-3 px-2 xs:py-4 xs:px-3 sm:py-6 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 overflow-x-hidden">
       <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
         <div class="mb-3 xs:mb-4 sm:mb-6">
           <VocabularyFilters
@@ -37,7 +37,7 @@
 
       <!-- Voice Settings Panel -->
       <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-        <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 mb-3 xs:mb-4 sm:mb-6">
+        <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 mb-3 xs:mb-4 sm:mb-6 overflow-x-hidden">
           <VoiceSelector :show-voice-info="true" />
         </div>
       </LazyLoadComponent>
@@ -145,7 +145,7 @@
     <Transition name="fade-scale">
       <div 
         v-show="showStickyButtonVisible"
-        class="fixed bottom-6 z-50 left-1/2 translate-x-4 sm:left-auto sm:right-6 sm:translate-x-0"
+        class="fixed bottom-6 z-50 left-1/2 translate-x-4 md:translate-x-4 lg:left-auto lg:right-6 lg:translate-x-0"
       >
         <button 
           @click="openAddDialog"
