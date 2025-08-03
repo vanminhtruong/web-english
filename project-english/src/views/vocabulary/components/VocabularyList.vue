@@ -417,14 +417,14 @@ const handleAccordionToggle = (date: string, expanded: boolean) => {
 
 // Handle note saved event
 const handleNoteSaved = (date: string, note: string, markedWords: string[]) => {
-  toast.success(t('vocabulary.notes.saveSuccess'), {
+  toast.success(t('vocabulary.notes.saveSuccess', 'Notes saved successfully'), {
     timeout: 2000,
   });
   
   // Check if auto-save is enabled
   const autoSaveEnabled = localStorage.getItem('vocabulary-auto-save-enabled');
   if (autoSaveEnabled === 'true') {
-    toast.info(t('vocabulary.notes.autoSaveNotice'), {
+    toast.info(t('vocabulary.notes.autoSaveNotice', 'Notes will be included in auto-save'), {
       timeout: 3000,
     });
   }

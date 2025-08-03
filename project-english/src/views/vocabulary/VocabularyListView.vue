@@ -354,7 +354,7 @@ const deleteWord = (word: any) => {
           vocabularyStore.deleteVocabulary(word.id);
           debounceAutoSave();
           toast.dismiss(toastId);
-          toast.success(t('vocabulary.deleteSuccess', { word: word.word }));
+          toast.success(t('vocabulary.deleteSuccess', { word: word.word }) || `Successfully deleted "${word.word}"`);
         },
         onCancel: () => {
           toast.dismiss(toastId);
@@ -570,13 +570,13 @@ const openAddVocabularyForDate = (date: string) => {
 };
 
 const handleNoteSaved = (note: string, markedWords: string[]) => {
-  toast.success(t('vocabulary.notes.saveSuccess'), {
+  toast.success(t('vocabulary.notes.saveSuccess', 'Notes saved successfully'), {
     timeout: 2000,
   });
   
   // Check if auto-save is enabled
   if (autoSaveEnabled.value) {
-    toast.info(t('vocabulary.notes.autoSaveNotice'), {
+    toast.info(t('vocabulary.notes.autoSaveNotice', 'Notes will be included in auto-save'), {
       timeout: 3000,
     });
     debounceAutoSave();

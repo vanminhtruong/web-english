@@ -388,7 +388,7 @@ export function useVocabularySaving() {
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
           console.error("Error setting up auto-save file:", error);
-          toast.error(t('vocabulary.save.errors.fileSelectError', { error: (error as Error).message }));
+          toast.error(t('vocabulary.save.errors.fileSelectError', { error: (error as Error).message }) || `File selection error: ${(error as Error).message}`);
         }
       }
     } else {
