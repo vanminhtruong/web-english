@@ -12,7 +12,6 @@
       <div 
         v-if="modelValue" 
         class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
-        @click="closeDialog"
       >
         <!-- Dialog Container -->
         <Transition
