@@ -7,14 +7,15 @@ export const useModalStore = defineStore('modal', () => {
   const showTopicManager = ref(false) 
   const showNoteDialog = ref(false)
   const showVocabularyDetail = ref(false)
+  const showGrammarManager = ref(false)
 
   // Computed properties to determine what should be hidden
   const shouldHideBackToTop = computed(() => {
-    return showVocabularyForm.value || showTopicManager.value || showNoteDialog.value
+    return showVocabularyForm.value || showTopicManager.value || showNoteDialog.value || showGrammarManager.value
   })
 
   const shouldHideAddNewWord = computed(() => {
-    return showTopicManager.value || showNoteDialog.value
+    return showTopicManager.value || showNoteDialog.value || showGrammarManager.value
   })
 
   // Actions to update modal states
@@ -34,12 +35,17 @@ export const useModalStore = defineStore('modal', () => {
     showVocabularyDetail.value = show
   }
 
+  const setGrammarManager = (show: boolean) => {
+    showGrammarManager.value = show
+  }
+
   return {
     // States
     showVocabularyForm,
     showTopicManager,
     showNoteDialog,
     showVocabularyDetail,
+    showGrammarManager,
     
     // Computed
     shouldHideBackToTop,
@@ -49,6 +55,7 @@ export const useModalStore = defineStore('modal', () => {
     setVocabularyForm,
     setTopicManager,
     setNoteDialog,
-    setVocabularyDetail
+    setVocabularyDetail,
+    setGrammarManager
   }
 })

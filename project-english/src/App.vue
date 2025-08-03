@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
 import { loadComponentSafely } from './utils/import-helper'
+import { useModalStore } from './stores/modalStore'
 
 // Import components - use direct import for header to ensure proper positioning
 const AppHeader = defineAsyncComponent(
@@ -11,6 +12,9 @@ const BackToTop = defineAsyncComponent(
   () => import('./components/common/BackToTop.vue')
 )
 const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLoadComponent.vue'))
+
+// Modal store for managing button visibility
+const modalStore = useModalStore()
 </script>
 
 <template>
@@ -24,7 +28,7 @@ const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLo
     </main>
 
     <!-- Back to Top Button - Fixed position -->
-    <BackToTop />
+    <BackToTop v-show="!modalStore.shouldHideBackToTop" />
   </div>
 </template>
 

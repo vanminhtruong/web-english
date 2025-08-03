@@ -586,8 +586,23 @@ const openGrammarManagerForDate = (date: string) => {
   console.log('Opening grammar manager for date:', date);
   grammarManagerDate.value = date;
   showGrammarManagerModal.value = true;
+  modalStore.setGrammarManager(true);
   console.log('Modal state:', showGrammarManagerModal.value);
 };
+
+// Prevent body scroll when grammar manager modal is open
+watch(showGrammarManagerModal, (newValue) => {
+  if (newValue) {
+    document.body.classList.add('modal-open');
+  } else {
+    // Only remove if other dialogs are also closed
+    if (!showNoteDialog.value && !showFormDialog.value) {
+      document.body.classList.remove('modal-open');
+    }
+  }
+  // Sync with modal store
+  modalStore.setGrammarManager(newValue);
+});
 
 const handleNoteSaved = (note: string, markedWords: string[]) => {
   toast.success(t('vocabulary.notes.saveSuccess', 'Notes saved successfully'), {
