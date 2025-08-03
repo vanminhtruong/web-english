@@ -74,7 +74,7 @@
         <div class="flex items-center justify-center space-x-2" @click.stop>
           <div v-if="!showTopicInput" class="flex items-center space-x-1">
             <!-- Topic display or add button -->
-            <div v-if="groupTopic" class="flex items-center space-x-1 px-2 py-1 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
+            <div v-if="groupTopic" class="flex items-center space-x-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
               <svg class="w-2 h-2 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
               </svg>
@@ -109,7 +109,7 @@
             <button
               v-else
               @click.stop="showTopicInput = true"
-              class="flex items-center space-x-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex items-center space-x-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
             >
               <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
@@ -130,7 +130,7 @@
               <!-- Add Vocabulary button -->
               <button
                 @click.stop="openAddVocabularyDialog"
-                class="flex items-center space-x-1 px-2 py-1 text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="flex items-center space-x-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :aria-label="t('vocabulary.addWord', 'Add Word')"
               >
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -150,11 +150,11 @@
               @keyup.escape="cancelTopicInput"
               type="text"
               :placeholder="t('vocabulary.accordion.topicPlaceholder')"
-              class="flex-1 px-2 py-1 text-xs xl:text-sm 2xl:text-base border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="flex-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs xl:text-sm 2xl:text-base border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
               @click="saveTopic"
-              class="px-1.5 py-1 text-xs xl:text-sm 2xl:text-base bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              class="px-1.5 md:px-1.5 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs xl:text-sm 2xl:text-base bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               :aria-label="t('vocabulary.accordion.saveTopic')"
             >
               <svg class="w-2.5 h-2.5 xl:w-3 xl:h-3 2xl:w-3.5 2xl:h-3.5" fill="currentColor" viewBox="0 0 20 20">
@@ -163,7 +163,7 @@
             </button>
             <button
               @click="cancelTopicInput"
-              class="px-1.5 py-1 text-xs xl:text-sm 2xl:text-base bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+              class="px-1.5 md:px-1.5 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs xl:text-sm 2xl:text-base bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
               :aria-label="t('vocabulary.accordion.cancelTopic')"
             >
               <svg class="w-2.5 h-2.5 xl:w-3 xl:h-3 2xl:w-3.5 2xl:h-3.5" fill="currentColor" viewBox="0 0 20 20">
@@ -174,11 +174,13 @@
         </div>
       </div>
 
-      <!-- Desktop/Tablet layout: Horizontal -->
-      <div 
-        @click="toggleAccordion"
-        class="hidden xs:flex items-center justify-between flex-wrap gap-1 cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-      >
+      <!-- Desktop/Tablet layout: Responsive -->
+      <div class="hidden xs:block">
+        <!-- Date Header Section -->
+        <div 
+          @click="toggleAccordion"
+          class="flex items-center justify-between cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+        >
         <!-- Header content -->
         <div class="flex items-center space-x-2">
           <!-- Accordion toggle button -->
@@ -193,8 +195,8 @@
             </svg>
           </div>
 
-          <h4 class="text-xs xs:text-sm sm:text-sm md:text-base lg:text-lg xl:text-base 2xl:text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2">
-            <svg class="w-3 xs:w-3.5 sm:w-4 md:w-5 lg:w-6 xl:w-6 xl:h-6 2xl:w-7 2xl:h-7" fill="currentColor" viewBox="0 0 20 20">
+          <h4 class="text-xs xs:text-sm sm:text-sm md:text-base lg:text-base xl:text-sm 2xl:text-base font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2">
+            <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
             </svg>
             <span>{{ group.displayDate }}</span>
@@ -204,147 +206,299 @@
           </h4>
         </div>
 
-        <!-- Center topic section -->
-        <div class="flex-1 flex justify-center mx-1 xs:mx-2 sm:mx-4 min-w-0">
-          <div v-if="!showTopicInput" class="flex items-center space-x-1.5 xs:space-x-1.5 sm:space-x-2 flex-nowrap">
-            <!-- Topic display or add button -->
-            <div v-if="groupTopic" class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-1.5 md:space-x-2 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700 flex-shrink-0">
-              <svg class="w-2.5 xs:w-3 sm:w-3 md:w-4 lg:w-4 h-2.5 xs:h-3 sm:h-3 md:h-4 lg:h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-              </svg>
-              <div class="relative">
-                <span
-                  ref="topicSpanDesktop"
-                  class="font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px] sm:max-w-none block cursor-default"
-                  @mouseenter="showTopicTooltip = true"
-                  @mouseleave="showTopicTooltip = false"
-                >{{ groupTopic }}</span>
-                
-                <!-- Tooltip -->
-                <div 
-                  v-if="showTopicTooltip && isTopicTruncated"
-                  class="absolute z-[9999] bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-lg whitespace-nowrap"
-                >
-                  {{ groupTopic }}
-                  <!-- Arrow -->
-                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
-                </div>
-              </div>
-              <button
-                @click.stop="editTopic"
-                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
-                :aria-label="t('vocabulary.accordion.editTopic')"
-              >
-                <svg class="w-2.5 xs:w-3 sm:w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-2.5 xs:h-3 sm:h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                </svg>
-              </button>
-            </div>
-            <button
-              v-else
-              @click.stop="showTopicInput = true"
-              class="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 rounded-md border border-blue-200 dark:border-blue-800 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-800/30 transition-colors duration-150"
-              :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
-            >
-              <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
-              </svg>
-              <span class="whitespace-nowrap xl:text-sm 2xl:text-base">{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
-            </button>
-
-            <!-- Action buttons (Note and Add Vocabulary) - controlled by toggle -->
-            <template v-if="showActionButtons">
-              <!-- Note button for all vocabulary groups -->
-              <div class="flex-shrink-0" @click.stop>
-                <VocabularyNoteButton
-                  :date="group.date"
-                  :is-today="isTodayGroup"
-                  @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
-                />
-              </div>
-              
-              <!-- Add Vocabulary button -->
-              <div class="flex-shrink-0" @click.stop>
-                <button
-                  @click="openAddVocabularyDialog"
-                  class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  :aria-label="t('vocabulary.addWord', 'Add Word')"
-                >
-                  <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
-                </button>
-              </div>
-            </template>
-          </div>
-
-          <!-- Topic input form -->
-          <div v-else class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 w-full max-w-[150px] xs:max-w-[200px] sm:max-w-xs" @click.stop>
-            <input
-              ref="topicInput"
-              v-model="topicInputValue"
-              @keyup.enter="saveTopic"
-              @keyup.escape="cancelTopicInput"
-              type="text"
-              :placeholder="t('vocabulary.accordion.topicPlaceholder')"
-              class="flex-1 px-2 xs:px-2 sm:px-2 py-0.5 xs:py-1 sm:py-1 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <button
-              @click="saveTopic"
-              class="px-1.5 xs:px-2 sm:px-2 py-0.5 xs:py-1 sm:py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-              :aria-label="t('vocabulary.accordion.saveTopic')"
-            >
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-            <button
-              @click="cancelTopicInput"
-              class="px-1.5 xs:px-2 sm:px-2 py-0.5 xs:py-1 sm:py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-              :aria-label="t('vocabulary.accordion.cancelTopic')"
-            >
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Date group pagination (only show when expanded) -->
-        <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="flex items-center space-x-2" @click.stop>
-          <button
-            @click="$emit('date-group-previous', group.date)"
-            :disabled="(group.currentPage || 1) === 1"
-            class="px-2 py-1 xl:px-3 xl:py-1.5 2xl:px-4 2xl:py-2 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ t('common.previous') }}
-          </button>
-
-          <span class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
-            {{ group.currentPage || 1 }} / {{ group.totalPages }}
-          </span>
-
-          <button
-            @click="$emit('date-group-next', group.date)"
-            :disabled="(group.currentPage || 1) === group.totalPages"
-            class="px-2 py-1 xl:px-3 xl:py-1.5 2xl:px-4 2xl:py-2 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ t('common.next') }}
-          </button>
-        </div>
-
-        <!-- Toggle switch for action buttons -->
-        <div class="flex items-center space-x-2" @click.stop>
+        <!-- For xs, sm, md: Show toggle switch in header -->  
+        <div class="lg:hidden flex items-center space-x-2" @click.stop>
+          <!-- Toggle switch for action buttons -->
           <label class="relative inline-flex items-center cursor-pointer">
             <input 
               type="checkbox" 
               v-model="showActionButtons"
               class="sr-only peer"
             >
-            <div class="w-9 h-5 xl:w-11 xl:h-6 2xl:w-14 2xl:h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] xl:after:top-[2px] 2xl:after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 xl:after:h-5 xl:after:w-5 2xl:after:h-6 2xl:after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <div class="w-7 h-4 bg-gray-200 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
           </label>
-          <span class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base text-gray-600 dark:text-gray-300">{{ t('common.actions') }}</span>
+        </div>
+
+        <!-- For lg+: Show toggle and pagination in header -->
+        <div class="hidden lg:flex items-center space-x-2">
+          <!-- Date group pagination (only show when expanded) -->
+          <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="flex items-center space-x-2" @click.stop>
+            <button
+              @click="$emit('date-group-previous', group.date)"
+              :disabled="(group.currentPage || 1) === 1"
+              class="px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 xl:px-3 xl:py-1.5 2xl:px-4 2xl:py-2 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ t('common.previous') }}
+            </button>
+
+            <span class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
+              {{ group.currentPage || 1 }} / {{ group.totalPages }}
+            </span>
+
+            <button
+              @click="$emit('date-group-next', group.date)"
+              :disabled="(group.currentPage || 1) === group.totalPages"
+              class="px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 xl:px-3 xl:py-1.5 2xl:px-4 2xl:py-2 text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ t('common.next') }}
+            </button>
+          </div>
+
+          <!-- Toggle switch for action buttons -->
+          <div class="flex items-center space-x-2" @click.stop>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                v-model="showActionButtons"
+                class="sr-only peer"
+              >
+              <div class="w-9 h-5 xl:w-11 xl:h-6 2xl:w-14 2xl:h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] xl:after:top-[2px] 2xl:after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 xl:after:h-5 xl:after:w-5 2xl:after:h-6 2xl:after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            </label>
+            <span class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base text-gray-600 dark:text-gray-300">{{ t('common.actions') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination for xs, sm, md (when expanded) -->
+      <div v-if="isExpanded && group.totalPages && group.totalPages > 1" class="lg:hidden flex items-center justify-center space-x-1 mt-2" @click.stop>
+        <button
+          @click="$emit('date-group-previous', group.date)"
+          :disabled="(group.currentPage || 1) === 1"
+          class="px-1.5 py-0.5 xs:px-2 xs:py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 text-xs xs:text-xs sm:text-sm md:text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          ‹
+        </button>
+
+        <span class="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400">
+          {{ group.currentPage || 1 }}/{{ group.totalPages }}
+        </span>
+
+        <button
+          @click="$emit('date-group-next', group.date)"
+          :disabled="(group.currentPage || 1) === group.totalPages"
+          class="px-1.5 py-0.5 xs:px-2 xs:py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 text-xs xs:text-xs sm:text-sm md:text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          ›
+        </button>
+      </div>
+
+      <!-- Buttons row for xs, sm, md - centered -->
+      <div class="lg:hidden flex items-center justify-center space-x-2 mt-2" @click.stop>
+        <div v-if="!showTopicInput" class="flex items-center space-x-2">
+          <!-- Topic display or add button -->
+          <div v-if="groupTopic" class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-1.5 md:space-x-2 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
+            <svg class="w-2.5 xs:w-3 sm:w-3 md:w-4 h-2.5 xs:h-3 sm:h-3 md:h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            <div class="relative">
+              <span
+                ref="topicSpanTablet"
+                class="font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px] sm:max-w-none block cursor-default text-xs xs:text-xs sm:text-sm md:text-sm"
+                @mouseenter="showTopicTooltip = true"
+                @mouseleave="showTopicTooltip = false"
+              >{{ groupTopic }}</span>
+              
+              <!-- Tooltip -->
+              <div 
+                v-if="showTopicTooltip && isTopicTruncated"
+                class="absolute z-[9999] bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-lg whitespace-nowrap"
+              >
+                {{ groupTopic }}
+                <!-- Arrow -->
+                <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+              </div>
+            </div>
+            <button
+              @click.stop="editTopic"
+              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
+              :aria-label="t('vocabulary.accordion.editTopic')"
+            >
+              <svg class="w-2.5 xs:w-3 sm:w-3 md:w-4 h-2.5 xs:h-3 sm:h-3 md:h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+              </svg>
+            </button>
+          </div>
+          <button
+            v-else
+            @click.stop="showTopicInput = true"
+            class="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs xs:text-xs sm:text-sm md:text-sm bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 rounded-md border border-blue-200 dark:border-blue-800 cursor-pointer transition-colors duration-150"
+            :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
+          >
+            <svg class="w-3 md:w-4 h-3 md:h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+            </svg>
+            <span class="whitespace-nowrap">{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
+          </button>
+
+          <!-- Action buttons (Note and Add Vocabulary) - controlled by toggle -->
+          <template v-if="showActionButtons">
+            <!-- Note button -->
+            <VocabularyNoteButton
+              :date="group.date"
+              :is-today="isTodayGroup"
+              @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
+            />
+            
+            <!-- Add Vocabulary button -->
+            <button
+              @click="openAddVocabularyDialog"
+              class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :aria-label="t('vocabulary.addWord', 'Add Word')"
+            >
+              <svg class="w-3 md:w-4 h-3 md:h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
+            </button>
+          </template>
+        </div>
+
+        <!-- Topic input form for xs, sm, md -->
+        <div v-else class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 w-full max-w-[150px] xs:max-w-[200px] sm:max-w-xs">
+          <input
+            ref="topicInputTablet"
+            v-model="topicInputValue"
+            @keyup.enter="saveTopic"
+            @keyup.escape="cancelTopicInput"
+            type="text"
+            :placeholder="t('vocabulary.accordion.topicPlaceholder')"
+            class="flex-1 px-2 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button
+            @click="saveTopic"
+            class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            :aria-label="t('vocabulary.accordion.saveTopic')"
+          >
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+          <button
+            @click="cancelTopicInput"
+            class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            :aria-label="t('vocabulary.accordion.cancelTopic')"
+          >
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- lg+ layout: horizontal with center topic section -->
+      <div class="hidden lg:block">
+        <!-- Center topic section for lg+ -->
+        <div 
+          @click="toggleAccordion"
+          class="flex items-center justify-between flex-wrap gap-1 cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+        >
+          <!-- Center topic section -->
+          <div class="flex-1 flex justify-center mx-1 xs:mx-2 sm:mx-4 min-w-0">
+            <div v-if="!showTopicInput" class="flex items-center space-x-1.5 xs:space-x-1.5 sm:space-x-2 flex-nowrap">
+              <!-- Topic display or add button -->
+              <div v-if="groupTopic" class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 lg:py-1.5 xl:py-1.5 2xl:py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700 flex-shrink-0">
+                <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <div class="relative">
+                  <span
+                    ref="topicSpanDesktop"
+                    class="text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px] sm:max-w-none block cursor-default"
+                    @mouseenter="showTopicTooltip = true"
+                    @mouseleave="showTopicTooltip = false"
+                  >{{ groupTopic }}</span>
+                  
+                  <!-- Tooltip -->
+                  <div 
+                    v-if="showTopicTooltip && isTopicTruncated"
+                    class="absolute z-[9999] bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-lg whitespace-nowrap"
+                  >
+                    {{ groupTopic }}
+                    <!-- Arrow -->
+                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                  </div>
+                </div>
+                <button
+                  @click.stop="editTopic"
+                  class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
+                  :aria-label="t('vocabulary.accordion.editTopic')"
+                >
+                  <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                  </svg>
+                </button>
+              </div>
+              <button
+                v-else
+                @click.stop="showTopicInput = true"
+                class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 rounded-full border border-dashed border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
+              >
+                <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                </svg>
+                <span>{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
+              </button>
+
+              <!-- Action buttons (Note and Add Vocabulary) - controlled by toggle -->
+              <template v-if="showActionButtons">
+                <!-- Note button for all vocabulary groups -->
+                <div class="flex-shrink-0" @click.stop>
+                  <VocabularyNoteButton
+                    :date="group.date"
+                    :is-today="isTodayGroup"
+                    @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
+                  />
+                </div>
+                
+                <!-- Add Vocabulary button -->
+                <div class="flex-shrink-0" @click.stop>
+                  <button
+                    @click="openAddVocabularyDialog"
+                    class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    :aria-label="t('vocabulary.addWord', 'Add Word')"
+                  >
+                    <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
+                  </button>
+                </div>
+              </template>
+            </div>
+
+            <!-- Topic input form -->
+            <div v-else class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 w-full max-w-[150px] xs:max-w-[200px] sm:max-w-xs" @click.stop>
+              <input
+                ref="topicInput"
+                v-model="topicInputValue"
+                @keyup.enter="saveTopic"
+                @keyup.escape="cancelTopicInput"
+                type="text"
+                :placeholder="t('vocabulary.accordion.topicPlaceholder')"
+                class="flex-1 px-2 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                @click="saveTopic"
+                class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                :aria-label="t('vocabulary.accordion.saveTopic')"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <button
+                @click="cancelTopicInput"
+                class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                :aria-label="t('vocabulary.accordion.cancelTopic')"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -396,14 +550,14 @@
                     <button 
                       @click="previousTopicPage(topicGroup.topic)" 
                       :disabled="!getPaginatedTopicVocabularies(topicGroup).hasPrevious" 
-                      class="relative inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="relative inline-flex items-center px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {{ t('common.previous') }}
                     </button>
                     <button 
                       @click="nextTopicPage(topicGroup.topic)" 
                       :disabled="!getPaginatedTopicVocabularies(topicGroup).hasNext" 
-                      class="ml-2 relative inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="ml-2 relative inline-flex items-center px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {{ t('common.next') }}
                     </button>
@@ -426,7 +580,7 @@
                         <button 
                           @click="previousTopicPage(topicGroup.topic)" 
                           :disabled="!getPaginatedTopicVocabularies(topicGroup).hasPrevious" 
-                          class="relative inline-flex items-center px-1.5 py-1 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-xs font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          class="relative inline-flex items-center px-1.5 md:px-1.5 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-xs font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <span class="sr-only">{{ t('common.previous') }}</span>
                           <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
@@ -446,7 +600,7 @@
                               : page === -1
                               ? 'bg-white dark:bg-[#0a0a0a] border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 cursor-default'
                               : 'bg-white dark:bg-[#0a0a0a] border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600',
-                            'relative inline-flex items-center px-2 py-1 border text-xs font-medium'
+                            'relative inline-flex items-center px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 border text-xs font-medium'
                           ]"
                         >
                           {{ page === -1 ? '...' : page }}
@@ -456,7 +610,7 @@
                         <button 
                           @click="nextTopicPage(topicGroup.topic)" 
                           :disabled="!getPaginatedTopicVocabularies(topicGroup).hasNext" 
-                          class="relative inline-flex items-center px-1.5 py-1 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-xs font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          class="relative inline-flex items-center px-1.5 md:px-1.5 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0a0a0a] text-xs font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <span class="sr-only">{{ t('common.next') }}</span>
                           <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">

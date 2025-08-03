@@ -11,7 +11,7 @@
     >
       <div 
         v-if="modelValue" 
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-2 xs:p-3 sm:p-4 md:p-6 z-50 backdrop-blur-sm"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
         @click="closeDialog"
       >
         <!-- Dialog Container -->
@@ -23,16 +23,16 @@
           leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
           leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
         >
-          <div class="w-full max-w-sm xs:max-w-md sm:max-w-2xl md:max-w-4xl max-h-[95vh] xs:max-h-[92vh] sm:max-h-[90vh] md:max-h-[88vh] flex flex-col">
+          <div class="w-full max-h-[90vh] flex flex-col max-w-full sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
             <!-- Dialog Content -->
             <div 
-              class="bg-white dark:bg-[#0a0a0a] shadow-2xl rounded-lg xs:rounded-xl sm:rounded-xl md:rounded-2xl border border-gray-200 dark:border-gray-700 flex flex-col h-full overflow-hidden transform"
+              class="bg-white dark:bg-[#0a0a0a] shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col h-full overflow-hidden transform"
               @click.stop
             >
               <!-- Header -->
-              <div class="px-3 py-3 xs:px-4 xs:py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
                 <div class="flex items-center justify-between">
-                  <h2 class="text-base xs:text-lg sm:text-xl md:text-xl font-semibold text-gray-900 dark:text-white flex items-center space-x-1 xs:space-x-2">
+                  <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
                     <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                     <span>{{ isEditing ? t('vocabulary.editVocabulary', 'Edit Vocabulary') : t('vocabulary.addVocabulary', 'Add Vocabulary') }}</span>
                   </h2>
@@ -40,7 +40,7 @@
                     @click="closeDialog"
                     class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
-                    <svg class="w-5 h-5 xs:w-6 xs:h-6 sm:w-6 sm:h-6 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                   </button>
@@ -48,12 +48,12 @@
               </div>
 
               <!-- Form -->
-              <div class="px-3 py-3 xs:px-4 xs:py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 lg:px-6 lg:py-4 flex-1 overflow-y-auto min-h-0">
-                <form @submit.prevent="submitForm" class="space-y-3 xs:space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-6">
-                  <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 xs:gap-4 sm:gap-5 md:gap-6 lg:gap-6">
+              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
+                <form @submit.prevent="submitForm" class="space-y-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Word -->
                     <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 0.1s">
-                      <label for="word" class="block text-xs xs:text-sm sm:text-sm md:text-sm lg:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 xs:mb-2 lg:mb-2 flex items-center">
+                      <label for="word" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-4 bg-blue-500 rounded mr-2"></span>
                         {{ t('vocabulary.word', 'Word') }} <span class="text-red-500 ml-1">*</span>
                       </label>
@@ -62,7 +62,7 @@
                         v-model="form.word"
                         type="text"
                         required
-                        class="w-full px-2 py-1.5 xs:px-3 xs:py-2 sm:px-3 sm:py-2 md:px-3 md:py-2 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md xs:rounded-lg sm:rounded-lg md:rounded-lg lg:rounded-lg bg-white dark:bg-[#0a0a0a] text-sm xs:text-base sm:text-base md:text-base lg:text-base text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500 transform hover:scale-[1.02]"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500 transform hover:scale-[1.02]"
                         :placeholder="t('vocabulary.wordPlaceholder', 'Enter English word')"
                         @blur="validateWord"
                       />
@@ -264,8 +264,8 @@
               </div>
 
               <!-- Footer Actions -->
-              <div class="px-3 py-3 xs:px-4 xs:py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 lg:px-6 lg:py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
-                <div class="flex flex-col xs:flex-row lg:flex-row justify-end space-y-2 xs:space-y-0 lg:space-y-0 xs:space-x-2 sm:space-x-3 md:space-x-3 lg:space-x-3">
+              <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+                <div class="flex justify-end space-x-3">
                   <button
                     type="button"
                     @click="closeDialog"
@@ -277,7 +277,7 @@
                   <button
                     @click="submitForm"
                     :disabled="isSubmitting"
-                    class="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 flex items-center justify-center space-x-2 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium disabled:cursor-not-allowed"
+                    class="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 flex items-center space-x-2 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium disabled:cursor-not-allowed"
                   >
                     <svg v-if="isSubmitting" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -307,9 +307,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, withDefaults, defineProps, defineEmits, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useModalStore } from '../../../stores/modalStore'
 import { useToast } from 'vue-toastification'
 import { useVocabularyStore, type Vocabulary } from '../../../composables/useVocabularyStore'
-import { useScrollStore } from '../../../stores/scroll'
 import { getTopicName } from '../../../utils/topicUtils'
 
 // Import components with defineAsyncComponent to avoid "has no default export" error
@@ -335,7 +335,9 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
 const toast = useToast()
-const scrollStore = useScrollStore()
+
+
+
 const vocabularyStore = useVocabularyStore()
 
 // Data
@@ -544,7 +546,6 @@ const handleKeydown = (event: KeyboardEvent) => {
 watch(() => props.modelValue, (newValue) => {
   if (newValue) {
     // Dialog opened
-    scrollStore.setModalOpen(true)
     window.dispatchEvent(new CustomEvent('vocabulary-edit-word'))
     // Reset form when dialog opens
     if (!props.vocabulary) {
@@ -554,7 +555,6 @@ watch(() => props.modelValue, (newValue) => {
     document.addEventListener('keydown', handleKeydown)
   } else {
     // Dialog closed
-    scrollStore.setModalOpen(false)
     document.body.style.overflow = ''
     document.removeEventListener('keydown', handleKeydown)
   }

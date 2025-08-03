@@ -70,7 +70,7 @@
       </LazyLoadComponent>
 
       <!-- Vocabulary List -->
-      <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="0px">
+      <LazyLoadComponent animation-type="slide-left" :threshold="0.05" root-margin="-50px">
         <VocabularyList
           :paginated-words="useGrouping ? [] : paginatedVocabulary"
           :current-page="currentPage"
@@ -138,7 +138,7 @@
     <Transition name="fade-scale">
       <div 
         v-show="showStickyButtonVisible"
-        class="fixed bottom-6 z-50 right-6 max-xs:right-6 xs:right-auto xs:left-1/2 xs:transform xs:translate-x-4 max-sm:right-auto max-sm:left-1/2 max-sm:transform max-sm:translate-x-4 sm:right-auto sm:left-1/2 sm:transform sm:translate-x-1 lg:right-6 lg:left-auto lg:transform-none lg:translate-x-0"
+        class="fixed bottom-6 z-50 left-1/2 translate-x-4 sm:left-auto sm:right-6 sm:translate-x-0"
       >
         <button 
           @click="openAddDialog"
@@ -174,6 +174,7 @@ import { useI18n } from 'vue-i18n';
 import { useToast, POSITION } from 'vue-toastification';
 import { useVoiceStore } from '../../stores/voiceStore';
 import { useVocabularyStore } from '../../composables/useVocabularyStore';
+import { useModalStore } from '../../stores/modalStore';
 import { groupVocabulariesByDate } from '../../utils/dateUtils';
 import type { Vocabulary } from '../../composables/useVocabularyStore';
 
@@ -204,6 +205,7 @@ const { t } = useI18n();
 const toast = useToast();
 const vocabularyStore = useVocabularyStore();
 const voiceStore = useVoiceStore();
+const modalStore = useModalStore();
 
 const itemsPerPage = ref(5);
 
@@ -337,7 +339,7 @@ const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value);
 
 // Computed property to control sticky button visibility
 const showStickyButtonVisible = computed(() => {
-  return showStickyButton.value && !showFormDialog.value && !showTopicManager.value && !showNoteDialog.value && !showDetailDialog.value;
+  return showStickyButton.value && !showFormDialog.value && !modalStore.shouldHideAddNewWord;
 });
 
 const deleteWord = (word: any) => {
@@ -453,6 +455,8 @@ watch(showNoteDialog, (newValue) => {
       document.body.classList.remove('modal-open');
     }
   }
+  // Sync with modal store
+  modalStore.setNoteDialog(newValue);
 });
 
 // Prevent body scroll when form dialog is open
@@ -467,6 +471,8 @@ watch(showFormDialog, (newValue) => {
       document.body.classList.remove('modal-open');
     }
   }
+  // Sync with modal store
+  modalStore.setVocabularyForm(newValue);
 });
 
 onMounted(() => {
@@ -603,14 +609,27 @@ body.modal-open {
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   opacity: 0;
-  scale: 0.8;
-  translate: 0 10px;
+  transform: scale(0.8) translateY(10px);
 }
 
 .fade-scale-enter-to,
 .fade-scale-leave-from {
   opacity: 1;
-  scale: 1;
-  translate: 0 0;
+  transform: scale(1) translateY(0);
+}
+
+/* XS: Override animation to include Add New Word positioning */
+@media (max-width: 639px) {
+  .fade-scale-enter-from,
+  .fade-scale-leave-to {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px) translateX(1rem);
+  }
+  
+  .fade-scale-enter-to,
+  .fade-scale-leave-from {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateX(1rem);
+  }
 }
 </style>

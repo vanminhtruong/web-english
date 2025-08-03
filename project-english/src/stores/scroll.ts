@@ -6,7 +6,6 @@ export const useScrollStore = defineStore('scroll', () => {
   const scrollY = ref(0)
   const showBackToTop = ref(false)
   const isScrolling = ref(false)
-  const isModalOpen = ref(false)
 
   // Threshold để hiển thị nút back to top (pixels)
   const SCROLL_THRESHOLD = 300
@@ -38,10 +37,6 @@ export const useScrollStore = defineStore('scroll', () => {
       top: 0,
       behavior: 'smooth'
     })
-  }
-
-  const setModalOpen = (open: boolean) => {
-    isModalOpen.value = open
   }
 
   const initScrollListener = () => {
@@ -76,11 +71,9 @@ export const useScrollStore = defineStore('scroll', () => {
     scrollY,
     showBackToTop,
     isScrolling,
-    isModalOpen,
     
     // Actions
     scrollToTop,
-    setModalOpen,
     initScrollListener,
     removeScrollListener,
     
