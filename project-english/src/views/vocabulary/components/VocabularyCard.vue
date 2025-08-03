@@ -83,11 +83,11 @@
     <!-- Image Zoom Modal using Teleport -->
     <Teleport to="body">
       <div v-if="isImageModalOpen" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-75 p-4">
-          <div class="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-2xl h-[400px] sm:h-[500px] md:h-[600px]">
+          <div class="relative w-full max-w-2xl bg-white dark:bg-[#0a0a0a] rounded-lg overflow-hidden shadow-2xl h-[400px] sm:h-[500px] md:h-[600px]">
               <!-- Close button -->
               <button 
                   @click="closeImageModal"
-                  class="absolute top-4 right-4 z-[10000] text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors duration-200 bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-80 rounded-full p-2 shadow-lg"
+                  class="absolute top-4 right-4 z-[10000] text-gray-600 dark:text-white hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 bg-white dark:bg-[#0a0a0a] bg-opacity-80 dark:bg-opacity-80 rounded-full p-2 shadow-lg"
               >
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
