@@ -268,10 +268,32 @@
                             <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                               {{ t('grammar.manager.examples', 'Examples') }}:
                             </p>
-                            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                              <li v-for="example in rule.examples" :key="example" class="flex items-start">
-                                <span class="text-gray-400 mr-2">•</span>
-                                <span>{{ example }}</span>
+                            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                              <li v-for="example in rule.examples" :key="example" class="flex items-start justify-between">
+                                <div class="flex items-start flex-1">
+                                  <span class="text-gray-400 mr-2 mt-0.5">•</span>
+                                  <span class="flex-1">{{ example }}</span>
+                                </div>
+                                <!-- Speaker button -->
+                                <button
+                                  @click="playExampleAudio(example)"
+                                  :disabled="isPlayingAudio === example"
+                                  class="ml-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-[#0a0a0a] transition-colors duration-200 flex-shrink-0"
+                                  :class="{
+                                    'text-blue-500 dark:text-blue-400': isPlayingAudio !== example,
+                                    'text-orange-500 dark:text-orange-400 animate-pulse': isPlayingAudio === example
+                                  }"
+                                  :title="t('grammar.examples.playAudio', 'Play example audio')"
+                                >
+                                  <!-- Speaker icon -->
+                                  <svg v-if="isPlayingAudio !== example" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M6 10l4-4v12l-4-4H3a1 1 0 01-1-1v-2a1 1 0 011-1h3z"></path>
+                                  </svg>
+                                  <!-- Loading icon -->
+                                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                                  </svg>
+                                </button>
                               </li>
                             </ul>
                           </div>
@@ -340,8 +362,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-
 const { t } = useI18n()
+
+// Text-to-speech state (temporarily disabled)
+const isPlayingAudio = ref<string | null>(null)
 
 interface GrammarRule {
   id: string
@@ -401,6 +425,83 @@ const renderHtmlContent = (content: string): string => {
 
 const formulaPreview = computed(() => renderHtmlContent(formData.value.formula))
 const descriptionPreview = computed(() => renderHtmlContent(formData.value.description))
+
+// Text-to-speech for examples with voice settings from localStorage
+const playExampleAudio = async (example: string) => {
+  if (isPlayingAudio.value === example) return
+  
+  try {
+    isPlayingAudio.value = example
+    
+    if ('speechSynthesis' in window) {
+      return new Promise((resolve, reject) => {
+        const utterance = new SpeechSynthesisUtterance(example)
+        
+        // Load voice settings from localStorage (same as voiceStore)
+        const savedSettings = localStorage.getItem('voice-settings')
+        let voiceSettings = {
+          rate: 0.8,
+          pitch: 1.0,
+          volume: 1.0
+        }
+        
+        if (savedSettings) {
+          try {
+            const settings = JSON.parse(savedSettings)
+            const currentVoiceType = localStorage.getItem('current-voice-type') || 'female-sweet'
+            if (settings[currentVoiceType]) {
+              voiceSettings = settings[currentVoiceType]
+            }
+          } catch (e) {
+            console.warn('Failed to parse voice settings')
+          }
+        }
+        
+        utterance.lang = 'en-US'
+        utterance.rate = Math.max(0.1, Math.min(10, voiceSettings.rate))
+        utterance.pitch = Math.max(0, Math.min(2, voiceSettings.pitch))
+        utterance.volume = Math.max(0, Math.min(1, voiceSettings.volume))
+        
+        // Find appropriate voice based on current voice type
+        const voices = speechSynthesis.getVoices()
+        const currentVoiceType = localStorage.getItem('current-voice-type') || 'female-sweet'
+        
+        let targetVoice = null
+        if (currentVoiceType.includes('female')) {
+          targetVoice = voices.find(voice => 
+            voice.lang.includes('en') && voice.name.toLowerCase().includes('female')
+          ) || voices.find(voice => 
+            voice.lang.includes('en') && !voice.name.toLowerCase().includes('male')
+          )
+        } else {
+          targetVoice = voices.find(voice => 
+            voice.lang.includes('en') && voice.name.toLowerCase().includes('male')
+          )
+        }
+        
+        if (!targetVoice) {
+          targetVoice = voices.find(voice => voice.lang.includes('en'))
+        }
+        
+        if (targetVoice) {
+          utterance.voice = targetVoice
+        }
+        
+        utterance.onend = () => resolve(void 0)
+        utterance.onerror = (event) => reject(event.error)
+        
+        speechSynthesis.speak(utterance)
+      })
+    } else {
+      console.warn('Speech synthesis not supported')
+    }
+    
+  } catch (error) {
+    console.error('Error playing audio:', error)
+  } finally {
+    isPlayingAudio.value = null
+  }
+}
 
 // Methods
 const closeModal = () => {
