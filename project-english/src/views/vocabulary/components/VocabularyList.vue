@@ -30,6 +30,7 @@
         @note-saved="handleNoteSaved"
         @open-note-dialog="$emit('open-note-dialog', $event.date, $event.words)"
         @open-add-vocabulary-dialog="$emit('open-add-vocabulary-dialog', $event)"
+        @open-grammar-manager="$emit('open-grammar-manager', $event)"
       />
       
       <!-- Date Group Pagination -->
@@ -61,7 +62,7 @@
                   start: dateGroupPaginationInfo.startIndex, 
                   end: dateGroupPaginationInfo.endIndex, 
                   total: dateGroupPaginationInfo.totalGroups 
-                }) || `Showing ${dateGroupPaginationInfo.startIndex} to ${dateGroupPaginationInfo.endIndex} of ${dateGroupPaginationInfo.totalGroups} date groups` }}
+                }, `Showing ${dateGroupPaginationInfo.startIndex} to ${dateGroupPaginationInfo.endIndex} of ${dateGroupPaginationInfo.totalGroups} date groups`) }}
               </p>
             </div>
             <div>
@@ -464,5 +465,6 @@ defineEmits<{
   'accordion-toggle': [date: string, expanded: boolean]
   'open-note-dialog': [date: string, words: any[]]
   'open-add-vocabulary-dialog': [date: string]
+  'open-grammar-manager': [date: string]
 }>()
 </script>

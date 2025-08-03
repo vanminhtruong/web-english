@@ -97,6 +97,7 @@
           @date-group-go-to-page="dateGroupGoToPage"
           @open-note-dialog="openNoteDialog"
           @open-add-vocabulary-dialog="openAddVocabularyForDate"
+          @open-grammar-manager="openGrammarManagerForDate"
         />
       </LazyLoadComponent>
     </div>
@@ -132,6 +133,12 @@
       :date="noteDialogDate"
       :today-words="noteDialogWords"
       @save-note="handleNoteSaved"
+    />
+
+    <!-- Grammar Manager Modal -->
+    <GrammarManagerModal
+      v-model="showGrammarManagerModal"
+      :selectedDate="grammarManagerDate"
     />
     
     <!-- Sticky Floating Add Button -->
@@ -189,6 +196,7 @@ const VocabularyList = defineAsyncComponent(() => import('./components/Vocabular
 const VocabularyFormDialog = defineAsyncComponent(() => import('./components/VocabularyFormDialog.vue'));
 const VocabularyDetailDialog = defineAsyncComponent(() => import('./components/VocabularyDetailDialog.vue'));
 const VocabularyNoteDialog = defineAsyncComponent(() => import('./components/VocabularyNoteDialog.vue'));
+const GrammarManagerModal = defineAsyncComponent(() => import('./components/GrammarManagerModal.vue'));
 const VoiceSelector = defineAsyncComponent(() => import('../../components/VoiceSelector.vue'));
 const TopicManager = defineAsyncComponent(() => import('./components/TopicManager.vue'));
 const ConfirmToast = defineAsyncComponent(() => import('../../components/common/ConfirmToast.vue'));
@@ -556,6 +564,10 @@ const openNoteDialog = (date: string, words: any[]) => {
 // Store the target date for new vocabulary
 const targetDateForNewVocabulary = ref<string | null>(null);
 
+// Grammar manager modal state
+const showGrammarManagerModal = ref(false);
+const grammarManagerDate = ref<string | null>(null);
+
 // Open add vocabulary dialog with specific date
 const openAddVocabularyForDate = (date: string) => {
   // Store the target date
@@ -567,6 +579,14 @@ const openAddVocabularyForDate = (date: string) => {
   
   // Dispatch edit word event
   window.dispatchEvent(new CustomEvent('vocabulary-edit-word'));
+};
+
+// Open grammar manager modal for specific date
+const openGrammarManagerForDate = (date: string) => {
+  console.log('Opening grammar manager for date:', date);
+  grammarManagerDate.value = date;
+  showGrammarManagerModal.value = true;
+  console.log('Modal state:', showGrammarManagerModal.value);
 };
 
 const handleNoteSaved = (note: string, markedWords: string[]) => {

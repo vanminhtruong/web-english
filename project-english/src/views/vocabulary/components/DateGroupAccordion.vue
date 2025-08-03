@@ -70,106 +70,127 @@
           </div>
         </div>
 
-        <!-- Second row: Topic and Note buttons -->
-        <div class="flex items-center justify-center space-x-2" @click.stop>
-          <div v-if="!showTopicInput" class="flex items-center space-x-1">
-            <!-- Topic display or add button -->
-            <div v-if="groupTopic" class="flex items-center space-x-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
-              <svg class="w-2 h-2 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-              </svg>
-              <div class="relative">
-                <span 
-                  ref="topicSpanMobile"
-                  class="text-xs xl:text-sm 2xl:text-base font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px] block cursor-default"
-                  @mouseenter="showTopicTooltip = true"
-                  @mouseleave="showTopicTooltip = false"
-                >{{ groupTopic }}</span>
-                
-                <!-- Tooltip -->
-                <div 
-                  v-if="showTopicTooltip && isTopicTruncated"
-                  class="absolute z-[9999] bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-lg whitespace-nowrap"
-                >
-                  {{ groupTopic }}
-                  <!-- Arrow -->
-                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
-                </div>
-              </div>
+        <!-- Second row: Action buttons with 2x2 grid layout for mobile -->
+        <div class="w-full" @click.stop>
+          <!-- Topic input form (when editing) -->
+          <div v-if="showTopicInput" class="flex items-center justify-center mb-3">
+            <div class="flex items-center space-x-1 w-full max-w-[280px]">
+              <input
+                ref="topicInput"
+                v-model="topicInputValue"
+                @keyup.enter="saveTopic"
+                @keyup.escape="cancelTopicInput"
+                type="text"
+                :placeholder="t('vocabulary.accordion.topicPlaceholder')"
+                class="flex-1 px-3 py-2 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
               <button
-                @click.stop="editTopic"
-                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
-                :aria-label="t('vocabulary.accordion.editTopic')"
+                @click="saveTopic"
+                class="px-2 py-2 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                :aria-label="t('vocabulary.accordion.saveTopic')"
               >
-                <svg class="w-2 h-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <button
+                @click="cancelTopicInput"
+                class="px-2 py-2 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                :aria-label="t('vocabulary.accordion.cancelTopic')"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                 </svg>
               </button>
             </div>
-            <button
-              v-else
-              @click.stop="showTopicInput = true"
-              class="flex items-center space-x-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-              :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
-            >
-              <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
-              </svg>
-              <span class="xl:text-sm 2xl:text-base">{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
-            </button>
-
-            <!-- Action buttons (Note and Add Vocabulary) - controlled by toggle -->
-            <template v-if="showActionButtons">
-              <!-- Note button -->
-              <VocabularyNoteButton
-                :date="group.date"
-                :is-today="isTodayGroup"
-                @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
-              />
-              
-              <!-- Add Vocabulary button -->
-              <button
-                @click.stop="openAddVocabularyDialog"
-                class="flex items-center space-x-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-full border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :aria-label="t('vocabulary.addWord', 'Add Word')"
-              >
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
-                </svg>
-                <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
-              </button>
-            </template>
           </div>
 
-          <!-- Topic input form -->
-          <div v-else class="flex items-center space-x-1 w-full max-w-[250px]" @click.stop>
-            <input
-              ref="topicInput"
-              v-model="topicInputValue"
-              @keyup.enter="saveTopic"
-              @keyup.escape="cancelTopicInput"
-              type="text"
-              :placeholder="t('vocabulary.accordion.topicPlaceholder')"
-              class="flex-1 px-2 md:px-2 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs xl:text-sm 2xl:text-base border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <button
-              @click="saveTopic"
-              class="px-1.5 md:px-1.5 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs xl:text-sm 2xl:text-base bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-              :aria-label="t('vocabulary.accordion.saveTopic')"
-            >
-              <svg class="w-2.5 h-2.5 xl:w-3 xl:h-3 2xl:w-3.5 2xl:h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-            <button
-              @click="cancelTopicInput"
-              class="px-1.5 md:px-1.5 py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs xl:text-sm 2xl:text-base bg-gray-500 hover:bg-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-              :aria-label="t('vocabulary.accordion.cancelTopic')"
-            >
-              <svg class="w-2.5 h-2.5 xl:w-3 xl:h-3 2xl:w-3.5 2xl:h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-              </svg>
-            </button>
+          <!-- Normal state: 2x2 Grid layout for action buttons -->
+          <div v-else>
+            <!-- Current topic display (if exists) -->
+            <div v-if="groupTopic" class="flex items-center justify-center mb-2">
+              <div class="flex items-center space-x-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700 max-w-[200px]">
+                <svg class="w-3 h-3 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <div class="relative flex-1 min-w-0">
+                  <span 
+                    ref="topicSpanMobile"
+                    class="text-xs font-medium text-blue-700 dark:text-blue-300 truncate block cursor-default"
+                    @mouseenter="showTopicTooltip = true"
+                    @mouseleave="showTopicTooltip = false"
+                  >{{ groupTopic }}</span>
+                  
+                  <!-- Tooltip -->
+                  <div 
+                    v-if="showTopicTooltip && isTopicTruncated"
+                    class="absolute z-[9999] bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-lg whitespace-nowrap"
+                  >
+                    {{ groupTopic }}
+                    <!-- Arrow -->
+                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                  </div>
+                </div>
+                <button
+                  @click.stop="editTopic"
+                  class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0 p-0.5 rounded hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors"
+                  :aria-label="t('vocabulary.accordion.editTopic')"
+                >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2x2 Grid for action buttons -->
+            <div class="grid grid-cols-2 gap-2 max-w-[280px] mx-auto">
+              <!-- Row 1 -->
+              <!-- Add Topic button (Top Left) -->
+              <button
+                v-if="!groupTopic"
+                @click.stop="showTopicInput = true"
+                class="flex flex-col items-center justify-center p-3 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[60px] hover:scale-105 hover:shadow-md"
+                :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
+              >
+                <svg class="w-4 h-4 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-center leading-tight">{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
+              </button>
+
+              <!-- Manage Notes button (Top Right or Top Left if topic exists) -->
+              <div class="flex">
+                <VocabularyNoteButton
+                  :date="group.date"
+                  :is-today="isTodayGroup"
+                  :class="'w-full flex flex-col items-center justify-center p-3 text-xs font-medium min-h-[60px] hover:scale-105 hover:shadow-md transition-all duration-200'"
+                  @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
+                />
+              </div>
+
+              <!-- Row 2 -->
+              <!-- Add Word button (Bottom Left) -->
+              <button
+                @click.stop="openAddVocabularyDialog"
+                class="flex flex-col items-center justify-center p-3 text-xs font-medium text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/50 rounded-lg border border-dashed border-green-300 dark:border-green-600 hover:border-green-400 dark:hover:border-green-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[60px] hover:scale-105 hover:shadow-md"
+                :aria-label="t('vocabulary.addWord', 'Add Word')"
+              >
+                <svg class="w-4 h-4 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-center leading-tight">{{ t('vocabulary.addWord', 'Add Word') }}</span>
+              </button>
+              
+              <!-- Manager Grammar button (Bottom Right) -->
+              <div class="flex">
+                <GrammarManagerButton
+                  :date="group.date"
+                  :class="'w-full flex flex-col items-center justify-center p-3 text-xs font-medium min-h-[60px] hover:scale-105 hover:shadow-md transition-all duration-200'"
+                  @open-grammar-manager="openGrammarManager"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -350,6 +371,12 @@
               </svg>
               <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
             </button>
+            
+            <!-- Manager Grammar button -->
+            <GrammarManagerButton
+              :date="group.date"
+              @open-grammar-manager="openGrammarManager"
+            />
           </template>
         </div>
 
@@ -464,6 +491,14 @@
                     </svg>
                     <span>{{ t('vocabulary.addWord', 'Add Word') }}</span>
                   </button>
+                </div>
+                
+                <!-- Manager Grammar button -->
+                <div class="flex-shrink-0" @click.stop>
+                  <GrammarManagerButton
+                    :date="group.date"
+                    @open-grammar-manager="openGrammarManager"
+                  />
                 </div>
               </template>
             </div>
@@ -668,6 +703,8 @@ import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import type { GroupedVocabulary } from '../../../utils/dateUtils'
 import { getTopicName } from '../../../utils/topicUtils'
+// Async component imports
+const GrammarManagerButton = defineAsyncComponent(() => import('./GrammarManagerButton.vue'))
 import { getDateKey } from '../../../utils/dateUtils'
 
 const { t } = useI18n()
@@ -1155,6 +1192,11 @@ const openAddVocabularyDialog = () => {
   emit('open-add-vocabulary-dialog', props.group.date)
 }
 
+// Open grammar manager modal for this specific date
+const openGrammarManager = (date: string) => {
+  emit('open-grammar-manager', date)
+}
+
 // Initialize component
 onMounted(async () => {
   // Load action buttons state from localStorage
@@ -1214,6 +1256,7 @@ const emit = defineEmits<{
   'note-saved': [date: string, note: string, markedWords: string[]]
   'open-note-dialog': [payload: { date: string, words: any[] }]
   'open-add-vocabulary-dialog': [date: string]
+  'open-grammar-manager': [date: string]
 }>()
 </script>
 

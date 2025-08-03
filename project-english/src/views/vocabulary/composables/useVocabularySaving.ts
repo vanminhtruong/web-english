@@ -106,6 +106,16 @@ export function useVocabularySaving() {
         }
     };
     
+    // Helper function to get grammar rules
+    const getGrammarRules = (): any[] => {
+        try {
+            const stored = localStorage.getItem('grammar-rules');
+            return stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            return [];
+        }
+    };
+    
     // Helper function to get category name without Vue composables
     const getCategoryName = (categoryKey: string): string => {
       // Check custom topics first
@@ -152,10 +162,11 @@ export function useVocabularySaving() {
         groupTopics: getGroupTopics(),
         vocabularyNotes: getVocabularyNotes(),
         markedWords: getMarkedWords(),
+        grammarRules: getGrammarRules(), // Include grammar rules in export
         accordionState: JSON.parse(localStorage.getItem('vocabulary-accordion-state') || '{}'),
         useGrouping: JSON.parse(localStorage.getItem('vocabulary-use-grouping') || 'false'), // Save grouping state
         exportDate: new Date().toISOString(),
-        version: '1.4', // Increment version to indicate enhanced format with notes
+        version: '1.5', // Increment version to indicate grammar rules support
         totalCount: vocabularyStore.totalCount.value
     };
   };
@@ -406,7 +417,7 @@ export function useVocabularySaving() {
       {
         component: ConfirmToast,
         props: {
-          message: t('vocabulary.save.import.confirmMessage', { count: '-', filename: file.name }) || `Import ${file.name}? This will replace all current vocabulary.`,
+          message: t('vocabulary.save.import.confirmMessage', { filename: file.name }, `Import ${file.name}? This will replace all current vocabulary.`),
           confirmText: t('common.confirm', 'Confirm'),
           cancelText: t('common.cancel', 'Cancel'),
           onConfirm: () => {
@@ -471,10 +482,16 @@ export function useVocabularySaving() {
                 console.log("Imported marked words:", data.markedWords);
               }
               
+              // Import grammar rules
+              if (data.grammarRules && Array.isArray(data.grammarRules)) {
+                localStorage.setItem('grammar-rules', JSON.stringify(data.grammarRules));
+                console.log("Imported grammar rules:", data.grammarRules);
+              }
+              
               isSaving.value = false;
               
               // Show detailed import success message
-              let importMessage = t('vocabulary.save.import.successMessage', { count: data.vocabularies.length }) || `Successfully imported ${data.vocabularies.length} vocabulary words`;
+              let importMessage = t('vocabulary.save.import.successMessage', { count: data.vocabularies.length }, `Successfully imported ${data.vocabularies.length} vocabulary words`);
               if (data.customTopics?.length > 0) {
                 importMessage += ` + ${data.customTopics.length} custom categories`;
               }
@@ -495,6 +512,9 @@ export function useVocabularySaving() {
                   }
                 });
                 importMessage += ` + ${totalMarkedWords} marked words`;
+              }
+              if (data.grammarRules && data.grammarRules.length > 0) {
+                importMessage += ` + ${data.grammarRules.length} grammar rules`;
               }
               
               toast.success(importMessage);
