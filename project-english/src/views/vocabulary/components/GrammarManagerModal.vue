@@ -118,13 +118,20 @@
                         <span class="w-1 h-4 bg-yellow-500 rounded mr-2"></span>
                         {{ t('grammar.manager.formula', 'Grammar Formula') }} <span class="text-red-500 ml-1">*</span>
                       </label>
-                      <textarea
-                        v-model="formData.formula"
-                        required
-                        rows="3"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300 hover:border-yellow-400 dark:hover:border-yellow-500 transform hover:scale-[1.02] resize-none"
-                        :placeholder="t('grammar.manager.formulaPlaceholder', 'e.g., Subject + have/has + past participle')"
-                      ></textarea>
+                      <div class="space-y-2">
+                        <textarea
+                          v-model="formData.formula"
+                          required
+                          rows="3"
+                          class="w-full px-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300 hover:border-yellow-400 dark:hover:border-yellow-500 transform hover:scale-[1.02] resize-none"
+                          :placeholder="t('grammar.manager.formulaPlaceholder', 'e.g., Subject + have/has + past participle + &lt;br&gt; or &lt;/br&gt; for line break')"
+                        ></textarea>
+                        <!-- Preview -->
+                        <div v-if="formData.formula.trim()" class="p-2 bg-yellow-50 dark:bg-[#0a0a0a] border border-yellow-200 dark:border-yellow-600 rounded text-sm">
+                          <div class="text-yellow-700 dark:text-yellow-400 font-medium mb-1">{{ t('grammar.manager.preview', 'Preview') }}:</div>
+                          <div class="text-gray-900 dark:text-white" v-html="formulaPreview"></div>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- Description -->
@@ -133,12 +140,19 @@
                         <span class="w-1 h-4 bg-teal-500 rounded mr-2"></span>
                         {{ t('grammar.manager.description', 'Description') }}
                       </label>
-                      <textarea
-                        v-model="formData.description"
-                        rows="3"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300 hover:border-teal-400 dark:hover:border-teal-500 transform hover:scale-[1.02] resize-none"
-                        :placeholder="t('grammar.manager.descriptionPlaceholder', 'Explain when and how to use this grammar rule')"
-                      ></textarea>
+                      <div class="space-y-2">
+                        <textarea
+                          v-model="formData.description"
+                          rows="3"
+                          class="w-full px-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300 hover:border-teal-400 dark:hover:border-teal-500 transform hover:scale-[1.02] resize-none"
+                          :placeholder="t('grammar.manager.descriptionPlaceholder', 'Explain when and how to use this grammar rule + &lt;br&gt; or &lt;/br&gt; for line break')"
+                        ></textarea>
+                        <!-- Preview -->
+                        <div v-if="formData.description.trim()" class="p-2 bg-teal-50 dark:bg-[#0a0a0a] border border-teal-200 dark:border-teal-600 rounded text-sm">
+                          <div class="text-teal-700 dark:text-teal-400 font-medium mb-1">{{ t('grammar.manager.preview', 'Preview') }}:</div>
+                          <div class="text-gray-900 dark:text-white" v-html="descriptionPreview"></div>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- Examples -->
@@ -243,13 +257,11 @@
                             <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                               {{ t('grammar.manager.formula', 'Formula') }}:
                             </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 font-mono bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                              {{ rule.formula }}
-                            </p>
+                            <div class="text-sm text-gray-600 dark:text-gray-400 font-mono bg-gray-50 dark:bg-[#0a0a0a] p-2 rounded" v-html="renderHtmlContent(rule.formula)"></div>
                           </div>
 
                           <div v-if="rule.description" class="mb-2">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ rule.description }}</p>
+                            <div class="text-sm text-gray-600 dark:text-gray-400" v-html="renderHtmlContent(rule.description)"></div>
                           </div>
 
                           <div v-if="rule.examples && rule.examples.length > 0" class="mb-2">
@@ -377,6 +389,18 @@ const filteredGrammarRules = computed(() => {
   if (!filterCategory.value) return grammarRules.value
   return grammarRules.value.filter(rule => rule.category === filterCategory.value)
 })
+
+// Convert <br> and </br> tags to line breaks
+const renderHtmlContent = (content: string): string => {
+  if (!content) return ''
+  return content
+    .replace(/<\/br>/gi, '<br>')
+    .replace(/<br\s*\/?>/gi, '<br>')
+    .replace(/\n/g, '<br>')
+}
+
+const formulaPreview = computed(() => renderHtmlContent(formData.value.formula))
+const descriptionPreview = computed(() => renderHtmlContent(formData.value.description))
 
 // Methods
 const closeModal = () => {
