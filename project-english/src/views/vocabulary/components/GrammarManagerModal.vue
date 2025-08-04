@@ -394,9 +394,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
+
+const ConfirmToast = defineAsyncComponent(() => import('../../../components/common/ConfirmToast.vue'))
+
 const { t } = useI18n()
+const toast = useToast()
 
 // Text-to-speech state (temporarily disabled)
 const isPlayingAudio = ref<string | null>(null)
@@ -640,10 +645,31 @@ const editGrammar = (rule: GrammarRule) => {
 }
 
 const deleteGrammar = (id: string) => {
-  if (confirm(t('grammar.manager.confirmDelete', 'Are you sure you want to delete this grammar rule?'))) {
-    grammarRules.value = grammarRules.value.filter(rule => rule.id !== id)
-    saveToLocalStorage()
-  }
+  const rule = grammarRules.value.find(r => r.id === id)
+  if (!rule) return
+  
+  const toastId = toast({
+    component: ConfirmToast,
+    props: {
+      message: t('grammar.manager.confirmDelete', 'Are you sure you want to delete this grammar rule?'),
+      confirmText: t('common.delete', 'Delete'),
+      cancelText: t('common.cancel', 'Cancel'),
+      onConfirm: () => {
+        grammarRules.value = grammarRules.value.filter(rule => rule.id !== id)
+        saveToLocalStorage()
+        toast.success(t('grammar.manager.ruleDeleted', 'Grammar rule deleted successfully'))
+        toast.dismiss(toastId)
+      },
+      onCancel: () => {
+        toast.dismiss(toastId)
+      }
+    }
+  }, {
+    timeout: false,
+    closeOnClick: false,
+    closeButton: false,
+    draggable: false
+  })
 }
 
 const formatDate = (date: Date) => {
