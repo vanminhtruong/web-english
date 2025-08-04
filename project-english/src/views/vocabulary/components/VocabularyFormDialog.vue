@@ -295,7 +295,7 @@
     <!-- Topic Manager Modal -->
     <TopicManager
       v-model="showTopicManager"
-      :vocabulary-usage="{}"
+      :vocabulary-usage="categoryUsage"
       @topic-added="onTopicAdded"
       @topic-updated="onTopicUpdated"
       @topic-deleted="onTopicDeleted"
@@ -371,6 +371,7 @@ const form = reactive({
 
 // Computed
 const isEditing = computed(() => !!props.vocabulary)
+const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value)
 
 // Field-specific validation functions
 const validateWord = (): boolean => {
