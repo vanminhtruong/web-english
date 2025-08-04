@@ -396,7 +396,10 @@
       "globalMode": "Chung",
       "perDateMode": "Theo ngày",
       "perDateDescription": "Đang quản lý quy tắc ngữ pháp cho ngày: {date}",
-      "noDateSelected": "Chưa chọn ngày cho chế độ theo ngày"
+      "noDateSelected": "Chưa chọn ngày cho chế độ theo ngày",
+      "showVocabulary": "Hiển thị từ vựng",
+      "vocabularyForDate": "Từ vựng ngày {date}",
+      "noVocabularyFound": "Không tìm thấy từ vựng nào cho ngày này"
     },
     "categories": {
       "tenses": "Thì",

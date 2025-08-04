@@ -391,7 +391,10 @@
       "globalMode": "Global",
       "perDateMode": "Per Date",
       "perDateDescription": "Managing grammar rules for date: {date}",
-      "noDateSelected": "No date selected for per-date mode"
+      "noDateSelected": "No date selected for per-date mode",
+      "showVocabulary": "Show Vocabulary",
+      "vocabularyForDate": "Vocabulary for {date}",
+      "noVocabularyFound": "No vocabulary found for this date"
     },
     "categories": {
       "tenses": "Tenses",

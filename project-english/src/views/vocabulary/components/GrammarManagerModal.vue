@@ -67,16 +67,81 @@
                 </div>
                 
                 <!-- Mode Description -->
-                <div v-if="perDateMode" class="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <p class="text-sm text-blue-700 dark:text-blue-300 flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {{ selectedDate ? 
-                      (t('grammar.manager.perDateDescription', { date: selectedDate }) || `Managing grammar rules for date: ${selectedDate}`) : 
-                      (t('grammar.manager.noDateSelected') || 'No date selected for per-date mode') 
-                    }}
-                  </p>
+                <div v-if="perDateMode" class="mt-3 p-2 bg-blue-50 dark:bg-gray-custom rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm text-blue-700 dark:text-blue-300 flex items-center">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      {{ selectedDate ? 
+                        (t('grammar.manager.perDateDescription', { date: selectedDate }) || `Managing grammar rules for date: ${selectedDate}`) : 
+                        (t('grammar.manager.noDateSelected') || 'No date selected for per-date mode') 
+                      }}
+                    </p>
+                    
+                    <!-- Show Vocabulary Button -->
+                    <div v-if="selectedDate" class="relative">
+                      <button
+                        @click="showVocabularyDropdown = !showVocabularyDropdown"
+                        class="flex items-center space-x-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-md hover:bg-green-200 dark:hover:bg-green-900/50 transition-all duration-200 text-sm font-medium"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        <span>{{ t('grammar.manager.showVocabulary', 'Show Vocabulary') }}</span>
+                        <span class="bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-0.5 rounded-full text-xs font-bold">
+                          {{ vocabulariesForSelectedDate.length }}
+                        </span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': showVocabularyDropdown }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                      </button>
+                      
+                      <!-- Vocabulary Dropdown -->
+                      <Transition
+                        enter-active-class="transition-all duration-300 ease-out"
+                        enter-from-class="opacity-0 scale-95 translate-y-2"
+                        enter-to-class="opacity-100 scale-100 translate-y-0"
+                        leave-active-class="transition-all duration-200 ease-in"
+                        leave-from-class="opacity-100 scale-100 translate-y-0"
+                        leave-to-class="opacity-0 scale-95 translate-y-2"
+                      >
+                        <div v-if="showVocabularyDropdown" class="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto">
+                          <div class="p-3 border-b border-gray-200 dark:border-gray-700">
+                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white flex items-center">
+                              <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                              </svg>
+                              {{ t('grammar.manager.vocabularyForDate', { date: selectedDate }) || `Vocabulary for ${selectedDate}` }}
+                            </h4>
+                          </div>
+                          
+                          <div v-if="vocabulariesForSelectedDate.length === 0" class="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                            {{ t('grammar.manager.noVocabularyFound', 'No vocabulary found for this date') }}
+                          </div>
+                          
+                          <div v-else class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <div v-for="vocab in vocabulariesForSelectedDate" :key="vocab.id" class="p-3 hover:bg-gray-50 dark:hover:bg-gray-custom cursor-pointer transition-colors duration-150">
+                              <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                  <h5 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ vocab.word }}</h5>
+                                  <p class="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{{ vocab.meaning }}</p>
+                                  <div class="flex items-center space-x-2 mt-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
+                                      {{ getTopicName(vocab.category) }}
+                                    </span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200">
+                                      {{ vocab.level }}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Transition>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -397,11 +462,15 @@
 import { ref, computed, watch, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
+import { useVocabularyStore } from '../../../composables/useVocabularyStore'
+import { getDateKey } from '../../../utils/dateUtils'
+import { getTopicName } from '../../../utils/topicUtils'
 
 const ConfirmToast = defineAsyncComponent(() => import('../../../components/common/ConfirmToast.vue'))
 
 const { t } = useI18n()
 const toast = useToast()
+const { allVocabularies } = useVocabularyStore()
 
 // Text-to-speech state (temporarily disabled)
 const isPlayingAudio = ref<string | null>(null)
@@ -438,6 +507,7 @@ const isEditing = ref(false)
 const editingId = ref<string | null>(null)
 const filterCategory = ref('')
 const perDateMode = ref(false) // Toggle for per-date grammar management
+const showVocabularyDropdown = ref(false) // Control vocabulary dropdown visibility
 
 // Form data
 const formData = ref({
@@ -468,6 +538,16 @@ const filteredGrammarRules = computed(() => {
   }
   
   return filtered
+})
+
+// Filter vocabulary for the selected date
+const vocabulariesForSelectedDate = computed(() => {
+  if (!props.selectedDate) return []
+  
+  return allVocabularies.value.filter(vocab => {
+    const vocabDateKey = getDateKey(vocab.createdAt)
+    return vocabDateKey === props.selectedDate
+  })
 })
 
 // Convert <br> and </br> tags to line breaks
