@@ -23,10 +23,10 @@
           leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
           leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
         >
-          <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700 transform"
+          <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] border border-gray-200 dark:border-gray-700 transform overflow-hidden flex flex-col"
                @click.stop>
             <!-- Header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a] rounded-t-lg">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
                 <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                 <span>{{ t('vocabulary.details.title', 'Vocabulary Details') }}</span>
@@ -42,7 +42,7 @@
             </div>
 
             <!-- Content -->
-            <div class="p-6" v-if="vocabulary">
+            <div class="p-6 overflow-y-auto flex-1" v-if="vocabulary">
               <!-- Word and pronunciation -->
               <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s">
                 <div class="flex items-center space-x-4 mb-2">
@@ -218,7 +218,7 @@
             </div>
 
             <!-- Footer Actions -->
-            <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-600 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+            <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-600 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a] rounded-b-lg">
               <button 
                 @click="editVocabulary"
                 class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg transform hover:-translate-y-0.5 active:scale-95"
@@ -382,21 +382,36 @@ button:active {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Custom scrollbar for dark mode */
+/* Custom scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
+/* Light mode scrollbar */
 ::-webkit-scrollbar-track {
-  background-color: #0f0f0f;
+  background-color: #f3f4f6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #0a0a0a;
+  background-color: #d1d5db;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #000000;
+  background-color: #9ca3af;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background-color: #0f0f0f;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #374151;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #4b5563;
 }
 </style>
