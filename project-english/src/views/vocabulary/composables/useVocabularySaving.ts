@@ -1,4 +1,4 @@
-import { ref, computed, watch, onUnmounted, defineAsyncComponent } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast, POSITION } from 'vue-toastification';
 import { useVocabularyStore } from '../../../composables/useVocabularyStore';
@@ -23,6 +23,77 @@ export function useVocabularySaving() {
 
   // Add a new ref to store the file path for debugging
   const autoSaveFilePath = ref<string>('');
+  
+  // IndexedDB setup for persisting file handles
+  const DB_NAME = 'vocabulary-file-handles';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'file-handles';
+  const FILE_HANDLE_KEY = 'auto-save-file-handle';
+  
+  // IndexedDB operations
+  const openDB = (): Promise<IDBDatabase> => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+      
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME);
+        }
+      };
+    });
+  };
+  
+  const saveFileHandleToIDB = async (fileHandle: any): Promise<void> => {
+    try {
+      const db = await openDB();
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      await new Promise<void>((resolve, reject) => {
+        const request = store.put(fileHandle, FILE_HANDLE_KEY);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+      console.log('File handle saved to IndexedDB');
+    } catch (error) {
+      console.error('Error saving file handle to IndexedDB:', error);
+    }
+  };
+  
+  const loadFileHandleFromIDB = async (): Promise<any | null> => {
+    try {
+      const db = await openDB();
+      const transaction = db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      return new Promise<any | null>((resolve, reject) => {
+        const request = store.get(FILE_HANDLE_KEY);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result || null);
+      });
+    } catch (error) {
+      console.error('Error loading file handle from IndexedDB:', error);
+      return null;
+    }
+  };
+  
+  const clearFileHandleFromIDB = async (): Promise<void> => {
+    try {
+      const db = await openDB();
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      await new Promise<void>((resolve, reject) => {
+        const request = store.delete(FILE_HANDLE_KEY);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+      console.log('File handle cleared from IndexedDB');
+    } catch (error) {
+      console.error('Error clearing file handle from IndexedDB:', error);
+    }
+  };
 
   const getStoredValue = (key: string, defaultValue: any) => {
     try {
@@ -40,6 +111,68 @@ export function useVocabularySaving() {
   autoSaveEnabled.value = getStoredValue('vocabulary-auto-save-enabled', true);
   hasAutoSaveFile.value = getStoredValue('vocabulary-has-auto-save-file', false);
   lastSaveTime.value = getStoredValue('vocabulary-last-save-time', '');
+  
+  // Restore file handle from IndexedDB on mount
+  const initializeAutoSave = async () => {
+    console.log('🔧 Initializing auto-save, hasAutoSaveFile:', hasAutoSaveFile.value);
+    
+    if (hasAutoSaveFile.value && 'showSaveFilePicker' in window) {
+      try {
+        console.log('🔍 Attempting to restore file handle from IndexedDB...');
+        const savedFileHandle = await loadFileHandleFromIDB();
+        
+        if (savedFileHandle) {
+          console.log('✅ Found saved file handle in IndexedDB');
+          // Verify the file handle is still valid
+          try {
+            const opts = { mode: 'readwrite' as const };
+            const permission = await savedFileHandle.queryPermission(opts);
+            console.log('🔐 File handle permission:', permission);
+            
+            if (permission === 'granted' || permission === 'prompt') {
+              autoSaveFileHandle.value = savedFileHandle;
+              console.log('✅ File handle restored to autoSaveFileHandle');
+              
+              // Try to get file info for display
+              try {
+                const fileProps = await savedFileHandle.getFile();
+                autoSaveFilePath.value = fileProps.name;
+                console.log('📁 File handle restored successfully:', fileProps.name);
+                
+                // If permission is prompt, request it silently
+                if (permission === 'prompt') {
+                  console.log('🔄 Requesting permission for file handle...');
+                  await savedFileHandle.requestPermission(opts);
+                }
+              } catch (e) {
+                console.log('⚠️ Could not get file properties, but handle seems valid:', e);
+              }
+            } else {
+              console.log('❌ File handle permission denied, clearing stored handle');
+              await clearFileHandleFromIDB();
+              hasAutoSaveFile.value = false;
+              setStoredValue('vocabulary-has-auto-save-file', false);
+            }
+          } catch (error) {
+            console.log('❌ Saved file handle is invalid, clearing:', error);
+            await clearFileHandleFromIDB();
+            hasAutoSaveFile.value = false;
+            setStoredValue('vocabulary-has-auto-save-file', false);
+          }
+        } else {
+          console.log('❌ No file handle found in IndexedDB');
+          hasAutoSaveFile.value = false;
+          setStoredValue('vocabulary-has-auto-save-file', false);
+        }
+      } catch (error) {
+        console.error('❌ Error initializing auto-save:', error);
+        hasAutoSaveFile.value = false;
+        setStoredValue('vocabulary-has-auto-save-file', false);
+      }
+    } else {
+      console.log('ℹ️ Auto-save not enabled or File System API not supported');
+    }
+  };
 
   const saveToFileSystem = async (data: any) => {
     try {
@@ -56,6 +189,9 @@ export function useVocabularySaving() {
       autoSaveFileHandle.value = fileHandle;
       hasAutoSaveFile.value = true;
       setStoredValue('vocabulary-has-auto-save-file', true);
+      
+      // Save file handle to IndexedDB for persistence
+      await saveFileHandleToIDB(fileHandle);
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         await downloadJsonFile(data);
@@ -302,6 +438,8 @@ export function useVocabularySaving() {
         autoSaveFileHandle.value = null;
         hasAutoSaveFile.value = false;
         setStoredValue('vocabulary-has-auto-save-file', false);
+        // Clear from IndexedDB as well
+        await clearFileHandleFromIDB();
       }
       
       return false;
@@ -370,6 +508,9 @@ export function useVocabularySaving() {
         
         // Store the file handle
         autoSaveFileHandle.value = fileHandle;
+        
+        // Save file handle to IndexedDB for persistence
+        await saveFileHandleToIDB(fileHandle);
         
         // Try to get the file name/path for debugging
         try {
@@ -557,10 +698,16 @@ export function useVocabularySaving() {
     );
   };
 
-  const resetAutoSaveFile = () => {
+  const resetAutoSaveFile = async () => {
     autoSaveFileHandle.value = null;
     hasAutoSaveFile.value = false;
     setStoredValue('vocabulary-has-auto-save-file', false);
+    autoSaveFilePath.value = '';
+    
+    // Clear file handle from IndexedDB
+    await clearFileHandleFromIDB();
+    
+    console.log('Auto-save file reset completed');
   };
 
   const getSaveStatusColor = computed(() => {
@@ -587,6 +734,12 @@ export function useVocabularySaving() {
         }
         return t('vocabulary.save.manual', 'Manual save');
     }
+  });
+
+  // Initialize auto-save on component mount
+  onMounted(() => {
+    console.log('🚀 Component mounted, initializing auto-save...');
+    initializeAutoSave();
   });
 
   onUnmounted(() => {
