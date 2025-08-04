@@ -39,7 +39,20 @@
             </div>
 
             <div class="flex-2">
-              <p class="text-gray-700 dark:text-gray-300">{{ word.meaning }}</p>
+              <div class="flex items-center space-x-2">
+                <p class="text-gray-700 dark:text-gray-300">{{ word.meaning }}</p>
+                <!-- Move arrow - only visible when move mode is active -->
+                <button 
+                  v-if="moveMode"
+                  @click.stop="handleMoveClick"
+                  class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  :title="t('vocabulary.moveToDateGroup', 'Move to another date group')"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </svg>
+                </button>
+              </div>
               <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="word.example">
                 <span class="font-medium">{{ t('vocabulary.example', 'Example') }}:</span> {{ word.example }}
               </p>
@@ -144,6 +157,7 @@ interface Word {
 
 interface Props {
   word: Word
+  moveMode?: boolean
 }
 
 const props = defineProps<Props>()
@@ -154,7 +168,15 @@ const emit = defineEmits<{
   'delete-word': [word: Word]
   'toggle-favorite': [word: Word]
   'view-details': [word: Word]
+  'move-vocabulary': [data: { word: Word, targetDate: string }]
 }>()
+
+// Handle move button click
+const handleMoveClick = () => {
+  // For now, we'll emit the event with empty targetDate
+  // The parent component will handle showing the date selection UI
+  emit('move-vocabulary', { word: props.word, targetDate: '' })
+}
 
 
 onUnmounted(() => {

@@ -1,5 +1,6 @@
 <template>
-  <div class="mb-3 xs:mb-4 sm:mb-6">
+  <div>
+    <div class="mb-3 xs:mb-4 sm:mb-6">
     <!-- Date group header with accordion toggle -->
     <div class="sticky top-0 bg-gray-50 dark:bg-[#0f0f0f] px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-2.5 sm:py-3 border-b border-gray-200 dark:border-gray-700 z-10">
       <!-- Mobile layout: Block/Vertical -->
@@ -541,6 +542,7 @@
     <!-- Collapsible content with simple transition -->
     <transition name="accordion">
       <div v-if="isExpanded" class="accordion-content">
+        
         <!-- Topic-based sub-groups -->
         <div v-if="group.topics && group.topics.length > 0" class="divide-y divide-gray-200 dark:divide-gray-700">
           <div 
@@ -667,11 +669,13 @@
                     v-for="word in getPaginatedTopicVocabularies(topicGroup).vocabularies"
                     :key="word.id"
                     :word="word"
+                    :move-mode="globalMoveMode"
                     @play-audio="$emit('play-audio', $event)"
                     @edit-word="$emit('edit-word', $event)"
                     @delete-word="$emit('delete-word', $event)"
                     @toggle-favorite="$emit('toggle-favorite', $event)"
                     @view-details="$emit('view-details', $event)"
+                    @move-vocabulary="handleMoveVocabulary"
                   />
                 </div>
               </div>
@@ -685,29 +689,32 @@
               v-for="word in group.vocabularies"
               :key="word.id"
               :word="word"
+              :move-mode="globalMoveMode"
               @play-audio="$emit('play-audio', $event)"
               @edit-word="$emit('edit-word', $event)"
               @delete-word="$emit('delete-word', $event)"
               @toggle-favorite="$emit('toggle-favorite', $event)"
               @view-details="$emit('view-details', $event)"
+              @move-vocabulary="handleMoveVocabulary"
             />
         </div>
       </div>
     </transition>
+    </div>
+
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, watch, onMounted, onUnmounted, nextTick, computed } from 'vue'
+import { defineAsyncComponent, ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import type { GroupedVocabulary } from '../../../utils/dateUtils'
 import { getTopicName } from '../../../utils/topicUtils'
-// Async component imports
-const GrammarManagerButton = defineAsyncComponent(() => import('./GrammarManagerButton.vue'))
 import { getDateKey } from '../../../utils/dateUtils'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // Sử dụng defineAsyncComponent để import components an toàn
 const VocabularyCard = defineAsyncComponent(
@@ -719,6 +726,9 @@ const VocabularyNoteButton = defineAsyncComponent(
   loadComponentSafely(() => import('./VocabularyNoteButton.vue'))
 )
 
+// Async component imports
+const GrammarManagerButton = defineAsyncComponent(() => loadComponentSafely(() => import('./GrammarManagerButton.vue'))())
+
 
 
 interface Props {
@@ -726,12 +736,14 @@ interface Props {
   defaultExpanded?: boolean
   accordionState?: Record<string, boolean>
   hoverToExpandEnabled?: boolean
+  globalMoveMode?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   defaultExpanded: false, // Changed to false for collapsed by default
   accordionState: () => ({}),
-  hoverToExpandEnabled: false
+  hoverToExpandEnabled: false,
+  globalMoveMode: false
 })
 
 // Computed property to calculate total vocabulary count (including paginated items)
@@ -1095,9 +1107,25 @@ const cancelTopicInput = () => {
   topicInputValue.value = ''
 }
 
+// Move modal state moved to parent (VocabularyListView)
 
+// Handle move vocabulary event
+const handleMoveVocabulary = (data: { word: any, targetDate: string }) => {
+  // Always emit to parent - let parent handle modal display
+  emit('move-vocabulary', data)
+}
 
+// Modal methods moved to parent (VocabularyListView)
 
+// Format date for display
+const formatDateForDisplay = (dateStr: string) => {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString(locale.value, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
 
 // Calculate accordion content height for smooth animation
 const calculateHeight = async () => {
@@ -1122,43 +1150,6 @@ const calculateHeight = async () => {
     document.body.removeChild(clone)
   }
 }
-
-// Initialize accordion state and load topics
-onMounted(async () => {
-  // Check if there's a saved state for this date group
-  if (props.accordionState && typeof props.accordionState[props.group.date] === 'boolean') {
-    isExpanded.value = props.accordionState[props.group.date]
-  }
-  
-  // Load saved topic for this group
-  const storedTopics = getStoredTopics()
-  if (storedTopics[props.group.date]) {
-    groupTopic.value = storedTopics[props.group.date]
-  }
-  
-  // Calculate height for smooth animation
-  await nextTick()
-  await calculateHeight()
-})
-
-// Recalculate height when vocabulary list changes
-watch(
-  () => props.group.vocabularies.length,
-  async () => {
-    await nextTick()
-    await calculateHeight()
-  }
-)
-
-// Watch for changes in accordionState prop
-watch(
-  () => props.accordionState?.[props.group.date],
-  (newState) => {
-    if (typeof newState === 'boolean') {
-      isExpanded.value = newState
-    }
-  }
-)
 
 // Watch for modal state changes to close categories when modal closes
 const modalWatchInterval = ref<number | null>(null)
@@ -1216,7 +1207,7 @@ onMounted(async () => {
     groupTopic.value = storedTopics[props.group.date]
   }
   
-  // Listen for vocabulary list mouse events
+  // Add event listeners for hover behavior
   window.addEventListener('vocabulary-list-mouse-leave', handleVocabularyListMouseLeave)
   window.addEventListener('vocabulary-list-mouse-enter', handleVocabularyListMouseEnter)
   
@@ -1257,6 +1248,8 @@ const emit = defineEmits<{
   'open-note-dialog': [payload: { date: string, words: any[] }]
   'open-add-vocabulary-dialog': [date: string]
   'open-grammar-manager': [date: string]
+  'move-vocabulary': [data: { word: any, targetDate: string }]
+  'request-available-dates': [data: { topic: string, currentDate: string }]
 }>()
 </script>
 

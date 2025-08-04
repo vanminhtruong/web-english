@@ -77,6 +77,16 @@
     "vocabInfo": "Thông tin từ vựng",
     "updateSuccess": "Từ vựng đã được cập nhật thành công.",
     "addSuccess": "Thêm từ vựng thành công!",
+    "deleteSuccess": "Đã xóa \"{word}\" thành công.",
+    "moveSuccess": "Đã di chuyển \"{word}\" thành công đến {date}",
+    "moveError": "Không thể di chuyển \"{word}\": {error}",
+    "moveAutoSaveNotice": "Từ đã được di chuyển và sẽ được lưu tự động",
+    "moveMode": "Chế độ di chuyển",
+    "moveModeActive": "Đang bật - Nhấn mũi tên để di chuyển từ",
+    "moveModeInactive": "Tắt",
+    "moveToDateGroup": "Di chuyển sang nhóm ngày khác",
+    "selectTargetDate": "Chọn ngày đích",
+    "moveToDate": "Di chuyển đến ngày",
     "words": "từ",
     "createdAt": "Tạo lúc",
     "updatedAt": "Cập nhật",
@@ -262,8 +272,7 @@
       "builtInTopicsDescription": "Hệ thống có sẵn 16 chủ đề cơ bản như Technology, Business, Travel... Bạn có thể thêm chủ đề tùy chỉnh ở đây.",
       "builtIn": "Có sẵn",
       "manageTopics": "Quản lý chủ đề"
-    },
-    "deleteSuccess": "Đã xóa \"{word}\" thành công."
+    }
   },
   "flashcard": {
     "header": {

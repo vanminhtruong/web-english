@@ -19,6 +19,7 @@
         :default-expanded="false"
         :accordion-state="accordionState"
         :hover-to-expand-enabled="hoverToExpandEnabled"
+        :global-move-mode="globalMoveMode"
         @play-audio="$emit('play-audio', $event)"
         @edit-word="$emit('edit-word', $event)"
         @delete-word="$emit('delete-word', $event)"
@@ -31,6 +32,8 @@
         @open-note-dialog="$emit('open-note-dialog', $event.date, $event.words)"
         @open-add-vocabulary-dialog="$emit('open-add-vocabulary-dialog', $event)"
         @open-grammar-manager="$emit('open-grammar-manager', $event)"
+        @move-vocabulary="handleMoveVocabulary"
+        @request-available-dates="handleRequestAvailableDates"
       />
       
       <!-- Date Group Pagination -->
@@ -180,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, computed, ref, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import { groupVocabulariesByDateAndTopic, type GroupedVocabulary } from '../../../utils/dateUtils'
@@ -276,6 +279,7 @@ interface Props {
   dateGroupPages?: Record<string, number>
   itemsPerPageGrouped?: number
   hoverToExpandEnabled?: boolean
+  globalMoveMode?: boolean
 }
 
 const props = defineProps<Props>()
@@ -450,7 +454,7 @@ const handleVocabularyListMouseEnter = () => {
   }
 }
 
-defineEmits<{
+const emit = defineEmits<{
   'play-audio': [word: string]
   'edit-word': [word: Word]
   'delete-word': [word: Word]
@@ -466,5 +470,50 @@ defineEmits<{
   'open-note-dialog': [date: string, words: any[]]
   'open-add-vocabulary-dialog': [date: string]
   'open-grammar-manager': [date: string]
+  'move-vocabulary': [data: { word: any, targetDate: string, sourceDate?: string }]
 }>()
+
+// Handle move vocabulary request
+const handleMoveVocabulary = (data: { word: any, targetDate: string }) => {
+  // Find the source date group for this word
+  const sourceDate = groupedWords.value.find(group => 
+    group.vocabularies.some(word => word.id === data.word.id)
+  )?.date
+  
+  // Pass through to parent with source date info
+  emit('move-vocabulary', {
+    ...data,
+    sourceDate
+  })
+}
+
+// Handle request for available dates with same topic
+const handleRequestAvailableDates = (data: { topic: string, currentDate: string }) => {
+  // Find all date groups that have the same topic and are not the current date
+  const availableDates = groupedWords.value
+    .filter(group => {
+      // Check if this group has words with the same topic
+      const hasSameTopic = group.vocabularies.some(word => word.category === data.topic)
+      return hasSameTopic && group.date !== data.currentDate
+    })
+    .map(group => ({
+      date: group.date,
+      count: group.vocabularies.filter(word => word.category === data.topic).length
+    }))
+    .filter(item => item.count > 0) // Only include dates that actually have words with this topic
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by date descending
+  
+  // Send available dates back to the DateGroupAccordion component
+  // We'll use a custom event since Vue doesn't support direct child-to-parent communication in this case
+  nextTick(() => {
+    const event = new CustomEvent('available-dates-response', {
+      detail: {
+        topic: data.topic,
+        currentDate: data.currentDate,
+        availableDates
+      }
+    })
+    window.dispatchEvent(event)
+  })
+}
 </script>

@@ -29,8 +29,10 @@
           <GroupingToggle 
             :model-value="useGrouping" 
             :hover-enabled="hoverToExpandEnabled"
+            :move-mode="globalMoveMode"
             @update:model-value="toggleGrouping" 
             @update:hover-enabled="hoverToExpandEnabled = $event"
+            @update:move-mode="globalMoveMode = $event"
           />
         </div>
       </LazyLoadComponent>
@@ -84,6 +86,7 @@
           :date-group-pages="dateGroupPages"
           :items-per-page-grouped="itemsPerPageGrouped"
           :hover-to-expand-enabled="hoverToExpandEnabled"
+          :global-move-mode="globalMoveMode"
           @play-audio="playAudio"
           @edit-word="openEditDialog"
           @delete-word="deleteWord"
@@ -98,6 +101,7 @@
           @open-note-dialog="openNoteDialog"
           @open-add-vocabulary-dialog="openAddVocabularyForDate"
           @open-grammar-manager="openGrammarManagerForDate"
+          @move-vocabulary="handleMoveVocabulary"
         />
       </LazyLoadComponent>
     </div>
@@ -172,6 +176,100 @@
         </button>
       </div>
     </Transition>
+
+    <!-- Move Vocabulary Modal -->
+    <!-- Backdrop -->
+    <Transition
+      enter-active-class="transition-all duration-500 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-300 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div 
+        v-if="showMoveModal" 
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+      >
+        <!-- Dialog Container -->
+        <Transition
+          enter-active-class="transition-all duration-500 ease-out"
+          enter-from-class="opacity-0 scale-90 translate-y-8 rotate-1"
+          enter-to-class="opacity-100 scale-100 translate-y-0 rotate-0"
+          leave-active-class="transition-all duration-300 ease-in"
+          leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
+          leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
+        >
+          <div class="w-full max-w-md mx-4">
+            <!-- Dialog Content -->
+            <div 
+              class="bg-white dark:bg-[#0a0a0a] shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 transform overflow-hidden"
+              @click.stop
+            >
+              <!-- Header -->
+              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span>{{ t('vocabulary.moveVocabulary', 'Move Vocabulary') }}</span>
+                  </h3>
+                  <button 
+                    @click="closeMoveModal" 
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Content -->
+              <div class="px-6 py-4">
+                <div v-if="wordToMove" class="mb-4">
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {{ t('vocabulary.movingWord', 'Moving word') }}:
+                  </p>
+                  <p class="font-medium text-gray-900 dark:text-white">{{ wordToMove.word }} - {{ wordToMove.meaning }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('vocabulary.topic', 'Topic') }}: {{ getTopicName(wordToMove.category) }}</p>
+                </div>
+                
+                <div class="mb-6">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ t('vocabulary.selectTargetDate', 'Select target date group') }}:
+                  </label>
+                  <select 
+                    v-model="selectedTargetDate" 
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
+                  >
+                    <option value="">{{ t('vocabulary.selectDate', 'Select a date') }}</option>
+                    <option v-for="dateOption in availableDateGroups" :key="dateOption.date" :value="dateOption.date">
+                      {{ formatDateForDisplay(dateOption.date) }} ({{ dateOption.count }} {{ t('vocabulary.words', 'words') }})
+                    </option>
+                  </select>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                  <button 
+                    @click="closeMoveModal"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-all duration-200 hover:scale-105"
+                  >
+                    {{ t('common.cancel', 'Cancel') }}
+                  </button>
+                  <button 
+                    @click="confirmMove"
+                    :disabled="!selectedTargetDate"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-md transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                  >
+                    {{ t('vocabulary.moveWord', 'Move Word') }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -183,6 +281,7 @@ import { useVoiceStore } from '../../stores/voiceStore';
 import { useVocabularyStore } from '../../composables/useVocabularyStore';
 import { useModalStore } from '../../stores/modalStore';
 import { groupVocabulariesByDate } from '../../utils/dateUtils';
+import { getTopicName } from '../../utils/topicUtils';
 import type { Vocabulary } from '../../composables/useVocabularyStore';
 
 // Local components
@@ -261,6 +360,36 @@ const setStoredHoverState = (enabled: boolean) => {
 };
 
 const hoverToExpandEnabled = ref(getStoredHoverState());
+
+// Global Move Mode functionality with localStorage persistence
+const GLOBAL_MOVE_MODE_STORAGE_KEY = 'vocabulary-global-move-mode-enabled';
+
+const getStoredMoveMode = (): boolean => {
+  try {
+    const stored = localStorage.getItem(GLOBAL_MOVE_MODE_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : false;
+  } catch (error) {
+    console.warn('Failed to load global move mode state from localStorage:', error);
+    return false;
+  }
+};
+
+const setStoredMoveMode = (enabled: boolean) => {
+  try {
+    localStorage.setItem(GLOBAL_MOVE_MODE_STORAGE_KEY, JSON.stringify(enabled));
+  } catch (error) {
+    console.warn('Failed to save global move mode state to localStorage:', error);
+  }
+};
+
+const globalMoveMode = ref(getStoredMoveMode());
+
+// Move Vocabulary Modal state
+const showMoveModal = ref(false);
+const wordToMove = ref<any>(null);
+const selectedTargetDate = ref('');
+const availableDateGroups = ref<{ date: string, count: number }[]>([]);
+const currentSourceDate = ref(''); // Track current word's source date
 
 // Note dialog state
 const showNoteDialog = ref(false);
@@ -623,6 +752,129 @@ const handleNoteSaved = (note: string, markedWords: string[]) => {
   
   console.log(`Note saved for ${noteDialogDate.value} with ${markedWords.length} marked words`);
 };
+
+// Perform move vocabulary between date groups  
+const performMoveVocabulary = (data: { word: any, targetDate: string }) => {
+  try {
+    // Find and update the word's createdAt and updatedAt to match target date
+    const wordIndex = vocabularyStore.allVocabularies.value.findIndex(w => w.id === data.word.id)
+    
+    if (wordIndex !== -1) {
+      // Update the vocabulary array using store method
+      vocabularyStore.updateVocabulary(data.word.id, {
+        createdAt: data.targetDate,
+        updatedAt: data.targetDate
+      })
+      
+      // Show success message
+      toast.success(
+        t('vocabulary.moveSuccess', 
+          { word: data.word.word, date: new Date(data.targetDate).toLocaleDateString() },
+          `Successfully moved "${data.word.word}" to ${new Date(data.targetDate).toLocaleDateString()}`
+        ),
+        { timeout: 3000 }
+      )
+      
+      // Trigger auto-save if enabled
+      if (autoSaveEnabled.value) {
+        debounceAutoSave()
+        toast.info(t('vocabulary.moveAutoSaveNotice', 'Word moved and will be included in auto-save'), {
+          timeout: 2000,
+        })
+      }
+      
+      console.log(`Moved vocabulary "${data.word.word}" to ${data.targetDate}`)
+    } else {
+      throw new Error('Word not found')
+    }
+  } catch (error) {
+    console.error('Failed to move vocabulary:', error)
+    toast.error(
+      t('vocabulary.moveError', 
+        { word: data.word.word, error: (error as Error).message },
+        `Failed to move "${data.word.word}": ${(error as Error).message}`
+      ),
+      { timeout: 5000 }
+    )
+  }
+};
+
+// Move Vocabulary Modal methods
+const handleMoveVocabulary = (data: { word: any, targetDate: string, sourceDate?: string }) => {
+  // If targetDate is empty, show the modal for date selection
+  if (!data.targetDate) {
+    wordToMove.value = data.word;
+    currentSourceDate.value = data.sourceDate || ''; // Store source date
+    loadAvailableDateGroups(data.word.category);
+    showMoveModal.value = true;
+    // Disable body scroll when modal opens
+    document.body.classList.add('modal-open');
+  } else {
+    // Direct move with specified date
+    performMoveVocabulary(data);
+  }
+};
+
+// Load available date groups with same topic
+const loadAvailableDateGroups = (topic: string) => {
+  // Get all vocabularies with the same topic
+  const vocabulariesWithSameTopic = vocabularyStore.allVocabularies.value.filter(
+    word => word.category === topic
+  );
+  
+  // Group by date and count
+  const dateGroups = groupVocabulariesByDate(vocabulariesWithSameTopic);
+  
+  // Filter out the current source date and map to count format
+  availableDateGroups.value = dateGroups
+    .filter(group => group.date !== currentSourceDate.value) // Exclude current word's source date
+    .map(group => ({
+      date: group.date,
+      count: group.vocabularies.length
+    }))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Sort by date descending
+};
+
+// Close move modal
+const closeMoveModal = () => {
+  showMoveModal.value = false;
+  wordToMove.value = null;
+  selectedTargetDate.value = '';
+  availableDateGroups.value = [];
+  currentSourceDate.value = ''; // Reset source date
+  // Re-enable body scroll when modal closes
+  document.body.classList.remove('modal-open');
+};
+
+// Confirm move action
+const confirmMove = () => {
+  if (wordToMove.value && selectedTargetDate.value) {
+    performMoveVocabulary({
+      word: wordToMove.value,
+      targetDate: selectedTargetDate.value
+    });
+    closeMoveModal();
+  }
+};
+
+// Format date for display
+const formatDateForDisplay = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('vi-VN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
+
+// Watch for changes and persist to localStorage
+watch(hoverToExpandEnabled, (newValue) => {
+  setStoredHoverState(newValue);
+});
+
+watch(globalMoveMode, (newValue) => {
+  setStoredMoveMode(newValue);
+});
 
 onUnmounted(() => {
   window.removeEventListener('vocabularyImportComplete', () => {});
