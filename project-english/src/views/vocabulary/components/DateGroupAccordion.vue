@@ -150,7 +150,7 @@
               <button
                 v-if="!groupTopic"
                 @click.stop="showTopicInput = true"
-                class="flex flex-col items-center justify-center p-3 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[60px] hover:scale-105 hover:shadow-md"
+                class="flex flex-col items-center justify-center p-3 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 min-h-[60px] hover:scale-105 hover:shadow-md"
                 :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
               >
                 <svg class="w-4 h-4 mb-1" fill="currentColor" viewBox="0 0 20 20">
@@ -307,14 +307,14 @@
       <div class="lg:hidden flex items-center justify-center space-x-2 mt-2" @click.stop>
         <div v-if="!showTopicInput" class="flex items-center space-x-2">
           <!-- Topic display or add button -->
-          <div v-if="groupTopic" class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-1.5 md:space-x-2 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700">
-            <svg class="w-2.5 xs:w-3 sm:w-3 md:w-4 h-2.5 xs:h-3 sm:h-3 md:h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+          <div v-if="groupTopic" class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-1.5 md:space-x-2 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 bg-orange-50 dark:bg-orange-900/50 rounded-full border border-orange-200 dark:border-orange-700">
+            <svg class="w-2.5 xs:w-3 sm:w-3 md:w-4 h-2.5 xs:h-3 sm:h-3 md:h-4 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
             </svg>
             <div class="relative">
               <span
                 ref="topicSpanTablet"
-                class="font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px] sm:max-w-none block cursor-default text-xs xs:text-xs sm:text-sm md:text-sm"
+                class="font-medium text-orange-700 dark:text-orange-300 truncate max-w-[80px] sm:max-w-none block cursor-default text-xs xs:text-xs sm:text-sm md:text-sm"
                 @mouseenter="showTopicTooltip = true"
                 @mouseleave="showTopicTooltip = false"
               >{{ groupTopic }}</span>
@@ -331,7 +331,7 @@
             </div>
             <button
               @click.stop="editTopic"
-              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
+              class="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-200 focus:outline-none flex-shrink-0"
               :aria-label="t('vocabulary.accordion.editTopic')"
             >
               <svg class="w-2.5 xs:w-3 sm:w-3 md:w-4 h-2.5 xs:h-3 sm:h-3 md:h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -342,7 +342,7 @@
           <button
             v-else
             @click.stop="showTopicInput = true"
-            class="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs xs:text-xs sm:text-sm md:text-sm bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 rounded-md border border-blue-200 dark:border-blue-800 cursor-pointer transition-colors duration-150"
+            class="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs xs:text-xs sm:text-sm md:text-sm bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-800/30 text-orange-600 dark:text-orange-400 rounded-full border border-orange-200 dark:border-orange-800 cursor-pointer transition-colors duration-150"
             :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
           >
             <svg class="w-3 md:w-4 h-3 md:h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -389,11 +389,11 @@
             @keyup.escape="cancelTopicInput"
             type="text"
             :placeholder="t('vocabulary.accordion.topicPlaceholder')"
-            class="flex-1 px-2 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="flex-1 px-2 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs border border-orange-300 dark:border-orange-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
           <button
             @click="saveTopic"
-            class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors"
             :aria-label="t('vocabulary.accordion.saveTopic')"
           >
             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -424,14 +424,14 @@
           <div class="flex-1 flex justify-center mx-1 xs:mx-2 sm:mx-4 min-w-0">
             <div v-if="!showTopicInput" class="flex items-center space-x-1.5 xs:space-x-1.5 sm:space-x-2 flex-nowrap">
               <!-- Topic display or add button -->
-              <div v-if="groupTopic" class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 lg:py-1.5 xl:py-1.5 2xl:py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700 flex-shrink-0">
-                <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <div v-if="groupTopic" class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 lg:py-1.5 xl:py-1.5 2xl:py-1.5 bg-orange-50 dark:bg-orange-900/50 rounded-full border border-orange-200 dark:border-orange-700 flex-shrink-0">
+                <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
                 <div class="relative">
                   <span
                     ref="topicSpanDesktop"
-                    class="text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium text-blue-700 dark:text-blue-300 truncate max-w-[80px] sm:max-w-none block cursor-default"
+                    class="text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium text-orange-700 dark:text-orange-300 truncate max-w-[80px] sm:max-w-none block cursor-default"
                     @mouseenter="showTopicTooltip = true"
                     @mouseleave="showTopicTooltip = false"
                   >{{ groupTopic }}</span>
@@ -448,7 +448,7 @@
                 </div>
                 <button
                   @click.stop="editTopic"
-                  class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0"
+                  class="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-200 focus:outline-none flex-shrink-0"
                   :aria-label="t('vocabulary.accordion.editTopic')"
                 >
                   <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -459,7 +459,7 @@
               <button
                 v-else
                 @click.stop="showTopicInput = true"
-                class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 rounded-full border border-dashed border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-800/30 text-orange-600 dark:text-orange-400 rounded-full border border-dashed border-orange-200 dark:border-orange-800 hover:border-orange-400 dark:hover:border-orange-500 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500"
                 :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
               >
                 <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -512,11 +512,11 @@
                 @keyup.escape="cancelTopicInput"
                 type="text"
                 :placeholder="t('vocabulary.accordion.topicPlaceholder')"
-                class="flex-1 px-2 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs border border-blue-300 dark:border-blue-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="flex-1 px-2 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs border border-orange-300 dark:border-orange-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button
                 @click="saveTopic"
-                class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                class="px-1.5 xs:px-2 sm:px-2 md:px-2 py-0.5 xs:py-1 sm:py-1 md:py-1.5 xl:py-1.5 2xl:py-1.5 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors"
                 :aria-label="t('vocabulary.accordion.saveTopic')"
               >
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
