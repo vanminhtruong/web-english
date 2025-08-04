@@ -1,7 +1,7 @@
 <template>
   <button
     @click="openGrammarManager"
-    class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium"
+    class="flex items-center space-x-1 md:space-x-1.5 px-2 xs:px-2.5 sm:px-3 md:px-4 py-0.5 xs:py-1 sm:py-1 md:py-1.5 text-xs md:text-sm lg:text-base xl:text-sm 2xl:text-base font-medium text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 hover:bg-purple-50 dark:hover:bg-purple-900/50 rounded-full border border-dashed border-purple-300 dark:border-purple-600 hover:border-purple-400 dark:hover:border-purple-500 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
     :aria-label="t('grammar.manager.manageGrammar', 'Manage Grammar')"
   >
     <svg class="w-3 md:w-4 lg:w-4 xl:w-5 xl:h-5 2xl:w-6 2xl:h-6 h-3 md:h-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
