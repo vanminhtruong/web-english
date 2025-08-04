@@ -308,7 +308,7 @@ import { useVocabularyDialogs } from './composables/useVocabularyDialogs';
 import { useTopicManager } from './composables/useTopicManager';
 import { useVocabularySaving } from './composables/useVocabularySaving';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const toast = useToast();
 const vocabularyStore = useVocabularyStore();
 const voiceStore = useVoiceStore();
@@ -860,7 +860,7 @@ const confirmMove = () => {
 // Format date for display
 const formatDateForDisplay = (dateStr: string) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('vi-VN', {
+  return date.toLocaleDateString(locale.value, {
     year: 'numeric',
     month: 'short',
     day: 'numeric'

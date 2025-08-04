@@ -141,7 +141,7 @@
                   {{ t('vocabulary.topicManager.noCustomTopics', 'No custom topics created yet') }}
                 </div>
 
-                <div v-else class="space-y-2 sm:space-y-3 md:space-y-2 lg:space-y-3">
+                <div v-else class="space-y-2 sm:space-y-3 md:space-y-2 lg:space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
                   <div
                     v-for="(topic, index) in customTopics"
                     :key="topic.key"
@@ -209,7 +209,7 @@
                   {{ t('vocabulary.topicManager.builtInTopicsDescription', 'These are system-provided topics that cannot be modified') }}
                 </p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
                   <div
                     v-for="(topic, index) in builtInTopics"
                     :key="topic.key"
