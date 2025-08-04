@@ -342,7 +342,11 @@ const {
   onTopicDeleted,
 } = useTopicManager(debounceAutoSave);
 
-const categories = computed(() => vocabularyStore.getCategories.value);
+// Only show categories that are actually used in vocabularies
+const categories = computed(() => {
+  const usedCategories = new Set(vocabularyStore.allVocabularies.value.map(vocab => vocab.category));
+  return Array.from(usedCategories).sort();
+});
 const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value);
 
 // Computed property to control sticky button visibility
