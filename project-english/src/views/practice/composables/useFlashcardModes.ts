@@ -19,7 +19,7 @@ export interface VocabularyItem {
   updatedAt?: string
 }
 
-export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flashcards: Ref<VocabularyItem[]>) {
+export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flashcards: Ref<VocabularyItem[]>, allVocabularies: Ref<VocabularyItem[]>) {
   // Voice settings
   const { playAudio: playVoiceAudio } = useVoiceStore()
   
@@ -99,7 +99,8 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     if (!currentCard.value) return
     
     const correctAnswer = getShortMeaning(currentCard.value.meaning)
-    const allOptions = flashcards.value
+    // Use allVocabularies instead of flashcards to get options from all vocabulary words
+    const allOptions = allVocabularies.value
       .filter(card => card.id !== currentCard.value?.id)
       .map(card => getShortMeaning(card.meaning))
       .filter(meaning => meaning !== correctAnswer) // Remove duplicates

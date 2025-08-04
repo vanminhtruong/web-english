@@ -549,7 +549,7 @@ const {
   isSpeechRecognitionSupported,
   startRecording,
   resetPronunciationMode,
-} = useFlashcardModes(currentShuffledCard, currentFlashcards)
+} = useFlashcardModes(currentShuffledCard, currentFlashcards, allVocabularies)
 
 // Card state storage for preserving answers when navigating back/forward
 interface CardState {
