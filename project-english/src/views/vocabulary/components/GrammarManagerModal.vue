@@ -35,14 +35,48 @@
                     <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                     <span>{{ t('grammar.manager.title', 'Grammar Manager') }}</span>
                   </h3>
-                  <button
-                    @click="closeModal"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-                  >
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  
+                  <div class="flex items-center space-x-4">
+                    <!-- Per-Date Mode Toggle -->
+                    <div class="flex items-center space-x-3">
+                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ t('grammar.manager.globalMode', 'Global') }}
+                      </span>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          v-model="perDateMode" 
+                          type="checkbox" 
+                          class="sr-only peer"
+                        >
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                      </label>
+                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ t('grammar.manager.perDateMode', 'Per Date') }}
+                      </span>
+                    </div>
+                    
+                    <button
+                      @click="closeModal"
+                      class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Mode Description -->
+                <div v-if="perDateMode" class="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p class="text-sm text-blue-700 dark:text-blue-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                  </button>
+                    {{ selectedDate ? 
+                      (t('grammar.manager.perDateDescription', { date: selectedDate }) || `Managing grammar rules for date: ${selectedDate}`) : 
+                      (t('grammar.manager.noDateSelected') || 'No date selected for per-date mode') 
+                    }}
+                  </p>
                 </div>
               </div>
 
@@ -377,6 +411,7 @@ interface GrammarRule {
   examples: string[]
   createdAt: Date
   updatedAt: Date
+  dateGroup?: string // Optional date group for per-date management
 }
 
 interface Props {
@@ -397,6 +432,7 @@ const grammarRules = ref<GrammarRule[]>([])
 const isEditing = ref(false)
 const editingId = ref<string | null>(null)
 const filterCategory = ref('')
+const perDateMode = ref(false) // Toggle for per-date grammar management
 
 // Form data
 const formData = ref({
@@ -410,8 +446,23 @@ const formData = ref({
 
 // Computed
 const filteredGrammarRules = computed(() => {
-  if (!filterCategory.value) return grammarRules.value
-  return grammarRules.value.filter(rule => rule.category === filterCategory.value)
+  let filtered = grammarRules.value
+  
+  // Filter by per-date mode
+  if (perDateMode.value) {
+    // Show only rules for the selected date
+    filtered = filtered.filter(rule => rule.dateGroup === props.selectedDate)
+  } else {
+    // Show only global rules (no dateGroup)
+    filtered = filtered.filter(rule => !rule.dateGroup)
+  }
+  
+  // Filter by category
+  if (filterCategory.value) {
+    filtered = filtered.filter(rule => rule.category === filterCategory.value)
+  }
+  
+  return filtered
 })
 
 // Convert <br> and </br> tags to line breaks
@@ -533,8 +584,11 @@ const removeExample = (index: number) => {
 }
 
 const saveGrammar = () => {
-  // Filter out empty examples
-  const examples = formData.value.examples.filter(example => example.trim() !== '')
+  if (!formData.value.title || !formData.value.category || !formData.value.level) {
+    return
+  }
+
+  const now = new Date()
   
   if (isEditing.value && editingId.value) {
     // Update existing rule
@@ -547,8 +601,8 @@ const saveGrammar = () => {
         level: formData.value.level,
         formula: formData.value.formula,
         description: formData.value.description,
-        examples,
-        updatedAt: new Date()
+        examples: formData.value.examples.filter(ex => ex.trim()),
+        updatedAt: now
       }
     }
   } else {
@@ -560,13 +614,14 @@ const saveGrammar = () => {
       level: formData.value.level,
       formula: formData.value.formula,
       description: formData.value.description,
-      examples,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      examples: formData.value.examples.filter(ex => ex.trim()),
+      createdAt: now,
+      updatedAt: now,
+      dateGroup: perDateMode.value ? props.selectedDate || undefined : undefined
     }
-    grammarRules.value.unshift(newRule)
+    grammarRules.value.push(newRule)
   }
-
+  
   saveToLocalStorage()
   resetForm()
 }
@@ -599,6 +654,23 @@ const saveToLocalStorage = () => {
   localStorage.setItem('grammar-rules', JSON.stringify(grammarRules.value))
 }
 
+const saveToggleState = () => {
+  localStorage.setItem('grammar-manager-per-date-mode', JSON.stringify(perDateMode.value))
+}
+
+const loadToggleState = () => {
+  const stored = localStorage.getItem('grammar-manager-per-date-mode')
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored)
+      perDateMode.value = typeof parsed === 'boolean' ? parsed : false
+    } catch (error) {
+      console.error('Error loading toggle state:', error)
+      perDateMode.value = false
+    }
+  }
+}
+
 const loadFromLocalStorage = () => {
   const stored = localStorage.getItem('grammar-rules')
   if (stored) {
@@ -624,6 +696,7 @@ const handleVocabularyImport = () => {
 // Initialize
 onMounted(() => {
   loadFromLocalStorage()
+  loadToggleState()
   // Listen for vocabulary import events to refresh grammar rules
   window.addEventListener('vocabularyImportComplete', handleVocabularyImport)
 })
@@ -653,6 +726,21 @@ watch(() => props.modelValue, (newValue) => {
     unlockBodyScroll()
   }
 })
+
+// Watch for per-date mode toggle
+watch(perDateMode, (newValue) => {
+  // Reset form when switching modes
+  resetForm()
+  // Reset filter category when switching modes
+  filterCategory.value = ''
+  // Save toggle state to localStorage
+  saveToggleState()
+  // If switching to per-date mode but no date selected, show warning
+  if (newValue && !props.selectedDate) {
+    console.warn('Per-date mode enabled but no date selected')
+  }
+})
+
 </script>
 
 <style scoped>

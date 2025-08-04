@@ -33,59 +33,6 @@
     "actions": "Thao tác",
     "backToTop": "Lên đầu trang"
   },
-  "grammar": {
-    "lessons": "Bài học ngữ pháp",
-    "formulas": "Công thức ngữ pháp",
-    "formulasDescription": "Quản lý và học các công thức ngữ pháp tiếng Anh với ví dụ",
-    "groupByPrefix": "Nhóm theo tiền tố",
-    "addFormula": "Thêm công thức",
-    "editFormula": "Sửa công thức",
-    "formulaTitle": "Tiêu đề công thức",
-    "formulaTitlePlaceholder": "ví dụ: Thì hiện tại hoàn thành",
-    "formulaStructure": "Cấu trúc công thức",
-    "formulaStructurePlaceholder": "ví dụ: Chủ ngữ + have/has + quá khứ phân từ",
-    "explanation": "Giải thích",
-    "explanationPlaceholder": "Giải thích khi nào và cách sử dụng công thức này...",
-    "example": "Ví dụ",
-    "examplePlaceholder": "ví dụ: Tôi đã sống ở đây 5 năm.",
-    "manager": {
-      "title": "Quản lý ngữ pháp",
-      "manageGrammar": "Quản lý ngữ pháp",
-      "addNew": "Thêm quy tắc ngữ pháp mới",
-      "editGrammar": "Sửa quy tắc ngữ pháp",
-      "titlePlaceholder": "ví dụ: Thì hiện tại hoàn thành",
-      "category": "Danh mục",
-      "selectCategory": "Chọn danh mục",
-      "level": "Cấp độ",
-      "selectLevel": "Chọn cấp độ",
-      "formula": "Công thức ngữ pháp",
-      "formulaPlaceholder": "ví dụ: Chủ ngữ + have/has + quá khứ phân từ",
-      "description": "Mô tả",
-      "descriptionPlaceholder": "Giải thích khi nào và cách sử dụng quy tắc ngữ pháp này",
-      "examples": "Ví dụ",
-      "examplePlaceholder": "ví dụ: Tôi đã hoàn thành bài tập về nhà.",
-      "addExample": "Thêm ví dụ",
-      "existingRules": "Quy tắc ngữ pháp",
-      "noRules": "Không tìm thấy quy tắc ngữ pháp nào",
-      "createdAt": "Đã tạo",
-      "confirmDelete": "Bạn có chắc chắn muốn xóa quy tắc ngữ pháp này?"
-    },
-    "categories": {
-      "tenses": "Thì",
-      "conditionals": "Câu điều kiện",
-      "passive": "Câu bị động",
-      "modals": "Động từ khuyết thiếu",
-      "articles": "Mạo từ",
-      "prepositions": "Giới từ",
-      "conjunctions": "Liên từ",
-      "other": "Khác"
-    },
-    "levels": {
-      "beginner": "Cơ bản",
-      "intermediate": "Trung cấp",
-      "advanced": "Nâng cao"
-    }
-  },
   "levels": {
     "beginner": "Cơ bản",
     "intermediate": "Trung cấp",
@@ -445,7 +392,11 @@
       "confirmDelete": "Bạn có chắc chắn muốn xóa quy tắc ngữ pháp này?",
       "ruleAdded": "Đã thêm quy tắc ngữ pháp thành công",
       "ruleUpdated": "Đã cập nhật quy tắc ngữ pháp thành công",
-      "ruleDeleted": "Đã xóa quy tắc ngữ pháp thành công"
+      "ruleDeleted": "Đã xóa quy tắc ngữ pháp thành công",
+      "globalMode": "Chung",
+      "perDateMode": "Theo ngày",
+      "perDateDescription": "Đang quản lý quy tắc ngữ pháp cho ngày: {date}",
+      "noDateSelected": "Chưa chọn ngày cho chế độ theo ngày"
     },
     "categories": {
       "tenses": "Thì",
