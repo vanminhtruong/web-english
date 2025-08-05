@@ -144,7 +144,7 @@
                             </svg>
                           </div>
                           
-                          <!-- Dropdown Menu -->
+                          <!-- Dropdown Menu - Using Teleport with Simple Positioning -->
                           <Teleport to="body">
                             <Transition
                               enter-active-class="transition duration-200 ease-out"
@@ -156,8 +156,9 @@
                             >
                               <div
                                 v-if="showCategoryDropdown"
-                                class="fixed z-[999999] bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-60 overflow-hidden"
-                                :style="{ top: dropdownPosition.top + 'px', left: dropdownPosition.left + 'px', width: dropdownPosition.width + 'px' }"
+                                ref="dropdownElement"
+                                :style="simpleDropdownStyle"
+                                class="fixed z-[9999] bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-60 overflow-hidden"
                               >
                               <!-- Search Input -->
                               <div class="p-2 border-b border-gray-200 dark:border-gray-600">
@@ -407,7 +408,7 @@ const showTopicManager = ref(false) // State for TopicManager modal
 const categorySearchQuery = ref('')
 const showCategoryDropdown = ref(false)
 const categorySearchInput = ref<HTMLInputElement | null>(null)
-const dropdownPosition = reactive({ top: 0, left: 0, width: 0 })
+const dropdownElement = ref<HTMLElement | null>(null)
 
 // Define category keys - use computed to make it reactive
 const categoryKeys = computed(() => {
@@ -447,6 +448,33 @@ const filteredCategoryKeys = computed(() => {
   return categoryKeys.value.filter(key => 
     getTopicDisplayName(key).toLowerCase().includes(query)
   )
+})
+
+// Simple dropdown positioning style
+const simpleDropdownStyle = computed(() => {
+  if (!showCategoryDropdown.value) {
+    return { display: 'none' }
+  }
+  
+  const inputElement = document.getElementById('category')
+  if (!inputElement) {
+    // Center fallback
+    return {
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '400px',
+      maxWidth: '90vw'
+    }
+  }
+  
+  const rect = inputElement.getBoundingClientRect()
+  return {
+    top: (rect.bottom + 4) + 'px',
+    left: rect.left + 'px',
+    width: Math.max(rect.width, 300) + 'px',
+    maxWidth: '500px'
+  }
 })
 
 // Field-specific validation functions
@@ -585,6 +613,8 @@ const resetForm = () => {
   form.favorite = false
 }
 
+// No complex watchers needed with inline dropdown
+
 // Watch for editing vocabulary changes
 watch(
   () => props.vocabulary,
@@ -643,19 +673,11 @@ const getTopicDisplayName = (category: string): string => {
 
 // Category dropdown functions
 const toggleCategoryDropdown = () => {
+  console.log('Toggle category dropdown clicked')
   showCategoryDropdown.value = !showCategoryDropdown.value
+  
   if (showCategoryDropdown.value) {
     categorySearchQuery.value = ''
-    
-    // Calculate dropdown position for Teleport
-    const inputElement = document.getElementById('category')
-    if (inputElement) {
-      const rect = inputElement.getBoundingClientRect()
-      dropdownPosition.top = rect.bottom + window.scrollY + 4
-      dropdownPosition.left = rect.left + window.scrollX
-      dropdownPosition.width = rect.width
-    }
-    
     nextTick(() => {
       categorySearchInput.value?.focus()
     })
