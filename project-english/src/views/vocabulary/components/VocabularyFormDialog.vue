@@ -47,7 +47,7 @@
               </div>
 
               <!-- Form -->
-              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
+              <div ref="modalContentRef" class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
                 <form @submit.prevent="submitForm" class="space-y-6">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Word -->
@@ -161,7 +161,7 @@
                                 class="fixed z-[9999] bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-60 overflow-hidden"
                               >
                               <!-- Search Input -->
-                              <div class="p-2 border-b border-gray-200 dark:border-gray-600">
+                              <div class="p-2 border-b border-gray-200 dark:border-gray-600" @click.stop>
                                 <input
                                   ref="categorySearchInput"
                                   v-model="categorySearchQuery"
@@ -170,6 +170,8 @@
                                   :placeholder="t('vocabulary.searchCategory', 'Search categories...')"
                                   @keydown.enter.prevent
                                   @keydown.escape="closeCategoryDropdown"
+                                  @click.stop
+                                  @focus.stop
                                 />
                               </div>
                               
@@ -409,6 +411,43 @@ const categorySearchQuery = ref('')
 const showCategoryDropdown = ref(false)
 const categorySearchInput = ref<HTMLInputElement | null>(null)
 const dropdownElement = ref<HTMLElement | null>(null)
+const modalContentRef = ref<HTMLElement | null>(null)
+
+// Search frequency tracking
+const SEARCH_FREQUENCY_KEY = 'vocabulary-category-search-frequency'
+const categorySearchFrequency = ref<Record<string, number>>({})
+const searchFrequencyTimeout = ref<number | null>(null)
+
+// Load search frequency from localStorage
+const loadSearchFrequency = () => {
+  try {
+    const stored = localStorage.getItem(SEARCH_FREQUENCY_KEY)
+    if (stored) {
+      categorySearchFrequency.value = JSON.parse(stored)
+    }
+  } catch (error) {
+    console.warn('Failed to load search frequency:', error)
+    categorySearchFrequency.value = {}
+  }
+}
+
+// Save search frequency to localStorage
+const saveSearchFrequency = () => {
+  try {
+    localStorage.setItem(SEARCH_FREQUENCY_KEY, JSON.stringify(categorySearchFrequency.value))
+  } catch (error) {
+    console.warn('Failed to save search frequency:', error)
+  }
+}
+
+// Update search frequency for a category
+const updateSearchFrequency = (categoryKey: string) => {
+  if (!categoryKey) return
+  
+  categorySearchFrequency.value[categoryKey] = (categorySearchFrequency.value[categoryKey] || 0) + 1
+  saveSearchFrequency()
+  console.log('Updated search frequency for:', categoryKey, 'new count:', categorySearchFrequency.value[categoryKey])
+}
 
 // Define category keys - use computed to make it reactive
 const categoryKeys = computed(() => {
@@ -439,15 +478,49 @@ const form = reactive({
 const isEditing = computed(() => !!props.vocabulary)
 const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value)
 
-// Filtered categories based on search query
+// Filtered categories based on search query with frequency-based sorting
 const filteredCategoryKeys = computed(() => {
+  let filtered: string[]
+  
   if (!categorySearchQuery.value.trim()) {
-    return categoryKeys.value
+    // No search query - show all categories sorted by frequency
+    filtered = [...categoryKeys.value]
+  } else {
+    // Filter by search query
+    const query = categorySearchQuery.value.toLowerCase()
+    filtered = categoryKeys.value.filter(key => 
+      getTopicDisplayName(key).toLowerCase().includes(query)
+    )
+    
+    // Update search frequency for each matching category when user is actively searching
+    if (query.length >= 2) { // Only track when user types at least 2 characters
+      filtered.forEach(key => {
+        // Only increment if the category name closely matches the search
+        if (getTopicDisplayName(key).toLowerCase().includes(query)) {
+          // Debounce the frequency update to avoid too many increments
+          if (searchFrequencyTimeout.value) {
+            clearTimeout(searchFrequencyTimeout.value)
+          }
+          searchFrequencyTimeout.value = setTimeout(() => {
+            updateSearchFrequency(key)
+          }, 1000) // Update after 1 second of no typing
+        }
+      })
+    }
   }
-  const query = categorySearchQuery.value.toLowerCase()
-  return categoryKeys.value.filter(key => 
-    getTopicDisplayName(key).toLowerCase().includes(query)
-  )
+  
+  // Sort by frequency (most searched first), then alphabetically
+  return filtered.sort((a, b) => {
+    const freqA = categorySearchFrequency.value[a] || 0
+    const freqB = categorySearchFrequency.value[b] || 0
+    
+    if (freqA !== freqB) {
+      return freqB - freqA // Higher frequency first
+    }
+    
+    // If same frequency, sort alphabetically
+    return getTopicDisplayName(a).localeCompare(getTopicDisplayName(b))
+  })
 })
 
 // Simple dropdown positioning style
@@ -615,6 +688,67 @@ const resetForm = () => {
 
 // No complex watchers needed with inline dropdown
 
+// Scroll handler to close dropdown when scrolling
+const handleScroll = () => {
+  if (showCategoryDropdown.value) {
+    showCategoryDropdown.value = false
+    categorySearchQuery.value = ''
+    console.log('Scroll detected, dropdown closed')
+  }
+}
+
+// Load search frequency on component mount
+onMounted(() => {
+  loadSearchFrequency()
+  console.log('Loaded category search frequency:', categorySearchFrequency.value)
+  
+  // Add scroll listener to modal content using ref
+  nextTick(() => {
+    if (modalContentRef.value) {
+      modalContentRef.value.addEventListener('scroll', handleScroll, { passive: true })
+      console.log('Added scroll listener to modal content')
+    }
+  })
+})
+
+// Cleanup scroll listener
+onUnmounted(() => {
+  if (modalContentRef.value) {
+    // Remove multiple possible listeners
+    modalContentRef.value.removeEventListener('scroll', handleScroll)
+    modalContentRef.value.removeEventListener('scroll', handleScroll)
+    console.log('Removed scroll listeners from modal content')
+  }
+})
+
+// Watch modal close to close dropdown and setup scroll listener
+watch(() => props.modelValue, (isOpen) => {
+  if (!isOpen) {
+    // Close dropdown when modal closes
+    showCategoryDropdown.value = false
+    categorySearchQuery.value = ''
+    
+    // Enable body scroll when modal closes
+    document.body.style.overflow = ''
+    console.log('Modal closed, dropdown closed, body scroll enabled')
+  } else {
+    // Disable body scroll when modal opens
+    document.body.style.overflow = 'hidden'
+    
+    // Add scroll listener when modal opens
+    nextTick(() => {
+      setTimeout(() => {
+        if (modalContentRef.value) {
+          modalContentRef.value.addEventListener('scroll', handleScroll, { passive: true })
+          console.log('Added scroll listener to modal content on modal open')
+        }
+      }, 100) // Small delay to ensure modal content is ready
+    })
+    
+    console.log('Modal opened, body scroll disabled')
+  }
+})
+
 // Watch for editing vocabulary changes
 watch(
   () => props.vocabulary,
@@ -691,8 +825,12 @@ const closeCategoryDropdown = () => {
 
 const selectCategory = (key: string) => {
   form.category = key
-  closeCategoryDropdown()
-  validateCategory()
+  showCategoryDropdown.value = false
+  categorySearchQuery.value = ''
+  
+  // Update search frequency when user selects a category
+  updateSearchFrequency(key)
+  console.log('Category selected:', getTopicDisplayName(key))
 }
 
 // Topic event handlers
