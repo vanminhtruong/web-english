@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="p-3 sm:p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer" @click="viewDetails">
+    <div class="p-3 sm:p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-custom cursor-pointer" @click="viewDetails">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between xl:items-center xl:justify-between 2xl:items-center 2xl:justify-between space-y-3 lg:space-y-0">
         <div class="flex-1">
           <div class="flex flex-col sm:flex-row sm:items-start xl:items-center 2xl:items-center space-y-3 sm:space-y-0 sm:space-x-4">
@@ -41,17 +41,12 @@
             <div class="flex-2">
               <div class="flex items-center space-x-2">
                 <p class="text-gray-700 dark:text-gray-300">{{ word.meaning }}</p>
-                <!-- Move arrow - only visible when move mode is active -->
-                <button 
-                  v-if="moveMode"
-                  @click.stop="handleMoveClick"
-                  class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                  :title="t('vocabulary.moveToDateGroup', 'Move to another date group')"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                  </svg>
-                </button>
+                <!-- Move Button Component -->
+                <MoveButton 
+                  :word="word"
+                  :move-mode="moveMode"
+                  @move-vocabulary="emit('move-vocabulary', $event)"
+                />
               </div>
               <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="word.example">
                 <span class="font-medium">{{ t('vocabulary.example', 'Example') }}:</span> {{ word.example }}
@@ -125,6 +120,7 @@ import { ref, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getRelativeTime } from '../../../utils/dateUtils'
 import { getTopicName } from '../../../utils/topicUtils'
+import { MoveButton } from './move'
 
 const { t, locale } = useI18n()
 
@@ -171,12 +167,7 @@ const emit = defineEmits<{
   'move-vocabulary': [data: { word: Word, targetDate: string }]
 }>()
 
-// Handle move button click
-const handleMoveClick = () => {
-  // For now, we'll emit the event with empty targetDate
-  // The parent component will handle showing the date selection UI
-  emit('move-vocabulary', { word: props.word, targetDate: '' })
-}
+
 
 
 onUnmounted(() => {

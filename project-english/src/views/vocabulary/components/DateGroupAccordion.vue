@@ -8,7 +8,7 @@
         <!-- First row: Date header -->
         <div 
           @click="toggleAccordion"
-          class="flex items-center justify-between mb-2 cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          class="flex items-center justify-between mb-2 cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-custom transition-colors"
         >
           <!-- Header content -->
           <div class="flex items-center space-x-1 flex-1">
@@ -43,7 +43,7 @@
                 v-model="showActionButtons"
                 class="sr-only peer"
               >
-              <div class="w-7 h-4 xl:w-9 xl:h-5 2xl:w-11 2xl:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] xl:after:top-[2px] 2xl:after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 xl:after:h-4 xl:after:w-4 2xl:after:h-5 2xl:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              <div class="w-9 h-5 sm:w-11 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             </label>
           </div>
 
@@ -201,7 +201,7 @@
         <!-- Date Header Section -->
         <div 
           @click="toggleAccordion"
-          class="flex items-center justify-between cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          class="flex items-center justify-between cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-custom transition-colors"
         >
         <!-- Header content -->
         <div class="flex items-center space-x-2">
@@ -274,7 +274,7 @@
                 v-model="showActionButtons"
                 class="sr-only peer"
               >
-              <div class="w-9 h-5 xl:w-11 xl:h-6 2xl:w-14 2xl:h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] xl:after:top-[2px] 2xl:after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 xl:after:h-5 xl:after:w-5 2xl:after:h-6 2xl:after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              <div class="w-9 h-5 sm:w-11 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             </label>
             <span class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-sm 2xl:text-base text-gray-600 dark:text-gray-300">{{ t('common.actions', 'Actions') }}</span>
           </div>
@@ -419,7 +419,7 @@
         <!-- Center topic section for lg+ -->
         <div 
           @click="toggleAccordion"
-          class="flex items-center justify-between flex-wrap gap-1 cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          class="flex items-center justify-between flex-wrap gap-1 cursor-pointer py-1 -mx-1 px-1 rounded hover:bg-gray-50 dark:hover:bg-gray-custom transition-colors"
         >
           <!-- Center topic section -->
           <div class="flex-1 flex justify-center mx-1 xs:mx-2 sm:mx-4 min-w-0">
@@ -556,7 +556,7 @@
             <div class="bg-gray-50 dark:bg-gray-custom border-b border-gray-200 dark:border-gray-700">
               <!-- Topic name and toggle -->
               <div 
-                class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-custom/50"
                 @click="toggleTopicAccordion(topicGroup.topic)"
               >
                 <div class="flex items-center space-x-2">
