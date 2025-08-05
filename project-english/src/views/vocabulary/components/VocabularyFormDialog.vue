@@ -118,23 +118,82 @@
                         <button
                           type="button"
                           @click="showTopicManager = true"
-                          class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 hover:rotate-90 z-10 shadow-lg"
+                          class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 hover:rotate-90 z-[10000] shadow-lg"
                           :title="t('vocabulary.addCategory', 'Add Category')"
                         >
                           +
                         </button>
-                        <select
-                          id="category"
-                          v-model="form.category"
-                          required
-                          class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 hover:border-orange-400 dark:hover:border-orange-500 transform hover:scale-[1.02] cursor-pointer"
-                          @change="validateCategory"
-                        >
-                          <option value="">{{ t('vocabulary.selectCategory', 'Select category') }}</option>
-                          <option v-for="key in categoryKeys" :key="key" :value="key">
-                            {{ getTopicDisplayName(key) }}
-                          </option>
-                        </select>
+                        
+                        <!-- Searchable Dropdown -->
+                        <div class="relative">
+                          <input
+                            id="category"
+                            type="text"
+                            required
+                            readonly
+                            @click="toggleCategoryDropdown"
+                            class="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 hover:border-orange-400 dark:hover:border-orange-500 transform hover:scale-[1.02] cursor-pointer"
+                            :placeholder="t('vocabulary.selectCategory', 'Select category')"
+                            :value="form.category ? getTopicDisplayName(form.category) : ''"
+                          />
+                          
+                          <!-- Dropdown Arrow -->
+                          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': showCategoryDropdown }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                          </div>
+                          
+                          <!-- Dropdown Menu -->
+                          <Teleport to="body">
+                            <Transition
+                              enter-active-class="transition duration-200 ease-out"
+                              enter-from-class="transform scale-95 opacity-0"
+                              enter-to-class="transform scale-100 opacity-100"
+                              leave-active-class="transition duration-75 ease-in"
+                              leave-from-class="transform scale-100 opacity-100"
+                              leave-to-class="transform scale-95 opacity-0"
+                            >
+                              <div
+                                v-if="showCategoryDropdown"
+                                class="fixed z-[999999] bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-60 overflow-hidden"
+                                :style="{ top: dropdownPosition.top + 'px', left: dropdownPosition.left + 'px', width: dropdownPosition.width + 'px' }"
+                              >
+                              <!-- Search Input -->
+                              <div class="p-2 border-b border-gray-200 dark:border-gray-600">
+                                <input
+                                  ref="categorySearchInput"
+                                  v-model="categorySearchQuery"
+                                  type="text"
+                                  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                  :placeholder="t('vocabulary.searchCategory', 'Search categories...')"
+                                  @keydown.enter.prevent
+                                  @keydown.escape="closeCategoryDropdown"
+                                />
+                              </div>
+                              
+                              <!-- Options List -->
+                              <div class="max-h-40 overflow-y-auto">
+                                <div
+                                  v-if="filteredCategoryKeys.length === 0"
+                                  class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400"
+                                >
+                                  {{ t('vocabulary.noCategories', 'No categories found') }}
+                                </div>
+                                <div
+                                  v-for="key in filteredCategoryKeys"
+                                  :key="key"
+                                  class="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-custom transition-colors duration-150"
+                                  :class="{ 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300': form.category === key }"
+                                  @click="selectCategory(key)"
+                                >
+                                  {{ getTopicDisplayName(key) }}
+                                </div>
+                              </div>
+                              </div>
+                            </Transition>
+                          </Teleport>
+                        </div>
                       </div>
                     </div>
 
@@ -304,7 +363,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch, withDefaults, defineProps, defineEmits, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
+import { ref, reactive, computed, watch, withDefaults, defineProps, defineEmits, onMounted, onUnmounted, defineAsyncComponent, nextTick, Teleport } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useModalStore } from '../../../stores/modalStore'
 import { useToast } from 'vue-toastification'
@@ -344,6 +403,12 @@ const isSubmitting = ref(false)
 const refreshTrigger = ref(0) // Trigger to force re-computation
 const showTopicManager = ref(false) // State for TopicManager modal
 
+// Category dropdown search functionality
+const categorySearchQuery = ref('')
+const showCategoryDropdown = ref(false)
+const categorySearchInput = ref<HTMLInputElement | null>(null)
+const dropdownPosition = reactive({ top: 0, left: 0, width: 0 })
+
 // Define category keys - use computed to make it reactive
 const categoryKeys = computed(() => {
   // Use refreshTrigger to force re-computation when topics change
@@ -372,6 +437,17 @@ const form = reactive({
 // Computed
 const isEditing = computed(() => !!props.vocabulary)
 const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value)
+
+// Filtered categories based on search query
+const filteredCategoryKeys = computed(() => {
+  if (!categorySearchQuery.value.trim()) {
+    return categoryKeys.value
+  }
+  const query = categorySearchQuery.value.toLowerCase()
+  return categoryKeys.value.filter(key => 
+    getTopicDisplayName(key).toLowerCase().includes(query)
+  )
+})
 
 // Field-specific validation functions
 const validateWord = (): boolean => {
@@ -565,6 +641,38 @@ const getTopicDisplayName = (category: string): string => {
   return getTopicName(category)
 }
 
+// Category dropdown functions
+const toggleCategoryDropdown = () => {
+  showCategoryDropdown.value = !showCategoryDropdown.value
+  if (showCategoryDropdown.value) {
+    categorySearchQuery.value = ''
+    
+    // Calculate dropdown position for Teleport
+    const inputElement = document.getElementById('category')
+    if (inputElement) {
+      const rect = inputElement.getBoundingClientRect()
+      dropdownPosition.top = rect.bottom + window.scrollY + 4
+      dropdownPosition.left = rect.left + window.scrollX
+      dropdownPosition.width = rect.width
+    }
+    
+    nextTick(() => {
+      categorySearchInput.value?.focus()
+    })
+  }
+}
+
+const closeCategoryDropdown = () => {
+  showCategoryDropdown.value = false
+  categorySearchQuery.value = ''
+}
+
+const selectCategory = (key: string) => {
+  form.category = key
+  closeCategoryDropdown()
+  validateCategory()
+}
+
 // Topic event handlers
 const onTopicAdded = (newTopic: any) => {
   // Force re-computation of categories
@@ -610,10 +718,28 @@ const handleTopicsUpdated = () => {
   }, 100)
 }
 
+// Click outside handler for dropdown
+const handleClickOutside = (event: Event) => {
+  if (!showCategoryDropdown.value) return
+  
+  const target = event.target as HTMLElement
+  const dropdownContainer = target.closest('.relative')
+  const dropdownMenu = target.closest('[class*="z-[99999]"]')
+  
+  // Don't close if clicking inside the dropdown container or menu
+  if (dropdownContainer || dropdownMenu) {
+    return
+  }
+  
+  closeCategoryDropdown()
+}
+
 // Lifecycle hooks
 onMounted(() => {
   // Listen for custom topics updates
   window.addEventListener('topics-updated', handleTopicsUpdated)
+  // Listen for clicks outside dropdown
+  document.addEventListener('click', handleClickOutside)
 })
 
 // Cleanup on unmount
@@ -622,6 +748,7 @@ onUnmounted(() => {
   document.body.classList.remove('modal-open')
   document.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('topics-updated', handleTopicsUpdated)
+  document.removeEventListener('click', handleClickOutside)
 })
 
 const closeDialog = () => {
