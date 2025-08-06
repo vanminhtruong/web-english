@@ -963,7 +963,10 @@ const submitForm = async () => {
       // Add new vocabulary
       // If targetDate is provided, use it for createdAt and updatedAt
       if (props.targetDate) {
-        const targetDateObj = new Date(props.targetDate)
+        // Create a new Date with current time but set to the target date
+        const now = new Date()
+        const [year, month, day] = props.targetDate.split('-')
+        const targetDateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())
         vocabularyData.createdAt = targetDateObj.toISOString()
         vocabularyData.updatedAt = targetDateObj.toISOString()
       }
