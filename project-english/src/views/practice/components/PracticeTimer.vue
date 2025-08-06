@@ -29,7 +29,7 @@
     <!-- Timeout Modal -->
     <Teleport to="body">
       <div v-if="showTimeoutModal" class="timeout-modal-overlay" style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 99999 !important; background: rgba(0,0,0,0.5) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important;">
-        <div style="position: relative !important; z-index: 100000 !important;" class="timeout-modal-content bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-3 sm:p-4 md:p-6">
+        <div style="position: relative !important; z-index: 100000 !important;" class="timeout-modal-content flex items-center justify-center z-[9999] p-3 sm:p-4 md:p-6">
         <div class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 md:p-8 max-w-xs sm:max-w-sm md:max-w-md mx-auto text-center w-full">
           <div class="text-red-500 mb-3 sm:mb-4 md:mb-5">
             <svg class="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
@@ -162,8 +162,8 @@ const restartPractice = () => {
 
 const skipCard = () => {
   showTimeoutModal.value = false
-  resetTimer()
-  startTimer()
+  stopTimer()
+  isActive.value = false // hide timer display
   emit('skip')
 }
 
@@ -209,6 +209,16 @@ watch(() => props.autoStart, (autoStart) => {
 })
 
 // Cleanup
+// Watch to lock/unlock body scroll when timeout modal visibility changes
+watch(showTimeoutModal, (visible) => {
+  if (visible) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
+})
+
+// Cleanup when component unmounts
 onUnmounted(() => {
   stopTimer()
 })

@@ -346,14 +346,14 @@ const handleTimerRestart = () => {
 
 const handleSkip = () => {
   console.log('Skip current card')
-  // If this is the last card, complete session and go to practice page
-  if (currentIndex.value >= currentFlashcards.value.length - 1) {
-    handleSessionComplete()
-    router.push('/practice/flashcard')
-  } else {
-    // Move to next card
-    enhancedNextCard()
+  // Reset game state and navigate back to the main flashcard page
+  practiceStarted.value = false
+  if (practiceTimerRef.value) {
+    practiceTimerRef.value.resetPractice()
   }
+  // Reset indices/state managed by composable
+  restartSession()
+  router.push('/practice/flashcard')
 }
 
 // Exit Warning Handlers
