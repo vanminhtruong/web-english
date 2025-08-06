@@ -146,7 +146,7 @@
               route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
             ]"
           >
-            {{ t('common.vocabulary', 'Từ vựng') }}
+            {{ t('common.vocabulary', 'Vocabulary') }}
           </RouterLink>
           <RouterLink
             to="/grammar"
@@ -156,7 +156,7 @@
               route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
             ]"
           >
-            {{ t('common.grammar', 'Ngữ pháp') }}
+            {{ t('common.grammar', 'Grammar') }}
           </RouterLink>
           <RouterLink
             to="/practice/flashcard"
@@ -166,7 +166,7 @@
               route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
             ]"
           >
-            {{ t('common.practice', 'Luyện tập') }}
+            {{ t('common.practice', 'Practice') }}
           </RouterLink>
         </nav>
       </div>
