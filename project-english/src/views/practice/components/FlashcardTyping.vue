@@ -21,7 +21,7 @@
             <input
               :value="typingAnswer"
               @input="handleInput"
-              @keyup.enter="$emit('check-answer')"
+              @keyup.enter="handleCheckAnswer"
               type="text"
               :disabled="typingAnswered"
               class="w-full p-3 text-center text-2xl border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 disabled:bg-gray-100 dark:disabled:bg-gray-700"
@@ -55,7 +55,7 @@
       <div class="text-center mt-6">
         <button
           v-if="!typingAnswered"
-          @click="$emit('check-answer')"
+          @click="handleCheckAnswer"
           :disabled="!typingAnswer.trim()"
           class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-8 py-3 rounded-full font-medium transition-colors"
         >
@@ -63,14 +63,33 @@
         </button>
       </div>
     </div>
+    
+    <!-- Firework Sound Effect -->
+    <FireworkSoundEffect 
+      ref="fireworkEffect"
+      :trigger-firework="triggerFirework"
+      :trigger-sound="triggerSound"
+      :is-correct="isCorrectAnswer"
+      @effect-complete="resetTriggers"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, watch, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getTopicName } from '../../../utils/topicUtils'
 
+// Import component using defineAsyncComponent to avoid "has no default export" error
+const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
+
 const { t } = useI18n()
+
+// Effect triggers
+const triggerFirework = ref(false)
+const triggerSound = ref(false)
+const isCorrectAnswer = ref(false)
+const fireworkEffect = ref()
 
 interface FlashcardData {
   word: string
@@ -85,6 +104,7 @@ interface Props {
   currentCard: FlashcardData
   typingAnswer: string
   typingAnswered: boolean
+  typingCorrect?: boolean
 }
 
 const props = defineProps<Props>()
@@ -102,4 +122,41 @@ const handleInput = (event: Event) => {
 const getShortMeaning = (meaning: string) => {
   return meaning.split(' - ')[0].trim()
 }
+
+// Handle check answer with effects
+const handleCheckAnswer = () => {
+  if (props.typingAnswered) return
+  
+  // Emit the check answer first
+  emit('check-answer')
+  
+  // Wait a bit for the answer to be processed, then trigger effects
+  setTimeout(() => {
+    // Determine if answer is correct
+    isCorrectAnswer.value = props.typingAnswer.toLowerCase().trim() === props.currentCard.word.toLowerCase()
+    
+    // Trigger effects
+    triggerFirework.value = true
+    triggerSound.value = true
+  }, 100)
+}
+
+// Reset effect triggers
+const resetTriggers = () => {
+  triggerFirework.value = false
+  triggerSound.value = false
+}
+
+// Watch for typingAnswered changes to trigger effects after parent updates
+watch(() => props.typingAnswered, (newValue) => {
+  if (newValue && !triggerFirework.value) {
+    // Answer was just processed, trigger effects
+    isCorrectAnswer.value = props.typingAnswer.toLowerCase().trim() === props.currentCard.word.toLowerCase()
+    
+    setTimeout(() => {
+      triggerFirework.value = true
+      triggerSound.value = true
+    }, 50)
+  }
+})
 </script>

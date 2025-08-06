@@ -22,7 +22,7 @@
             <button
               v-for="(option, index) in quizOptions"
               :key="index"
-              @click="$emit('select-answer', option)"
+              @click="handleSelectAnswer(option)"
               :class="[
                 'relative p-4 text-center rounded-lg border-2 transition-all duration-200 font-semibold text-sm min-h-[60px] flex items-center justify-center',
                 quizAnswered && option === getCorrectAnswer()
@@ -59,14 +59,33 @@
         </div>
       </div>
     </div>
+    
+    <!-- Firework Sound Effect -->
+    <FireworkSoundEffect 
+      ref="fireworkEffect"
+      :trigger-firework="triggerFirework"
+      :trigger-sound="triggerSound"
+      :is-correct="isCorrectAnswer"
+      @effect-complete="resetTriggers"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getTopicName } from '../../../utils/topicUtils'
 
+// Import component using defineAsyncComponent to avoid "has no default export" error
+const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
+
 const { t } = useI18n()
+
+// Effect triggers
+const triggerFirework = ref(false)
+const triggerSound = ref(false)
+const isCorrectAnswer = ref(false)
+const fireworkEffect = ref()
 
 interface FlashcardData {
   word: string
@@ -92,5 +111,29 @@ const emit = defineEmits<{
 
 const getCorrectAnswer = () => {
   return props.currentCard.meaning.split(' - ')[0].trim()
+}
+
+// Handle answer selection with effects
+const handleSelectAnswer = (answer: string) => {
+  if (props.quizAnswered) return
+  
+  // Emit the answer selection first
+  emit('select-answer', answer)
+  
+  // Determine if answer is correct
+  const correctAnswer = getCorrectAnswer()
+  isCorrectAnswer.value = answer === correctAnswer
+  
+  // Trigger effects after a small delay to let the UI update
+  setTimeout(() => {
+    triggerFirework.value = true
+    triggerSound.value = true
+  }, 100)
+}
+
+// Reset effect triggers
+const resetTriggers = () => {
+  triggerFirework.value = false
+  triggerSound.value = false
 }
 </script>

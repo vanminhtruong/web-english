@@ -19,7 +19,13 @@ export interface VocabularyItem {
   updatedAt?: string
 }
 
-export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flashcards: Ref<VocabularyItem[]>, allVocabularies: Ref<VocabularyItem[]>) {
+export function useFlashcardModes(
+  currentCard: Ref<VocabularyItem | null>, 
+  flashcards: Ref<VocabularyItem[]>, 
+  allVocabularies: Ref<VocabularyItem[]>,
+  onCorrectAnswer?: () => void,
+  onIncorrectAnswer?: () => void
+) {
   // Voice settings
   const { playAudio: playVoiceAudio } = useVoiceStore()
   
@@ -91,6 +97,14 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     const userAnswer = transcript.toLowerCase().trim().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
     const correctAnswer = currentCard.value.word.toLowerCase().trim().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
     pronunciationCorrect.value = userAnswer === correctAnswer
+    
+    // Trigger effects
+    if (pronunciationCorrect.value) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
+    
     return pronunciationCorrect.value
   }
 
@@ -121,13 +135,16 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     
     // So sánh với short meaning thay vì full meaning
     const correctAnswer = currentCard.value ? getShortMeaning(currentCard.value.meaning) : ''
-    if (answer === correctAnswer) {
-      // Correct answer logic will be handled by parent
-      return true
+    const isCorrect = answer === correctAnswer
+    
+    // Trigger effects
+    if (isCorrect) {
+      onCorrectAnswer?.()
     } else {
-      // Wrong answer logic will be handled by parent
-      return false
+      onIncorrectAnswer?.()
     }
+    
+    return isCorrect
   }
 
   // Typing mode methods
@@ -139,6 +156,13 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     const correctAnswer = currentCard.value.word.toLowerCase().trim()
     
     typingCorrect.value = userAnswer === correctAnswer
+    
+    // Trigger effects
+    if (typingCorrect.value) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
     
     return typingCorrect.value
   }
@@ -153,6 +177,13 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     
     listeningCorrect.value = userAnswer === correctAnswer
     
+    // Trigger effects
+    if (listeningCorrect.value) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
+    
     return listeningCorrect.value
   }
 
@@ -165,6 +196,13 @@ export function useFlashcardModes(currentCard: Ref<VocabularyItem | null>, flash
     const correctAnswer = currentCard.value.word.toLowerCase().trim()
     
     imageCorrect.value = userAnswer === correctAnswer
+    
+    // Trigger effects
+    if (imageCorrect.value) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
     
     return imageCorrect.value
   }

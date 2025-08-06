@@ -95,14 +95,32 @@
         </p>
       </div>
     </div>
+    
+    <!-- Firework Sound Effect -->
+    <FireworkSoundEffect 
+      ref="fireworkEffect"
+      :trigger-firework="triggerFirework"
+      :trigger-sound="triggerSound"
+      :is-correct="isCorrectAnswer"
+      @effect-complete="resetTriggers"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 import { getTopicName } from '../../../utils/topicUtils'
+
+// Import component using defineAsyncComponent to avoid "has no default export" error
+const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
+
+// Effect triggers
+const triggerFirework = ref(false)
+const triggerSound = ref(false)
+const isCorrectAnswer = ref(false)
+const fireworkEffect = ref()
 
 interface Props {
   currentCard: Vocabulary | null
@@ -149,6 +167,35 @@ const handleImageError = () => {
 const checkAnswer = () => {
   if (!props.imageAnswered && userAnswer.value.trim()) {
     emit('checkAnswer')
+    
+    // Wait a bit for the answer to be processed, then trigger effects
+    setTimeout(() => {
+      // Use the imageCorrect prop from parent
+      isCorrectAnswer.value = props.imageCorrect
+      
+      // Trigger effects
+      triggerFirework.value = true
+      triggerSound.value = true
+    }, 100)
   }
 }
+
+// Reset effect triggers
+const resetTriggers = () => {
+  triggerFirework.value = false
+  triggerSound.value = false
+}
+
+// Watch for imageAnswered changes to trigger effects after parent updates
+watch(() => props.imageAnswered, (newValue) => {
+  if (newValue && !triggerFirework.value) {
+    // Answer was just processed, trigger effects
+    isCorrectAnswer.value = props.imageCorrect
+    
+    setTimeout(() => {
+      triggerFirework.value = true
+      triggerSound.value = true
+    }, 50)
+  }
+})
 </script>

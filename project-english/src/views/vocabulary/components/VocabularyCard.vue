@@ -90,27 +90,51 @@
     </div>
     <!-- Image Zoom Modal using Teleport -->
     <Teleport to="body">
-      <div v-if="isImageModalOpen" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-75 p-4">
-          <div class="relative w-full max-w-2xl bg-white dark:bg-[#0a0a0a] rounded-lg overflow-hidden shadow-2xl h-[400px] sm:h-[500px] md:h-[600px]">
-              <!-- Close button -->
-              <button 
-                  @click="closeImageModal"
-                  class="absolute top-4 right-4 z-[10000] text-gray-600 dark:text-white hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 bg-white dark:bg-[#0a0a0a] bg-opacity-80 dark:bg-opacity-80 rounded-full p-2 shadow-lg"
-              >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
-              </button>
-              <!-- Image container with fixed aspect ratio -->
-              <div class="w-full h-full flex items-center justify-center p-4">
-                  <img 
-                      :src="word.image" 
-                      :alt="`${t('vocabulary.image.preview', 'Image preview')} - ${word.word}`" 
-                      class="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                  >
-              </div>
-          </div>
-      </div>
+      <!-- Backdrop -->
+      <Transition
+        enter-active-class="transition-all duration-500 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-all duration-300 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div 
+          v-if="isImageModalOpen" 
+          class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-75 p-4 backdrop-blur-sm"
+        >
+          <!-- Modal Container -->
+          <Transition
+            enter-active-class="transition-all duration-500 ease-out"
+            enter-from-class="opacity-0 scale-90 translate-y-8 rotate-1"
+            enter-to-class="opacity-100 scale-100 translate-y-0 rotate-0"
+            leave-active-class="transition-all duration-300 ease-in"
+            leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
+            leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
+          >
+            <div class="relative w-full max-w-2xl bg-white dark:bg-[#0a0a0a] rounded-lg overflow-hidden shadow-2xl h-[400px] sm:h-[500px] md:h-[600px] transform">
+                <!-- Close button -->
+                <button 
+                    @click="closeImageModal"
+                    class="absolute top-4 right-4 z-[10000] text-gray-600 dark:text-white hover:text-gray-800 dark:hover:text-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-90 bg-white dark:bg-[#0a0a0a] bg-opacity-80 dark:bg-opacity-80 rounded-full p-2 shadow-lg"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <!-- Image container with fixed aspect ratio -->
+                <div class="w-full h-full flex items-center justify-center p-4">
+                    <img 
+                        :src="word.image" 
+                        :alt="`${t('vocabulary.image.preview', 'Image preview')} - ${word.word}`" 
+                        class="max-w-full max-h-full object-contain rounded-lg shadow-lg animate-fade-in-up"
+                        style="animation-delay: 0.2s"
+                    >
+                </div>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
     </Teleport>
   </div>
 </template>
@@ -207,3 +231,58 @@ const getLevelColor = (level: string): string => {
 
 
 </script>
+
+<style scoped>
+/* Fade in up animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+/* Enhanced backdrop blur effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Transform utility class */
+.transform {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover effects */
+.hover\:scale-110:hover {
+  transform: scale(1.1);
+}
+
+.hover\:rotate-90:hover {
+  transform: rotate(90deg);
+}
+
+/* Enhanced shadow effects */
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Smooth transitions for all interactive elements */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced button active state */
+button:active {
+  transform: scale(0.95);
+}
+</style>

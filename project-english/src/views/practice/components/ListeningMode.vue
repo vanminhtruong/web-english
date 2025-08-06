@@ -22,7 +22,7 @@
         <input
           :value="listeningAnswer"
           @input="onInput"
-          @keyup.enter="emit('check-answer')"
+          @keyup.enter="handleCheckAnswer"
           type="text"
           :disabled="listeningAnswered"
           class="w-full p-4 text-center text-xl border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -35,14 +35,33 @@
         </div>
       </div>
     </div>
+    
+    <!-- Firework Sound Effect -->
+    <FireworkSoundEffect 
+      ref="fireworkEffect"
+      :trigger-firework="triggerFirework"
+      :trigger-sound="triggerSound"
+      :is-correct="isCorrectAnswer"
+      @effect-complete="resetTriggers"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, watch, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n';
 import type { Vocabulary } from '../../../composables/useVocabularyStore';
 
-defineProps<{
+// Import component using defineAsyncComponent to avoid "has no default export" error
+const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
+
+// Effect triggers
+const triggerFirework = ref(false)
+const triggerSound = ref(false)
+const isCorrectAnswer = ref(false)
+const fireworkEffect = ref()
+
+const props = defineProps<{
   card: Vocabulary | null;
   listeningAnswer: string;
   listeningAnswered: boolean;
@@ -56,5 +75,42 @@ const onInput = (event: Event) => {
   emit('update:listeningAnswer', (event.target as HTMLInputElement).value)
 }
 
+// Handle check answer with effects
+const handleCheckAnswer = () => {
+  if (props.listeningAnswered) return
+  
+  // Emit the check answer first
+  emit('check-answer')
+  
+  // Wait a bit for the answer to be processed, then trigger effects
+  setTimeout(() => {
+    // Use the listeningCorrect prop from parent
+    isCorrectAnswer.value = props.listeningCorrect
+    
+    // Trigger effects
+    triggerFirework.value = true
+    triggerSound.value = true
+  }, 100)
+}
+
+// Reset effect triggers
+const resetTriggers = () => {
+  triggerFirework.value = false
+  triggerSound.value = false
+}
+
+// Watch for listeningAnswered changes to trigger effects after parent updates
+watch(() => props.listeningAnswered, (newValue) => {
+  if (newValue && !triggerFirework.value) {
+    // Answer was just processed, trigger effects
+    isCorrectAnswer.value = props.listeningCorrect
+    
+    setTimeout(() => {
+      triggerFirework.value = true
+      triggerSound.value = true
+    }, 50)
+  }
+})
+
 const { t } = useI18n();
-</script> 
+</script>

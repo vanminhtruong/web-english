@@ -14,7 +14,7 @@
       </div>
       <div v-else>
         <button
-          @click="emit('start-recording')"
+          @click="handleStartRecording"
           :disabled="isRecording"
           class="bg-red-500 hover:bg-red-600 text-white p-6 rounded-full transition-colors disabled:opacity-50"
           :class="{ 'animate-pulse': isRecording }"
@@ -35,13 +35,32 @@
         </div>
       </div>
     </div>
+    
+    <!-- Firework Sound Effect -->
+    <FireworkSoundEffect 
+      ref="fireworkEffect"
+      :trigger-firework="triggerFirework"
+      :trigger-sound="triggerSound"
+      :is-correct="isCorrectAnswer"
+      @effect-complete="resetTriggers"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, watch, defineAsyncComponent } from 'vue'
 import type { Vocabulary } from '../../../composables/useVocabularyStore';
 
-defineProps<{
+// Import component using defineAsyncComponent to avoid "has no default export" error
+const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
+
+// Effect triggers
+const triggerFirework = ref(false)
+const triggerSound = ref(false)
+const isCorrectAnswer = ref(false)
+const fireworkEffect = ref()
+
+const props = defineProps<{
   card: Vocabulary | null;
   isRecording: boolean;
   pronunciationResult: string;
@@ -52,4 +71,28 @@ defineProps<{
 }>();
 
 const emit = defineEmits(['start-recording']);
-</script> 
+
+// Handle start recording with potential effects triggering
+const handleStartRecording = () => {
+  emit('start-recording')
+}
+
+// Reset effect triggers
+const resetTriggers = () => {
+  triggerFirework.value = false
+  triggerSound.value = false
+}
+
+// Watch for pronunciationAnswered changes to trigger effects after parent updates
+watch(() => props.pronunciationAnswered, (newValue) => {
+  if (newValue && !triggerFirework.value) {
+    // Answer was just processed, trigger effects
+    isCorrectAnswer.value = props.pronunciationCorrect
+    
+    setTimeout(() => {
+      triggerFirework.value = true
+      triggerSound.value = true
+    }, 50)
+  }
+})
+</script>
