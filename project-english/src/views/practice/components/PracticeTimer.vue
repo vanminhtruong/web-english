@@ -37,23 +37,23 @@
             </svg>
           </div>
           <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4">
-            {{ t('practice.timer.timeUp') }}
+            {{ t('practice.timer.timeUp', 'Time is up!') }}
           </h3>
           <p class="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 mb-4 sm:mb-5 md:mb-6 leading-relaxed">
-            {{ t('practice.timer.timeUpMessage') }}
+            {{ t('practice.timer.timeUpMessage', 'Your time is up. Would you like to try again or skip this card?') }}
           </p>
           <div class="flex gap-2 sm:gap-3 md:gap-4">
             <button
               @click="restartPractice"
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 sm:px-4 sm:py-2 md:px-5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base"
             >
-              {{ t('practice.timer.tryAgain') }}
+              {{ t('practice.timer.tryAgain', 'Try Again') }}
             </button>
             <button
               @click="skipCard"
               class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 sm:px-4 sm:py-2 md:px-5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base"
             >
-              {{ t('practice.timer.skip') }}
+              {{ t('practice.timer.skip', 'Skip') }}
             </button>
           </div>
         </div>
