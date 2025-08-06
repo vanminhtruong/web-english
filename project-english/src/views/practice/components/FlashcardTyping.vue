@@ -10,8 +10,8 @@
 
       <!-- Question -->
       <div class="text-center mb-8">
-        <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ getShortMeaning(currentCard.meaning) }}</h2>
-        <p class="text-lg text-gray-600 dark:text-gray-300">{{ t('flashcard.typing.instruction', 'Type the corresponding English word:') }}</p>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ getShortMeaning(currentCard.meaning) }}</h2>
+        <p class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">{{ t('flashcard.typing.instruction', 'Type the corresponding English word:') }}</p>
       </div>
 
       <!-- Input Area -->
@@ -24,7 +24,7 @@
               @keyup.enter="handleCheckAnswer"
               type="text"
               :disabled="typingAnswered"
-              class="w-full p-3 text-center text-2xl border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+              class="w-full p-3 text-center text-xl sm:text-2xl md:text-3xl border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 disabled:bg-gray-100 dark:disabled:bg-gray-700"
               :placeholder="t('flashcard.typing.placeholder', 'Type the word...')"
             />
             
@@ -46,7 +46,7 @@
           <!-- Correct answer display -->
           <div v-if="typingAnswered && typingAnswer.toLowerCase().trim() !== currentCard.word.toLowerCase()" class="mt-4 text-center">
             <p class="text-gray-600 dark:text-gray-400 text-sm">{{ t('flashcard.typing.correctAnswer', 'Correct answer:') }}</p>
-            <p class="text-xl font-bold text-green-600 dark:text-green-400">{{ currentCard.word }}</p>
+            <p class="text-lg sm:text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">{{ currentCard.word }}</p>
           </div>
         </div>
       </div>

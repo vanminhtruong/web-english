@@ -10,9 +10,9 @@
 
       <!-- Question -->
       <div class="text-center mb-4 flex-shrink-0">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ currentCard.word }}</h2>
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ currentCard.word }}</h2>
         <p class="text-sm text-gray-600 dark:text-gray-300">{{ currentCard.pronunciation }}</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ t('flashcard.quiz.instruction', 'Choose the correct meaning:') }}</p>
+        <p class="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400 mt-1">{{ t('flashcard.quiz.instruction', 'Choose the correct meaning:') }}</p>
       </div>
 
       <!-- Options -->

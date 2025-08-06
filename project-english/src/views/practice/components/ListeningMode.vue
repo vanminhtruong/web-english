@@ -2,7 +2,7 @@
   <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96">
     <div class="text-center h-full flex flex-col justify-center">
       <div class="mb-6">
-        <span class="px-3 py-1 bg-blue-100 dark:bg-gray-800 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-full">
+        <span class="px-3 py-1 bg-blue-100 dark:bg-gray-800 text-blue-800 dark:text-blue-300 text-xs sm:text-sm md:text-base font-medium rounded-full">
           {{ card?.category ? getTopicName(card.category) : '' }}
         </span>
       </div>
@@ -16,7 +16,7 @@
           </svg>
         </button>
       </div>
-      <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">{{ t('flashcard.listening.instruction', 'Listen and type the word you hear:') }}</p>
+      <p class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8">{{ t('flashcard.listening.instruction', 'Listen and type the word you hear:') }}</p>
 
       <div class="max-w-md mx-auto">
         <input
@@ -25,7 +25,7 @@
           @keyup.enter="handleCheckAnswer"
           type="text"
           :disabled="listeningAnswered"
-          class="w-full p-4 text-center text-xl border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full p-4 text-center text-lg sm:text-xl md:text-2xl border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           :placeholder="t('flashcard.listening.placeholder', 'Type the word you hear...')"
         />
         <div v-if="listeningAnswered" class="mt-4">

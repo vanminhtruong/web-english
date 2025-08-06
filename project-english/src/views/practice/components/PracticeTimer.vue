@@ -30,7 +30,7 @@
     <Teleport to="body">
       <div v-if="showTimeoutModal" class="timeout-modal-overlay" style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 99999 !important; background: rgba(0,0,0,0.5) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important;">
         <div style="position: relative !important; z-index: 100000 !important;" class="timeout-modal-content flex items-center justify-center z-[9999] p-3 sm:p-4 md:p-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 md:p-8 max-w-xs sm:max-w-sm md:max-w-md mx-auto text-center w-full">
+        <div class="bg-white dark:bg-[#0a0a0a] rounded-xl p-4 sm:p-6 md:p-8 max-w-xs sm:max-w-sm md:max-w-md mx-auto text-center w-full">
           <div class="text-red-500 mb-3 sm:mb-4 md:mb-5">
             <svg class="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>

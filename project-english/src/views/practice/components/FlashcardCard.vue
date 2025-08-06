@@ -13,7 +13,7 @@
               {{ getTopicName(currentCard.category) }}
             </span>
           </div>
-          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 md:mb-5">
+          <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 md:mb-5">
             {{ currentCard.word }}
           </h2>
           <p class="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 mb-4 sm:mb-5 md:mb-6">
@@ -28,7 +28,7 @@
       <!-- Back Side -->
       <div class="flashcard-face flashcard-back absolute inset-0 bg-gradient-to-br from-green-400 to-green-600 dark:from-green-700 dark:to-green-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div class="text-center text-white">
-          <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-5">
+          <h3 class="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4 md:mb-5">
             {{ currentCard.meaning }}
           </h3>
           <p class="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-5" v-if="currentCard.partOfSpeech">
