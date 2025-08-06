@@ -16,7 +16,7 @@
           </svg>
         </button>
       </div>
-      <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">{{ t('flashcard.listening.instruction') }}</p>
+      <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">{{ t('flashcard.listening.instruction', 'Listen and type the word you hear:') }}</p>
 
       <div class="max-w-md mx-auto">
         <input
@@ -26,11 +26,11 @@
           type="text"
           :disabled="listeningAnswered"
           class="w-full p-4 text-center text-xl border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          :placeholder="t('flashcard.listening.placeholder')"
+          :placeholder="t('flashcard.listening.placeholder', 'Type the word you hear...')"
         />
         <div v-if="listeningAnswered" class="mt-4">
-          <p v-if="listeningCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ t('flashcard.listening.correct') }}</p>
-          <p v-else class="text-red-600 dark:text-red-400 font-medium">{{ t('flashcard.listening.incorrect') }} {{ card?.word }}</p>
+          <p v-if="listeningCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ t('flashcard.listening.correct', '✓ Correct!') }}</p>
+          <p v-else class="text-red-600 dark:text-red-400 font-medium">{{ t('flashcard.listening.incorrect', '✗ Correct answer:') }} {{ card?.word }}</p>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ card?.meaning }}</p>
         </div>
       </div>

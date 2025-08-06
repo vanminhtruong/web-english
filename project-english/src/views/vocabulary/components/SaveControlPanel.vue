@@ -95,7 +95,7 @@
           <svg class="h-3 w-3 sm:h-4 sm:w-4 md:h-4 md:w-4 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span class="truncate">{{ t('vocabulary.save.lastSave', { time: lastSaveTime || t('vocabulary.save.notSaved', 'Not saved') }, 'Last save: {time}') }}</span>
+          <span class="truncate">{{ formattedLastSave }}</span>
         </div>
         <div class="flex items-center space-x-1">
           <div :class="['h-2 w-2 rounded-full', saveStatusColor]" />
@@ -114,10 +114,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-defineProps<{
+const props = defineProps<{
   autoSaveEnabled: boolean;
   isSaving: boolean;
   hasAutoSaveFile: boolean;
@@ -137,6 +137,21 @@ const emit = defineEmits([
 
 const { t } = useI18n();
 const fileInputRef = ref<HTMLInputElement | null>(null);
+
+// Generate Last save label robustly, even if translation key missing
+const formattedLastSave = computed(() => {
+  const notSaved = t('vocabulary.save.notSaved', 'Not saved');
+  if (!props.lastSaveTime) {
+    return notSaved;
+  }
+  // Attempt to use translation with interpolation
+  const result = t('vocabulary.save.lastSave', { time: props.lastSaveTime }, 'Last save: {time}');
+  // If result still contains {time}, manually replace
+  if (result && result.includes('{time}')) {
+    return result.replace('{time}', props.lastSaveTime);
+  }
+  return result || `Last save: ${props.lastSaveTime}`;
+});
 
 const openFilePicker = () => {
   fileInputRef.value?.click();
