@@ -385,7 +385,7 @@ interface Props {
 
 interface Emits {
   'update:modelValue': [value: boolean]
-  'vocabulary-saved': []
+  'vocabulary-saved': [data: { category: string }]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -977,8 +977,8 @@ const submitForm = async () => {
       toast.success(t('vocabulary.validation.saveSuccess', 'Vocabulary added successfully!'))
     }
 
-    // Emit success event
-    emit('vocabulary-saved')
+    // Emit success event with category info
+    emit('vocabulary-saved', { category: vocabularyData.category })
 
     // Close dialog after short delay
     setTimeout(() => {

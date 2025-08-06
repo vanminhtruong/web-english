@@ -34,6 +34,7 @@
         @open-grammar-manager="$emit('open-grammar-manager', $event)"
         @move-vocabulary="handleMoveVocabulary"
         @request-available-dates="handleRequestAvailableDates"
+        @batch-move-category="$emit('batch-move-category', $event)"
       />
       
       <!-- Date Group Pagination -->
@@ -280,6 +281,7 @@ interface Props {
   itemsPerPageGrouped?: number
   hoverToExpandEnabled?: boolean
   globalMoveMode?: boolean
+  recentlyAddedCategory?: string | null // Category to show at the top
 }
 
 const props = defineProps<Props>()
@@ -294,7 +296,33 @@ const groupedWords = computed((): GroupedVocabulary[] => {
 
   // Use allWords for grouping if provided, otherwise use paginatedWords
   const wordsToGroup = props.allWords || props.paginatedWords
-  const allGroups = groupVocabulariesByDateAndTopic(wordsToGroup, locale.value, t)
+  let allGroups = groupVocabulariesByDateAndTopic(wordsToGroup, locale.value, t)
+
+  // Sort topics to put recently added category at the top
+  if (props.recentlyAddedCategory) {
+    allGroups = allGroups.map(group => {
+      if (!group.topics) return group
+      
+      // Find the recently added category in topics
+      const recentCategoryIndex = group.topics.findIndex(
+        topic => topic.topic === props.recentlyAddedCategory
+      )
+      
+      // If found, move it to the beginning
+      if (recentCategoryIndex > -1) {
+        const sortedTopics = [...group.topics]
+        const [recentCategory] = sortedTopics.splice(recentCategoryIndex, 1)
+        sortedTopics.unshift(recentCategory)
+        
+        return {
+          ...group,
+          topics: sortedTopics
+        }
+      }
+      
+      return group
+    })
+  }
 
   // Phân trang theo số lượng topic group (categories) cho mỗi group date
   if (props.dateGroupPages && props.itemsPerPageGrouped) {
@@ -471,6 +499,7 @@ const emit = defineEmits<{
   'open-add-vocabulary-dialog': [date: string]
   'open-grammar-manager': [date: string]
   'move-vocabulary': [data: { word: any, targetDate: string, sourceDate?: string }]
+  'batch-move-category': [data: { topic: string, words: any[], sourceDate: string }]
 }>()
 
 // Handle move vocabulary request

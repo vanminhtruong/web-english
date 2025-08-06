@@ -51,38 +51,81 @@
               <!-- Modal Body -->
               <div class="p-4">
                 <div v-if="wordToMove" class="mb-4">
-                  <p class="text-sm text-gray-500 dark:text-white/60 mb-1">
-                    {{ t('vocabulary.movingWord', 'Moving word') }}:
-                  </p>
-                  <div class="mb-1">
-                    <span class="text-lg font-medium text-gray-900 dark:text-white">{{ wordToMove.word }}</span>
-                    <span class="text-gray-500 dark:text-white/60 ml-2">- {{ wordToMove.meaning }}</span>
+                  <!-- Batch Move Display -->
+                  <div v-if="wordToMove.isBatchMove" class="mb-4">
+                    <p class="text-sm text-gray-500 dark:text-white/60 mb-1">
+                      {{ t('vocabulary.movingCategory', 'Moving all words in category') }}:
+                    </p>
+                    <div class="mb-2">
+                      <span class="text-lg font-medium text-gray-900 dark:text-white">
+                        {{ getTopicName(wordToMove.categoryName || wordToMove.category) }}
+                      </span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-white/70 bg-gray-50 dark:bg-black/20 px-3 py-2 rounded-md">
+                      <span class="font-medium">{{ wordToMove.batchWords?.length || 0 }}</span> 
+                      {{ t('vocabulary.wordsWillBeMoved', 'words will be moved to the selected date') }}
+                    </p>
                   </div>
-                  <p class="text-sm text-gray-500 dark:text-white/60">
-                    Topic: {{ getTopicName(wordToMove.category) }}
+                  <!-- Single Move Display -->
+                  <div v-else>
+                    <p class="text-sm text-gray-500 dark:text-white/60 mb-1">
+                      {{ t('vocabulary.movingWord', 'Moving word') }}:
+                    </p>
+                    <div class="mb-1">
+                      <span class="text-lg font-medium text-gray-900 dark:text-white">{{ wordToMove.word }}</span>
+                      <span class="text-gray-500 dark:text-white/60 ml-2">- {{ wordToMove.meaning }}</span>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-white/60">
+                      Topic: {{ getTopicName(wordToMove.category) }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Filter Toggle -->
+                <div class="mb-4">
+                  <div class="flex items-center justify-between">
+                    <label for="filterByTopic" class="text-sm font-medium text-gray-700 dark:text-white">
+                      {{ t('vocabulary.filterBySameTopic', 'Filter by same topic') }}
+                    </label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        id="filterByTopic"
+                        v-model="filterBySameTopic"
+                        type="checkbox" 
+                        class="sr-only peer"
+                      />
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  <p v-if="filterBySameTopic" class="text-xs text-gray-500 dark:text-white/60 mt-1">
+                    {{ t('vocabulary.showingDatesWithSameTopic', 'Showing only dates with same topic') }}: 
+                    <span class="font-medium">{{ getTopicName(wordToMove?.categoryName || wordToMove?.category || '') }}</span>
                   </p>
                 </div>
 
                 <div class="mb-4">
                   <label for="targetDate" class="block text-sm font-medium text-gray-700 dark:text-white mb-2">
-                    Select target date group:
+                    {{ t('vocabulary.selectTargetDateGroup', 'Select target date group') }}:
                   </label>
                   <select 
                     id="targetDate"
                     v-model="selectedTargetDate"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-white/10 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:scale-[1.02] hover:shadow-sm"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-white/20 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white"
                   >
                     <option value="">
-                      Select a date
+                      {{ t('vocabulary.selectDate', 'Select a date') }}
                     </option>
                     <option 
-                      v-for="dateGroup in availableDateGroups" 
+                      v-for="dateGroup in filteredDateGroups" 
                       :key="dateGroup.date" 
                       :value="dateGroup.date"
                     >
                       {{ formatDateForDisplay(dateGroup.date) }} ({{ dateGroup.count }} words)
                     </option>
                   </select>
+                  <p v-if="filteredDateGroups.length === 0" class="text-sm text-gray-500 dark:text-white/60 mt-2">
+                    {{ t('vocabulary.noMatchingDates', 'No dates found with this topic. Try disabling the filter.') }}
+                  </p>
                 </div>
               </div>
 
@@ -92,14 +135,14 @@
                   @click="closeModal"
                   class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-white bg-gray-100 dark:bg-black/40 rounded-md hover:bg-gray-200 dark:hover:bg-black/60 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95"
                 >
-                  Cancel
+                  {{ t('common.cancel', 'Cancel') }}
                 </button>
                 <button
                   @click="confirmMove"
                   :disabled="!selectedTargetDate"
                   class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 hover:shadow-md hover:-translate-y-0.5 active:scale-95"
                 >
-                  Move Word
+                  {{ wordToMove?.isBatchMove ? t('vocabulary.moveAll', 'Move All') : t('vocabulary.moveWord', 'Move Word') }}
                 </button>
               </div>
             </div>
@@ -130,6 +173,9 @@ interface Word {
   image?: string
   createdAt?: string
   updatedAt?: string
+  isBatchMove?: boolean
+  batchWords?: Word[]
+  categoryName?: string
 }
 
 interface DateGroup {
@@ -142,6 +188,7 @@ interface Props {
   wordToMove: Word | null
   availableDateGroups: DateGroup[]
   sourceDate?: string
+  allVocabularies?: Word[]
 }
 
 const props = defineProps<Props>()
@@ -152,6 +199,71 @@ const emit = defineEmits<{
 }>()
 
 const selectedTargetDate = ref('')
+const filterBySameTopic = ref(false)
+
+// Computed property to filter date groups based on toggle
+const filteredDateGroups = computed(() => {
+  console.log('Filter state:', {
+    filterBySameTopic: filterBySameTopic.value,
+    hasWordToMove: !!props.wordToMove,
+    hasAllVocabularies: !!props.allVocabularies,
+    allVocabulariesLength: props.allVocabularies?.length
+  })
+  
+  // If toggle is off or no data, return all date groups
+  if (!filterBySameTopic.value || !props.wordToMove || !props.allVocabularies) {
+    return props.availableDateGroups
+  }
+
+  // Get the category of the word to move
+  const currentCategory = props.wordToMove.categoryName || props.wordToMove.category
+  console.log('Current category:', currentCategory)
+  console.log('Word to move:', props.wordToMove)
+  
+  // If no category, return all date groups
+  if (!currentCategory) {
+    return props.availableDateGroups
+  }
+
+  // Log first few vocabularies to check structure
+  console.log('Sample vocabularies:', props.allVocabularies.slice(0, 3))
+
+  // Filter date groups to only show those containing words with the same category
+  const filtered = props.availableDateGroups.filter(dateGroup => {
+    // Parse the date group date
+    const groupDate = new Date(dateGroup.date)
+    const groupDateStr = groupDate.toISOString().split('T')[0]
+    
+    // Check if any vocabulary in allVocabularies matches this date and category
+    const hasMatch = props.allVocabularies!.some(vocab => {
+      // Skip if no date or different category
+      if (vocab.category !== currentCategory) return false
+      
+      // Check date match
+      const vocabDateStr = vocab.createdAt ? new Date(vocab.createdAt).toISOString().split('T')[0] : null
+      const vocabUpdateDateStr = vocab.updatedAt ? new Date(vocab.updatedAt).toISOString().split('T')[0] : null
+      
+      // Match if either created or updated date matches the group date
+      const matches = vocabDateStr === groupDateStr || vocabUpdateDateStr === groupDateStr
+      
+      if (matches) {
+        console.log('Found match:', {
+          vocab: vocab.word,
+          category: vocab.category,
+          vocabDate: vocabDateStr,
+          groupDate: groupDateStr
+        })
+      }
+      
+      return matches
+    })
+    
+    return hasMatch
+  })
+  
+  console.log('Filtered result:', filtered.length, 'groups')
+  return filtered
+})
 
 // Format date for display
 const formatDateForDisplay = (dateStr: string) => {
@@ -166,6 +278,7 @@ const formatDateForDisplay = (dateStr: string) => {
 // Close modal and reset state
 const closeModal = () => {
   selectedTargetDate.value = ''
+  filterBySameTopic.value = false // Reset toggle state
   emit('close')
 }
 
@@ -187,6 +300,7 @@ watch(() => props.showModal, (newValue) => {
   } else {
     document.body.classList.remove('modal-open')
     selectedTargetDate.value = '' // Reset selection
+    filterBySameTopic.value = false // Reset toggle state
   }
 })
 

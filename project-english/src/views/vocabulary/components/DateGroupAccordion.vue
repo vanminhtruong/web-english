@@ -573,6 +573,18 @@
                     <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
                   </h5>
                 </div>
+                
+                <!-- Batch Move Arrow for Category -->
+                <button
+                  v-if="globalMoveMode && topicGroup.vocabularies.length > 0"
+                  @click.stop="handleBatchMoveCategory(topicGroup)"
+                  class="ml-auto mr-2 p-1.5 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-md transition-colors"
+                  :title="t('vocabulary.moveCategoryToAnotherDay', 'Move all words in this category to another day')"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                  </svg>
+                </button>
               </div>
               
               <!-- Category pagination (only show when expanded and has multiple pages) -->
@@ -1188,6 +1200,16 @@ const openGrammarManager = (date: string) => {
   emit('open-grammar-manager', date)
 }
 
+// Handle batch move for all words in a category
+const handleBatchMoveCategory = (topicGroup: any) => {
+  // Emit batch move event with all words in the category
+  emit('batch-move-category', {
+    topic: topicGroup.topic,
+    words: topicGroup.vocabularies,
+    sourceDate: props.group.date
+  })
+}
+
 // Initialize component
 onMounted(async () => {
   // Load action buttons state from localStorage
@@ -1250,6 +1272,7 @@ const emit = defineEmits<{
   'open-grammar-manager': [date: string]
   'move-vocabulary': [data: { word: any, targetDate: string }]
   'request-available-dates': [data: { topic: string, currentDate: string }]
+  'batch-move-category': [data: { topic: string, words: any[], sourceDate: string }]
 }>()
 </script>
 

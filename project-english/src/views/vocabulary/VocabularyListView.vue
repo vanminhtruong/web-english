@@ -87,6 +87,7 @@
           :items-per-page-grouped="itemsPerPageGrouped"
           :hover-to-expand-enabled="hoverToExpandEnabled"
           :global-move-mode="globalMoveMode"
+          :recently-added-category="recentlyAddedCategory"
           @play-audio="playAudio"
           @edit-word="openEditDialog"
           @delete-word="deleteWord"
@@ -102,6 +103,7 @@
           @open-note-dialog="openNoteDialog"
           @open-add-vocabulary-dialog="openAddVocabularyForDate"
           @open-grammar-manager="openGrammarManagerForDate"
+          @batch-move-category="handleBatchMoveCategory"
         />
       </LazyLoadComponent>
     </div>
@@ -183,6 +185,7 @@
       :word-to-move="wordToMove"
       :available-date-groups="availableDateGroups"
       :source-date="currentSourceDate"
+      :all-vocabularies="vocabularyStore.allVocabularies.value"
       @close="closeMoveModal"
       @confirm-move="confirmMove"
     />
@@ -292,6 +295,7 @@ const {
   currentSourceDate,
   toggleMoveMode,
   handleMoveVocabulary,
+  handleBatchMoveCategory,
   closeMoveModal,
   confirmMove,
   formatDateForDisplay
@@ -338,10 +342,19 @@ const {
   openEditFromDetail,
 } = useVocabularyDialogs();
 
+// Store the category that should be at the top
+const recentlyAddedCategory = ref<string | null>(null);
+
 // Override onVocabularySaved to reset target date and reload grouping
-const onVocabularySaved = () => {
+const onVocabularySaved = (data?: { category: string }) => {
   originalOnVocabularySaved();
   targetDateForNewVocabulary.value = null;
+  
+  // Store the category that was just added to move it to the top
+  if (data?.category) {
+    recentlyAddedCategory.value = data.category;
+    console.log('Recently added category:', data.category);
+  }
   
   // Reload grouping state to ensure new vocabulary appears in correct date group
   if (useGrouping.value) {
