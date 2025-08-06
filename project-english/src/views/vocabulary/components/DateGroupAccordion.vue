@@ -3,8 +3,8 @@
     <div class="mb-3 xs:mb-4 sm:mb-6">
     <!-- Date group header with accordion toggle -->
     <div class="sticky top-0 bg-gray-50 dark:bg-[#0f0f0f] px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-2.5 sm:py-3 border-b border-gray-200 dark:border-gray-700 z-10">
-      <!-- Mobile layout: Block/Vertical -->
-      <div class="max-xs:block xs:hidden">
+      <!-- Mobile/Small layout: Block/Vertical with Grid -->
+      <div class="sm:block md:hidden">
         <!-- First row: Date header -->
         <div 
           @click="toggleAccordion"
@@ -108,9 +108,9 @@
 
           <!-- Normal state: 2x2 Grid layout for action buttons -->
           <div v-else>
-            <!-- Current topic display (if exists) -->
-            <div v-if="groupTopic" class="flex items-center justify-center mb-2">
-              <div class="flex items-center space-x-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/50 rounded-full border border-blue-200 dark:border-blue-700 max-w-[200px]">
+            <!-- Current topic display (if exists) - Compact design -->
+            <div v-if="groupTopic" class="flex items-center justify-center mb-1.5">
+              <div class="flex items-center space-x-1 px-2.5 py-1 bg-blue-50 dark:bg-blue-900/50 rounded-lg border border-blue-200 dark:border-blue-700 max-w-[180px]">
                 <svg class="w-3 h-3 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
@@ -134,7 +134,7 @@
                 </div>
                 <button
                   @click.stop="editTopic"
-                  class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 focus:outline-none flex-shrink-0 p-0.5 rounded hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors"
+                  class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 focus:outline-none flex-shrink-0 p-0.5 rounded hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors"
                   :aria-label="t('vocabulary.accordion.editTopic')"
                 >
                   <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -144,17 +144,17 @@
               </div>
             </div>
 
-            <!-- 2x2 Grid for action buttons -->
-            <div class="grid grid-cols-2 gap-2 max-w-[280px] mx-auto">
+            <!-- 2x2 Grid for action buttons - Responsive mobile/small tablet design -->
+            <div class="grid grid-cols-2 gap-2 max-w-[280px] sm:max-w-[320px] mx-auto">
               <!-- Row 1 -->
               <!-- Add Topic button (Top Left) -->
               <button
                 v-if="!groupTopic"
                 @click.stop="showTopicInput = true"
-                class="flex flex-col items-center justify-center p-3 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 min-h-[60px] hover:scale-105 hover:shadow-md"
+                class="flex flex-col items-center justify-center p-2 sm:p-3 text-xs sm:text-sm font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-900/50 rounded-md border border-dashed border-orange-300 dark:border-orange-600 hover:border-orange-400 dark:hover:border-orange-500 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-orange-500 min-h-[56px] sm:min-h-[64px] hover:scale-[1.02]"
                 :aria-label="t('vocabulary.accordion.addTopic', 'Add Topic')"
               >
-                <svg class="w-4 h-4 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                 </svg>
                 <span class="text-center leading-tight">{{ t('vocabulary.accordion.addTopic', 'Add Topic') }}</span>
@@ -165,7 +165,7 @@
                 <VocabularyNoteButton
                   :date="group.date"
                   :is-today="isTodayGroup"
-                  :class="'w-full flex flex-col items-center justify-center p-3 text-xs font-medium min-h-[60px] hover:scale-105 hover:shadow-md transition-all duration-200'"
+                  :class="'w-full flex flex-col items-center justify-center p-2 sm:p-3 text-xs sm:text-sm font-medium min-h-[56px] sm:min-h-[64px] hover:scale-[1.02] transition-all duration-200 rounded-md'"
                   @open-note-dialog="() => emit('open-note-dialog', { date: group.date, words: group.vocabularies })"
                 />
               </div>
@@ -174,10 +174,10 @@
               <!-- Add Word button (Bottom Left) -->
               <button
                 @click.stop="openAddVocabularyDialog"
-                class="flex flex-col items-center justify-center p-3 text-xs font-medium text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/50 rounded-lg border border-dashed border-green-300 dark:border-green-600 hover:border-green-400 dark:hover:border-green-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[60px] hover:scale-105 hover:shadow-md"
+                class="flex flex-col items-center justify-center p-2 sm:p-3 text-xs sm:text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/50 rounded-md border border-dashed border-green-300 dark:border-green-600 hover:border-green-400 dark:hover:border-green-500 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-green-500 min-h-[56px] sm:min-h-[64px] hover:scale-[1.02]"
                 :aria-label="t('vocabulary.addWord', 'Add Word')"
               >
-                <svg class="w-4 h-4 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                 </svg>
                 <span class="text-center leading-tight">{{ t('vocabulary.addWord', 'Add Word') }}</span>
@@ -187,7 +187,7 @@
               <div class="flex">
                 <GrammarManagerButton
                   :date="group.date"
-                  :class="'w-full flex flex-col items-center justify-center p-3 text-xs font-medium min-h-[60px] hover:scale-105 hover:shadow-md transition-all duration-200'"
+                  :class="'w-full flex flex-col items-center justify-center p-2 sm:p-3 text-xs sm:text-sm font-medium min-h-[56px] sm:min-h-[64px] hover:scale-[1.02] transition-all duration-200 rounded-md'"
                   @open-grammar-manager="openGrammarManager"
                 />
               </div>
@@ -197,7 +197,7 @@
       </div>
 
       <!-- Desktop/Tablet layout: Responsive -->
-      <div class="hidden xs:block">
+      <div class="hidden md:block">
         <!-- Date Header Section -->
         <div 
           @click="toggleAccordion"
@@ -304,7 +304,7 @@
         </button>
       </div>
 
-      <!-- Buttons row for xs, sm, md - centered -->
+      <!-- Buttons row for md+ - centered -->
       <div class="lg:hidden flex items-center justify-center space-x-2 mt-2" @click.stop>
         <div v-if="!showTopicInput" class="flex items-center space-x-2">
           <!-- Topic display or add button -->
@@ -381,7 +381,7 @@
           </template>
         </div>
 
-        <!-- Topic input form for xs, sm, md -->
+        <!-- Topic input form for md+ -->
         <div v-else class="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 w-full max-w-[150px] xs:max-w-[200px] sm:max-w-xs">
           <input
             ref="topicInputTablet"

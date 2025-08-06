@@ -27,10 +27,26 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 const propsRefs = toRefs(props)
 
+// Shared AudioContext to prevent audio context issues
+let audioContextInstance: AudioContext | null = null
+
+// Get or create shared audio context
+const getAudioContext = () => {
+  if (!audioContextInstance || audioContextInstance.state === 'closed') {
+    audioContextInstance = new (window.AudioContext || (window as any).webkitAudioContext)()
+  }
+  return audioContextInstance
+}
+
 // Create synthetic audio sounds using Web Audio API
 const createSuccessSound = () => {
   try {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const audioContext = getAudioContext()
+    
+    // Resume context if suspended (required by some browsers)
+    if (audioContext.state === 'suspended') {
+      audioContext.resume()
+    }
     
     // Create a cheerful success sound (ascending notes)
     const playNote = (frequency: number, startTime: number, duration: number) => {
@@ -43,25 +59,26 @@ const createSuccessSound = () => {
       oscillator.frequency.setValueAtTime(frequency, startTime)
       oscillator.type = 'sine'
       
-      // Envelope
+      // Envelope - smoother gain curve
       gainNode.gain.setValueAtTime(0, startTime)
-      gainNode.gain.linearRampToValueAtTime(props.soundVolume * 0.3, startTime + 0.01)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration)
+      gainNode.gain.linearRampToValueAtTime(props.soundVolume * 0.4, startTime + 0.02)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration)
       
       oscillator.start(startTime)
       oscillator.stop(startTime + duration)
+      
+      // Prevent memory leaks
+      oscillator.onended = () => {
+        oscillator.disconnect()
+        gainNode.disconnect()
+      }
     }
     
     const now = audioContext.currentTime
-    // Play a cheerful chord progression: C-E-G (major chord)
-    playNote(523.25, now, 0.3)        // C5
-    playNote(659.25, now + 0.1, 0.3)  // E5  
-    playNote(783.99, now + 0.2, 0.4)  // G5
-    
-    // Cleanup
-    setTimeout(() => {
-      audioContext.close()
-    }, 1000)
+    // Play a cheerful chord progression: C-E-G (major chord) with longer duration
+    playNote(523.25, now, 0.5)        // C5
+    playNote(659.25, now + 0.15, 0.5)  // E5  
+    playNote(783.99, now + 0.3, 0.6)  // G5
     
   } catch (error) {
     console.warn('Web Audio API not supported:', error)
@@ -70,7 +87,12 @@ const createSuccessSound = () => {
 
 const createErrorSound = () => {
   try {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const audioContext = getAudioContext()
+    
+    // Resume context if suspended
+    if (audioContext.state === 'suspended') {
+      audioContext.resume()
+    }
     
     // Create a descending error sound
     const oscillator = audioContext.createOscillator()
@@ -79,23 +101,25 @@ const createErrorSound = () => {
     oscillator.connect(gainNode)
     gainNode.connect(audioContext.destination)
     
-    // Start high and slide down
-    oscillator.frequency.setValueAtTime(400, audioContext.currentTime)
-    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.5)
+    // Start high and slide down - longer duration
+    const now = audioContext.currentTime
+    oscillator.frequency.setValueAtTime(400, now)
+    oscillator.frequency.exponentialRampToValueAtTime(180, now + 0.8)
     oscillator.type = 'sawtooth'
     
-    // Quick attack, longer decay
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime)
-    gainNode.gain.linearRampToValueAtTime(props.soundVolume * 0.4, audioContext.currentTime + 0.01)
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+    // Smoother gain envelope
+    gainNode.gain.setValueAtTime(0, now)
+    gainNode.gain.linearRampToValueAtTime(props.soundVolume * 0.5, now + 0.02)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
     
-    oscillator.start(audioContext.currentTime)
-    oscillator.stop(audioContext.currentTime + 0.5)
+    oscillator.start(now)
+    oscillator.stop(now + 0.8)
     
-    // Cleanup
-    setTimeout(() => {
-      audioContext.close()
-    }, 1000)
+    // Prevent memory leaks
+    oscillator.onended = () => {
+      oscillator.disconnect()
+      gainNode.disconnect()
+    }
     
   } catch (error) {
     console.warn('Web Audio API not supported:', error)
@@ -167,33 +191,64 @@ const playSoundEffect = () => {
 // Fallback sound using Web Audio API
 const playFallbackSound = (isCorrect: boolean) => {
   try {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
-    const oscillator = audioContext.createOscillator()
-    const gainNode = audioContext.createGain()
+    const audioContext = getAudioContext()
     
-    oscillator.connect(gainNode)
-    gainNode.connect(audioContext.destination)
-    
-    if (isCorrect) {
-      // Success sound: ascending notes
-      oscillator.frequency.setValueAtTime(523, audioContext.currentTime) // C5
-      oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1) // E5
-      oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2) // G5
-    } else {
-      // Error sound: descending notes
-      oscillator.frequency.setValueAtTime(400, audioContext.currentTime) // G4
-      oscillator.frequency.setValueAtTime(350, audioContext.currentTime + 0.15) // F4
-      oscillator.frequency.setValueAtTime(300, audioContext.currentTime + 0.3) // D4
+    // Resume context if suspended
+    if (audioContext.state === 'suspended') {
+      audioContext.resume()
     }
     
-    gainNode.gain.setValueAtTime(props.soundVolume, audioContext.currentTime)
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+    const now = audioContext.currentTime
     
-    oscillator.start(audioContext.currentTime)
-    oscillator.stop(audioContext.currentTime + 0.5)
-    
-    oscillator.onended = () => {
-      audioContext.close()
+    if (isCorrect) {
+      // Success sound: play multiple notes in sequence
+      const frequencies = [523, 659, 784] // C5, E5, G5
+      frequencies.forEach((freq, index) => {
+        const oscillator = audioContext.createOscillator()
+        const gainNode = audioContext.createGain()
+        
+        oscillator.connect(gainNode)
+        gainNode.connect(audioContext.destination)
+        
+        const startTime = now + (index * 0.15)
+        oscillator.frequency.setValueAtTime(freq, startTime)
+        oscillator.type = 'sine'
+        
+        gainNode.gain.setValueAtTime(0, startTime)
+        gainNode.gain.linearRampToValueAtTime(props.soundVolume * 0.4, startTime + 0.02)
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4)
+        
+        oscillator.start(startTime)
+        oscillator.stop(startTime + 0.4)
+        
+        oscillator.onended = () => {
+          oscillator.disconnect()
+          gainNode.disconnect()
+        }
+      })
+    } else {
+      // Error sound: single descending tone
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
+      
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      
+      oscillator.frequency.setValueAtTime(400, now)
+      oscillator.frequency.exponentialRampToValueAtTime(200, now + 0.6)
+      oscillator.type = 'sawtooth'
+      
+      gainNode.gain.setValueAtTime(0, now)
+      gainNode.gain.linearRampToValueAtTime(props.soundVolume * 0.5, now + 0.02)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.6)
+      
+      oscillator.start(now)
+      oscillator.stop(now + 0.6)
+      
+      oscillator.onended = () => {
+        oscillator.disconnect()
+        gainNode.disconnect()
+      }
     }
   } catch (error) {
     console.warn('Web Audio API fallback failed:', error)
@@ -221,6 +276,21 @@ watch([triggerFirework, triggerSound], ([newFirework, newSound]) => {
     triggerEffects()
   }
 }, { immediate: false })
+
+// Cleanup audio context when component unmounts
+import { onUnmounted } from 'vue'
+
+onUnmounted(() => {
+  if (audioContextInstance && audioContextInstance.state !== 'closed') {
+    // Don't close immediately, let current sounds finish
+    setTimeout(() => {
+      if (audioContextInstance && audioContextInstance.state !== 'closed') {
+        audioContextInstance.close()
+        audioContextInstance = null
+      }
+    }, 1000)
+  }
+})
 
 // No need for onMounted/onUnmounted with synthetic audio
 

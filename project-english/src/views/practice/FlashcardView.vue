@@ -190,7 +190,7 @@
       :stats="stats"
       :card-count="flashcards.length"
       @restart="handleRestartSession"
-      @go-back="goBack"
+      @go-back="handleCompletionGoBack"
     />
 
     <!-- Exit Warning Modal -->
@@ -209,6 +209,7 @@ import { useI18n } from 'vue-i18n'
 import { useVocabularyStore } from '../../composables/useVocabularyStore'
 import type { Vocabulary } from '../../composables/useVocabularyStore'
 import { getDateKey } from '../../utils/dateUtils'
+import { useModalStore } from '../../stores/modalStore'
 
 // Initialize i18n
 const { t } = useI18n()
@@ -247,6 +248,9 @@ import { getTopicName } from '../../utils/topicUtils'
 
 // Vocabulary store
 const { allVocabularies } = useVocabularyStore()
+
+// Modal store for controlling back to top and body scroll
+const modalStore = useModalStore()
 
 // Date filter state with localStorage persistence
 const STORAGE_KEY = 'flashcard-date-filter'
@@ -790,6 +794,9 @@ const handleRestartSession = () => {
   // Clear all card state storage when restarting
   cardStateStorage.value = {}
   
+  // Reset modal store when restarting (will hide completion modal, show back to top, enable body scroll)
+  modalStore.setCompletionModal(false)
+  
   // Re-shuffle cards if shuffle is enabled to get new random order
   if (flashcardSettings.value.shuffleCards && baseFlashcards.value.length > 0) {
     shuffleFlashcards()
@@ -801,6 +808,14 @@ const handleRestartSession = () => {
   if (practiceTimerRef.value) {
     practiceTimerRef.value.resetPractice()
   }
+}
+
+// Handle completion modal go back - reset modal store and navigate
+const handleCompletionGoBack = () => {
+  // Reset modal store first (hide completion modal, show back to top, enable body scroll)
+  modalStore.setCompletionModal(false)
+  // Then navigate back
+  goBack()
 }
 
 // Auto flip functionality
@@ -827,10 +842,19 @@ watch(practiceMode, () => {
 
 
 
-// Save session to history when completed
+// Save session to history when completed and stop timer
 watch(showCompletionModal, (newValue) => {
   if (newValue) {
+    // Stop the timer immediately when completion modal appears
+    if (practiceTimerRef.value) {
+      practiceTimerRef.value.stopTimer()
+    }
+    // Update modal store to hide back to top and control body scroll
+    modalStore.setCompletionModal(true)
     saveSessionToHistory(stats.value, currentFlashcards.value.length)
+  } else {
+    // Reset modal store when completion modal is closed
+    modalStore.setCompletionModal(false)
   }
 })
 
