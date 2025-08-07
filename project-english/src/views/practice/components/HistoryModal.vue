@@ -90,7 +90,7 @@
                   <span class="text-gray-500 dark:text-gray-400 text-sm">{{ t('flashcard.history.categories', 'Categories') }}:</span>
                   <div class="flex flex-wrap gap-1 mt-1">
                     <span v-for="category in session.categories" :key="category" class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
-                      {{ category }}
+                      {{ category.startsWith('flashcard.') ? t(category, category.split('.').pop() || category) : category }}
                     </span>
                   </div>
                 </div>
