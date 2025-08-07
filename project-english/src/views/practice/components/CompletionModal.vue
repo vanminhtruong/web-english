@@ -57,7 +57,7 @@
 
             <!-- Description -->
             <div class="text-center mb-6 animate-fade-in-up" style="animation-delay: 0.2s">
-              <p class="text-gray-600 dark:text-gray-300">{{ t('flashcard.completion.description', { count: cardCount }) || `You have completed ${cardCount} flashcards.` }}</p>
+              <p class="text-gray-600 dark:text-gray-300">{{ t('flashcard.completion.description', { count: cardCount }, `You have completed ${cardCount} flashcards.`) }}</p>
             </div>
 
             <!-- Stats Cards -->
