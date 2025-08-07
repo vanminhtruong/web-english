@@ -90,7 +90,7 @@
                   <span class="text-gray-500 dark:text-gray-400 text-sm">{{ t('flashcard.history.categories', 'Categories') }}:</span>
                   <div class="flex flex-wrap gap-1 mt-1">
                     <span v-for="category in session.categories" :key="category" class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
-                      {{ category.startsWith('flashcard.') ? t(category, category.split('.').pop() || category) : category }}
+                      {{ getCategoryDisplay(category) }}
                     </span>
                   </div>
                 </div>
@@ -139,4 +139,28 @@ defineProps<{
 const emit = defineEmits(['close']);
 
 const { t } = useI18n();
+
+// Helper function to translate category names
+const getCategoryDisplay = (category: string): string => {
+  // Check if it's a translation key
+  if (category.includes('.')) {
+    // Try to get the last part of the key as fallback
+    const parts = category.split('.');
+    const fallback = parts[parts.length - 1];
+    
+    // Handle common flashcard mode keys
+    if (category === 'flashcard.modes.flashcard') return t(category, 'Flashcard');
+    if (category === 'flashcard.modes.quiz') return t(category, 'Quiz');
+    if (category === 'flashcard.modes.typing') return t(category, 'Typing');
+    if (category === 'flashcard.modes.listening') return t(category, 'Listening');
+    if (category === 'flashcard.modes.image') return t(category, 'Image');
+    if (category === 'flashcard.modes.pronunciation') return t(category, 'Pronunciation');
+    
+    // For other translation keys, use the general pattern
+    return t(category, fallback.charAt(0).toUpperCase() + fallback.slice(1));
+  }
+  
+  // If it's not a translation key, return as is
+  return category;
+};
 </script> 
