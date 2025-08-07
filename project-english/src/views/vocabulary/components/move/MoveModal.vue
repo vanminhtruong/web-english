@@ -199,7 +199,33 @@ const emit = defineEmits<{
 }>()
 
 const selectedTargetDate = ref('')
-const filterBySameTopic = ref(false)
+
+// Load filterBySameTopic state from localStorage
+const getStoredFilterState = (): boolean => {
+  try {
+    const stored = localStorage.getItem('vocabulary-move-filter-by-topic')
+    return stored ? JSON.parse(stored) : false
+  } catch (error) {
+    console.warn('Failed to parse stored filter state:', error)
+    return false
+  }
+}
+
+// Save filterBySameTopic state to localStorage
+const setStoredFilterState = (value: boolean) => {
+  try {
+    localStorage.setItem('vocabulary-move-filter-by-topic', JSON.stringify(value))
+  } catch (error) {
+    console.warn('Failed to store filter state:', error)
+  }
+}
+
+const filterBySameTopic = ref(getStoredFilterState())
+
+// Watch for changes and save to localStorage
+watch(filterBySameTopic, (newValue) => {
+  setStoredFilterState(newValue)
+})
 
 // Computed property to filter date groups based on toggle
 const filteredDateGroups = computed(() => {
@@ -278,7 +304,7 @@ const formatDateForDisplay = (dateStr: string) => {
 // Close modal and reset state
 const closeModal = () => {
   selectedTargetDate.value = ''
-  filterBySameTopic.value = false // Reset toggle state
+  // Don't reset filterBySameTopic - keep the user's preference
   emit('close')
 }
 
@@ -300,7 +326,7 @@ watch(() => props.showModal, (newValue) => {
   } else {
     document.body.classList.remove('modal-open')
     selectedTargetDate.value = '' // Reset selection
-    filterBySameTopic.value = false // Reset toggle state
+    // Don't reset filterBySameTopic - keep the user's preference
   }
 })
 

@@ -620,12 +620,11 @@
                           start: getPaginatedTopicVocabularies(topicGroup).startIndex, 
                           end: getPaginatedTopicVocabularies(topicGroup).endIndex, 
                           total: getPaginatedTopicVocabularies(topicGroup).totalItems 
-                        }) }}
+                        }, `Showing ${getPaginatedTopicVocabularies(topicGroup).startIndex} to ${getPaginatedTopicVocabularies(topicGroup).endIndex} of ${getPaginatedTopicVocabularies(topicGroup).totalItems} items`) }}
                       </p>
                     </div>
                     <div>
                       <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                        <!-- Previous button -->
                         <button 
                           @click="previousTopicPage(topicGroup.topic)" 
                           :disabled="!getPaginatedTopicVocabularies(topicGroup).hasPrevious" 

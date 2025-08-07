@@ -33,7 +33,7 @@ interface Word {
 }
 
 interface Props {
-  word: Word
+  word: Word     
   moveMode?: boolean
 }
 
