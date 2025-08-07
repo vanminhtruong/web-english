@@ -8,6 +8,8 @@ import { useModalStore } from './stores/modalStore'
 const AppHeader = defineAsyncComponent(
   () => import('./components/common/AppHeader.vue')
 )
+
+// Import
 const BackToTop = defineAsyncComponent(
   () => import('./components/common/BackToTop.vue')
 )
