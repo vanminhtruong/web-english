@@ -1,69 +1,96 @@
 <template>
   <!-- Exercise Manager Modal -->
-  <div v-if="modelValue" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          {{ t('grammar.practice.exerciseManager.title', 'Exercise Manager') }}
-        </h3>
-        <button
-          @click="closeModal"
-          class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      
-      <!-- Exercise Types Management -->
-      <div class="space-y-6">
+  <!-- Backdrop Transition -->
+  <Transition appear
+    enter-active-class="transition-all duration-500 ease-out"
+    enter-from-class="opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="transition-all duration-300 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="opacity-0"
+  >
+    <div v-if="modelValue" class="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+      <!-- Dialog Container Transition -->
+      <Transition appear
+        enter-active-class="transition-all duration-500 ease-out"
+        enter-from-class="opacity-0 scale-90 translate-y-8 rotate-1"
+        enter-to-class="opacity-100 scale-100 translate-y-0 rotate-0"
+        leave-active-class="transition-all duration-300 ease-in"
+        leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
+        leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
+      >
+        <div class="w-full max-h-[90vh] flex flex-col max-w-full sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+          <!-- Modal Surface -->
+          <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border-0 dark:border dark:border-gray-custom flex flex-col h-full overflow-hidden transform transform-gpu will-change-transform" @click.stop>
+            <!-- Header -->
+            <div class="px-6 py-4 border-b-0 dark:border-b dark:border-gray-custom flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
+                  <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                  <span>{{ t('grammar.practice.exerciseManager.title', 'Exercise Manager') }}</span>
+                </h3>
+                <button
+                  @click="closeModal"
+                  class="text-gray-400 hover:text-gray-600 dark:text-white/60 dark:hover:text-white transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10"
+                  aria-label="Close"
+                >
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Body (scrollable) -->
+            <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
+              <!-- Exercise Types Management -->
+              <div class="space-y-6">
         <!-- Add New Exercise Type -->
-        <div class="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div class="bg-white dark:bg-gray-custom border-0 dark:border dark:border-gray-custom rounded-lg p-4 animate-fade-in-up ring-1 ring-gray-100 dark:ring-0" style="animation-delay: 0.1s">
           <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">
             {{ t('grammar.practice.exerciseManager.addNew', 'Add new exercise type') }}
           </h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div class="animate-fade-in-up" style="animation-delay: 0.2s">
+              <label class="block text-sm font-medium text-gray-700 dark:text-white/80 mb-2">
                 {{ t('grammar.practice.exerciseManager.exerciseType', 'Exercise type') }}
               </label>
               <input
                 v-model="newExercise.type"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                class="w-full px-3 py-2 border-0 dark:border dark:border-gray-custom rounded-lg bg-white dark:bg-gray-custom text-gray-900 dark:text-white ring-1 ring-gray-200/50 dark:ring-0 shadow-sm dark:shadow-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 dark:hover:border-blue-500 transform hover:scale-[1.02]"
                 :placeholder="t('grammar.practice.exerciseManager.typePlaceholder', 'e.g. multiple-choice')"
               >
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div class="animate-fade-in-up" style="animation-delay: 0.3s">
+              <label class="block text-sm font-medium text-gray-700 dark:text-white/80 mb-2">
                 {{ t('grammar.practice.exerciseManager.title', 'Title') }}
               </label>
               <input
                 v-model="newExercise.title"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                class="w-full px-3 py-2 border-0 dark:border dark:border-gray-custom rounded-lg bg-white dark:bg-gray-custom text-gray-900 dark:text-white ring-1 ring-gray-200/50 dark:ring-0 shadow-sm dark:shadow-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 dark:hover:border-blue-500 transform hover:scale-[1.02]"
                 :placeholder="t('grammar.practice.exerciseManager.titlePlaceholder', 'Enter exercise title')"
               >
             </div>
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 0.4s">
+              <label class="block text-sm font-medium text-gray-700 dark:text-white/80 mb-2">
                 {{ t('grammar.practice.exerciseManager.description', 'Description') }}
               </label>
               <textarea
                 v-model="newExercise.description"
                 rows="3"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                class="w-full px-3 py-2 border-0 dark:border dark:border-gray-custom rounded-lg bg-white dark:bg-gray-custom text-gray-900 dark:text-white ring-1 ring-gray-200/50 dark:ring-0 shadow-sm dark:shadow-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 dark:hover:border-blue-500 transform hover:scale-[1.02]"
                 :placeholder="t('grammar.practice.exerciseManager.descriptionPlaceholder', 'Briefly describe this exercise')"
               ></textarea>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div class="animate-fade-in-up" style="animation-delay: 0.5s">
+              <label class="block text-sm font-medium text-gray-700 dark:text-white/80 mb-2">
                 {{ t('grammar.practice.exerciseManager.difficulty', 'Difficulty') }}
               </label>
               <select
                 v-model="newExercise.difficulty"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                class="w-full px-3 py-2 border-0 dark:border dark:border-gray-custom rounded-lg bg-white dark:bg-gray-custom text-gray-900 dark:text-white ring-1 ring-gray-200/50 dark:ring-0 shadow-sm dark:shadow-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 dark:hover:border-blue-500 transform hover:scale-[1.02] cursor-pointer"
               >
                 <option value="easy">{{ t('grammar.practice.settings.levels.easy', 'Easy') }}</option>
                 <option value="medium">{{ t('grammar.practice.settings.levels.medium', 'Medium') }}</option>
@@ -71,21 +98,21 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-white/80 mb-2">
                 {{ t('grammar.practice.exerciseManager.duration', 'Duration') }}
               </label>
               <input
                 v-model="newExercise.duration"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                class="w-full px-3 py-2 border-0 dark:border dark:border-gray-custom rounded-lg bg-white dark:bg-gray-custom text-gray-900 dark:text-white ring-1 ring-gray-200/50 dark:ring-0 shadow-sm dark:shadow-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 dark:hover:border-blue-500 transform hover:scale-[1.02]"
                 :placeholder="t('grammar.practice.exerciseManager.durationPlaceholder', 'e.g. 10-15 min')"
               >
             </div>
           </div>
-          <div class="flex justify-end mt-4">
+          <div class="flex justify-end mt-4 animate-fade-in-up" style="animation-delay: 0.7s">
             <button
               @click="addExerciseType"
-              class="px-4 py-2 text-sm font-medium text-white bg-gray-800 dark:bg-gray-700 rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors"
+              class="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-lg"
             >
               {{ t('grammar.practice.exerciseManager.add', 'Add') }}
             </button>
@@ -101,7 +128,7 @@
             <div
               v-for="(exercise, index) in exerciseTypes"
               :key="exercise.type"
-              class="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+              class="bg-white dark:bg-gray-custom border-0 dark:border dark:border-gray-custom rounded-lg p-4 ring-1 ring-gray-100 dark:ring-0"
             >
               <div class="flex items-start justify-between">
                 <div class="flex-1">
@@ -109,8 +136,8 @@
                     <component :is="exercise.icon" class="w-5 h-5" :class="exercise.colorClass.replace('bg-', 'text-')" />
                     <h5 class="font-medium text-gray-900 dark:text-white">{{ tf(`grammar.practice.exercises.${exercise.type}.title`, exercise.title) }}</h5>
                   </div>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ tf(`grammar.practice.exercises.${exercise.type}.description`, exercise.description) }}</p>
-                  <div class="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="text-sm text-gray-600 dark:text-white/60 mb-2">{{ tf(`grammar.practice.exercises.${exercise.type}.description`, exercise.description) }}</p>
+                  <div class="flex items-center space-x-4 text-xs text-gray-500 dark:text-white/60">
                     <span>{{ exercise.difficulty }}</span>
                     <span>{{ exercise.duration }}</span>
                   </div>
@@ -149,27 +176,36 @@
           </div>
         </div>
       </div>
-      
-      <div class="flex justify-end space-x-4 mt-6">
-        <button
-          @click="closeModal"
-          class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#0a0a0a] rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-        >
-          {{ t('common.cancel', 'Cancel') }}
-        </button>
-        <button
-          @click="saveExerciseTypes"
-          class="px-4 py-2 text-sm font-medium text-white bg-gray-800 dark:bg-gray-700 rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors"
-        >
-          {{ t('common.save', 'Save') }}
-        </button>
-      </div>
+            
+            <!-- close body container -->
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 border-t-0 dark:border-t dark:border-gray-custom flex-shrink-0 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+              <div class="flex justify-end space-x-3">
+              <button
+                @click="closeModal"
+                class="px-6 py-2 text-gray-700 dark:text-white/80 bg-gray-100 dark:bg-gray-custom hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+              >
+                {{ t('common.cancel', 'Cancel') }}
+              </button>
+              <button
+                @click="saveExerciseTypes"
+                class="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+              >
+                {{ t('common.save', 'Save') }}
+              </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // Props
@@ -301,5 +337,22 @@ watch(() => props.modelValue, (newValue) => {
       colorClass: 'bg-gray-500'
     })
   }
+})
+
+// Body scroll lock to prevent page scroll behind modal
+const lockBodyScroll = () => {
+  document.body.style.overflow = 'hidden'
+}
+const unlockBodyScroll = () => {
+  document.body.style.overflow = ''
+}
+
+watch(() => props.modelValue, (open) => {
+  if (open) lockBodyScroll()
+  else unlockBodyScroll()
+}, { immediate: true })
+
+onUnmounted(() => {
+  unlockBodyScroll()
 })
 </script>

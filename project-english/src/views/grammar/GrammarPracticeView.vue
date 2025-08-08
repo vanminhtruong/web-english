@@ -151,97 +151,125 @@
     </div>
 
     <!-- Settings Modal -->
-    <div v-if="showSettings" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full mx-4">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            {{ t('grammar.practice.settings.title', 'Settings') }}
-          </h3>
-          <button
-            @click="showSettings = false"
-            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        
-        <div class="space-y-4">
-          <!-- Difficulty Level -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {{ t('grammar.practice.settings.difficulty', 'Difficulty') }}
-            </label>
-            <select 
-              v-model="settings.difficulty"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-mute text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="easy">{{ t('grammar.practice.settings.levels.easy', 'Easy') }}</option>
-              <option value="medium">{{ t('grammar.practice.settings.levels.medium', 'Medium') }}</option>
-              <option value="hard">{{ t('grammar.practice.settings.levels.hard', 'Hard') }}</option>
-            </select>
+    <Transition
+      enter-active-class="transition-all duration-500 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-300 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="showSettings" class="fixed inset-0 bg-black/50 dark:bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <Transition
+          enter-active-class="transition-all duration-500 ease-out"
+          enter-from-class="opacity-0 scale-90 translate-y-8 rotate-1"
+          enter-to-class="opacity-100 scale-100 translate-y-0 rotate-0"
+          leave-active-class="transition-all duration-300 ease-in"
+          leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
+          leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
+        >
+          <div class="w-full max-h-[90vh] flex flex-col max-w-md sm:max-w-md md:max-w-lg" @click.stop>
+            <div class="bg-white dark:bg-[#0a0a0a] shadow-2xl rounded-xl border border-gray-200 dark:border-dark-bg-mute flex flex-col h-full overflow-hidden transform">
+              <!-- Header -->
+              <div class="px-6 py-4 border-b border-gray-200 dark:border-dark-bg-mute flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                    <span>{{ t('grammar.practice.settings.title', 'Settings') }}</span>
+                  </h3>
+                  <button 
+                    @click="showSettings = false"
+                    class="text-gray-400 dark:text-white hover:text-gray-600 dark:hover:text-white transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-dark-bg-mute"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Body -->
+              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0 space-y-4">
+                <!-- Difficulty Level -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                    {{ t('grammar.practice.settings.difficulty', 'Difficulty') }}
+                  </label>
+                  <select 
+                    v-model="settings.difficulty"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value="easy">{{ t('grammar.practice.settings.levels.easy', 'Easy') }}</option>
+                    <option value="medium">{{ t('grammar.practice.settings.levels.medium', 'Medium') }}</option>
+                    <option value="hard">{{ t('grammar.practice.settings.levels.hard', 'Hard') }}</option>
+                  </select>
+                </div>
+
+                <!-- Auto-play Audio -->
+                <div class="flex items-center justify-between">
+                  <label class="text-sm font-medium text-gray-700 dark:text-white">
+                    {{ t('grammar.practice.settings.autoPlay', 'Auto-play audio') }}
+                  </label>
+                  <button
+                    @click="settings.autoPlayAudio = !settings.autoPlayAudio"
+                    :class="[
+                      'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
+                      settings.autoPlayAudio ? 'bg-blue-600' : 'bg-gray-200 dark:bg-dark-bg-mute'
+                    ]"
+                  >
+                    <span
+                      :class="[
+                        'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                        settings.autoPlayAudio ? 'translate-x-6' : 'translate-x-1'
+                      ]"
+                    />
+                  </button>
+                </div>
+
+                <!-- Show Explanations -->
+                <div class="flex items-center justify-between">
+                  <label class="text-sm font-medium text-gray-700 dark:text-white">
+                    {{ t('grammar.practice.settings.showExplanations', 'Show explanations') }}
+                  </label>
+                  <button
+                    @click="settings.showExplanations = !settings.showExplanations"
+                    :class="[
+                      'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
+                      settings.showExplanations ? 'bg-blue-600' : 'bg-gray-200 dark:bg-dark-bg-mute'
+                    ]"
+                  >
+                    <span
+                      :class="[
+                        'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                        settings.showExplanations ? 'translate-x-6' : 'translate-x-1'
+                      ]"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="px-6 py-4 border-t border-gray-200 dark:border-dark-bg-mute flex-shrink-0 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+                <div class="flex justify-end space-x-3">
+                  <button
+                    @click="showSettings = false"
+                    class="px-6 py-2 text-gray-700 dark:text-white bg-gray-100 dark:bg-dark-bg-mute hover:bg-gray-200 dark:hover:bg-dark-bg-soft rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+                  >
+                    {{ t('common.cancel', 'Cancel') }}
+                  </button>
+                  <button
+                    @click="saveSettings"
+                    class="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+                  >
+                    {{ t('common.save', 'Save') }}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <!-- Auto-play Audio -->
-          <div class="flex items-center justify-between">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {{ t('grammar.practice.settings.autoPlay', 'Auto-play audio') }}
-            </label>
-            <button
-              @click="settings.autoPlayAudio = !settings.autoPlayAudio"
-              :class="[
-                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-                settings.autoPlayAudio ? 'bg-blue-600' : 'bg-gray-200 dark:bg-mute'
-              ]"
-            >
-              <span
-                :class="[
-                  'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                  settings.autoPlayAudio ? 'translate-x-6' : 'translate-x-1'
-                ]"
-              />
-            </button>
-          </div>
-          
-          <!-- Show Explanations -->
-          <div class="flex items-center justify-between">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {{ t('grammar.practice.settings.showExplanations', 'Show explanations') }}
-            </label>
-            <button
-              @click="settings.showExplanations = !settings.showExplanations"
-              :class="[
-                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-                settings.showExplanations ? 'bg-blue-600' : 'bg-gray-200 dark:bg-mute'
-              ]"
-            >
-              <span
-                :class="[
-                  'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                  settings.showExplanations ? 'translate-x-6' : 'translate-x-1'
-                ]"
-              />
-            </button>
-          </div>
-        </div>
-        
-        <div class="flex justify-end space-x-4 mt-6">
-          <button
-            @click="showSettings = false"
-            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#0a0a0a] rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-          >
-            {{ t('common.cancel', 'Cancel') }}
-          </button>
-          <button
-            @click="saveSettings"
-            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            {{ t('common.save', 'Save') }}
-          </button>
-        </div>
+        </Transition>
       </div>
-    </div>
+    </Transition>
 
     <!-- Results Modal -->
     <div v-if="showResults" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
