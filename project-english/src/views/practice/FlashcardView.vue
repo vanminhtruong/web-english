@@ -93,8 +93,14 @@
                 :image-answer="imageAnswer"
                 :image-answered="imageAnswered"
                 :image-correct="imageCorrect"
+                :image-quiz-enabled="imageQuizEnabled"
+                :image-quiz-options="imageQuizOptions"
+                :image-quiz-selected="imageQuizSelected"
+                :image-quiz-answered="imageQuizAnswered"
                 @update:image-answer="imageAnswer = $event"
                 @check-answer="handleImageAnswer"
+                @update:image-quiz-enabled="onToggleImageQuiz($event)"
+                @select-image-quiz-answer="handleImageQuizAnswer($event)"
               />
             </template>
             <template v-else-if="practiceMode === 'pronunciation'">
@@ -542,6 +548,12 @@ const {
   imageCorrect,
   checkImageAnswer,
   resetImageMode,
+  imageQuizEnabled,
+  imageQuizOptions,
+  imageQuizSelected,
+  imageQuizAnswered,
+  generateImageQuizOptions,
+  selectImageQuizAnswer,
   resetAllModes,
   getCanProceed,
   getShortMeaning,
@@ -576,6 +588,10 @@ interface CardState {
   imageAnswer?: string
   imageAnswered?: boolean
   imageCorrect?: boolean
+  // Image-quiz state (within image mode)
+  imageQuizOptions?: string[]
+  imageQuizSelected?: string
+  imageQuizAnswered?: boolean
   
   // Pronunciation mode
   pronunciationResult?: string
@@ -610,6 +626,9 @@ const saveCurrentCardState = () => {
     imageAnswer: imageAnswer.value || undefined,
     imageAnswered: imageAnswered.value || undefined,
     imageCorrect: imageCorrect.value || undefined,
+    imageQuizOptions: imageQuizOptions.value && imageQuizOptions.value.length ? imageQuizOptions.value : undefined,
+    imageQuizSelected: imageQuizSelected.value || undefined,
+    imageQuizAnswered: imageQuizAnswered.value || undefined,
     
     // Pronunciation mode
     pronunciationResult: pronunciationResult.value || undefined,
@@ -669,6 +688,15 @@ const restoreCardState = () => {
     if (savedState.imageCorrect !== undefined) {
       imageCorrect.value = savedState.imageCorrect
     }
+    if (savedState.imageQuizOptions !== undefined) {
+      imageQuizOptions.value = savedState.imageQuizOptions
+    }
+    if (savedState.imageQuizSelected !== undefined) {
+      imageQuizSelected.value = savedState.imageQuizSelected
+    }
+    if (savedState.imageQuizAnswered !== undefined) {
+      imageQuizAnswered.value = savedState.imageQuizAnswered
+    }
     
     // Restore pronunciation mode
     if (savedState.pronunciationResult !== undefined) {
@@ -698,6 +726,21 @@ const handleListeningAnswer = () => {
   checkListeningAnswer()
   recordAnswer(listeningCorrect.value)
 }
+// Image-quiz handlers (image mode multiple-choice)
+const onToggleImageQuiz = (enabled: boolean) => {
+  imageQuizEnabled.value = enabled
+  // Reset image mode state, but keep toggle as per composable's behavior
+  resetImageMode()
+  if (enabled) {
+    // Prepare options for current card
+    generateImageQuizOptions()
+  }
+}
+
+const handleImageQuizAnswer = (answer: string) => {
+  const isCorrect = selectImageQuizAnswer(answer)
+  recordAnswer(!!isCorrect)
+}
 const resetAndRestoreCard = () => {
   // First, reset all modes to ensure a clean slate from the previous card.
   resetAllModes();
@@ -712,6 +755,12 @@ const resetAndRestoreCard = () => {
     // Only generate options if the card hasn't been answered in a quiz before.
     if (!savedState || savedState.quizAnswer === undefined) {
       generateQuizOptions();
+    }
+  }
+  // For image mode with quiz enabled, ensure options exist
+  if (practiceMode.value === 'image' && imageQuizEnabled.value && currentShuffledCard.value) {
+    if (!imageQuizOptions.value || imageQuizOptions.value.length === 0) {
+      generateImageQuizOptions()
     }
   }
 };
@@ -838,9 +887,13 @@ watch(practiceMode, () => {
   // When practice mode changes, reset the card.
   // No state will be restored because we are changing modes.
   resetAndRestoreCard();
+  
+  // Ensure shuffle is applied after mode switch (e.g., Image mode)
+  // If shuffle is enabled but no shuffled list exists yet, generate it.
+  if (flashcardSettings.value.shuffleCards && shuffledFlashcards.value.length === 0) {
+    shuffleFlashcards()
+  }
 })
-
-
 
 // Save session to history when completed and stop timer
 watch(showCompletionModal, (newValue) => {

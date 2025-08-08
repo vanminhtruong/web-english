@@ -68,6 +68,15 @@ export function useFlashcardGame(flashcards: Ref<Vocabulary[]>) {
     mode: 'flashcard'
   })
 
+  // Ensure stats.mode always reflects the current practice mode
+  // Initial sync (in case a saved mode is loaded from storage)
+  stats.value.mode = practiceMode.value
+
+  // Keep stats.mode in sync when practice mode changes
+  watch(practiceMode, (mode) => {
+    stats.value.mode = mode
+  })
+
   // Current card
   const currentCard = computed(() => {
     if (flashcards.value.length === 0) return null

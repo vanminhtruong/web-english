@@ -1,11 +1,27 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6 min-h-96 max-h-[500px]">
+  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-dark-bg-mute p-6 min-h-96 max-h-[500px]">
     <div class="h-full flex flex-col overflow-hidden">
       <!-- Category Badge -->
       <div class="mb-4 text-center">
-        <span class="px-3 py-1 bg-purple-100 dark:bg-gray-800 text-purple-800 dark:text-purple-300 text-sm font-medium rounded-full">
+        <span class="px-3 py-1 bg-purple-100 dark:bg-dark-bg-mute text-purple-800 dark:text-purple-300 text-sm font-medium rounded-full">
           {{ currentCard?.category ? getTopicName(currentCard.category) : '' }}
         </span>
+      </div>
+
+      <!-- Image Quiz Toggle -->
+      <div class="mb-3 flex items-center justify-center gap-3">
+        <span class="text-xs text-gray-600 dark:text-white/80">{{ t('flashcard.image.quizToggle', 'Multiple Choice') }}</span>
+        <button
+          :aria-label="t('flashcard.image.quizToggle', 'Multiple Choice')"
+          @click="toggleImageQuiz()"
+          class="relative inline-flex items-center h-5 w-9 rounded-full transition-colors duration-200 focus:outline-none border border-gray-300 dark:border-dark-bg-mute"
+          :class="imageQuizEnabled ? 'bg-purple-600' : 'bg-gray-200 dark:bg-dark-bg-mute'"
+        >
+          <span
+            class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200"
+            :class="imageQuizEnabled ? 'translate-x-4' : 'translate-x-1'"
+          />
+        </button>
       </div>
 
       <!-- Image Display -->
@@ -14,41 +30,72 @@
           <img 
             :src="currentCard.image" 
             :alt="t('flashcard.image.imageAlt', 'Flashcard image')"
-            class="max-w-full max-h-40 object-contain rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+            class="max-w-full max-h-40 object-contain rounded-lg shadow-md border border-gray-200 dark:border-dark-bg-mute"
             @error="handleImageError"
           />
-          <div v-if="imageError" class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <div v-if="imageError" class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-dark-bg-mute rounded-lg">
             <div class="text-center">
-              <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ t('flashcard.image.imageError', 'Could not load image.') }}</p>
+              <p class="text-sm text-gray-500 dark:text-white/60 mt-2">{{ t('flashcard.image.imageError', 'Could not load image.') }}</p>
             </div>
           </div>
         </div>
         
         <!-- No Image State -->
-        <div v-else class="flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg p-8 w-full max-w-sm">
+        <div v-else class="flex items-center justify-center bg-gray-100 dark:bg-dark-bg-mute rounded-lg p-8 w-full max-w-sm">
           <div class="text-center">
-            <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ t('flashcard.image.noImage', 'No image available for this card.') }}</p>
+            <p class="text-sm text-gray-500 dark:text-white/60 mt-2">{{ t('flashcard.image.noImage', 'No image available for this card.') }}</p>
           </div>
         </div>
       </div>
 
-      <!-- Answer Input -->
+      <!-- Answer Area -->
       <div class="space-y-3 flex-shrink-0">
-        <div>
+        <!-- Typing input when toggle is OFF -->
+        <div v-if="!imageQuizEnabled">
           <input
             v-model="userAnswer"
             @keyup.enter="checkAnswer"
             type="text"
             :disabled="imageAnswered"
             :placeholder="t('flashcard.image.placeholder', 'Enter your answer...')"
-            class="w-full px-4 py-3 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-4 py-3 text-center text-lg border border-gray-300 dark:border-dark-bg-mute rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-white/50 disabled:opacity-50 disabled:cursor-not-allowed"
           />
+        </div>
+
+        <!-- Multiple choice when toggle is ON -->
+        <div v-else>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 justify-items-center sm:justify-items-center justify-center mx-auto max-w-[560px] sm:max-w-[520px]">
+            <button
+              v-for="(opt, idx) in imageQuizOptions"
+              :key="idx"
+              @click="onSelectImageOption(opt)"
+              :disabled="imageQuizAnswered"
+              translate="no"
+              class="notranslate px-3 py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full max-w-[260px] sm:max-w-[240px]"
+              :class="[
+                imageQuizAnswered
+                  ? (isOptionCorrect(opt)
+                      ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700'
+                      : isOptionSelected(opt)
+                        ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 border-red-300 dark:border-red-700'
+                        : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60')
+                  : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60 hover:shadow-sm hover:scale-[1.01] dark:hover:bg-white/5'
+              ]"
+            >
+              <span
+                class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80"
+              >
+                {{ String.fromCharCode(65 + idx) }}
+              </span>
+              <span class="truncate">{{ opt }}</span>
+            </button>
+          </div>
         </div>
 
         <!-- Show result after answered -->
@@ -72,26 +119,29 @@
           
           <!-- Show correct answer if wrong -->
           <div v-if="!imageCorrect" class="text-center">
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-gray-600 dark:text-white/70">
               {{ t('flashcard.image.correctAnswer', 'Correct answer') }}: 
               <span class="font-semibold text-gray-900 dark:text-white">{{ currentCard?.word }}</span>
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+            <p class="text-xs text-gray-500 dark:text-white/60 mt-1 line-clamp-2">
               {{ currentCard?.meaning }}
             </p>
           </div>
           
           <!-- Show meaning if correct -->
           <div v-else class="text-center">
-            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+            <p class="text-sm text-gray-600 dark:text-white/70 line-clamp-2">
               {{ currentCard?.meaning }}
             </p>
           </div>
         </div>
 
         <!-- Instruction text -->
-        <p v-if="!imageAnswered" class="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p v-if="!imageAnswered && !imageQuizEnabled" class="text-center text-sm text-gray-500 dark:text-white/60">
           {{ t('flashcard.image.instruction', 'Type the word for the image above and press Enter.') }}
+        </p>
+        <p v-if="!imageAnswered && imageQuizEnabled" class="text-center text-sm text-gray-500 dark:text-white/60">
+          {{ t('flashcard.image.instructionQuiz', 'Choose the correct word for the image.') }}
         </p>
       </div>
     </div>
@@ -127,11 +177,17 @@ interface Props {
   imageAnswer: string
   imageAnswered: boolean
   imageCorrect: boolean
+  imageQuizEnabled: boolean
+  imageQuizOptions: string[]
+  imageQuizSelected: string
+  imageQuizAnswered: boolean
 }
 
 interface Emits {
   (e: 'update:imageAnswer', value: string): void
   (e: 'checkAnswer'): void
+  (e: 'update:imageQuizEnabled', value: boolean): void
+  (e: 'select-image-quiz-answer', value: string): void
 }
 
 const props = defineProps<Props>()
@@ -198,4 +254,18 @@ watch(() => props.imageAnswered, (newValue) => {
     }, 50)
   }
 })
+
+// Toggle Image Quiz
+const toggleImageQuiz = () => {
+  emit('update:imageQuizEnabled', !props.imageQuizEnabled)
+}
+
+// Helpers for options UI
+const onSelectImageOption = (opt: string) => {
+  if (!props.imageQuizAnswered) {
+    emit('select-image-quiz-answer', opt)
+  }
+}
+const isOptionSelected = (opt: string) => props.imageQuizSelected === opt
+const isOptionCorrect = (opt: string) => props.currentCard ? opt.trim().toLowerCase() === props.currentCard.word.trim().toLowerCase() : false
 </script>

@@ -49,6 +49,12 @@ export function useFlashcardModes(
   const imageAnswered = ref(false)
   const imageCorrect = ref(false)
 
+  // Image-Quiz (multiple choice within Image mode)
+  const imageQuizEnabled = ref(false)
+  const imageQuizOptions = ref<string[]>([])
+  const imageQuizSelected = ref('')
+  const imageQuizAnswered = ref(false)
+
   // Pronunciation mode states
   const isRecording = ref(false)
   const pronunciationResult = ref('')
@@ -144,6 +150,44 @@ export function useFlashcardModes(
       onIncorrectAnswer?.()
     }
     
+    return isCorrect
+  }
+
+  // Image-Quiz methods (multiple choice answers are the WORDs)
+  const generateImageQuizOptions = () => {
+    if (!currentCard.value) return
+
+    const correctWord = currentCard.value.word.trim()
+    const allWrong = allVocabularies.value
+      .filter(card => card.id !== currentCard.value?.id)
+      .map(card => card.word.trim())
+      .filter(word => word.toLowerCase() !== correctWord.toLowerCase())
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+
+    const wrongOptions = allWrong.length >= 3 ? allWrong.slice(0, 3) : allWrong
+    imageQuizOptions.value = [correctWord, ...wrongOptions].sort(() => Math.random() - 0.5)
+  }
+
+  const selectImageQuizAnswer = (answer: string) => {
+    if (imageQuizAnswered.value) return
+
+    imageQuizSelected.value = answer
+    imageQuizAnswered.value = true
+
+    const correctWord = currentCard.value ? currentCard.value.word.trim().toLowerCase() : ''
+    const isCorrect = answer.trim().toLowerCase() === correctWord
+
+    // Reflect into base Image mode state so existing flow/stats work
+    imageAnswered.value = true
+    imageCorrect.value = isCorrect
+
+    if (isCorrect) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
+
     return isCorrect
   }
 
@@ -247,6 +291,10 @@ export function useFlashcardModes(
     imageAnswer.value = ''
     imageAnswered.value = false
     imageCorrect.value = false
+    // Reset Image-Quiz, but keep the toggle value as-is; caller can decide
+    imageQuizOptions.value = []
+    imageQuizSelected.value = ''
+    imageQuizAnswered.value = false
   }
 
   const resetPronunciationMode = () => {
@@ -314,6 +362,14 @@ export function useFlashcardModes(
     imageCorrect,
     checkImageAnswer,
     resetImageMode,
+
+    // Image-Quiz (within Image mode)
+    imageQuizEnabled,
+    imageQuizOptions,
+    imageQuizSelected,
+    imageQuizAnswered,
+    generateImageQuizOptions,
+    selectImageQuizAnswer,
 
     // Pronunciation mode
     isRecording,

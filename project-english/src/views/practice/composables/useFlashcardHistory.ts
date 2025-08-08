@@ -77,8 +77,13 @@ export function useFlashcardHistory() {
         return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
       case 'listening':
         return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+      case 'image':
+        return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
+      case 'pronunciation':
+        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200'
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+        // Avoid gray in dark mode per UI rules
+        return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
     }
   }
 
@@ -92,6 +97,10 @@ export function useFlashcardHistory() {
         return t('flashcard.modes.typing')
       case 'listening':
         return t('flashcard.modes.listening')
+      case 'image':
+        return t('flashcard.modes.image')
+      case 'pronunciation':
+        return t('flashcard.modes.pronunciation')
       default:
         return 'Unknown'
     }
