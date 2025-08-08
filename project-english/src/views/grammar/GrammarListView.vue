@@ -131,7 +131,7 @@ const practiceLesson = (lesson: any) => {
 }
 
 const deleteLesson = (lesson: any) => {
-  if (confirm(t('grammar.confirmDelete', { title: lesson.title }))) {
+  if (confirm(t('grammar.confirmDelete', { title: lesson.title }) || `Delete lesson "${lesson.title}"?`)) {
     grammarStore.deleteLesson(lesson.id)
   }
 }

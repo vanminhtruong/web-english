@@ -241,7 +241,7 @@ const editExerciseType = (index: number) => {
 }
 
 const deleteExerciseType = (index: number) => {
-  if (confirm(t('common.confirmDelete'))) {
+  if (confirm(t('common.confirmDelete', 'Are you sure you want to delete this?'))) {
     emit('delete-exercise', index)
   }
 }

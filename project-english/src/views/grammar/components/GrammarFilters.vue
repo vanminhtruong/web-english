@@ -3,40 +3,40 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <!-- Search -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('common.search') }}</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('common.search', 'Search') }}</label>
         <input
           :value="searchQuery"
           @input="handleSearchInput"
           type="text"
-          :placeholder="t('grammar.search')"
+          :placeholder="t('grammar.search', 'Search grammar...')"
           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
         />
       </div>
       
       <!-- Level Filter -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('grammar.level') }}</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('grammar.level', 'Level') }}</label>
         <select 
           :value="selectedLevel" 
           @change="handleLevelChange"
           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
         >
-          <option value="">{{ t('common.all') }}</option>
-          <option value="beginner">{{ t('grammar.levels.beginner') }}</option>
-          <option value="intermediate">{{ t('grammar.levels.intermediate') }}</option>
-          <option value="advanced">{{ t('grammar.levels.advanced') }}</option>
+          <option value="">{{ t('common.all', 'All') }}</option>
+          <option value="beginner">{{ t('grammar.levels.beginner', 'Beginner') }}</option>
+          <option value="intermediate">{{ t('grammar.levels.intermediate', 'Intermediate') }}</option>
+          <option value="advanced">{{ t('grammar.levels.advanced', 'Advanced') }}</option>
         </select>
       </div>
       
       <!-- Category Filter -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('grammar.category') }}</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('grammar.category', 'Category') }}</label>
         <select 
           :value="selectedCategory" 
           @change="handleCategoryChange"
           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
         >
-          <option value="">{{ t('common.all') }}</option>
+          <option value="">{{ t('common.all', 'All') }}</option>
           <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
         </select>
       </div>

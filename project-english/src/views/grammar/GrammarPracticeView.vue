@@ -1290,7 +1290,7 @@ const editExerciseType = (index: number) => {
 }
 
 const deleteExerciseType = (index: number) => {
-  if (confirm(t('common.confirmDelete'))) {
+  if (confirm(t('common.confirmDelete', 'Are you sure you want to delete this?'))) {
     exerciseTypes.value.splice(index, 1)
   }
 }
@@ -1429,7 +1429,7 @@ const editQuestion = (index: number) => {
 }
 
 const deleteQuestion = (index: number) => {
-  if (confirm(t('common.confirmDelete'))) {
+  if (confirm(t('common.confirmDelete', 'Are you sure you want to delete this?'))) {
     const exerciseType = selectedExerciseTypeForQuestions.value
     exerciseQuestions.value[exerciseType].splice(index, 1)
     saveQuestionsToStorage()

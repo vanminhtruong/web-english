@@ -401,7 +401,7 @@ const saveDraft = () => {
 }
 
 const clearText = () => {
-  if (confirm(t('grammar.practice.exercises.writing.confirmClear'))) {
+  if (confirm(t('grammar.practice.exercises.writing.confirmClear', 'Clear all text?'))) {
     userText.value = ''
     wordCount.value = 0
   }
