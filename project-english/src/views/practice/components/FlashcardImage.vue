@@ -1,5 +1,10 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-dark-bg-mute p-6 min-h-96 max-h-[500px]">
+  <div
+    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-dark-bg-mute p-6 min-h-96 max-h-[500px] select-none"
+    @copy.prevent
+    @cut.prevent
+    @contextmenu.prevent
+  >
     <div class="h-full flex flex-col overflow-hidden">
       <!-- Category Badge -->
       <div class="mb-4 text-center">
@@ -48,7 +53,7 @@
             type="text"
             :disabled="imageAnswered"
             :placeholder="t('flashcard.image.placeholder', 'Enter your answer...')"
-            class="w-full px-4 py-3 text-center text-lg border border-gray-300 dark:border-dark-bg-mute rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-white/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-4 py-3 text-center text-lg border border-gray-300 dark:border-dark-bg-mute rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-white/50 disabled:opacity-50 disabled:cursor-not-allowed select-text"
           />
         </div>
 

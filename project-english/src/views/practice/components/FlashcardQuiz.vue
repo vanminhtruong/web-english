@@ -1,5 +1,10 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96">
+  <div
+    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96 select-none"
+    @copy.prevent
+    @cut.prevent
+    @contextmenu.prevent
+  >
     <div class="h-full flex flex-col">
       <!-- Header -->
       <div class="text-center mb-4">

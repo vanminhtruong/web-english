@@ -46,6 +46,10 @@
                 type="button"
                 @click="toggleMobileDropdown"
                 class="relative pl-2 pr-8 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0f0f0f] cursor-pointer text-gray-900 dark:text-white flex items-center min-w-[120px]"
+                :class="practiceStarted ? 'opacity-50 cursor-not-allowed' : ''"
+                :disabled="practiceStarted"
+                :aria-disabled="practiceStarted ? 'true' : 'false'"
+                :title="practiceStarted ? t('flashcard.modes.change_disabled_during_practice', 'Mode change is disabled during practice') : t('flashcard.header.selectMode', 'Select mode')"
                 :aria-label="t('flashcard.header.selectMode', 'Select mode')"
               >
                 <span class="truncate">
@@ -64,7 +68,7 @@
               </button>
               <transition name="fade" appear>
                 <div
-                  v-if="mobileDropdownOpen"
+                  v-if="mobileDropdownOpen && !practiceStarted"
                   class="absolute right-0 mt-1 w-44 z-[9999] rounded-md shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f0f0f] overflow-hidden"
                 >
                   <ul class="py-1 text-xs text-gray-900 dark:text-white">
@@ -193,6 +197,10 @@
                 type="button"
                 @click="toggleDesktopDropdown"
                 class="relative pl-3 pr-10 py-1 md:pl-4 md:pr-12 md:py-2 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#0f0f0f] cursor-pointer text-gray-900 dark:text-white flex items-center min-w-[140px]"
+                :class="practiceStarted ? 'opacity-50 cursor-not-allowed' : ''"
+                :disabled="practiceStarted"
+                :aria-disabled="practiceStarted ? 'true' : 'false'"
+                :title="practiceStarted ? t('flashcard.modes.change_disabled_during_practice', 'Mode change is disabled during practice') : t('flashcard.header.selectMode', 'Select mode')"
                 :aria-label="t('flashcard.header.selectMode', 'Select mode')"
               >
                 <span class="truncate">
@@ -211,7 +219,7 @@
               </button>
               <transition name="fade" appear>
                 <div
-                  v-if="desktopDropdownOpen"
+                  v-if="desktopDropdownOpen && !practiceStarted"
                   class="absolute right-0 mt-1 w-52 z-[9999] rounded-md shadow-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f0f0f] overflow-hidden"
                 >
                   <ul class="py-1 text-sm text-gray-900 dark:text-white">
@@ -319,15 +327,22 @@ const closeAll = () => {
 }
 
 const toggleMobileDropdown = () => {
+  if (props.practiceStarted) return
   mobileDropdownOpen.value = !mobileDropdownOpen.value
   if (mobileDropdownOpen.value) desktopDropdownOpen.value = false
 }
 const toggleDesktopDropdown = () => {
+  if (props.practiceStarted) return
   desktopDropdownOpen.value = !desktopDropdownOpen.value
   if (desktopDropdownOpen.value) mobileDropdownOpen.value = false
 }
 
 const selectMode = (mode: PracticeMode) => {
+  if (props.practiceStarted) {
+    // Do not allow mode changes during active practice
+    closeAll()
+    return
+  }
   emit('change-practice-mode', mode)
   closeAll()
 }

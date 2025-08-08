@@ -3,7 +3,10 @@
     <div
       :class="['flashcard', { 'flipped': isFlipped }]"
       @click="$emit('flip-card')"
-      class="relative w-full cursor-pointer h-80 sm:h-96 md:h-[28rem]"
+      class="relative w-full cursor-pointer h-80 sm:h-96 md:h-[28rem] select-none"
+      @copy.prevent
+      @cut.prevent
+      @contextmenu.prevent
     >
       <!-- Front Side -->
       <div class="flashcard-face flashcard-front absolute inset-0 bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 flex items-center justify-center p-4 sm:p-6 md:p-8">

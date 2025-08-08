@@ -1,5 +1,10 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96">
+  <div
+    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96 select-none"
+    @copy.prevent
+    @cut.prevent
+    @contextmenu.prevent
+  >
     <div class="h-full flex flex-col">
       <!-- Header -->
       <div class="text-center mb-6">
@@ -25,7 +30,7 @@
               @keyup.enter="handleCheckAnswer"
               type="text"
               :disabled="typingAnswered"
-              class="w-full p-3 text-center text-xl sm:text-2xl md:text-3xl border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+              class="w-full p-3 text-center text-xl sm:text-2xl md:text-3xl border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 disabled:bg-gray-100 dark:disabled:bg-gray-700 select-text"
               :placeholder="t('flashcard.typing.placeholder', 'Type the word...')"
             />
             

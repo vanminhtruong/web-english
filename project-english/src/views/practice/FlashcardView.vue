@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-black dark:to-gray-900">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-dark-bg dark:to-dark-bg-soft">
     <!-- Header -->
     <FlashcardHeader
       :current-index="currentIndex"
@@ -28,7 +28,7 @@
     <!-- Voice Settings -->
     <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
       <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 md:p-5">
+        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-dark-bg-mute p-3 sm:p-4 md:p-5">
           <VoiceSelector :show-voice-info="false" />
         </div>
       </div>
@@ -37,12 +37,11 @@
     <!-- Date Filter -->
     <LazyLoadComponent animation-type="slide-right" :threshold="0.1" root-margin="-50px">
       <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 md:p-5">
+        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-dark-bg-mute p-3 sm:p-4 md:p-5">
           <FlashcardDateFilter
             :vocabularies="allVocabularies"
-            :enabled="dateFilterEnabled"
             :selectedDate="selectedDate"
-            @update:enabled="dateFilterEnabled = $event"
+            :practice-started="practiceStarted"
             @update:selectedDate="selectedDate = $event"
           />
         </div>
@@ -277,30 +276,26 @@ const modalStore = useModalStore()
 // Date filter state with localStorage persistence
 const STORAGE_KEY = 'flashcard-date-filter'
 
-// Load date filter state from localStorage
+// Load date filter state from localStorage (always enabled)
 const loadDateFilterState = () => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
       const parsed = JSON.parse(saved)
       return {
-        enabled: parsed.enabled || false,
         selectedDate: parsed.selectedDate || ''
       }
     }
   } catch (error) {
     console.error('Error loading date filter state:', error)
   }
-  return { enabled: false, selectedDate: '' }
+  return { selectedDate: '' }
 }
 
-// Save date filter state to localStorage
+// Save date filter state to localStorage (enabled is implicitly true)
 const saveDateFilterState = () => {
   try {
-    const state = {
-      enabled: dateFilterEnabled.value,
-      selectedDate: selectedDate.value
-    }
+    const state = { selectedDate: selectedDate.value }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
   } catch (error) {
     console.error('Error saving date filter state:', error)
@@ -309,15 +304,16 @@ const saveDateFilterState = () => {
 
 // Initialize state from localStorage
 const initialState = loadDateFilterState()
-const dateFilterEnabled = ref(initialState.enabled)
+// Keep ref for SettingsModal compatibility; always true
+const dateFilterEnabled = ref(true)
 const selectedDate = ref(initialState.selectedDate)
 
 // Filter flashcards by date and category
 const filteredVocabularies = computed(() => {
   let vocabularies = allVocabularies.value
 
-  // Filter by date if enabled
-  if (dateFilterEnabled.value && selectedDate.value) {
+  // Filter by date (always enabled)
+  if (selectedDate.value) {
     vocabularies = vocabularies.filter((vocab: Vocabulary) => {
       const vocabDateKey = getDateKey(vocab.createdAt)
       return vocabDateKey === selectedDate.value
