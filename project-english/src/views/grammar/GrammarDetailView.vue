@@ -368,7 +368,12 @@ const getLevelColor = (level: string) => {
 }
 
 const getLevelText = (level: string) => {
-  return t(`grammar.levels.${level}`)
+  const fallbackMap: Record<string, string> = {
+    beginner: 'Beginner',
+    intermediate: 'Intermediate',
+    advanced: 'Advanced',
+  }
+  return t(`grammar.levels.${level}`, fallbackMap[level] || 'Level')
 }
 
 onMounted(() => {

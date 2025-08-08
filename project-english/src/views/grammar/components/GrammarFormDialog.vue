@@ -28,7 +28,7 @@
                 <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a] -mx-4 -mt-5 px-4 pt-5 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6">
                   <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white flex items-center space-x-2">
                     <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                    <span>{{ isEdit ? t('grammar.editLesson') : t('grammar.addNewLesson') }}</span>
+                    <span>{{ isEdit ? t('grammar.editLesson', 'Edit Lesson') : t('grammar.addNewLesson', 'Add New Lesson') }}</span>
                   </h3>
                   <button @click="closeDialog" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,7 +51,7 @@
                       <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 0.2s">
                         <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-blue-500 rounded mr-2"></span>
-                          {{ t('common.title') }} <span class="text-red-500">*</span>
+                          {{ t('common.title', 'Title') }} <span class="text-red-500">*</span>
                         </label>
                         <input
                           id="title"
@@ -59,7 +59,7 @@
                           type="text"
                           required
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500 transform hover:scale-[1.02]"
-                          :placeholder="t('grammar.titlePlaceholder')"
+                          :placeholder="t('grammar.titlePlaceholder', 'Enter lesson title')"
                         />
                       </div>
 
@@ -67,7 +67,7 @@
                       <div class="animate-fade-in-up" style="animation-delay: 0.3s">
                         <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-green-500 rounded mr-2"></span>
-                          {{ t('grammar.category') }} <span class="text-red-500">*</span>
+                          {{ t('grammar.category', 'Category') }} <span class="text-red-500">*</span>
                         </label>
                         <select
                           id="category"
@@ -75,7 +75,7 @@
                           required
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 hover:border-green-400 dark:hover:border-green-500 transform hover:scale-[1.02] cursor-pointer"
                         >
-                          <option value="">{{ t('grammar.selectCategory') }}</option>
+                          <option value="">{{ t('grammar.selectCategory', 'Select category') }}</option>
                           <option v-for="category in categories" :key="category" :value="category">
                             {{ category }}
                           </option>
@@ -86,7 +86,7 @@
                       <div class="animate-fade-in-up" style="animation-delay: 0.4s">
                         <label for="level" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-purple-500 rounded mr-2"></span>
-                          {{ t('grammar.level') }} <span class="text-red-500">*</span>
+                          {{ t('grammar.level', 'Level') }} <span class="text-red-500">*</span>
                         </label>
                         <select
                           id="level"
@@ -94,10 +94,10 @@
                           required
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:border-purple-400 dark:hover:border-purple-500 transform hover:scale-[1.02] cursor-pointer"
                         >
-                          <option value="">{{ t('grammar.selectLevel') }}</option>
-                          <option value="beginner">{{ t('grammar.levels.beginner') }}</option>
-                          <option value="intermediate">{{ t('grammar.levels.intermediate') }}</option>
-                          <option value="advanced">{{ t('grammar.levels.advanced') }}</option>
+                          <option value="">{{ t('grammar.selectLevel', 'Select level') }}</option>
+                          <option value="beginner">{{ t('grammar.levels.beginner', 'Beginner') }}</option>
+                          <option value="intermediate">{{ t('grammar.levels.intermediate', 'Intermediate') }}</option>
+                          <option value="advanced">{{ t('grammar.levels.advanced', 'Advanced') }}</option>
                         </select>
                       </div>
 
@@ -105,7 +105,7 @@
                       <div class="animate-fade-in-up" style="animation-delay: 0.5s">
                         <label for="duration" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-orange-500 rounded mr-2"></span>
-                          {{ t('grammar.durationLabel') }} <span class="text-red-500">*</span>
+                          {{ t('grammar.durationLabel', 'Duration (minutes)') }} <span class="text-red-500">*</span>
                         </label>
                         <input
                           id="duration"
@@ -122,7 +122,7 @@
                       <div class="md:col-span-2 animate-fade-in-up" style="animation-delay: 0.6s">
                         <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-indigo-500 rounded mr-2"></span>
-                          {{ t('grammar.description') }} <span class="text-red-500">*</span>
+                          {{ t('grammar.description', 'Description') }} <span class="text-red-500">*</span>
                         </label>
                         <textarea
                           id="description"
@@ -130,7 +130,7 @@
                           rows="3"
                           required
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-400 dark:hover:border-indigo-500 transform hover:scale-[1.02] resize-none"
-                          :placeholder="t('grammar.descriptionPlaceholder')"
+                          :placeholder="t('grammar.descriptionPlaceholder', 'Enter a brief description')"
                         ></textarea>
                       </div>
                     </div>
@@ -140,7 +140,7 @@
                   <div class="bg-white dark:bg-[#0f0f0f] shadow-lg rounded-xl p-6 border border-gray-200 dark:border-gray-700 animate-fade-in-up" style="animation-delay: 0.7s">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-6 flex items-center">
                       <span class="w-1 h-4 bg-teal-500 rounded mr-2"></span>
-                      {{ t('grammar.lessonContent') }}
+                      {{ t('grammar.lessonContent', 'Lesson Content') }}
                     </h3>
                     
                     <div class="space-y-6">
@@ -148,7 +148,7 @@
                       <div class="animate-fade-in-up" style="animation-delay: 0.8s">
                         <label for="theory" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-teal-500 rounded mr-2"></span>
-                          {{ t('grammar.theory') }} <span class="text-red-500">*</span>
+                          {{ t('grammar.theory', 'Theory') }} <span class="text-red-500">*</span>
                         </label>
                         <textarea
                           id="theory"
@@ -156,16 +156,16 @@
                           rows="6"
                           required
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300 hover:border-teal-400 dark:hover:border-teal-500 transform hover:scale-[1.02] resize-none"
-                          :placeholder="t('grammar.theoryPlaceholder')"
+                          :placeholder="t('grammar.theoryPlaceholder', 'Enter grammar theory')"
                         ></textarea>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ t('grammar.markdownSupported') }}</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ t('grammar.markdownSupported', 'Markdown is supported') }}</p>
                       </div>
 
                       <!-- Structure -->
                       <div class="animate-fade-in-up" style="animation-delay: 0.9s">
                         <label for="structure" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-pink-500 rounded mr-2"></span>
-                          {{ t('grammar.structure') }} <span class="text-red-500">*</span>
+                          {{ t('grammar.structure', 'Structure') }} <span class="text-red-500">*</span>
                         </label>
                         <textarea
                           id="structure"
@@ -173,7 +173,7 @@
                           rows="4"
                           required
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 hover:border-pink-400 dark:hover:border-pink-500 transform hover:scale-[1.02] resize-none"
-                          :placeholder="t('grammar.structurePlaceholder')"
+                          :placeholder="t('grammar.structurePlaceholder', 'Enter structure')"
                         ></textarea>
                       </div>
 
@@ -181,7 +181,7 @@
                       <div class="animate-fade-in-up" style="animation-delay: 1.0s">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-yellow-500 rounded mr-2"></span>
-                          {{ t('grammar.examples') }} <span class="text-red-500">*</span>
+                          {{ t('grammar.examples', 'Examples') }} <span class="text-red-500">*</span>
                         </label>
                         
                         <div class="space-y-2">
@@ -191,15 +191,13 @@
                                 v-model="example.text"
                                 type="text"
                                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300 hover:border-yellow-400 dark:hover:border-yellow-500 transform hover:scale-[1.02]"
-                                :placeholder="t('grammar.examplePlaceholder', { index: index + 1 })"
-                                required
+                                :placeholder="tf('grammar.examplePlaceholder', 'Example {{index}}', { index: index + 1 })"
                               />
                               <input
                                 v-model="example.translation"
                                 type="text"
                                 class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300 hover:border-yellow-400 dark:hover:border-yellow-500 transform hover:scale-[1.02]"
-                                :placeholder="t('grammar.translationPlaceholder', { index: index + 1 })"
-                                required
+                                :placeholder="tf('grammar.translationPlaceholder', 'Translation {{index}}', { index: index + 1 })"
                               />
                             </div>
                             <button 
@@ -223,7 +221,7 @@
                           <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                           </svg>
-                          {{ t('grammar.addExample') }}
+                          {{ t('grammar.addExample', 'Add example') }}
                         </button>
                       </div>
 
@@ -231,7 +229,7 @@
                       <div class="animate-fade-in-up" style="animation-delay: 1.2s">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-cyan-500 rounded mr-2"></span>
-                          {{ t('grammar.usageRules') }}
+                          {{ t('grammar.usageRules', 'Usage Rules') }}
                         </label>
                         
                         <div class="space-y-2">
@@ -241,13 +239,13 @@
                                 v-model="rule.title"
                                 type="text"
                                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 hover:border-cyan-400 dark:hover:border-cyan-500 transform hover:scale-[1.02]"
-                                :placeholder="t('grammar.ruleTitlePlaceholder', { index: index + 1 })"
+                                :placeholder="tf('grammar.ruleTitlePlaceholder', 'Rule {{index}} title', { index: index + 1 })"
                               />
                               <textarea
                                 v-model="rule.description"
                                 rows="2"
                                 class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 hover:border-cyan-400 dark:hover:border-cyan-500 transform hover:scale-[1.02] resize-none"
-                                :placeholder="t('grammar.ruleDescriptionPlaceholder', { index: index + 1 })"
+                                :placeholder="tf('grammar.ruleDescriptionPlaceholder', 'Rule {{index}} description', { index: index + 1 })"
                               ></textarea>
                             </div>
                             <button 
@@ -270,7 +268,7 @@
                           <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                           </svg>
-                          {{ t('grammar.addRule') }}
+                          {{ t('grammar.addRule', 'Add rule') }}
                         </button>
                       </div>
 
@@ -278,7 +276,7 @@
                       <div class="animate-fade-in-up" style="animation-delay: 1.4s">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                           <span class="w-1 h-3 bg-red-500 rounded mr-2"></span>
-                          {{ t('grammar.commonMistakes') }}
+                          {{ t('grammar.commonMistakes', 'Common Mistakes') }}
                         </label>
                         
                         <div class="space-y-2">
@@ -288,19 +286,19 @@
                                 v-model="mistake.wrong"
                                 type="text"
                                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 hover:border-red-400 dark:hover:border-red-500 transform hover:scale-[1.02]"
-                                :placeholder="t('grammar.wrongSentencePlaceholder', { index: index + 1 })"
+                                :placeholder="tf('grammar.wrongSentencePlaceholder', 'Wrong sentence {{index}}', { index: index + 1 })"
                               />
                               <input
                                 v-model="mistake.correct"
                                 type="text"
                                 class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 hover:border-red-400 dark:hover:border-red-500 transform hover:scale-[1.02]"
-                                :placeholder="t('grammar.correctSentencePlaceholder', { index: index + 1 })"
+                                :placeholder="tf('grammar.correctSentencePlaceholder', 'Correct sentence {{index}}', { index: index + 1 })"
                               />
                               <textarea
                                 v-model="mistake.explanation"
                                 rows="2"
                                 class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 hover:border-red-400 dark:hover:border-red-500 transform hover:scale-[1.02] resize-none"
-                                :placeholder="t('grammar.explanationPlaceholder', { index: index + 1 })"
+                                :placeholder="tf('grammar.explanationPlaceholder', 'Explanation {{index}}', { index: index + 1 })"
                               ></textarea>
                             </div>
                             <button 
@@ -323,7 +321,7 @@
                           <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                           </svg>
-                          {{ t('grammar.addMistake') }}
+                          {{ t('grammar.addMistake', 'Add mistake') }}
                         </button>
                       </div>
                     </div>
@@ -343,14 +341,14 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  {{ isSubmitting ? t('common.saving') : (isEdit ? t('common.update') : t('common.save')) }}
+                  {{ isSubmitting ? t('common.saving', 'Saving...') : (isEdit ? t('common.update', 'Update') : t('common.save', 'Save')) }}
                 </button>
                 <button 
                   type="button" 
                   @click="closeDialog"
                   class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-[#0a0a0a] text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-300 hover:scale-105 hover:shadow-lg"
                 >
-                  {{ t('common.cancel') }}
+                  {{ t('common.cancel', 'Cancel') }}
                 </button>
               </div>
             </div>
@@ -380,6 +378,21 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'saved'])
 
 const { t } = useI18n()
+
+// Helper: i18n with params + safe fallback
+const tf = (key: string, fallback: string, params?: Record<string, any>) => {
+  const translated = params ? (t as any)(key, params) : (t as any)(key)
+  // When key missing, many i18n setups return the key string itself
+  const text = typeof translated === 'string' ? translated : String(translated)
+  if (text === key) {
+    if (params) {
+      // very small template replacement for "{{index}}" style placeholders
+      return fallback.replace('{{index}}', String(params.index ?? ''))
+    }
+    return fallback
+  }
+  return text
+}
 const grammarStore = useGrammarStore()
 const isSubmitting = ref(false)
 const isEdit = computed(() => !!props.editId)

@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-white/10 p-6">
     <!-- Writing Prompt -->
     <div class="mb-8">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        {{ t('grammar.practice.exercises.writing.instruction') }}
+        {{ tf('grammar.practice.exercises.writing.instruction', 'Follow the writing instructions') }}
       </h3>
       
       <!-- Task Description -->
@@ -16,10 +16,10 @@
           </div>
           <div>
             <h4 class="font-medium text-blue-800 dark:text-blue-200 mb-2">
-              {{ question.taskType === 'essay' ? t('grammar.practice.exercises.writing.essay') : 
-                 question.taskType === 'email' ? t('grammar.practice.exercises.writing.email') :
-                 question.taskType === 'letter' ? t('grammar.practice.exercises.writing.letter') :
-                 t('grammar.practice.exercises.writing.paragraph') }}
+              {{ question.taskType === 'essay' ? tf('grammar.practice.exercises.writing.essay', 'Essay') : 
+                 question.taskType === 'email' ? tf('grammar.practice.exercises.writing.email', 'Email') :
+                 question.taskType === 'letter' ? tf('grammar.practice.exercises.writing.letter', 'Letter') :
+                 tf('grammar.practice.exercises.writing.paragraph', 'Paragraph') }}
             </h4>
             <p class="text-blue-700 dark:text-blue-300 text-sm">
               {{ question.prompt }}
@@ -30,14 +30,14 @@
       
       <!-- Requirements -->
       <div v-if="question.requirements && question.requirements.length > 0" class="mb-6">
-        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          {{ t('grammar.practice.exercises.writing.requirements') }}
+        <h4 class="text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
+          {{ tf('grammar.practice.exercises.writing.requirements', 'Requirements') }}
         </h4>
         <ul class="space-y-1">
           <li 
             v-for="requirement in question.requirements" 
             :key="requirement"
-            class="flex items-start space-x-2 text-sm text-gray-600 dark:text-gray-400"
+            class="flex items-start space-x-2 text-sm text-gray-600 dark:text-white/60"
           >
             <svg class="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -48,18 +48,18 @@
       </div>
       
       <!-- Word/Time Limits -->
-      <div class="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400 mb-4">
+      <div class="flex items-center space-x-6 text-sm text-gray-600 dark:text-white/60 mb-4">
         <div v-if="question.minWords" class="flex items-center space-x-1">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>{{ t('grammar.practice.exercises.writing.minWords') }}: {{ question.minWords }}</span>
+          <span>{{ tf('grammar.practice.exercises.writing.minWords', 'Min words') }}: {{ question.minWords }}</span>
         </div>
         <div v-if="question.timeLimit" class="flex items-center space-x-1">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span>{{ t('grammar.practice.exercises.writing.timeLimit') }}: {{ question.timeLimit }} {{ t('common.minutes') }}</span>
+          <span>{{ tf('grammar.practice.exercises.writing.timeLimit', 'Time limit') }}: {{ question.timeLimit }} {{ tf('common.minutes', 'minutes') }}</span>
         </div>
       </div>
     </div>
@@ -68,13 +68,13 @@
     <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
         <h4 class="text-lg font-medium text-gray-900 dark:text-white">
-          {{ t('grammar.practice.exercises.writing.yourResponse') }}
+          {{ tf('grammar.practice.exercises.writing.yourResponse', 'Your response') }}
         </h4>
         
         <!-- Stats -->
         <div class="flex items-center space-x-4 text-sm">
           <div class="flex items-center space-x-1">
-            <span class="text-gray-500 dark:text-gray-400">{{ t('grammar.practice.exercises.writing.words') }}:</span>
+            <span class="text-gray-500 dark:text-white/60">{{ tf('grammar.practice.exercises.writing.words', 'Words') }}:</span>
             <span 
               :class="[
                 'font-medium',
@@ -83,13 +83,13 @@
             >
               {{ wordCount }}
             </span>
-            <span v-if="question.minWords" class="text-gray-400 dark:text-gray-500">
+            <span v-if="question.minWords" class="text-gray-400 dark:text-white/50">
               / {{ question.minWords }}
             </span>
           </div>
           
           <div v-if="question.timeLimit" class="flex items-center space-x-1">
-            <span class="text-gray-500 dark:text-gray-400">{{ t('grammar.practice.exercises.writing.timeLeft') }}:</span>
+            <span class="text-gray-500 dark:text-white/60">{{ tf('grammar.practice.exercises.writing.timeLeft', 'Time left') }}:</span>
             <span 
               :class="[
                 'font-medium font-mono',
@@ -107,20 +107,20 @@
         v-model="userText"
         :disabled="timeExpired || isSubmitted"
         :placeholder="getPlaceholderText()"
-        class="w-full h-80 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
+        class="w-full h-80 px-4 py-3 border border-gray-300 dark:border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white resize-none disabled:bg-gray-100 dark:disabled:bg-white/5 disabled:cursor-not-allowed"
         @input="updateWordCount"
       ></textarea>
       
       <!-- Tips -->
-      <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+      <div class="mt-4 text-sm text-gray-600 dark:text-white/60">
         <button
           @click="showTips = !showTips"
-          class="flex items-center space-x-1 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+          class="flex items-center space-x-1 hover:text-gray-800 dark:hover:text-white/80 transition-colors"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
-          <span>{{ t('grammar.practice.exercises.writing.tips') }}</span>
+          <span>{{ tf('grammar.practice.exercises.writing.tips', 'Tips') }}</span>
         </button>
         
         <div v-if="showTips" class="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg">
@@ -136,14 +136,14 @@
     <!-- AI Feedback (if submitted) -->
     <div v-if="isSubmitted && feedback" class="mb-6">
       <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-        {{ t('grammar.practice.exercises.writing.feedback') }}
+        {{ tf('grammar.practice.exercises.writing.feedback', 'Feedback') }}
       </h4>
       
       <!-- Overall Score -->
       <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mb-4">
         <div class="flex items-center justify-between">
           <h5 class="font-medium text-gray-900 dark:text-white">
-            {{ t('grammar.practice.exercises.writing.overallScore') }}
+            {{ tf('grammar.practice.exercises.writing.overallScore', 'Overall score') }}
           </h5>
           <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
             {{ feedback.overallScore }}/100
@@ -154,19 +154,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           <div class="text-center">
             <div class="text-lg font-semibold text-gray-900 dark:text-white">{{ feedback.grammar }}</div>
-            <div class="text-xs text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.writing.grammar') }}</div>
+            <div class="text-xs text-gray-600 dark:text-white/60">{{ tf('grammar.practice.exercises.writing.grammar', 'Grammar') }}</div>
           </div>
           <div class="text-center">
             <div class="text-lg font-semibold text-gray-900 dark:text-white">{{ feedback.vocabulary }}</div>
-            <div class="text-xs text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.writing.vocabulary') }}</div>
+            <div class="text-xs text-gray-600 dark:text-white/60">{{ tf('grammar.practice.exercises.writing.vocabulary', 'Vocabulary') }}</div>
           </div>
           <div class="text-center">
             <div class="text-lg font-semibold text-gray-900 dark:text-white">{{ feedback.coherence }}</div>
-            <div class="text-xs text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.writing.coherence') }}</div>
+            <div class="text-xs text-gray-600 dark:text-white/60">{{ tf('grammar.practice.exercises.writing.coherence', 'Coherence') }}</div>
           </div>
           <div class="text-center">
             <div class="text-lg font-semibold text-gray-900 dark:text-white">{{ feedback.taskResponse }}</div>
-            <div class="text-xs text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.writing.taskResponse') }}</div>
+            <div class="text-xs text-gray-600 dark:text-white/60">{{ tf('grammar.practice.exercises.writing.taskResponse', 'Task response') }}</div>
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@
         <!-- Strengths -->
         <div v-if="feedback.strengths.length > 0" class="p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
           <h6 class="font-medium text-green-800 dark:text-green-200 mb-2">
-            {{ t('grammar.practice.exercises.writing.strengths') }}
+            {{ tf('grammar.practice.exercises.writing.strengths', 'Strengths') }}
           </h6>
           <ul class="space-y-1">
             <li v-for="strength in feedback.strengths" :key="strength" class="text-green-700 dark:text-green-300 text-sm">
@@ -188,7 +188,7 @@
         <!-- Areas for Improvement -->
         <div v-if="feedback.improvements.length > 0" class="p-4 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-700 rounded-lg">
           <h6 class="font-medium text-orange-800 dark:text-orange-200 mb-2">
-            {{ t('grammar.practice.exercises.writing.improvements') }}
+            {{ tf('grammar.practice.exercises.writing.improvements', 'Areas for improvement') }}
           </h6>
           <ul class="space-y-1">
             <li v-for="improvement in feedback.improvements" :key="improvement" class="text-orange-700 dark:text-orange-300 text-sm">
@@ -200,7 +200,7 @@
         <!-- Specific Corrections -->
         <div v-if="feedback.corrections.length > 0" class="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg">
           <h6 class="font-medium text-red-800 dark:text-red-200 mb-2">
-            {{ t('grammar.practice.exercises.writing.corrections') }}
+            {{ tf('grammar.practice.exercises.writing.corrections', 'Corrections') }}
           </h6>
           <div class="space-y-2">
             <div v-for="correction in feedback.corrections" :key="correction.original" class="text-sm">
@@ -210,7 +210,7 @@
               <div class="text-green-700 dark:text-green-300">
                 ✅ {{ correction.corrected }}
               </div>
-              <div v-if="correction.explanation" class="text-gray-600 dark:text-gray-400 text-xs mt-1">
+              <div v-if="correction.explanation" class="text-gray-600 dark:text-white/60 text-xs mt-1">
                 {{ correction.explanation }}
               </div>
             </div>
@@ -231,7 +231,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
           </svg>
-          <span>{{ t('grammar.practice.exercises.writing.saveDraft') }}</span>
+          <span>{{ tf('grammar.practice.exercises.writing.saveDraft', 'Save draft') }}</span>
         </button>
         
         <!-- Clear -->
@@ -243,7 +243,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          <span>{{ t('grammar.practice.exercises.writing.clear') }}</span>
+          <span>{{ tf('grammar.practice.exercises.writing.clear', 'Clear') }}</span>
         </button>
       </div>
 
@@ -255,7 +255,7 @@
           :disabled="!canSubmit"
           class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
-          {{ isAnalyzing ? t('grammar.practice.exercises.writing.analyzing') : t('grammar.practice.exercises.writing.submit') }}
+          {{ isAnalyzing ? tf('grammar.practice.exercises.writing.analyzing', 'Analyzing...') : tf('grammar.practice.exercises.writing.submit', 'Submit for review') }}
         </button>
         
         <!-- Next Question -->
@@ -264,7 +264,7 @@
           @click="nextQuestion"
           class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
-          {{ questionIndex === totalQuestions - 1 ? t('grammar.practice.finish') : t('grammar.practice.next') }}
+          {{ questionIndex === totalQuestions - 1 ? tf('grammar.practice.finish', 'Finish') : tf('grammar.practice.next', 'Next') }}
         </button>
       </div>
     </div>
@@ -276,6 +276,13 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+// Helper: i18n with safe fallback and optional params
+const tf = (key: string, fallback: string, params?: Record<string, any>) => {
+  const translated = params ? (t as any)(key, params) : (t as any)(key)
+  const text = typeof translated === 'string' ? translated : String(translated)
+  if (text === key) return fallback
+  return text
+}
 
 // Props
 interface Props {
@@ -335,11 +342,11 @@ const canSubmit = computed(() => {
 
 const writingTips = computed(() => {
   const tips = [
-    t('grammar.practice.exercises.writing.tip1'),
-    t('grammar.practice.exercises.writing.tip2'),
-    t('grammar.practice.exercises.writing.tip3'),
-    t('grammar.practice.exercises.writing.tip4'),
-    t('grammar.practice.exercises.writing.tip5')
+    tf('grammar.practice.exercises.writing.tip1', 'Plan your structure before writing.'),
+    tf('grammar.practice.exercises.writing.tip2', 'Use clear and concise sentences.'),
+    tf('grammar.practice.exercises.writing.tip3', 'Vary vocabulary and sentence patterns.'),
+    tf('grammar.practice.exercises.writing.tip4', 'Check grammar and punctuation.'),
+    tf('grammar.practice.exercises.writing.tip5', 'Review and edit your response.')
   ]
   return tips
 })
@@ -352,13 +359,13 @@ const updateWordCount = () => {
 const getPlaceholderText = () => {
   switch (props.question.taskType) {
     case 'essay':
-      return t('grammar.practice.exercises.writing.essayPlaceholder')
+      return tf('grammar.practice.exercises.writing.essayPlaceholder', 'Write your essay here...')
     case 'email':
-      return t('grammar.practice.exercises.writing.emailPlaceholder')
+      return tf('grammar.practice.exercises.writing.emailPlaceholder', 'Write your email here...')
     case 'letter':
-      return t('grammar.practice.exercises.writing.letterPlaceholder')
+      return tf('grammar.practice.exercises.writing.letterPlaceholder', 'Write your letter here...')
     default:
-      return t('grammar.practice.exercises.writing.paragraphPlaceholder')
+      return tf('grammar.practice.exercises.writing.paragraphPlaceholder', 'Write your paragraph here...')
   }
 }
 

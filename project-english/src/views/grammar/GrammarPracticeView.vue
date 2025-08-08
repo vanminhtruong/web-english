@@ -15,10 +15,10 @@
             </button>
             <div>
               <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
-                {{ t('grammar.practice.title') }}
+                {{ t('grammar.practice.title', 'Practice') }}
               </h1>
               <p class="text-sm text-gray-500 dark:text-gray-400">
-                {{ t('grammar.practice.subtitle') }}
+                {{ t('grammar.practice.subtitle', 'Choose a mode to practice grammar with interactive exercises') }}
               </p>
             </div>
           </div>
@@ -26,14 +26,14 @@
           <!-- Settings and Progress -->
           <div class="flex items-center space-x-4">
             <div class="text-sm text-gray-500 dark:text-gray-400">
-              {{ t('grammar.practice.score') }}: <span class="font-medium text-blue-600 dark:text-blue-400">{{ totalScore }}</span>
+              {{ t('grammar.practice.score', 'Score') }}: <span class="font-medium text-blue-600 dark:text-blue-400">{{ totalScore }}</span>
             </div>
             
             <!-- Exercise Management Button -->
             <button
               @click="showExerciseManager = true"
               class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              :title="t('grammar.practice.exerciseManager.title')"
+              :title="t('grammar.practice.exerciseManager.title', 'Manage exercises')"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
@@ -44,7 +44,7 @@
             <button
               @click="showSettings = true"
               class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              :title="t('grammar.practice.settings.title')"
+              :title="t('grammar.practice.settings.title', 'Settings')"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -62,10 +62,10 @@
       <div v-if="!selectedExercise" class="space-y-6">
         <div class="text-center">
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            {{ t('grammar.practice.chooseExercise') }}
+            {{ t('grammar.practice.chooseExercise', 'Choose an exercise') }}
           </h2>
           <p class="text-gray-600 dark:text-gray-400 mb-8">
-            {{ t('grammar.practice.chooseDescription') }}
+            {{ t('grammar.practice.chooseDescription', 'Select a practice type below to get started') }}
           </p>
         </div>
 
@@ -82,10 +82,10 @@
                 <component :is="exercise.icon" class="w-8 h-8 text-white" />
               </div>
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                {{ t(`grammar.practice.exercises.${exercise.type}.title`) }}
+                {{ tf(`grammar.practice.exercises.${exercise.type}.title`, exercise.title) }}
               </h3>
               <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                {{ t(`grammar.practice.exercises.${exercise.type}.description`) }}
+                {{ tf(`grammar.practice.exercises.${exercise.type}.description`, exercise.description) }}
               </p>
               <div class="flex items-center justify-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
                 <span>{{ exercise.duration }}</span>
@@ -113,17 +113,17 @@
               </button>
               <div>
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-                  {{ t(`grammar.practice.exercises.${selectedExercise}.title`) }}
+                  {{ tf(`grammar.practice.exercises.${selectedExercise}.title`, 'Exercise') }}
                 </h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ t('grammar.practice.question') }} {{ currentQuestionIndex + 1 }} / {{ totalQuestions }}
+                  {{ t('grammar.practice.question', 'Question') }} {{ currentQuestionIndex + 1 }} / {{ totalQuestions }}
                 </p>
               </div>
             </div>
             
             <!-- Progress Bar -->
             <div class="flex items-center space-x-4">
-              <div class="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div class="w-32 bg-gray-200 dark:bg-mute rounded-full h-2">
                 <div 
                   class="bg-blue-600 h-2 rounded-full transition-all duration-300"
                   :style="{ width: `${(currentQuestionIndex / totalQuestions) * 100}%` }"
@@ -155,7 +155,7 @@
       <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full mx-4">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            {{ t('grammar.practice.settings.title') }}
+            {{ t('grammar.practice.settings.title', 'Settings') }}
           </h3>
           <button
             @click="showSettings = false"
@@ -171,28 +171,28 @@
           <!-- Difficulty Level -->
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {{ t('grammar.practice.settings.difficulty') }}
+              {{ t('grammar.practice.settings.difficulty', 'Difficulty') }}
             </label>
             <select 
               v-model="settings.difficulty"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-mute text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="easy">{{ t('grammar.practice.settings.levels.easy') }}</option>
-              <option value="medium">{{ t('grammar.practice.settings.levels.medium') }}</option>
-              <option value="hard">{{ t('grammar.practice.settings.levels.hard') }}</option>
+              <option value="easy">{{ t('grammar.practice.settings.levels.easy', 'Easy') }}</option>
+              <option value="medium">{{ t('grammar.practice.settings.levels.medium', 'Medium') }}</option>
+              <option value="hard">{{ t('grammar.practice.settings.levels.hard', 'Hard') }}</option>
             </select>
           </div>
           
           <!-- Auto-play Audio -->
           <div class="flex items-center justify-between">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {{ t('grammar.practice.settings.autoPlay') }}
+              {{ t('grammar.practice.settings.autoPlay', 'Auto-play audio') }}
             </label>
             <button
               @click="settings.autoPlayAudio = !settings.autoPlayAudio"
               :class="[
                 'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-                settings.autoPlayAudio ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'
+                settings.autoPlayAudio ? 'bg-blue-600' : 'bg-gray-200 dark:bg-mute'
               ]"
             >
               <span
@@ -207,13 +207,13 @@
           <!-- Show Explanations -->
           <div class="flex items-center justify-between">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {{ t('grammar.practice.settings.showExplanations') }}
+              {{ t('grammar.practice.settings.showExplanations', 'Show explanations') }}
             </label>
             <button
               @click="settings.showExplanations = !settings.showExplanations"
               :class="[
                 'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-                settings.showExplanations ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                settings.showExplanations ? 'bg-blue-600' : 'bg-gray-200 dark:bg-mute'
               ]"
             >
               <span
@@ -231,13 +231,13 @@
             @click="showSettings = false"
             class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#0a0a0a] rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
-            {{ t('common.cancel') }}
+            {{ t('common.cancel', 'Cancel') }}
           </button>
           <button
             @click="saveSettings"
             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            {{ t('common.save') }}
+            {{ t('common.save', 'Save') }}
           </button>
         </div>
       </div>
@@ -254,22 +254,22 @@
           </div>
           
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {{ t('grammar.practice.results.title') }}
+            {{ t('grammar.practice.results.title', 'Great job!') }}
           </h3>
           
           <div class="space-y-4 mb-6">
             <div class="grid grid-cols-3 gap-4 text-center">
               <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4">
                 <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ exerciseResults.correct }}</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.results.correct') }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.results.correct', 'Correct') }}</div>
               </div>
               <div class="bg-red-50 dark:bg-red-900/30 rounded-lg p-4">
                 <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ exerciseResults.incorrect }}</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.results.incorrect') }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.results.incorrect', 'Incorrect') }}</div>
               </div>
               <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-4">
                 <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ exerciseResults.percentage }}%</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.results.accuracy') }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.results.accuracy', 'Accuracy') }}</div>
               </div>
             </div>
           </div>
@@ -279,13 +279,13 @@
               @click="restartExercise"
               class="px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
-              {{ t('grammar.practice.results.tryAgain') }}
+              {{ t('grammar.practice.results.tryAgain', 'Try again') }}
             </button>
             <button
               @click="goBackToSelection"
               class="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              {{ t('grammar.practice.results.chooseAnother') }}
+              {{ t('grammar.practice.results.chooseAnother', 'Choose another exercise') }}
             </button>
           </div>
         </div>
@@ -791,6 +791,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { useVoiceStore } from '../../stores/voiceStore'
 
 const { t } = useI18n()
+// Helper: i18n with safe fallback and optional params
+const tf = (key: string, fallback: string, params?: Record<string, any>) => {
+  const translated = params ? (t as any)(key, params) : (t as any)(key)
+  const text = typeof translated === 'string' ? translated : String(translated)
+  if (text === key) return fallback
+  return text
+}
 const route = useRoute()
 const router = useRouter()
 const { playAudio } = useVoiceStore()
