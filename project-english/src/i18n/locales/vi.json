@@ -31,7 +31,8 @@
     "apply": "Áp dụng",
     "resetToDefault": "Về mặc định",
     "actions": "Thao tác",
-    "backToTop": "Lên đầu trang"
+    "backToTop": "Lên đầu trang",
+    "backToTopTooltip": "Lên đầu trang ({percent}%)"
   },
   "levels": {
     "beginner": "Cơ bản",

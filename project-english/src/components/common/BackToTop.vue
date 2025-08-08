@@ -20,11 +20,11 @@
       >
         <div
           v-show="showTooltip"
-          class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 dark:bg-black rounded shadow-lg whitespace-nowrap z-10 pointer-events-none"
+          class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 dark:bg-dark-bg rounded shadow-lg whitespace-nowrap z-10 pointer-events-none"
         >
-          {{ t('common.backToTop') }}
+          {{ tooltipText }}
           <!-- Arrow -->
-          <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-black"></div>
+          <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-dark-bg"></div>
         </div>
       </Transition>
 
@@ -121,6 +121,15 @@ const handleScrollToTop = () => {
   showTooltip.value = false
   scrollStore.scrollToTop()
 }
+
+// Tooltip text with i18n param and robust fallback
+const displayPercent = computed(() => Math.round(scrollPercentage.value))
+const tooltipText = computed(() => {
+  const key = 'common.backToTopTooltip'
+  const translated = t(key, { percent: displayPercent.value }) as string
+  const isMissing = translated === key || translated.includes('{percent}')
+  return isMissing ? `Back to Top (${displayPercent.value}%)` : translated
+})
 
 // Lifecycle
 onMounted(() => {

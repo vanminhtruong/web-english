@@ -31,7 +31,8 @@
     "reset": "Reset",
     "resetToDefault": "Reset to Default",
     "actions": "Actions",
-    "backToTop": "Back to Top"
+    "backToTop": "Back to Top",
+    "backToTopTooltip": "Back to Top ({percent}%)"
   },
   "vocabulary": {
     "title": "Vocabulary",
