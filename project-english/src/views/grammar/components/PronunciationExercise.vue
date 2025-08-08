@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-white/10 p-6">
     <!-- Instruction -->
     <div class="mb-6">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        {{ t('grammar.practice.pronunciation.instruction') }}
+        {{ tf('grammar.practice.pronunciation.instruction', 'Pronounce the following correctly') }}
       </h3>
       
       <!-- Target sentence/word -->
@@ -26,7 +26,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m-2.036-5.036a2.5 2.5 0 010 3.536M6 10h4l4.5-4.5v9L10 10H6V8z" />
             </svg>
-            <span>{{ t('grammar.practice.pronunciation.listen') }}</span>
+            <span>{{ tf('grammar.practice.pronunciation.listen', 'Listen') }}</span>
           </button>
         </div>
       </div>
@@ -43,13 +43,13 @@
             'w-24 h-24 rounded-full border-4 flex items-center justify-center transition-all duration-200 mb-4',
             isRecording
               ? 'border-red-500 bg-red-100 dark:bg-red-900/30 animate-pulse'
-              : 'border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-[#0a0a0a] hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30',
+              : 'border-gray-300 dark:border-white/10 bg-gray-100 dark:bg-[#0a0a0a] hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30',
             isProcessing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
           ]"
         >
           <svg 
             v-if="!isRecording && !isProcessing"
-            class="w-10 h-10 text-gray-600 dark:text-gray-400" 
+            class="w-10 h-10 text-gray-600 dark:text-white/60" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -76,7 +76,7 @@
         </button>
         
         <!-- Recording Status -->
-        <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+        <div class="text-sm text-gray-600 dark:text-white/60 mb-2">
           {{ recordingStatus }}
         </div>
         
@@ -101,13 +101,13 @@
               </svg>
             </button>
             <span class="text-blue-700 dark:text-blue-300 font-medium">
-              {{ t('grammar.practice.pronunciation.yourRecording') }}
+              {{ tf('grammar.practice.pronunciation.yourRecording', 'Your recording') }}
             </span>
           </div>
           
           <button
             @click="clearRecording"
-            class="p-2 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+            class="p-2 text-gray-500 dark:text-white/60 hover:text-red-600 dark:hover:text-red-400 transition-colors"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -145,7 +145,7 @@
         </div>
         
         <!-- Progress Bar -->
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-3">
+        <div class="w-full bg-gray-200 dark:bg-white/10 rounded-full h-3 mb-3">
           <div 
             :class="[
               'h-3 rounded-full transition-all duration-500',
@@ -178,7 +178,7 @@
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
         </svg>
-        <span>{{ t('grammar.practice.pronunciation.tips') }}</span>
+        <span>{{ tf('grammar.practice.pronunciation.tips', 'Tips') }}</span>
       </button>
       
       <div v-if="showTips" class="mt-3 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg">
@@ -203,7 +203,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <span>{{ t('grammar.practice.pronunciation.tryAgain') }}</span>
+          <span>{{ tf('grammar.practice.pronunciation.tryAgain', 'Try again') }}</span>
         </button>
       </div>
 
@@ -215,7 +215,7 @@
           :disabled="!recordedAudio"
           class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
-          {{ t('grammar.practice.pronunciation.analyze') }}
+          {{ tf('grammar.practice.pronunciation.analyze', 'Analyze pronunciation') }}
         </button>
         
         <button
@@ -223,7 +223,7 @@
           @click="nextQuestion"
           class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
-          {{ questionIndex === totalQuestions - 1 ? t('grammar.practice.finish') : t('grammar.practice.next') }}
+          {{ questionIndex === totalQuestions - 1 ? tf('grammar.practice.finish', 'Finish') : tf('grammar.practice.next', 'Next') }}
         </button>
       </div>
     </div>
@@ -236,6 +236,15 @@ import { useI18n } from 'vue-i18n'
 import { useVoiceStore } from '../../../stores/voiceStore'
 
 const { t } = useI18n()
+// Safe translation with explicit fallback and optional params
+const tf = (key: string, fallback: string, params?: Record<string, any>) => {
+  try {
+    const translated = t(key as any, params as any)
+    return typeof translated === 'string' && translated !== key ? translated : fallback
+  } catch {
+    return fallback
+  }
+}
 const { playAudio } = useVoiceStore()
 
 // Props
@@ -274,10 +283,10 @@ const recordingTimer = ref<number | null>(null)
 
 // Computed
 const recordingStatus = computed(() => {
-  if (isProcessing.value) return t('grammar.practice.pronunciation.processing')
-  if (isRecording.value) return t('grammar.practice.pronunciation.recording')
-  if (recordedAudio.value) return t('grammar.practice.pronunciation.recorded')
-  return t('grammar.practice.pronunciation.ready')
+  if (isProcessing.value) return tf('grammar.practice.pronunciation.processing', 'Processing...')
+  if (isRecording.value) return tf('grammar.practice.pronunciation.recording', 'Recording...')
+  if (recordedAudio.value) return tf('grammar.practice.pronunciation.recorded', 'Recorded')
+  return tf('grammar.practice.pronunciation.ready', 'Ready to record')
 })
 
 // Methods
@@ -319,7 +328,7 @@ const startRecording = async () => {
     
   } catch (error) {
     console.error('Error accessing microphone:', error)
-    alert(t('grammar.practice.pronunciation.microphoneError'))
+    alert(tf('grammar.practice.pronunciation.microphoneError', 'Unable to access microphone. Please check your browser permissions and try again.'))
   }
 }
 
@@ -386,13 +395,13 @@ const getFeedbackMessage = () => {
   if (pronunciationScore.value === null) return ''
   
   if (pronunciationScore.value >= 90) {
-    return t('grammar.practice.pronunciation.excellent')
+    return tf('grammar.practice.pronunciation.excellent', 'Excellent pronunciation!')
   } else if (pronunciationScore.value >= 80) {
-    return t('grammar.practice.pronunciation.good')
+    return tf('grammar.practice.pronunciation.good', 'Good pronunciation!')
   } else if (pronunciationScore.value >= 70) {
-    return t('grammar.practice.pronunciation.fair')
+    return tf('grammar.practice.pronunciation.fair', 'Fair pronunciation. Keep practicing!')
   } else {
-    return t('grammar.practice.pronunciation.needsImprovement')
+    return tf('grammar.practice.pronunciation.needsImprovement', 'Needs improvement. Try again!')
   }
 }
 

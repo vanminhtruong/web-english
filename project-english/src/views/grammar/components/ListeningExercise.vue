@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-white/10 p-6">
     <!-- Listening Controls -->
     <div class="mb-8">
       <div class="text-center">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          {{ t('grammar.practice.exercises.listening.instruction') }}
+          {{ tf('grammar.practice.exercises.listening.instruction', 'Listen carefully and answer the questions') }}
         </h3>
         
         <!-- Audio Player -->
@@ -29,7 +29,7 @@
             <button
               @click="restartAudio"
               :disabled="!audioLoaded"
-              class="p-3 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 disabled:bg-gray-200 dark:disabled:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full transition-colors"
+              class="p-3 bg-gray-300 dark:bg-white/10 hover:bg-gray-400 dark:hover:bg-white/15 disabled:bg-gray-200 dark:disabled:bg-white/5 text-gray-700 dark:text-white/80 rounded-full transition-colors"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -41,7 +41,7 @@
           <!-- Progress Bar -->
           <div class="mb-4">
             <div 
-              class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 cursor-pointer"
+              class="w-full bg-gray-200 dark:bg-white/10 rounded-full h-2 cursor-pointer"
               @click="seekAudio"
               ref="progressBar"
             >
@@ -50,52 +50,52 @@
                 :style="{ width: `${progress}%` }"
               ></div>
             </div>
-            <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <div class="flex justify-between text-xs text-gray-500 dark:text-white/60 mt-1">
               <span>{{ formatTime(currentTime) }}</span>
               <span>{{ formatTime(duration) }}</span>
             </div>
           </div>
           
           <!-- Play Count Info -->
-          <div class="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+          <div class="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-white/60">
             <div class="flex items-center space-x-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m-2.036-5.036a2.5 2.5 0 010 3.536M6 10h4l4.5-4.5v9L10 10H6V8z" />
               </svg>
-              <span>{{ t('grammar.practice.exercises.listening.playsLeft') }}: {{ playsRemaining }}</span>
+              <span>{{ tf('grammar.practice.exercises.listening.playsLeft', 'Plays left') }}: {{ playsRemaining }}</span>
             </div>
             <div v-if="question.allowNotes" class="flex items-center space-x-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              <span>{{ t('grammar.practice.exercises.listening.notesAllowed') }}</span>
+              <span>{{ tf('grammar.practice.exercises.listening.notesAllowed', 'Notes are allowed') }}</span>
             </div>
           </div>
         </div>
         
         <!-- Loading State -->
-        <div v-if="!audioLoaded" class="text-gray-500 dark:text-gray-400">
-          {{ t('grammar.practice.exercises.listening.loading') }}...
+        <div v-if="!audioLoaded" class="text-gray-500 dark:text-white/60">
+          {{ tf('grammar.practice.exercises.listening.loading', 'Loading') }}...
         </div>
       </div>
     </div>
 
     <!-- Notes Section (if allowed) -->
     <div v-if="question.allowNotes" class="mb-6">
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        {{ t('grammar.practice.exercises.listening.takeNotes') }}
+      <label class="block text-sm font-medium text-gray-700 dark:text-white/80 mb-2">
+        {{ tf('grammar.practice.exercises.listening.takeNotes', 'Take notes') }}
       </label>
       <textarea
         v-model="userNotes"
-        :placeholder="t('grammar.practice.exercises.listening.notesPlaceholder')"
-        class="w-full h-32 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
+        :placeholder="tf('grammar.practice.exercises.listening.notesPlaceholder', 'Type your notes here...')"
+        class="w-full h-32 px-4 py-2 border border-gray-300 dark:border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white resize-none"
       ></textarea>
     </div>
 
     <!-- Questions Section -->
     <div class="space-y-6">
-      <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-        {{ t('grammar.practice.exercises.listening.questions') }}
+      <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-white/10 pb-2">
+        {{ tf('grammar.practice.exercises.listening.questions', 'Questions') }}
       </h4>
       
       <!-- Question List -->
@@ -103,7 +103,7 @@
         <div
           v-for="(q, index) in question.questions"
           :key="index"
-          class="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+          class="border border-gray-200 dark:border-white/10 rounded-lg p-4"
         >
           <div class="mb-4">
             <h5 class="font-medium text-gray-900 dark:text-white mb-2">
@@ -119,7 +119,7 @@
                   'flex items-start space-x-3 p-3 rounded-lg cursor-pointer transition-all',
                   userAnswers[index] === optionIndex
                     ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-600'
-                    : 'bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent',
+                    : 'bg-gray-50 dark:bg-[#0a0a0a]/50 hover:bg-gray-100 dark:hover:bg-[#0a0a0a]/70 border border-transparent',
                   showAnswers && optionIndex === q.correctAnswer
                     ? 'bg-green-50 dark:bg-green-900/30 border border-green-300 dark:border-green-600'
                     : '',
@@ -167,28 +167,28 @@
               <input
                 v-model="userAnswers[index]"
                 :disabled="showAnswers"
-                :placeholder="t('grammar.practice.exercises.listening.fillBlank')"
+                :placeholder="tf('grammar.practice.exercises.listening.fillBlank', 'Type the missing word/phrase')"
                 :class="[
                   'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
                   showAnswers
                     ? isAnswerCorrect(index)
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
                       : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700',
+                    : 'border-gray-300 dark:border-white/10 bg-white dark:bg-[#0a0a0a]',
                   'text-gray-900 dark:text-white'
                 ]"
               />
               
               <!-- Show correct answer -->
               <div v-if="showAnswers && !isAnswerCorrect(index)" class="text-sm text-green-600 dark:text-green-400">
-                {{ t('grammar.practice.exercises.listening.correctAnswer') }}: {{ q.correctAnswer }}
+                {{ tf('grammar.practice.exercises.listening.correctAnswer', 'Correct answer') }}: {{ q.correctAnswer }}
               </div>
             </div>
             
             <!-- Ordering/Sequencing -->
             <div v-else-if="q.type === 'ordering'" class="space-y-2">
-              <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                {{ t('grammar.practice.exercises.listening.dragToOrder') }}
+              <div class="text-sm text-gray-600 dark:text-white/60 mb-2">
+                {{ tf('grammar.practice.exercises.listening.dragToOrder', 'Drag to order') }}
               </div>
               <draggable 
                 v-model="userAnswers[index]" 
@@ -199,12 +199,12 @@
                 <template #item="{ element, index: itemIndex }">
                   <div 
                     :class="[
-                      'p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border cursor-move',
+                      'p-3 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg border cursor-move',
                       showAnswers && itemIndex === element.correctPosition
                         ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
                         : showAnswers && itemIndex !== element.correctPosition
                         ? 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                        : 'border-gray-200 dark:border-gray-600'
+                        : 'border-gray-200 dark:border-white/10'
                     ]"
                   >
                     <div class="flex items-center space-x-3">
@@ -222,7 +222,7 @@
           <!-- Question explanation -->
           <div v-if="showAnswers && q.explanation" class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg">
             <p class="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>{{ t('grammar.practice.exercises.explanation') }}:</strong> {{ q.explanation }}
+              <strong>{{ tf('grammar.practice.exercises.explanation', 'Explanation') }}:</strong> {{ q.explanation }}
             </p>
           </div>
         </div>
@@ -234,15 +234,15 @@
       <div class="grid grid-cols-3 gap-4 text-center">
         <div>
           <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ correctAnswers }}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.listening.correct') }}</div>
+          <div class="text-sm text-gray-600 dark:text-white/60">{{ tf('grammar.practice.exercises.listening.correct', 'Correct') }}</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ incorrectAnswers }}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.listening.incorrect') }}</div>
+          <div class="text-sm text-gray-600 dark:text-white/60">{{ tf('grammar.practice.exercises.listening.incorrect', 'Incorrect') }}</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ accuracy }}%</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.exercises.listening.accuracy') }}</div>
+          <div class="text-sm text-gray-600 dark:text-white/60">{{ tf('grammar.practice.exercises.listening.accuracy', 'Accuracy') }}</div>
         </div>
       </div>
     </div>
@@ -259,7 +259,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>{{ showTranscript ? t('grammar.practice.exercises.listening.hideTranscript') : t('grammar.practice.exercises.listening.showTranscript') }}</span>
+          <span>{{ showTranscript ? tf('grammar.practice.exercises.listening.hideTranscript', 'Hide transcript') : tf('grammar.practice.exercises.listening.showTranscript', 'Show transcript') }}</span>
         </button>
       </div>
 
@@ -271,7 +271,7 @@
           :disabled="!hasAllAnswers"
           class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
-          {{ t('grammar.practice.exercises.checkAnswer') }}
+          {{ tf('grammar.practice.exercises.checkAnswer', 'Check answer') }}
         </button>
         
         <!-- Next Question -->
@@ -280,21 +280,21 @@
           @click="nextQuestion"
           class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
-          {{ questionIndex === totalQuestions - 1 ? t('grammar.practice.exercises.finish') : t('grammar.practice.exercises.next') }}
+          {{ questionIndex === totalQuestions - 1 ? tf('grammar.practice.exercises.finish', 'Finish') : tf('grammar.practice.exercises.next', 'Next') }}
         </button>
       </div>
     </div>
 
     <!-- Transcript Modal -->
     <div v-if="showTranscript" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+      <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-white/10 p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            {{ t('grammar.practice.exercises.listening.transcript') }}
+            {{ tf('grammar.practice.exercises.listening.transcript', 'Transcript') }}
           </h3>
           <button
             @click="showTranscript = false"
-            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="p-2 rounded-lg text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -318,6 +318,15 @@ import { useVoiceStore } from '../../../stores/voiceStore'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
 
 const { t } = useI18n()
+// Safe translation with explicit fallback and optional params
+const tf = (key: string, fallback: string, params?: Record<string, any>) => {
+  try {
+    const translated = t(key as any, params as any)
+    return typeof translated === 'string' && translated !== key ? translated : fallback
+  } catch {
+    return fallback
+  }
+}
 const { playAudio } = useVoiceStore()
 
 // YouTube player reference

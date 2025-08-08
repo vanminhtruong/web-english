@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-white/10 p-6">
     <!-- Reading Passage -->
     <div class="mb-8">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          {{ question.title || t('grammar.practice.reading.passage') }}
+          {{ question.title || tf('grammar.practice.reading.passage', 'Reading passage') }}
         </h3>
         
         <div class="flex items-center space-x-4">
@@ -17,12 +17,12 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m-2.036-5.036a2.5 2.5 0 010 3.536M6 10h4l4.5-4.5v9L10 10H6V8z" />
             </svg>
-            <span>{{ t('grammar.practice.reading.listen') }}</span>
+            <span>{{ tf('grammar.practice.reading.listen', 'Listen') }}</span>
           </button>
           
           <!-- Reading time -->
-          <div class="text-sm text-gray-500 dark:text-gray-400">
-            {{ t('grammar.practice.reading.readingTime') }}: {{ formatTime(readingTime) }}
+          <div class="text-sm text-gray-500 dark:text-white/60">
+            {{ tf('grammar.practice.reading.readingTime', 'Reading time') }}: {{ formatTime(readingTime) }}
           </div>
         </div>
       </div>
@@ -40,8 +40,8 @@
 
     <!-- Questions Section -->
     <div class="space-y-6">
-      <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-        {{ t('grammar.practice.reading.questions') }}
+      <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-white/10 pb-2">
+        {{ tf('grammar.practice.reading.questions', 'Questions') }}
       </h4>
       
       <!-- Question List -->
@@ -49,7 +49,7 @@
         <div
           v-for="(q, index) in question.questions"
           :key="index"
-          class="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+          class="border border-gray-200 dark:border-white/10 rounded-lg p-4"
         >
           <div class="mb-4">
             <h5 class="font-medium text-gray-900 dark:text-white mb-2">
@@ -65,7 +65,7 @@
                   'flex items-start space-x-3 p-3 rounded-lg cursor-pointer transition-all',
                   userAnswers[index] === optionIndex
                     ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-600'
-                    : 'bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent',
+                    : 'bg-gray-50 dark:bg-[#0a0a0a]/50 hover:bg-gray-100 dark:hover:bg-[#0a0a0a]/70 border border-transparent',
                   showAnswers && optionIndex === q.correctAnswer
                     ? 'bg-green-50 dark:bg-green-900/30 border border-green-300 dark:border-green-600'
                     : '',
@@ -134,7 +134,7 @@
                   :disabled="showAnswers"
                 />
                 <span class="text-gray-900 dark:text-white">
-                  {{ t(`grammar.practice.reading.${option}`) }}
+                  {{ option === 'true' ? tf('grammar.practice.reading.true', 'True') : tf('grammar.practice.reading.false', 'False') }}
                 </span>
               </label>
             </div>
@@ -144,21 +144,21 @@
               <input
                 v-model="userAnswers[index]"
                 :disabled="showAnswers"
-                :placeholder="t('grammar.practice.reading.yourAnswer')"
+                :placeholder="tf('grammar.practice.reading.yourAnswer', 'Your answer')"
                 :class="[
                   'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
                   showAnswers
                     ? isShortAnswerCorrect(index)
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
                       : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700',
+                    : 'border-gray-300 dark:border-white/10 bg-white dark:bg-[#0a0a0a]',
                   'text-gray-900 dark:text-white'
                 ]"
               />
               
               <!-- Show correct answer for short answer -->
               <div v-if="showAnswers && !isShortAnswerCorrect(index)" class="text-sm text-green-600 dark:text-green-400">
-                {{ t('grammar.practice.reading.correctAnswer') }}: {{ q.correctAnswer }}
+                {{ tf('grammar.practice.reading.correctAnswer', 'Correct answer') }}: {{ q.correctAnswer }}
               </div>
             </div>
           </div>
@@ -166,7 +166,7 @@
           <!-- Question explanation -->
           <div v-if="showAnswers && q.explanation" class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg">
             <p class="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>{{ t('grammar.practice.explanation') }}:</strong> {{ q.explanation }}
+              <strong>{{ tf('grammar.practice.explanation', 'Explanation') }}:</strong> {{ q.explanation }}
             </p>
           </div>
         </div>
@@ -178,15 +178,15 @@
       <div class="grid grid-cols-3 gap-4 text-center">
         <div>
           <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ correctAnswers }}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.reading.correct') }}</div>
+          <div class="text-sm text-gray-600 dark:text-white/60">{{ tf('grammar.practice.reading.correct', 'Correct') }}</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ incorrectAnswers }}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.reading.incorrect') }}</div>
+          <div class="text-sm text-gray-600 dark:text-white/60">{{ tf('grammar.practice.reading.incorrect', 'Incorrect') }}</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ accuracy }}%</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">{{ t('grammar.practice.reading.accuracy') }}</div>
+          <div class="text-sm text-gray-600 dark:text-white/60">{{ tf('grammar.practice.reading.accuracy', 'Accuracy') }}</div>
         </div>
       </div>
     </div>
@@ -197,16 +197,16 @@
         <!-- Highlight Keywords -->
         <button
           @click="toggleHighlights"
-          class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+          class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-600 dark:text-white/60 hover:text-gray-800 dark:hover:text-white transition-colors"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
           </svg>
-          <span>{{ showHighlights ? t('grammar.practice.reading.hideHighlights') : t('grammar.practice.reading.showHighlights') }}</span>
+          <span>{{ showHighlights ? tf('grammar.practice.reading.hideHighlights', 'Hide highlights') : tf('grammar.practice.reading.showHighlights', 'Show highlights') }}</span>
         </button>
         
         <!-- Reading Timer -->
-        <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+        <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-white/60">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -222,7 +222,7 @@
           :disabled="!hasAllAnswers"
           class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
-          {{ t('grammar.practice.checkAnswer') }}
+          {{ tf('grammar.practice.checkAnswer', 'Check answer') }}
         </button>
         
         <!-- Next Question -->
@@ -231,7 +231,7 @@
           @click="nextQuestion"
           class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
-          {{ questionIndex === totalQuestions - 1 ? t('grammar.practice.finish') : t('grammar.practice.next') }}
+          {{ questionIndex === totalQuestions - 1 ? tf('grammar.practice.finish', 'Finish') : tf('grammar.practice.next', 'Next') }}
         </button>
       </div>
     </div>
@@ -244,6 +244,15 @@ import { useI18n } from 'vue-i18n'
 import { useVoiceStore } from '../../../stores/voiceStore'
 
 const { t } = useI18n()
+// Safe i18n with fallback + params
+const tf = (key: string, fallback: string, params?: Record<string, any>) => {
+  try {
+    const translated = t(key as any, params as any)
+    return typeof translated === 'string' && translated !== key ? translated : fallback
+  } catch {
+    return fallback
+  }
+}
 const { playAudio } = useVoiceStore()
 
 // Props
