@@ -7,11 +7,17 @@
       :practice-mode="practiceMode"
       :shuffle-enabled="shuffleEnabled"
       :practice-started="practiceStarted"
+      :image-quiz-enabled="imageQuizEnabled"
+      :listening-quiz-enabled="listeningQuizEnabled"
+      :typing-quiz-enabled="typingQuizEnabled"
       @go-back="handleExitPractice"
       @show-history="showHistory = true"
       @change-practice-mode="changePracticeMode"
       @show-settings="showSettingsDialog = true"
       @toggle-shuffle="toggleShuffle"
+      @update:image-quiz-enabled="onToggleImageQuiz($event)"
+      @update:listening-quiz-enabled="onToggleListeningQuiz($event)"
+      @update:typing-quiz-enabled="onToggleTypingQuiz($event)"
     />
 
     <!-- Progress Bar -->
@@ -83,8 +89,13 @@
                 :typing-answer="typingAnswer"
                 :typing-answered="typingAnswered"
                 :typing-correct="typingCorrect"
+                :typing-quiz-enabled="typingQuizEnabled"
+                :typing-quiz-options="typingQuizOptions"
+                :typing-quiz-selected="typingQuizSelected"
+                :typing-quiz-answered="typingQuizAnswered"
                 @update:typing-answer="typingAnswer = $event"
                 @check-answer="handleTypingAnswer"
+                @select-typing-quiz-answer="handleTypingQuizAnswer($event)"
               />
             </template>
             <template v-else-if="practiceMode === 'image'">
@@ -103,6 +114,23 @@
                 @select-image-quiz-answer="handleImageQuizAnswer($event)"
               />
             </template>
+            <template v-else-if="practiceMode === 'listening'">
+              <ListeningMode
+                :card="currentShuffledCard"
+                :listening-answer="listeningAnswer"
+                @update:listening-answer="listeningAnswer = $event"
+                :listening-answered="listeningAnswered"
+                :listening-correct="listeningCorrect"
+                :listening-quiz-enabled="listeningQuizEnabled"
+                :listening-quiz-options="listeningQuizOptions"
+                :listening-quiz-selected="listeningQuizSelected"
+                :listening-quiz-answered="listeningQuizAnswered"
+                :get-topic-name="getTopicName"
+                @check-answer="handleListeningAnswer"
+                @play-audio="playAudio"
+                @select-listening-quiz-answer="handleListeningQuizAnswer($event)"
+              />
+            </template>
             <template v-else-if="practiceMode === 'pronunciation'">
               <PronunciationMode
                 :card="currentShuffledCard"
@@ -113,18 +141,6 @@
                 :is-speech-recognition-supported="isSpeechRecognitionSupported"
                 :get-topic-name="getTopicName"
                 @start-recording="startRecording"
-              />
-            </template>
-            <template v-else-if="practiceMode === 'listening'">
-              <ListeningMode
-                :card="currentShuffledCard"
-                :listening-answer="listeningAnswer"
-                @update:listening-answer="listeningAnswer = $event"
-                :listening-answered="listeningAnswered"
-                :listening-correct="listeningCorrect"
-                :get-topic-name="getTopicName"
-                @check-answer="handleListeningAnswer"
-                @play-audio="playAudio"
               />
             </template>
           </LazyLoadComponent>
@@ -537,6 +553,13 @@ const {
   typingCorrect,
   checkTypingAnswer,
   resetTypingMode,
+  // Typing-quiz
+  typingQuizEnabled,
+  typingQuizOptions,
+  typingQuizSelected,
+  typingQuizAnswered,
+  generateTypingQuizOptions,
+  selectTypingQuizAnswer,
   listeningAnswer,
   listeningAnswered,
   listeningCorrect,
@@ -565,6 +588,12 @@ const {
   isSpeechRecognitionSupported,
   startRecording,
   resetPronunciationMode,
+  listeningQuizEnabled,
+  listeningQuizOptions,
+  listeningQuizSelected,
+  listeningQuizAnswered,
+  generateListeningQuizOptions,
+  selectListeningQuizAnswer,
 } = useFlashcardModes(currentShuffledCard, currentFlashcards, allVocabularies)
 
 // Card state storage for preserving answers when navigating back/forward
@@ -578,11 +607,19 @@ interface CardState {
   typingAnswer?: string
   typingAnswered?: boolean
   typingCorrect?: boolean
+  // Typing-quiz
+  typingQuizOptions?: string[]
+  typingQuizSelected?: string
+  typingQuizAnswered?: boolean
   
   // Listening mode
   listeningAnswer?: string
   listeningAnswered?: boolean
   listeningCorrect?: boolean
+  // Listening-quiz
+  listeningQuizOptions?: string[]
+  listeningQuizSelected?: string
+  listeningQuizAnswered?: boolean
   
   // Image mode
   imageAnswer?: string
@@ -616,11 +653,19 @@ const saveCurrentCardState = () => {
     typingAnswer: typingAnswer.value || undefined,
     typingAnswered: typingAnswered.value || undefined,
     typingCorrect: typingCorrect.value || undefined,
+    // Typing-quiz
+    typingQuizOptions: typingQuizOptions.value || undefined,
+    typingQuizSelected: typingQuizSelected.value || undefined,
+    typingQuizAnswered: typingQuizAnswered.value || undefined,
     
     // Listening mode
     listeningAnswer: listeningAnswer.value || undefined,
     listeningAnswered: listeningAnswered.value || undefined,
     listeningCorrect: listeningCorrect.value || undefined,
+    // Listening-quiz
+    listeningQuizOptions: listeningQuizOptions.value || undefined,
+    listeningQuizSelected: listeningQuizSelected.value || undefined,
+    listeningQuizAnswered: listeningQuizAnswered.value || undefined,
     
     // Image mode
     imageAnswer: imageAnswer.value || undefined,
@@ -666,6 +711,16 @@ const restoreCardState = () => {
     if (savedState.typingCorrect !== undefined) {
       typingCorrect.value = savedState.typingCorrect
     }
+    // Restore typing-quiz
+    if (savedState.typingQuizOptions !== undefined) {
+      typingQuizOptions.value = savedState.typingQuizOptions
+    }
+    if (savedState.typingQuizSelected !== undefined) {
+      typingQuizSelected.value = savedState.typingQuizSelected
+    }
+    if (savedState.typingQuizAnswered !== undefined) {
+      typingQuizAnswered.value = savedState.typingQuizAnswered
+    }
     
     // Restore listening mode
     if (savedState.listeningAnswer !== undefined) {
@@ -676,6 +731,16 @@ const restoreCardState = () => {
     }
     if (savedState.listeningCorrect !== undefined) {
       listeningCorrect.value = savedState.listeningCorrect
+    }
+    // Restore listening-quiz
+    if (savedState.listeningQuizOptions !== undefined) {
+      listeningQuizOptions.value = savedState.listeningQuizOptions
+    }
+    if (savedState.listeningQuizSelected !== undefined) {
+      listeningQuizSelected.value = savedState.listeningQuizSelected
+    }
+    if (savedState.listeningQuizAnswered !== undefined) {
+      listeningQuizAnswered.value = savedState.listeningQuizAnswered
     }
     
     // Restore image mode
@@ -721,10 +786,36 @@ const handleTypingAnswer = () => {
   checkTypingAnswer()
   recordAnswer(typingCorrect.value)
 }
+// Typing-quiz handlers
+const onToggleTypingQuiz = (enabled: boolean) => {
+  typingQuizEnabled.value = enabled
+  resetTypingMode()
+  if (enabled) {
+    generateTypingQuizOptions()
+  }
+}
+
+const handleTypingQuizAnswer = (answer: string) => {
+  const isCorrect = selectTypingQuizAnswer(answer)
+  recordAnswer(!!isCorrect)
+}
 
 const handleListeningAnswer = () => {
   checkListeningAnswer()
   recordAnswer(listeningCorrect.value)
+}
+// Listening-quiz handlers (within listening mode)
+const onToggleListeningQuiz = (enabled: boolean) => {
+  listeningQuizEnabled.value = enabled
+  resetListeningMode()
+  if (enabled) {
+    generateListeningQuizOptions()
+  }
+}
+
+const handleListeningQuizAnswer = (answer: string) => {
+  const isCorrect = selectListeningQuizAnswer(answer)
+  recordAnswer(!!isCorrect)
 }
 // Image-quiz handlers (image mode multiple-choice)
 const onToggleImageQuiz = (enabled: boolean) => {
@@ -761,6 +852,18 @@ const resetAndRestoreCard = () => {
   if (practiceMode.value === 'image' && imageQuizEnabled.value && currentShuffledCard.value) {
     if (!imageQuizOptions.value || imageQuizOptions.value.length === 0) {
       generateImageQuizOptions()
+    }
+  }
+  // For typing mode with quiz enabled, ensure options exist
+  if (practiceMode.value === 'typing' && typingQuizEnabled.value && currentShuffledCard.value) {
+    if (!typingQuizOptions.value || typingQuizOptions.value.length === 0) {
+      generateTypingQuizOptions()
+    }
+  }
+  // For listening mode with quiz enabled, ensure options exist
+  if (practiceMode.value === 'listening' && listeningQuizEnabled.value && currentShuffledCard.value) {
+    if (!listeningQuizOptions.value || listeningQuizOptions.value.length === 0) {
+      generateListeningQuizOptions()
     }
   }
 };

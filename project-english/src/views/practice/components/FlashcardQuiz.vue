@@ -25,18 +25,18 @@
               @click="handleSelectAnswer(option)"
               :class="[
                 'relative p-4 text-center rounded-lg border-2 transition-all duration-200 font-semibold text-sm min-h-[60px] flex items-center justify-center',
-                quizAnswered && option === getCorrectAnswer()
-                  ? 'bg-green-50 dark:bg-green-900/30 border-green-500 text-green-800 dark:text-green-200 shadow-lg'
-                  : quizAnswered && option === selectedAnswer && option !== getCorrectAnswer()
-                  ? 'bg-red-50 dark:bg-red-900/30 border-red-500 text-red-800 dark:text-red-200 shadow-lg'
-                  : quizAnswered
-                  ? 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400'
-                  : 'bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-600 text-gray-900 dark:text-white hover:from-blue-100 hover:to-blue-200 dark:hover:from-gray-700 dark:hover:to-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-md transform hover:scale-105'
+                quizAnswered
+                  ? (option === getCorrectAnswer()
+                      ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700'
+                      : (option === selectedAnswer
+                          ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 border-red-300 dark:border-red-700'
+                          : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60'))
+                  : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60 hover:shadow-sm hover:scale-[1.01] dark:hover:bg-white/5'
               ]"
               :disabled="quizAnswered"
             >
               <!-- Letter badge -->
-              <span class="absolute top-2 left-2 w-6 h-6 bg-blue-500 dark:bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+              <span class="absolute top-2 left-2 w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80">
                 {{ String.fromCharCode(65 + index) }}
               </span>
 

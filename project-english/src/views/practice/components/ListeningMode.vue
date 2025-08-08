@@ -16,9 +16,10 @@
           </svg>
         </button>
       </div>
-      <p class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8">{{ t('flashcard.listening.instruction', 'Listen and type the word you hear:') }}</p>
+      <p v-if="!listeningQuizEnabled" class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8">{{ t('flashcard.listening.instruction', 'Listen and type the word you hear:') }}</p>
+      <p v-else class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8">{{ t('flashcard.listening.instructionQuiz', 'Choose the word you hear:') }}</p>
 
-      <div class="max-w-md mx-auto">
+      <div v-if="!listeningQuizEnabled" class="max-w-md mx-auto">
         <input
           :value="listeningAnswer"
           @input="onInput"
@@ -29,6 +30,37 @@
           :placeholder="t('flashcard.listening.placeholder', 'Type the word you hear...')"
         />
         <div v-if="listeningAnswered" class="mt-4">
+          <p v-if="listeningCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ t('flashcard.listening.correct', '✓ Correct!') }}</p>
+          <p v-else class="text-red-600 dark:text-red-400 font-medium">{{ t('flashcard.listening.incorrect', '✗ Correct answer:') }} {{ card?.word }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ card?.meaning }}</p>
+        </div>
+      </div>
+      <div v-else class="max-w-xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 justify-items-center mx-auto max-w-[560px] sm:max-w-[520px]">
+          <button
+            v-for="(opt, idx) in listeningQuizOptions"
+            :key="idx"
+            @click="onSelectListeningOption(opt)"
+            :disabled="listeningQuizAnswered"
+            translate="no"
+            class="notranslate px-3 py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full max-w-[260px] sm:max-w-[240px]"
+            :class="[
+              listeningQuizAnswered
+                ? (isOptionCorrect(opt)
+                    ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700'
+                    : isOptionSelected(opt)
+                      ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 border-red-300 dark:border-red-700'
+                      : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60')
+                : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60 hover:shadow-sm hover:scale-[1.01] dark:hover:bg-white/5'
+            ]"
+          >
+            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80">
+              {{ String.fromCharCode(65 + idx) }}
+            </span>
+            <span class="truncate">{{ opt }}</span>
+          </button>
+        </div>
+        <div v-if="listeningAnswered" class="mt-4 text-center">
           <p v-if="listeningCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ t('flashcard.listening.correct', '✓ Correct!') }}</p>
           <p v-else class="text-red-600 dark:text-red-400 font-medium">{{ t('flashcard.listening.incorrect', '✗ Correct answer:') }} {{ card?.word }}</p>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ card?.meaning }}</p>
@@ -66,10 +98,14 @@ const props = defineProps<{
   listeningAnswer: string;
   listeningAnswered: boolean;
   listeningCorrect: boolean;
+  listeningQuizEnabled: boolean;
+  listeningQuizOptions: string[];
+  listeningQuizSelected: string;
+  listeningQuizAnswered: boolean;
   getTopicName: (topic: string) => string;
 }>();
 
-const emit = defineEmits(['update:listeningAnswer', 'check-answer', 'play-audio']);
+const emit = defineEmits(['update:listeningAnswer', 'check-answer', 'play-audio', 'select-listening-quiz-answer']);
 
 const onInput = (event: Event) => {
   emit('update:listeningAnswer', (event.target as HTMLInputElement).value)
@@ -113,4 +149,13 @@ watch(() => props.listeningAnswered, (newValue) => {
 })
 
 const { t } = useI18n();
+
+// Helpers for options UI
+const onSelectListeningOption = (opt: string) => {
+  if (!props.listeningQuizAnswered) {
+    emit('select-listening-quiz-answer', opt)
+  }
+}
+const isOptionSelected = (opt: string) => props.listeningQuizSelected === opt
+const isOptionCorrect = (opt: string) => props.card ? opt.trim().toLowerCase() === props.card.word.trim().toLowerCase() : false
 </script>

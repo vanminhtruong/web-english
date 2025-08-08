@@ -11,12 +11,13 @@
       <!-- Question -->
       <div class="text-center mb-8">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ getShortMeaning(currentCard.meaning) }}</h2>
-        <p class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">{{ t('flashcard.typing.instruction', 'Type the corresponding English word:') }}</p>
+        <p v-if="!typingQuizEnabled" class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">{{ t('flashcard.typing.instruction', 'Type the corresponding English word:') }}</p>
+        <p v-else class="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">{{ t('flashcard.typing.instructionQuiz', 'Choose the correct English word:') }}</p>
       </div>
 
       <!-- Input Area -->
       <div class="flex-1 flex flex-col justify-center">
-        <div class="max-w-lg mx-auto w-full">
+        <div v-if="!typingQuizEnabled" class="max-w-lg mx-auto w-full">
           <div class="relative">
             <input
               :value="typingAnswer"
@@ -47,6 +48,36 @@
           <div v-if="typingAnswered && typingAnswer.toLowerCase().trim() !== currentCard.word.toLowerCase()" class="mt-4 text-center">
             <p class="text-gray-600 dark:text-gray-400 text-sm">{{ t('flashcard.typing.correctAnswer', 'Correct answer:') }}</p>
             <p class="text-lg sm:text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">{{ currentCard.word }}</p>
+          </div>
+        </div>
+        <div v-else class="max-w-xl mx-auto">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 justify-items-center mx-auto max-w-[560px] sm:max-w-[520px]">
+            <button
+              v-for="(opt, idx) in typingQuizOptions"
+              :key="idx"
+              @click="onSelectTypingOption(opt)"
+              :disabled="typingQuizAnswered"
+              translate="no"
+              class="notranslate px-3 py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full max-w-[260px] sm:max-w-[240px]"
+              :class="[
+                typingQuizAnswered
+                  ? (isOptionCorrect(opt)
+                      ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700'
+                      : isOptionSelected(opt)
+                        ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 border-red-300 dark:border-red-700'
+                        : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60')
+                  : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60 hover:shadow-sm hover:scale-[1.01] dark:hover:bg-white/5'
+              ]"
+            >
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80">
+                {{ String.fromCharCode(65 + idx) }}
+              </span>
+              <span class="truncate">{{ opt }}</span>
+            </button>
+          </div>
+          <div v-if="typingAnswered" class="mt-4 text-center">
+            <p v-if="typingCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ t('flashcard.typing.correct', '✓ Correct!') }}</p>
+            <p v-else class="text-red-600 dark:text-red-400 font-medium">{{ t('flashcard.typing.incorrect', '✗ Correct answer:') }} {{ currentCard.word }}</p>
           </div>
         </div>
       </div>
@@ -105,6 +136,10 @@ interface Props {
   typingAnswer: string
   typingAnswered: boolean
   typingCorrect?: boolean
+  typingQuizEnabled?: boolean
+  typingQuizOptions?: string[]
+  typingQuizSelected?: string
+  typingQuizAnswered?: boolean
 }
 
 const props = defineProps<Props>()
@@ -112,6 +147,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   'update:typingAnswer': [value: string]
   'check-answer': []
+  'select-typing-quiz-answer': [answer: string]
 }>()
 
 const handleInput = (event: Event) => {
@@ -150,13 +186,25 @@ const resetTriggers = () => {
 // Watch for typingAnswered changes to trigger effects after parent updates
 watch(() => props.typingAnswered, (newValue) => {
   if (newValue && !triggerFirework.value) {
-    // Answer was just processed, trigger effects
-    isCorrectAnswer.value = props.typingAnswer.toLowerCase().trim() === props.currentCard.word.toLowerCase()
-    
+    // Use typingCorrect from props (set by parent) to ensure consistency
+    if (typeof props.typingCorrect === 'boolean') {
+      isCorrectAnswer.value = props.typingCorrect
+    } else {
+      // Fallback compare for legacy input flow
+      isCorrectAnswer.value = props.typingAnswer.toLowerCase().trim() === props.currentCard.word.toLowerCase()
+    }
+
     setTimeout(() => {
       triggerFirework.value = true
       triggerSound.value = true
     }, 50)
   }
 })
+
+// Helpers for options UI
+const onSelectTypingOption = (opt: string) => {
+  if (!props.typingQuizAnswered) emit('select-typing-quiz-answer', opt)
+}
+const isOptionSelected = (opt: string) => props.typingQuizSelected === opt
+const isOptionCorrect = (opt: string) => opt.trim().toLowerCase() === props.currentCard.word.trim().toLowerCase()
 </script>

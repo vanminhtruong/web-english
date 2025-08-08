@@ -8,22 +8,6 @@
         </span>
       </div>
 
-      <!-- Image Quiz Toggle -->
-      <div class="mb-3 flex items-center justify-center gap-3">
-        <span class="text-xs text-gray-600 dark:text-white/80">{{ t('flashcard.image.quizToggle', 'Multiple Choice') }}</span>
-        <button
-          :aria-label="t('flashcard.image.quizToggle', 'Multiple Choice')"
-          @click="toggleImageQuiz()"
-          class="relative inline-flex items-center h-5 w-9 rounded-full transition-colors duration-200 focus:outline-none border border-gray-300 dark:border-dark-bg-mute"
-          :class="imageQuizEnabled ? 'bg-purple-600' : 'bg-gray-200 dark:bg-dark-bg-mute'"
-        >
-          <span
-            class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200"
-            :class="imageQuizEnabled ? 'translate-x-4' : 'translate-x-1'"
-          />
-        </button>
-      </div>
-
       <!-- Image Display -->
       <div class="flex-1 flex items-center justify-center mb-4 min-h-0">
         <div v-if="currentCard?.image" class="relative">
@@ -280,10 +264,7 @@ watch(() => props.imageQuizEnabled, (newVal) => {
   }
 })
 
-// Toggle Image Quiz
-const toggleImageQuiz = () => {
-  emit('update:imageQuizEnabled', !props.imageQuizEnabled)
-}
+// Toggle handled in FlashcardHeader dropdown; no local toggle UI here
 
 // Helpers for options UI
 const onSelectImageOption = (opt: string) => {

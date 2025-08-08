@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import { useVoiceStore } from '../../../stores/voiceStore'
 
@@ -38,11 +38,21 @@ export function useFlashcardModes(
   const typingAnswer = ref('')
   const typingAnswered = ref(false)
   const typingCorrect = ref(false)
+  // Typing-Quiz (multiple choice within Typing mode)
+  const typingQuizEnabled = ref(false)
+  const typingQuizOptions = ref<string[]>([])
+  const typingQuizSelected = ref('')
+  const typingQuizAnswered = ref(false)
 
   // Listening mode states
   const listeningAnswer = ref('')
   const listeningAnswered = ref(false)
   const listeningCorrect = ref(false)
+  // Listening-Quiz (multiple choice within Listening mode)
+  const listeningQuizEnabled = ref(false)
+  const listeningQuizOptions = ref<string[]>([])
+  const listeningQuizSelected = ref('')
+  const listeningQuizAnswered = ref(false)
 
   // Image mode states
   const imageAnswer = ref('')
@@ -54,6 +64,37 @@ export function useFlashcardModes(
   const imageQuizOptions = ref<string[]>([])
   const imageQuizSelected = ref('')
   const imageQuizAnswered = ref(false)
+
+  // Persist toggle states in localStorage
+  const STORAGE_KEYS = {
+    image: 'pe_imageQuizEnabled',
+    listening: 'pe_listeningQuizEnabled',
+    typing: 'pe_typingQuizEnabled',
+  } as const
+
+  const readBool = (key: string, def = false) => {
+    try {
+      const v = localStorage.getItem(key)
+      return v === null ? def : v === 'true'
+    } catch {
+      return def
+    }
+  }
+
+  // Initialize from localStorage
+  imageQuizEnabled.value = readBool(STORAGE_KEYS.image, false)
+  listeningQuizEnabled.value = readBool(STORAGE_KEYS.listening, false)
+  typingQuizEnabled.value = readBool(STORAGE_KEYS.typing, false)
+
+  const writeBool = (key: string, val: boolean) => {
+    try {
+      localStorage.setItem(key, String(val))
+    } catch {}
+  }
+
+  watch(imageQuizEnabled, (v) => writeBool(STORAGE_KEYS.image, v))
+  watch(listeningQuizEnabled, (v) => writeBool(STORAGE_KEYS.listening, v))
+  watch(typingQuizEnabled, (v) => writeBool(STORAGE_KEYS.typing, v))
 
   // Pronunciation mode states
   const isRecording = ref(false)
@@ -211,6 +252,44 @@ export function useFlashcardModes(
     return typingCorrect.value
   }
 
+  // Typing-Quiz methods (multiple choice answers are the WORDs)
+  const generateTypingQuizOptions = () => {
+    if (!currentCard.value) return
+
+    const correctWord = currentCard.value.word.trim()
+    const allWrong = allVocabularies.value
+      .filter(card => card.id !== currentCard.value?.id)
+      .map(card => card.word.trim())
+      .filter(word => word.toLowerCase() !== correctWord.toLowerCase())
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+
+    const wrongOptions = allWrong.length >= 3 ? allWrong.slice(0, 3) : allWrong
+    typingQuizOptions.value = [correctWord, ...wrongOptions].sort(() => Math.random() - 0.5)
+  }
+
+  const selectTypingQuizAnswer = (answer: string) => {
+    if (typingQuizAnswered.value) return
+
+    typingQuizSelected.value = answer
+    typingQuizAnswered.value = true
+
+    const correctWord = currentCard.value ? currentCard.value.word.trim().toLowerCase() : ''
+    const isCorrect = answer.trim().toLowerCase() === correctWord
+
+    // Reflect into base Typing mode state so existing flow/stats work
+    typingAnswered.value = true
+    typingCorrect.value = isCorrect
+
+    if (isCorrect) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
+
+    return isCorrect
+  }
+
   // Listening mode methods
   const checkListeningAnswer = () => {
     if (!currentCard.value || listeningAnswered.value) return
@@ -229,6 +308,44 @@ export function useFlashcardModes(
     }
     
     return listeningCorrect.value
+  }
+
+  // Listening-Quiz methods (multiple choice answers are the WORDs)
+  const generateListeningQuizOptions = () => {
+    if (!currentCard.value) return
+
+    const correctWord = currentCard.value.word.trim()
+    const allWrong = allVocabularies.value
+      .filter(card => card.id !== currentCard.value?.id)
+      .map(card => card.word.trim())
+      .filter(word => word.toLowerCase() !== correctWord.toLowerCase())
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+
+    const wrongOptions = allWrong.length >= 3 ? allWrong.slice(0, 3) : allWrong
+    listeningQuizOptions.value = [correctWord, ...wrongOptions].sort(() => Math.random() - 0.5)
+  }
+
+  const selectListeningQuizAnswer = (answer: string) => {
+    if (listeningQuizAnswered.value) return
+
+    listeningQuizSelected.value = answer
+    listeningQuizAnswered.value = true
+
+    const correctWord = currentCard.value ? currentCard.value.word.trim().toLowerCase() : ''
+    const isCorrect = answer.trim().toLowerCase() === correctWord
+
+    // Reflect into base Listening mode state so existing flow/stats work
+    listeningAnswered.value = true
+    listeningCorrect.value = isCorrect
+
+    if (isCorrect) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
+
+    return isCorrect
   }
 
   // Image mode methods
@@ -279,12 +396,20 @@ export function useFlashcardModes(
     typingAnswer.value = ''
     typingAnswered.value = false
     typingCorrect.value = false
+    // Reset Typing-Quiz state but keep toggle as-is
+    typingQuizOptions.value = []
+    typingQuizSelected.value = ''
+    typingQuizAnswered.value = false
   }
 
   const resetListeningMode = () => {
     listeningAnswer.value = ''
     listeningAnswered.value = false
     listeningCorrect.value = false
+    // Reset Listening-Quiz state but keep toggle as-is; caller decides
+    listeningQuizOptions.value = []
+    listeningQuizSelected.value = ''
+    listeningQuizAnswered.value = false
   }
 
   const resetImageMode = () => {
@@ -347,6 +472,13 @@ export function useFlashcardModes(
     typingCorrect,
     checkTypingAnswer,
     resetTypingMode,
+    // Typing-Quiz (within Typing mode)
+    typingQuizEnabled,
+    typingQuizOptions,
+    typingQuizSelected,
+    typingQuizAnswered,
+    generateTypingQuizOptions,
+    selectTypingQuizAnswer,
     
     // Listening mode
     listeningAnswer,
@@ -355,6 +487,13 @@ export function useFlashcardModes(
     checkListeningAnswer,
     playAudio,
     resetListeningMode,
+    // Listening-Quiz (within Listening mode)
+    listeningQuizEnabled,
+    listeningQuizOptions,
+    listeningQuizSelected,
+    listeningQuizAnswered,
+    generateListeningQuizOptions,
+    selectListeningQuizAnswer,
     
     // Image mode
     imageAnswer,
