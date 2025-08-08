@@ -27,8 +27,16 @@
       <div class="flex items-center justify-between h-16">
         <!-- Logo and Title -->
         <div class="flex items-center space-x-2 sm:space-x-4">
-          <img alt="Vue logo" src="@/assets/logo.svg" class="h-6 w-6 sm:h-8 sm:w-8" />
-          <h1 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
+          <img alt="Vue logo" src="@/assets/logo.svg" class="h-6 w-6 sm:h-8 sm:w-8 cursor-pointer" @click="handleLogoClick" :title="t('common.dashboard', 'Dashboard')" />
+          <h1
+            class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate cursor-pointer"
+            @click="handleLogoClick"
+            :title="t('common.dashboard', 'Dashboard')"
+            role="button"
+            tabindex="0"
+            @keydown.enter.prevent="handleLogoClick"
+            @keydown.space.prevent="handleLogoClick"
+          >
             <span class="hidden sm:inline">English Learning App</span>
             <span class="sm:hidden">English App</span>
           </h1>
@@ -177,7 +185,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { loadComponentSafely } from '../../utils/import-helper'
 
 // Use defineAsyncComponent to import components
@@ -190,6 +198,7 @@ const LanguageSwitcher = defineAsyncComponent(
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 // Mobile menu state
 const isMobileMenuOpen = ref(false)
@@ -269,6 +278,21 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
+}
+
+// Logo click: go to dashboard from anywhere; if already there, scroll to top
+const handleLogoClick = async () => {
+  try {
+    if (route.path === '/dashboard') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      if (isMobileMenuOpen.value) closeMobileMenu()
+      await router.push('/dashboard')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  } catch (e) {
+    // no-op
+  }
 }
 </script>
 

@@ -158,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineAsyncComponent } from 'vue'
+import { ref, watch, defineAsyncComponent, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 import { getTopicName } from '../../../utils/topicUtils'
@@ -252,6 +252,31 @@ watch(() => props.imageAnswered, (newValue) => {
       triggerFirework.value = true
       triggerSound.value = true
     }, 50)
+  }
+})
+
+// Persist Image Quiz toggle in localStorage
+const STORAGE_KEY_IMAGE_QUIZ = 'flashcard_image_quiz_enabled'
+
+onMounted(() => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_IMAGE_QUIZ)
+    if (saved !== null) {
+      const val = saved === 'true'
+      if (val !== props.imageQuizEnabled) {
+        emit('update:imageQuizEnabled', val)
+      }
+    }
+  } catch (e) {
+    // ignore storage errors
+  }
+})
+
+watch(() => props.imageQuizEnabled, (newVal) => {
+  try {
+    localStorage.setItem(STORAGE_KEY_IMAGE_QUIZ, String(newVal))
+  } catch (e) {
+    // ignore storage errors
   }
 })
 
