@@ -32,7 +32,8 @@
     "resetToDefault": "Về mặc định",
     "actions": "Thao tác",
     "backToTop": "Lên đầu trang",
-    "backToTopTooltip": "Lên đầu trang ({percent}%)"
+    "backToTopTooltip": "Lên đầu trang ({percent}%)",
+    "checking": "Đang kiểm tra..."
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -111,7 +112,19 @@
       "saveSuccess": "Đã lưu ghi chú thành công!",
       "autoSaveNotice": "Đã bật lưu tự động. Ghi chú của bạn sẽ được đưa vào bản sao lưu tiếp theo.",
       "today": "Hôm nay",
-      "yesterday": "Hôm qua"
+      "yesterday": "Hôm qua",
+      "grammarCheck": "Bật kiểm tra ngữ pháp (tiếng Anh)",
+      "preview": "Xem trước với gợi ý ngữ pháp",
+      "grammarDisclaimer": "Kiểm tra ngữ pháp sử dụng LanguageTool (public API) và có thể bị giới hạn tần suất.",
+      "grammarError": "Kiểm tra ngữ pháp thất bại. Vui lòng thử lại sau.",
+      "lt": {
+        "spelling": "Có thể có lỗi chính tả.",
+        "grammar": "Lỗi ngữ pháp",
+        "punctuation": "Lỗi chấm câu",
+        "style": "Lỗi phong cách",
+        "typographical": "Lỗi đánh máy",
+        "suggestion": "Gợi ý"
+      }
     },
     "lazyLoading": {
       "loading": "Đang tải...",
