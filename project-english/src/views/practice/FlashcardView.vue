@@ -445,13 +445,17 @@ const handleTimeout = () => {
 
 const handleTimerRestart = () => {
   // Restart the session from the FIRST card when user clicks "Try again" in the Time's Up modal
-  // 1) Keep current shuffled order (no reshuffle), just go back to index 0
-  // 2) Clear any per-card saved states
-  // 3) Reset the practice timer and card UI state
+  // If shuffle is enabled, reshuffle to get a new random order, then go back to index 0.
+  // Clear any per-card saved states and reset the practice timer and card UI state.
   console.log('Timer restarted: restarting from the first card')
   
   // Ensure we are in practice mode
   practiceStarted.value = true
+
+  // If shuffle is enabled, reshuffle to provide a new order for the new attempt
+  if (flashcardSettings.value.shuffleCards && baseFlashcards.value.length > 0) {
+    shuffleFlashcards()
+  }
 
   // Clear saved states and reset to first card
   cardStateStorage.value = {}

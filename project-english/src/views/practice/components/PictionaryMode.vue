@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-dark-bg-mute p-6 min-h-96 max-h-[560px] select-none"
+    class="bg-white dark:bg-black rounded-xl shadow-2xl border border-gray-200 dark:border-dark-bg-mute p-6 min-h-96 max-h-[560px] select-none"
     @copy.prevent
     @cut.prevent
     @contextmenu.prevent
@@ -8,10 +8,23 @@
   >
     <div class="h-full flex flex-col overflow-hidden">
       <!-- Category Badge -->
-      <div class="mb-4 text-center">
+      <div class="mb-4 flex items-center justify-center gap-3">
         <span class="px-3 py-1 bg-purple-100 dark:bg-dark-bg-mute text-purple-800 dark:text-purple-300 text-sm font-medium rounded-full">
           {{ card?.category ? getTopicName(card.category) : '' }}
         </span>
+        <!-- Drag mode toggle (local to Pictionary) -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-600 dark:text-white/70">{{ t('flashcard.pictionary.dragToggle', 'Drag & Drop') }}</span>
+          <button
+            class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors border border-gray-300 dark:border-dark-bg-mute"
+            :class="dragMode ? 'bg-blue-600' : 'bg-gray-200 dark:bg-dark-bg-soft'"
+            @click.stop="toggleDragMode"
+            :aria-pressed="dragMode ? 'true' : 'false'"
+            :title="t('flashcard.pictionary.dragToggle', 'Drag & Drop')"
+          >
+            <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', dragMode ? 'translate-x-5' : 'translate-x-1']" />
+          </button>
+        </div>
       </div>
 
       <!-- Image Display as hint -->
@@ -53,18 +66,63 @@
               v-else
               class="w-10 h-12 sm:w-12 sm:h-14 flex items-center justify-center rounded-md border text-xl sm:text-2xl font-semibold bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white border-gray-300 dark:border-dark-bg-mute transition-all duration-200"
               :class="[
-                slot.fixed ? 'opacity-90' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-bg-mute hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm'
+                slot.fixed
+                  ? 'opacity-90'
+                  : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-bg-mute hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm',
+                dragMode && !slot.fixed ? 'ring-0' : ''
               ]"
-              @click="!slot.fixed && focusInput()"
+              @click="onSlotClick(idx)"
+              @dragover.prevent="onSlotDragOver(idx, $event)"
+              @drop.prevent="onSlotDrop(idx, $event)"
             >
               <span v-if="slot.char" class="uppercase tracking-wider">{{ slot.char }}</span>
               <span
-                v-else-if="isFocused && !pictionaryAnswered && idx === nextEditableIndex()"
+                v-else-if="!dragMode && isFocused && !pictionaryAnswered && idx === nextEditableIndex()"
                 class="caret-block"
                 aria-hidden="true"
               ></span>
               <span v-else class="uppercase tracking-wider">&nbsp;</span>
             </div>
+          </div>
+        </div>
+        <!-- Letter bank filter & list for drag mode -->
+        <div v-if="dragMode && !pictionaryAnswered" class="mt-3">
+          <div class="mb-2 flex justify-center">
+            <div class="relative w-48 sm:w-56">
+              <input
+                v-model="letterQuery"
+                type="text"
+                inputmode="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Find letter..."
+                class="w-full px-3 pr-8 py-1.5 text-sm rounded-md border bg-white text-gray-900 border-gray-300 dark:bg-dark-bg-soft dark:text-white dark:border-dark-bg-mute focus:outline-none focus:ring-2 focus:ring-blue-500"
+                @click.stop
+              />
+              <button
+                type="button"
+                class="absolute right-1.5 top-1/2 -translate-y-1/2 z-10 p-1 rounded text-gray-500 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/10"
+                :class="{ 'opacity-40 pointer-events-none': !letterQuery }"
+                @click.stop="clearLetterQuery"
+                :aria-label="t('common.clear', 'Clear')"
+                :title="t('common.clear', 'Clear')"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 justify-center">
+            <button
+              v-for="ch in filteredLetterBank"
+              :key="ch"
+              class="w-8 h-10 sm:w-9 sm:h-11 inline-flex items-center justify-center rounded-md text-base sm:text-lg font-semibold border bg-blue-50 text-blue-700 border-blue-200 dark:bg-dark-bg-soft dark:text-blue-300 dark:border-blue-900/40 hover:shadow transition"
+              draggable="true"
+              @dragstart="onLetterDragStart(ch, $event)"
+            >
+              {{ ch }}
+            </button>
           </div>
         </div>
         <!-- Hidden input to capture typing -->
@@ -121,7 +179,10 @@
 
       <!-- Instruction -->
       <p v-if="!pictionaryAnswered" class="text-center text-sm text-gray-500 dark:text-white/60 mt-3">
-        {{ t('flashcard.pictionary.instruction', 'Click the boxes and type to fill in the missing letters. Press Enter to check.') }}
+        {{ dragMode
+          ? t('flashcard.pictionary.dragInstruction', 'Drag letters into the boxes, then press Enter to check.')
+          : t('flashcard.pictionary.instruction', 'Click the boxes and type to fill in the missing letters. Press Enter to check.')
+        }}
       </p>
       
       <!-- Firework Sound Effect -->
@@ -137,7 +198,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick, defineAsyncComponent } from 'vue'
+import { ref, watch, onMounted, nextTick, defineAsyncComponent, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 
@@ -161,6 +222,24 @@ const { t } = useI18n()
 const imageError = ref(false)
 const hiddenInput = ref<HTMLInputElement | null>(null)
 const isFocused = ref(false)
+// Drag & drop mode state
+const dragMode = ref(false)
+const letterBank = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+// Query to filter letter bank in drag mode
+const letterQuery = ref('')
+const filteredLetterBank = computed(() => {
+  const q = letterQuery.value.trim().toUpperCase()
+  if (!q) return letterBank
+  // Allow entering multiple characters: show unique letters typed that exist in A-Z
+  const onlyLetters = q.replace(/[^A-Z]/g, '')
+  if (!onlyLetters) return letterBank
+  const set = new Set(onlyLetters.split(''))
+  return letterBank.filter(ch => set.has(ch))
+})
+
+const clearLetterQuery = () => {
+  letterQuery.value = ''
+}
 
 // Import effect component lazily
 const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
@@ -244,6 +323,11 @@ const lastFilledEditableIndex = () => {
 const handleKeydown = (e: KeyboardEvent) => {
   if (props.pictionaryAnswered) return
   const key = e.key
+  // In drag mode, ignore typing except Enter
+  if (dragMode.value) {
+    if (key === 'Enter') emit('check-answer')
+    return
+  }
   // Support desktop physical keyboards
   if (/^[a-z]$/i.test(key)) {
     const idx = nextEditableIndex()
@@ -266,6 +350,11 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 const handleBeforeInput = (e: Event) => {
   if (props.pictionaryAnswered) return
+  if (dragMode.value) {
+    // ignore text input events while in drag mode, but still clear input value
+    if (hiddenInput.value) hiddenInput.value.value = ''
+    return
+  }
   const ie = e as InputEvent
   const type = ie.inputType as string | undefined
   // Handle character insertion from soft keyboards (Android/iOS)
@@ -294,6 +383,18 @@ const handleBeforeInput = (e: Event) => {
 const handleInput = (e: Event) => {
   // Clear any stray value in the hidden input
   if (hiddenInput.value) hiddenInput.value.value = ''
+}
+
+// Determines if all editable, non-separator slots are filled
+const allEditableFilled = () => {
+  return slots.value.every(s => s.fixed || s.separator || !!s.char)
+}
+
+// In drag mode, auto-check when all letters are filled
+const maybeAutoCheck = () => {
+  if (dragMode.value && !props.pictionaryAnswered && allEditableFilled()) {
+    emit('check-answer')
+  }
 }
 
 watch(() => props.card, (c) => {
@@ -330,6 +431,75 @@ watch(() => props.pictionaryAnswered, (newVal) => {
     isFocused.value = false
   }
 })
+
+// Drag & drop helpers (top-level)
+const toggleDragMode = () => {
+  dragMode.value = !dragMode.value
+  if (!dragMode.value) {
+    // when leaving drag mode, allow typing focus
+    focusInput()
+  } else {
+    // leaving focus to avoid showing caret
+    isFocused.value = false
+  }
+}
+
+const onLetterDragStart = (ch: string, ev: DragEvent) => {
+  ev.dataTransfer?.setData('text/plain', ch)
+  ev.dataTransfer?.setDragImage?.(createDragImage(ch), 12, 12)
+}
+
+const onSlotDragOver = (idx: number, _ev: DragEvent) => {
+  // Only allow drop on editable and non-fixed slots
+  const s = slots.value[idx]
+  if (!s || s.fixed || s.separator) return
+}
+
+const onSlotDrop = (idx: number, ev: DragEvent) => {
+  const s = slots.value[idx]
+  if (!s || s.fixed || s.separator) return
+  const ch = (ev.dataTransfer?.getData('text/plain') || '').toUpperCase()
+  if (/^[A-Z]$/.test(ch)) {
+    s.char = ch
+    pushAnswer()
+    // After filling a letter via drag, auto-check if all slots are filled in drag mode
+    maybeAutoCheck()
+  }
+}
+
+const onSlotClick = (idx: number) => {
+  const s = slots.value[idx]
+  if (!s || s.separator || s.fixed) return
+  if (dragMode.value) {
+    // In drag mode: click toggles clear if filled
+    if (s.char) {
+      s.char = ''
+      pushAnswer()
+    }
+  } else {
+    // typing mode focuses input
+    focusInput()
+  }
+}
+
+// Create a lightweight drag image element
+const createDragImage = (ch: string) => {
+  const el = document.createElement('div')
+  el.textContent = ch
+  el.style.position = 'absolute'
+  el.style.top = '-1000px'
+  el.style.left = '-1000px'
+  el.style.padding = '6px 8px'
+  el.style.fontWeight = '700'
+  el.style.fontSize = '16px'
+  el.style.borderRadius = '8px'
+  el.style.background = 'rgba(37,99,235,0.15)'
+  el.style.color = '#1D4ED8'
+  el.style.border = '1px solid rgba(37,99,235,0.35)'
+  document.body.appendChild(el)
+  setTimeout(() => document.body.removeChild(el), 0)
+  return el
+}
 </script>
 
 <style scoped>
