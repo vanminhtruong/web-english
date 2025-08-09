@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-8 h-96 select-none"
+    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 h-auto sm:h-96 select-none"
     @copy.prevent
     @cut.prevent
     @contextmenu.prevent
@@ -41,14 +41,14 @@
         </div>
       </div>
       <div v-else class="w-full px-2 sm:px-3 md:px-0">
-        <div class="grid grid-cols-1 grid-2-cols-480 sm:grid-cols-2 gap-2 sm:gap-3 justify-items-stretch w-full max-w-none">
+        <div class="grid grid-cols-1 grid-2-cols-480 sm:grid-cols-2 gap-1.5 sm:gap-3 justify-items-stretch w-full max-w-none">
           <button
             v-for="(opt, idx) in listeningQuizOptions"
             :key="idx"
             @click="onSelectListeningOption(opt)"
             :disabled="listeningQuizAnswered"
             translate="no"
-            class="notranslate px-3 py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full min-w-0"
+            class="notranslate px-3 py-1.5 sm:py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full min-w-0"
             :class="[
               listeningQuizAnswered
                 ? (isOptionCorrect(opt)

@@ -460,10 +460,7 @@ const handleTimerRestart = () => {
 
   // Start the timer immediately (avoid showing the Start button)
   if (practiceTimerRef.value) {
-    // Mark timer as started and start countdown
-    if (practiceTimerRef.value.hasStarted) {
-      practiceTimerRef.value.hasStarted.value = true
-    }
+    // Start the timer directly - hasStarted will be set internally
     practiceTimerRef.value.startTimer()
   }
 }

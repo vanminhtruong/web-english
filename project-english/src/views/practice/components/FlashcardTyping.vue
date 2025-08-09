@@ -55,15 +55,15 @@
             <p class="text-lg sm:text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">{{ currentCard.word }}</p>
           </div>
         </div>
-        <div v-else class="max-w-xl mx-auto">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 justify-items-center mx-auto max-w-[560px] sm:max-w-[520px]">
+        <div v-else class="w-full px-2 sm:px-3 md:px-0">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 justify-items-stretch w-full">
             <button
               v-for="(opt, idx) in typingQuizOptions"
               :key="idx"
               @click="onSelectTypingOption(opt)"
               :disabled="typingQuizAnswered"
               translate="no"
-              class="notranslate px-3 py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full max-w-[260px] sm:max-w-[240px]"
+              class="notranslate px-3 py-1.5 sm:py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full min-w-0"
               :class="[
                 typingQuizAnswered
                   ? (isOptionCorrect(opt)
@@ -74,15 +74,15 @@
                   : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60 hover:shadow-sm hover:scale-[1.01] dark:hover:bg-white/5'
               ]"
             >
-              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80">
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80 shrink-0">
                 {{ String.fromCharCode(65 + idx) }}
               </span>
-              <span class="truncate">{{ opt }}</span>
+              <span class="truncate overflow-hidden min-w-0">{{ opt }}</span>
             </button>
           </div>
-          <div v-if="typingAnswered" class="mt-4 text-center">
-            <p v-if="typingCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ t('flashcard.typing.correct', '✓ Correct!') }}</p>
-            <p v-else class="text-red-600 dark:text-red-400 font-medium">{{ t('flashcard.typing.incorrect', '✗ Correct answer:') }} {{ currentCard.word }}</p>
+          <div v-if="typingAnswered" class="mt-3 sm:mt-4 text-center px-2">
+            <p v-if="typingCorrect" class="text-green-600 dark:text-green-400 font-medium text-sm sm:text-base">{{ t('flashcard.typing.correct', '✓ Correct!') }}</p>
+            <p v-else class="text-red-600 dark:text-red-400 font-medium text-sm sm:text-base break-words">{{ t('flashcard.typing.incorrect', '✗ Correct answer:') }} <span class="font-bold">{{ currentCard.word }}</span></p>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@
       <!-- Submit button -->
       <div class="text-center mt-6">
         <button
-          v-if="!typingAnswered"
+          v-if="!typingAnswered && !typingQuizEnabled"
           @click="handleCheckAnswer"
           :disabled="!typingAnswer.trim()"
           class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-8 py-3 rounded-full font-medium transition-colors"

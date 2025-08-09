@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted, watch } from 'vue'
+import { ref, computed, onUnmounted, watch, readonly } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
