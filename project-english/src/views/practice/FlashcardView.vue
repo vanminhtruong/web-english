@@ -401,8 +401,28 @@ const handleTimeout = () => {
 }
 
 const handleTimerRestart = () => {
-  console.log('Timer restarted for current card')
-  // Card stays the same, timer restarts
+  // Restart the session from the FIRST card when user clicks "Try again" in the Time's Up modal
+  // 1) Keep current shuffled order (no reshuffle), just go back to index 0
+  // 2) Clear any per-card saved states
+  // 3) Reset the practice timer and card UI state
+  console.log('Timer restarted: restarting from the first card')
+  
+  // Ensure we are in practice mode
+  practiceStarted.value = true
+
+  // Clear saved states and reset to first card
+  cardStateStorage.value = {}
+  currentIndex.value = 0
+  resetAndRestoreCard()
+
+  // Start the timer immediately (avoid showing the Start button)
+  if (practiceTimerRef.value) {
+    // Mark timer as started and start countdown
+    if (practiceTimerRef.value.hasStarted) {
+      practiceTimerRef.value.hasStarted.value = true
+    }
+    practiceTimerRef.value.startTimer()
+  }
 }
 
 const handleSkip = () => {
