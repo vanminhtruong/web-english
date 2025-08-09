@@ -6,6 +6,29 @@
         <div class="absolute top-20 left-10 w-64 h-64 bg-blue-300 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob"></div>
         <div class="absolute top-40 right-10 w-72 h-72 bg-purple-300 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
         <div class="absolute -bottom-8 left-20 w-80 h-80 bg-pink-300 dark:bg-pink-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+        <!-- Extra decorative balls (responsive, subtle, non-intrusive) -->
+        <div class="hidden sm:block absolute top-10 left-1/2 -translate-x-1/2 w-40 h-40 bg-cyan-300 dark:bg-cyan-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-25 animate-blob animation-delay-1000"></div>
+        <div class="hidden sm:block absolute bottom-24 right-24 w-52 h-52 bg-indigo-300 dark:bg-indigo-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-25 animate-blob animation-delay-3000"></div>
+        <div class="hidden md:block absolute top-1/3 right-1/3 w-36 h-36 bg-emerald-300 dark:bg-emerald-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-1500"></div>
+        <div class="hidden md:block absolute -bottom-20 -right-10 w-96 h-96 bg-blue-200 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-2xl opacity-20 animate-blob animation-delay-2500"></div>
+        <div class="hidden lg:block absolute top-1/2 -left-16 w-72 h-72 bg-fuchsia-300 dark:bg-fuchsia-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-25 animate-blob animation-delay-3500"></div>
+        <div class="hidden xl:block absolute top-6 right-1/4 w-44 h-44 bg-teal-300 dark:bg-teal-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-25 animate-blob animation-delay-500"></div>
+        <!-- Even more subtle orbs for depth -->
+        <div class="hidden sm:block absolute top-1/4 left-6 w-24 h-24 bg-sky-300 dark:bg-sky-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-lg opacity-20 animate-blob animation-delay-4500"></div>
+        <div class="hidden sm:block absolute bottom-8 left-1/3 w-28 h-28 bg-rose-300 dark:bg-rose-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-lg opacity-20 animate-blob animation-delay-5500"></div>
+        <div class="hidden md:block absolute top-16 right-1/3 w-20 h-20 bg-violet-300 dark:bg-violet-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-lg opacity-20 animate-blob animation-delay-6500"></div>
+        <div class="hidden md:block absolute bottom-1/3 right-6 w-24 h-24 bg-lime-300 dark:bg-lime-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-lg opacity-20 animate-blob animation-delay-7500"></div>
+        <div class="hidden lg:block absolute top-3/4 left-1/4 w-32 h-32 bg-amber-300 dark:bg-amber-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-20 animate-blob animation-delay-8500"></div>
+        <div class="hidden lg:block absolute top-8 right-8 w-16 h-16 bg-orange-300 dark:bg-orange-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-md opacity-25 animate-blob animation-delay-1200"></div>
+        <div class="hidden xl:block absolute bottom-10 left-1/2 -translate-x-1/2 w-28 h-28 bg-cyan-200 dark:bg-cyan-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-15 animate-blob animation-delay-2200"></div>
+        <div class="hidden 2xl:block absolute top-1/5 right-1/5 w-40 h-40 bg-indigo-200 dark:bg-indigo-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-2xl opacity-15 animate-blob animation-delay-5200"></div>
+        <!-- Ultra subtle background depth orbs (desktop only) -->
+        <div class="hidden lg:block absolute -top-24 left-1/3 w-96 h-96 bg-blue-100 dark:bg-blue-700 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl opacity-10 animate-blob animation-delay-900"></div>
+        <div class="hidden lg:block absolute bottom-[-120px] left-[-80px] w-[420px] h-[420px] bg-purple-100 dark:bg-purple-700 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl opacity-10 animate-blob animation-delay-1900"></div>
+        <div class="hidden xl:block absolute top-1/3 left-[70%] w-48 h-48 bg-pink-200 dark:bg-pink-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-2xl opacity-15 animate-blob animation-delay-3300"></div>
+        <div class="hidden xl:block absolute bottom-1/4 right-[35%] w-32 h-32 bg-cyan-300 dark:bg-cyan-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-15 animate-blob animation-delay-6100"></div>
+        <div class="hidden 2xl:block absolute top-[12%] left-[12%] w-56 h-56 bg-emerald-200 dark:bg-emerald-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-2xl opacity-15 animate-blob animation-delay-7100"></div>
+        <div class="hidden 2xl:block absolute bottom-[8%] right-[12%] w-64 h-64 bg-teal-200 dark:bg-teal-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-2xl opacity-15 animate-blob animation-delay-9100"></div>
       </div>
     </div>
     <!-- Header -->
