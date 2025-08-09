@@ -70,6 +70,9 @@ export function useFlashcardModes(
     image: 'pe_imageQuizEnabled',
     listening: 'pe_listeningQuizEnabled',
     typing: 'pe_typingQuizEnabled',
+    imagePos: 'pe_imageQuiz_correct_pos',
+    listeningPos: 'pe_listeningQuiz_correct_pos',
+    typingPos: 'pe_typingQuiz_correct_pos',
   } as const
 
   const readBool = (key: string, def = false) => {
@@ -92,9 +95,50 @@ export function useFlashcardModes(
     } catch {}
   }
 
+  const readNumber = (key: string, def = 0) => {
+    try {
+      const v = localStorage.getItem(key)
+      const n = v === null ? def : Number(v)
+      return Number.isFinite(n) && n >= 0 ? n : def
+    } catch {
+      return def
+    }
+  }
+
+  const writeNumber = (key: string, val: number) => {
+    try {
+      localStorage.setItem(key, String(val))
+    } catch {}
+  }
+
   watch(imageQuizEnabled, (v) => writeBool(STORAGE_KEYS.image, v))
   watch(listeningQuizEnabled, (v) => writeBool(STORAGE_KEYS.listening, v))
   watch(typingQuizEnabled, (v) => writeBool(STORAGE_KEYS.typing, v))
+
+  // Rotating indices for correct-answer position (A,B,C,D => 0..3)
+  const imageCorrectPos = ref(readNumber(STORAGE_KEYS.imagePos, Math.floor(Math.random() * 4)))
+  const listeningCorrectPos = ref(readNumber(STORAGE_KEYS.listeningPos, Math.floor(Math.random() * 4)))
+  const typingCorrectPos = ref(readNumber(STORAGE_KEYS.typingPos, Math.floor(Math.random() * 4)))
+
+  watch(imageCorrectPos, (n) => writeNumber(STORAGE_KEYS.imagePos, n))
+  watch(listeningCorrectPos, (n) => writeNumber(STORAGE_KEYS.listeningPos, n))
+  watch(typingCorrectPos, (n) => writeNumber(STORAGE_KEYS.typingPos, n))
+
+  const placeWithRotation = (correct: string, wrongs: string[], posRef: { value: number }) => {
+    const options = new Array<string>(4)
+    const idx = posRef.value % 4
+    options[idx] = correct
+    // Fill remaining slots with shuffled wrongs
+    const shuffledWrongs = [...wrongs].sort(() => Math.random() - 0.5)
+    let wi = 0
+    for (let i = 0; i < 4; i++) {
+      if (i === idx) continue
+      options[i] = shuffledWrongs[wi++] ?? ''
+    }
+    // Advance rotation for next time
+    posRef.value = (posRef.value + 1) % 4
+    return options
+  }
 
   // Pronunciation mode states
   const isRecording = ref(false)
@@ -207,7 +251,10 @@ export function useFlashcardModes(
       .slice(0, 3)
 
     const wrongOptions = allWrong.length >= 3 ? allWrong.slice(0, 3) : allWrong
-    imageQuizOptions.value = [correctWord, ...wrongOptions].sort(() => Math.random() - 0.5)
+    // Place correct answer using rotating position to avoid repetition in the same slot
+    const paddedWrongs = [...new Set(wrongOptions)]
+    while (paddedWrongs.length < 3) paddedWrongs.push('')
+    imageQuizOptions.value = placeWithRotation(correctWord, paddedWrongs, imageCorrectPos)
   }
 
   const selectImageQuizAnswer = (answer: string) => {
@@ -265,7 +312,9 @@ export function useFlashcardModes(
       .slice(0, 3)
 
     const wrongOptions = allWrong.length >= 3 ? allWrong.slice(0, 3) : allWrong
-    typingQuizOptions.value = [correctWord, ...wrongOptions].sort(() => Math.random() - 0.5)
+    const paddedWrongs = [...new Set(wrongOptions)]
+    while (paddedWrongs.length < 3) paddedWrongs.push('')
+    typingQuizOptions.value = placeWithRotation(correctWord, paddedWrongs, typingCorrectPos)
   }
 
   const selectTypingQuizAnswer = (answer: string) => {
@@ -323,7 +372,9 @@ export function useFlashcardModes(
       .slice(0, 3)
 
     const wrongOptions = allWrong.length >= 3 ? allWrong.slice(0, 3) : allWrong
-    listeningQuizOptions.value = [correctWord, ...wrongOptions].sort(() => Math.random() - 0.5)
+    const paddedWrongs = [...new Set(wrongOptions)]
+    while (paddedWrongs.length < 3) paddedWrongs.push('')
+    listeningQuizOptions.value = placeWithRotation(correctWord, paddedWrongs, listeningCorrectPos)
   }
 
   const selectListeningQuizAnswer = (answer: string) => {
