@@ -57,7 +57,13 @@
               ]"
               @click="!slot.fixed && focusInput()"
             >
-              <span class="uppercase tracking-wider">{{ slot.char || ' ' }}</span>
+              <span v-if="slot.char" class="uppercase tracking-wider">{{ slot.char }}</span>
+              <span
+                v-else-if="isFocused && !pictionaryAnswered && idx === nextEditableIndex()"
+                class="caret-block"
+                aria-hidden="true"
+              ></span>
+              <span v-else class="uppercase tracking-wider">&nbsp;</span>
             </div>
           </div>
         </div>
@@ -65,9 +71,17 @@
         <input
           ref="hiddenInput"
           type="text"
-          class="sr-only"
+          class="fixed top-0 left-0 w-px h-px opacity-0"
+          tabindex="-1"
+          aria-hidden="true"
           autocomplete="off"
+          spellcheck="false"
+          inputmode="text"
+          @beforeinput.stop.prevent="handleBeforeInput"
+          @input.stop.prevent="handleInput"
           @keydown.stop.prevent="handleKeydown"
+          @focus="isFocused = true"
+          @blur="isFocused = false"
         />
       </div>
 
@@ -146,6 +160,7 @@ const { t } = useI18n()
 
 const imageError = ref(false)
 const hiddenInput = ref<HTMLInputElement | null>(null)
+const isFocused = ref(false)
 
 // Import effect component lazily
 const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
@@ -201,7 +216,13 @@ const pushAnswer = () => {
 
 const focusInput = async () => {
   await nextTick()
-  hiddenInput.value?.focus()
+  try {
+    hiddenInput.value?.focus({ preventScroll: true })
+  } catch {
+    // Fallback for browsers not supporting FocusOptions
+    hiddenInput.value?.focus()
+  }
+  isFocused.value = true
 }
 
 const nextEditableIndex = () => slots.value.findIndex(s => !s.fixed && !s.char)
@@ -216,13 +237,16 @@ const lastFilledEditableIndex = () => {
 const handleKeydown = (e: KeyboardEvent) => {
   if (props.pictionaryAnswered) return
   const key = e.key
+  // Support desktop physical keyboards
   if (/^[a-z]$/i.test(key)) {
     const idx = nextEditableIndex()
     if (idx !== -1) {
       slots.value[idx].char = key.toUpperCase()
       pushAnswer()
     }
-  } else if (key === 'Backspace') {
+    return
+  }
+  if (key === 'Backspace') {
     const idx = lastFilledEditableIndex()
     if (idx !== -1) {
       slots.value[idx].char = ''
@@ -231,6 +255,38 @@ const handleKeydown = (e: KeyboardEvent) => {
   } else if (key === 'Enter') {
     emit('check-answer')
   }
+}
+
+const handleBeforeInput = (e: Event) => {
+  if (props.pictionaryAnswered) return
+  const ie = e as InputEvent
+  const type = ie.inputType as string | undefined
+  // Handle character insertion from soft keyboards (Android/iOS)
+  if (type === 'insertText') {
+    const data = (ie as any).data || ''
+    if (/^[a-z]$/i.test(data)) {
+      const idx = nextEditableIndex()
+      if (idx !== -1) {
+        slots.value[idx].char = data.toUpperCase()
+        pushAnswer()
+      }
+    }
+  } else if (type === 'deleteContentBackward') {
+    const idx = lastFilledEditableIndex()
+    if (idx !== -1) {
+      slots.value[idx].char = ''
+      pushAnswer()
+    }
+  } else if (type === 'insertLineBreak') {
+    emit('check-answer')
+  }
+  // Always clear the hidden input value so it doesn't accumulate text
+  if (hiddenInput.value) hiddenInput.value.value = ''
+}
+
+const handleInput = (e: Event) => {
+  // Clear any stray value in the hidden input
+  if (hiddenInput.value) hiddenInput.value.value = ''
 }
 
 watch(() => props.card, (c) => {
@@ -262,5 +318,25 @@ watch(() => props.pictionaryAnswered, (newVal) => {
       triggerSound.value = true
     }, 50)
   }
+  if (newVal) {
+    // Hide caret when answered
+    isFocused.value = false
+  }
 })
 </script>
+
+<style scoped>
+@keyframes caret-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+.caret-block {
+  display: block;
+  width: 2px;
+  height: 1.3em; /* match text height */
+  background-color: currentColor; /* inherits from parent text color */
+  border-radius: 1px;
+  animation: caret-blink 1s step-end infinite;
+}
+</style>

@@ -15,7 +15,7 @@ export function useFlashcardGame(flashcards: Ref<Vocabulary[]>) {
   const loadPracticeModeFromStorage = (): string => {
     try {
       const saved = localStorage.getItem(PRACTICE_MODE_STORAGE_KEY)
-      if (saved && ['flashcard', 'quiz', 'typing', 'image', 'listening', 'pronunciation'].includes(saved)) {
+      if (saved && ['flashcard', 'quiz', 'typing', 'image', 'listening', 'pronunciation', 'pictionary'].includes(saved)) {
         return saved
       }
     } catch (error) {
