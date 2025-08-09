@@ -11,6 +11,8 @@
     <div 
       v-if="show" 
       class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+      @wheel.prevent
+      @touchmove.prevent
     >
       <!-- Modal Container -->
       <Transition
@@ -177,14 +179,7 @@ const { t } = useI18n()
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Button hover effects */
-button:hover {
-  transform: translateY(-2px) scale(1.02);
-}
-
-button:active {
-  transform: translateY(0) scale(0.98);
-}
+/* Button hover effects removed to let Tailwind hover utilities control transforms */
 
 /* Custom scrollbar for dark mode */
 ::-webkit-scrollbar {
