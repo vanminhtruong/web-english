@@ -186,8 +186,15 @@ const buildSlots = (word: string) => {
       meaningfulIndices.push(i)
     }
   }
-  const firstIdx = meaningfulIndices[0]
-  const lastIdx = meaningfulIndices[meaningfulIndices.length - 1]
+  // Determine number of hint letters: 1 for short words (<= 3 letters), else 2
+  const alphaCount = meaningfulIndices.length
+  const hintCount = alphaCount <= 3 ? 1 : 2
+  // Randomly select hint positions among alphabetic letters
+  const hintSet = new Set<number>()
+  while (hintSet.size < Math.min(hintCount, alphaCount)) {
+    const r = meaningfulIndices[Math.floor(Math.random() * alphaCount)]
+    hintSet.add(r)
+  }
 
   for (let i = 0; i < letters.length; i++) {
     const c = letters[i]
@@ -196,7 +203,7 @@ const buildSlots = (word: string) => {
       arr.push({ char: c, fixed: true, separator: true })
       continue
     }
-    if (i === firstIdx || i === lastIdx) {
+    if (hintSet.has(i)) {
       arr.push({ char: c.toUpperCase(), fixed: true })
     } else {
       arr.push({ char: '', fixed: false })
