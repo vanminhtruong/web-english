@@ -101,11 +101,22 @@
                     </li>
                     <!-- Image option with inline toggle -->
                     <li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-2">
-                      <button class="text-left flex-1 truncate" @click="selectMode('image')">{{ t('flashcard.modes.image', 'Image') }}</button>
+                      <button
+                        class="text-left flex-1 truncate"
+                        @click="selectMode('image')"
+                        :disabled="!imageModeAvailable"
+                        :aria-disabled="!imageModeAvailable ? 'true' : 'false'"
+                        :title="!imageModeAvailable ? t('flashcard.image.unavailable', 'Image mode is unavailable for the selected date') : t('flashcard.modes.image', 'Image')"
+                        :class="!imageModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.image', 'Image') }}
+                      </button>
                       <button
                         class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
-                        :class="imageQuizEnabled ? 'bg-purple-600' : 'bg-gray-200 dark:bg-[#0a0a0a]'"
-                        @click.stop="toggleImageQuizFromDropdown()"
+                        :class="[
+                          imageModeAvailable ? (imageQuizEnabled ? 'bg-purple-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="imageModeAvailable && toggleImageQuizFromDropdown()"
                         :title="t('flashcard.image.quizToggle', 'Multiple Choice')"
                         :aria-label="t('flashcard.image.quizToggle', 'Multiple Choice')"
                       >
@@ -250,11 +261,22 @@
                       </button>
                     </li>
                     <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
-                      <button class="text-left flex-1 truncate" @click="selectMode('image')">{{ t('flashcard.modes.image', 'Image') }}</button>
+                      <button
+                        class="text-left flex-1 truncate"
+                        @click="selectMode('image')"
+                        :disabled="!imageModeAvailable"
+                        :aria-disabled="!imageModeAvailable ? 'true' : 'false'"
+                        :title="!imageModeAvailable ? t('flashcard.image.unavailable', 'Image mode is unavailable for the selected date') : t('flashcard.modes.image', 'Image')"
+                        :class="!imageModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.image', 'Image') }}
+                      </button>
                       <button
                         class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
-                        :class="imageQuizEnabled ? 'bg-purple-600' : 'bg-gray-200 dark:bg-[#0a0a0a]'"
-                        @click.stop="toggleImageQuizFromDropdown()"
+                        :class="[
+                          imageModeAvailable ? (imageQuizEnabled ? 'bg-purple-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="imageModeAvailable && toggleImageQuizFromDropdown()"
                         :title="t('flashcard.image.quizToggle', 'Multiple Choice')"
                         :aria-label="t('flashcard.image.quizToggle', 'Multiple Choice')"
                       >
@@ -292,12 +314,14 @@ interface Props {
   imageQuizEnabled?: boolean
   listeningQuizEnabled?: boolean
   typingQuizEnabled?: boolean
+  imageModeAvailable?: boolean
 }
 
 const props = defineProps<Props>()
 const imageQuizEnabled = computed(() => props.imageQuizEnabled ?? false)
 const listeningQuizEnabled = computed(() => props.listeningQuizEnabled ?? false)
 const typingQuizEnabled = computed(() => props.typingQuizEnabled ?? false)
+const imageModeAvailable = computed(() => props.imageModeAvailable ?? true)
 
 const { t } = useI18n()
 
@@ -343,19 +367,29 @@ const selectMode = (mode: PracticeMode) => {
     closeAll()
     return
   }
+  if (mode === 'image' && !imageModeAvailable.value) {
+    // Prevent selecting Image mode when unavailable for current date filter
+    closeAll()
+    return
+  }
   emit('change-practice-mode', mode)
   closeAll()
 }
 
 const toggleImageQuizFromDropdown = () => {
+  // Prevent toggling during active practice or when image mode is unavailable
+  if (props.practiceStarted) return
+  if (!imageModeAvailable.value) return
   emit('update:image-quiz-enabled', !imageQuizEnabled.value)
 }
 
 const toggleListeningQuizFromDropdown = () => {
+  if (props.practiceStarted) return 
   emit('update:listening-quiz-enabled', !listeningQuizEnabled.value)
 }
 
 const toggleTypingQuizFromDropdown = () => {
+  if (props.practiceStarted) return
   emit('update:typing-quiz-enabled', !typingQuizEnabled.value)
 }
 

@@ -10,6 +10,7 @@
       :image-quiz-enabled="imageQuizEnabled"
       :listening-quiz-enabled="listeningQuizEnabled"
       :typing-quiz-enabled="typingQuizEnabled"
+      :image-mode-available="imageModeAvailable"
       @go-back="handleExitPractice"
       @show-history="showHistory = true"
       @change-practice-mode="changePracticeMode"
@@ -308,6 +309,22 @@ const initialState = loadDateFilterState()
 const dateFilterEnabled = ref(true)
 const selectedDate = ref(initialState.selectedDate)
 
+// Persist date filter changes
+watch(selectedDate, () => {
+  saveDateFilterState()
+})
+
+// Settings composable  
+const {
+  showSettings: showSettingsDialog,
+  settings: flashcardSettings,
+  localSettings,
+  applySettings: applyGameSettings,
+  resetSettings,
+  cancelSettings,
+  openSettings
+} = useFlashcardSettings()
+
 // Filter flashcards by date and category
 const filteredVocabularies = computed(() => {
   let vocabularies = allVocabularies.value
@@ -326,6 +343,32 @@ const filteredVocabularies = computed(() => {
   }
 
   return vocabularies
+})
+
+// Combine filter and shuffle logic
+const baseFlashcards = computed(() => {
+  return filteredVocabularies.value.filter((vocab: Vocabulary) => {
+    const category = flashcardSettings.value.category
+    const difficulty = flashcardSettings.value.difficulty
+    const categoryMatch = !category || vocab.category === category
+    const levelMatch = !difficulty || difficulty === 'all' || vocab.level === difficulty
+    return categoryMatch && levelMatch
+  })
+})
+
+// Determine if Image mode is available for the CURRENT effective set (date + category + difficulty)
+// This ensures that when a date contains multiple topics, Image mode is only enabled if the selected
+// topic (and difficulty) actually has images.
+const imageModeAvailable = computed(() => {
+  const cards = baseFlashcards.value
+  if (cards.length === 0) return false
+  // Image mode is available only if ALL cards in the current effective set have a non-empty image
+  return cards.every((v: Vocabulary) => {
+    const img: any = (v as any).image
+    if (img == null) return false
+    const s = typeof img === 'string' ? img : String(img)
+    return s.trim().length > 0
+  })
 })
 
 // Practice Timer State
@@ -443,26 +486,6 @@ const {
   formatDuration
 } = useFlashcardHistory()
 
-// Settings composable  
-const {
-  showSettings: showSettingsDialog,
-  settings: flashcardSettings,
-  localSettings,
-  applySettings: applyGameSettings,
-  resetSettings,
-  cancelSettings,
-  openSettings
-} = useFlashcardSettings()
-
-// Combine filter and shuffle logic
-const baseFlashcards = computed(() => {
-  return filteredVocabularies.value.filter(vocab => {
-    const categoryMatch = !settings.value.category || vocab.category === settings.value.category
-    const levelMatch = !settings.value.difficulty || settings.value.difficulty === 'all' || vocab.level === settings.value.difficulty
-    return categoryMatch && levelMatch
-  })
-})
-
 // Main game composable - must be after baseFlashcards
 const {
   currentIndex,
@@ -489,6 +512,19 @@ const {
   markDifficult,
   cleanup
 } = useFlashcardGame(baseFlashcards)
+
+// Auto-switch away from Image mode if it becomes unavailable
+watch(imageModeAvailable, (available) => {
+  if (practiceMode.value === 'image' && !available) {
+    // Respect rule: do not change mode during active session
+    if (practiceStarted.value) {
+      console.log('[Flashcard] Image mode became unavailable but practice is active; not switching mode.')
+      return
+    }
+    console.log('[Flashcard] Image mode unavailable for current filter; switching to flashcard mode.')
+    changePracticeMode('flashcard')
+  }
+}, { immediate: true })
 
 // Stats composable - must be after useFlashcardGame
 const {
