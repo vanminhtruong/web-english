@@ -1,14 +1,42 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0a0a0a] dark:to-[#0f0f0f] relative overflow-x-hidden">
+    <!-- Animated Background Elements to match Dashboard style -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <div class="floating-shapes">
+        <div class="absolute top-20 left-10 w-64 h-64 bg-blue-300 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob"></div>
+        <div class="absolute top-40 right-10 w-72 h-72 bg-purple-300 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-80 h-80 bg-pink-300 dark:bg-pink-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+    </div>
     <!-- Header -->
-    <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="0px">
-      <VocabularyHeader @add-vocabulary="openAddDialog" />
-    </LazyLoadComponent>
+    <div class="relative z-10 max-w-full sm:max-w-full md:max-w-full lg:max-w-7xl mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 pt-3 sm:pt-6">
+      <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="0px">
+        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 mb-3 xs:mb-4 sm:mb-6">
+          <div class="flex items-center mb-4">
+            <div class="animate-pulse-slow">
+              <div class="w-2.5 h-2.5 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mr-2.5"></div>
+            </div>
+            <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+              {{ t('vocabulary.header.title', 'Vocabulary') }}
+            </h1>
+          </div>
+          <VocabularyHeader @add-vocabulary="openAddDialog" />
+        </div>
+      </LazyLoadComponent>
+    </div>
 
     <!-- Filters and Search -->
-    <div class="max-w-full sm:max-w-full md:max-w-full lg:max-w-7xl mx-auto py-3 px-2 xs:py-4 xs:px-3 sm:py-6 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 overflow-x-hidden">
+    <div class="relative z-10 max-w-full sm:max-w-full md:max-w-full lg:max-w-7xl mx-auto py-3 px-2 xs:py-4 xs:px-3 sm:py-6 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 overflow-x-hidden">
       <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
-        <div class="mb-3 xs:mb-4 sm:mb-6">
+        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] mb-3 xs:mb-4 sm:mb-6 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
+          <div class="flex items-center mb-4">
+            <div class="animate-pulse-slow">
+              <div class="w-2.5 h-2.5 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-2.5"></div>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+              {{ t('vocabulary.filters.title', 'Filters') }}
+            </h3>
+          </div>
           <VocabularyFilters
             :search-query="searchQuery"
             :selected-category="selectedCategory"
@@ -25,7 +53,15 @@
       
       <!-- Date Grouping Toggle -->
       <LazyLoadComponent animation-type="slide-right" :threshold="0.1" root-margin="-50px">
-        <div class="mb-3 xs:mb-4 sm:mb-6">
+        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] mb-3 xs:mb-4 sm:mb-6 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
+          <div class="flex items-center mb-4">
+            <div class="animate-pulse-slow">
+              <div class="w-2.5 h-2.5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mr-2.5"></div>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
+              {{ t('vocabulary.grouping.title', 'Grouping & Move Mode') }}
+            </h3>
+          </div>
           <GroupingToggle 
             :model-value="useGrouping" 
             :hover-enabled="hoverToExpandEnabled"
@@ -37,23 +73,47 @@
         </div>
       </LazyLoadComponent>
 
-      <!-- Voice Settings Panel -->
+      <!-- Voice Settings Panel (glassmorphism like Dashboard) -->
       <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-        <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 mb-3 xs:mb-4 sm:mb-6 overflow-x-hidden">
+        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.01] p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 mb-3 xs:mb-4 sm:mb-6 overflow-x-hidden">
+          <div class="flex items-center mb-4">
+            <div class="animate-pulse-slow">
+              <div class="w-2.5 h-2.5 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2.5"></div>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+              {{ t('voice.settings.title', 'Voice Settings') }}
+            </h3>
+          </div>
           <VoiceSelector :show-voice-info="true" />
         </div>
       </LazyLoadComponent>
 
       <!-- Topic Management Panel -->
       <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
-        <div class="mb-3 xs:mb-4 sm:mb-6">
+        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] mb-3 xs:mb-4 sm:mb-6 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
+          <div class="flex items-center mb-4">
+            <div class="animate-pulse-slow">
+              <div class="w-2.5 h-2.5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mr-2.5"></div>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-yellow-600 to-orange-600 dark:from-yellow-400 dark:to-orange-400 bg-clip-text text-transparent">
+              {{ t('vocabulary.topicManager.title', 'Topic Manager') }}
+            </h3>
+          </div>
           <TopicManagerPanel @open="openTopicManager" />
         </div>
       </LazyLoadComponent>
 
       <!-- Save Control Panel -->
       <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
-        <div class="mb-3 xs:mb-4 sm:mb-6">
+        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] mb-3 xs:mb-4 sm:mb-6 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
+          <div class="flex items-center mb-4">
+            <div class="animate-pulse-slow">
+              <div class="w-2.5 h-2.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-2.5"></div>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">
+              {{ t('vocabulary.save.title', 'Save & Sync') }}
+            </h3>
+          </div>
           <SaveControlPanel
             :auto-save-enabled="autoSaveEnabled"
             @update:auto-save-enabled="autoSaveEnabled = $event"
@@ -73,38 +133,40 @@
 
       <!-- Vocabulary List -->
       <LazyLoadComponent animation-type="slide-left" :threshold="0.05" root-margin="-50px">
-        <VocabularyList
-          :paginated-words="useGrouping ? [] : paginatedVocabulary"
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          :total-count="filteredVocabulary.length"
-          :start-index="startIndex"
-          :end-index="endIndex"
-          :visible-pages="visiblePages"
-          :use-grouping="useGrouping"
-          :all-words="useGrouping ? filteredVocabulary : undefined"
-          :date-group-pages="dateGroupPages"
-          :items-per-page-grouped="itemsPerPageGrouped"
-          :hover-to-expand-enabled="hoverToExpandEnabled"
-          :global-move-mode="globalMoveMode"
-          :recently-added-category="recentlyAddedCategory"
-          @play-audio="playAudio"
-          @edit-word="openEditDialog"
-          @delete-word="deleteWord"
-          @toggle-favorite="toggleFavorite"
-          @view-details="openDetailsDialog"
-          @previous-page="previousPage"
-          @next-page="nextPage"
-          @go-to-page="goToPage"
-          @date-group-previous="(date) => dateGroupPrevious(date, filteredVocabulary)"
-          @date-group-next="(date) => dateGroupNext(date, filteredVocabulary)"
-          @date-group-go-to-page="dateGroupGoToPage"
-          @move-vocabulary="handleMoveVocabulary"
-          @open-note-dialog="openNoteDialog"
-          @open-add-vocabulary-dialog="openAddVocabularyForDate"
-          @open-grammar-manager="openGrammarManagerForDate"
-          @batch-move-category="handleBatchMoveCategory"
-        />
+        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.003] p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
+          <VocabularyList
+            :paginated-words="useGrouping ? [] : paginatedVocabulary"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            :total-count="filteredVocabulary.length"
+            :start-index="startIndex"
+            :end-index="endIndex"
+            :visible-pages="visiblePages"
+            :use-grouping="useGrouping"
+            :all-words="useGrouping ? filteredVocabulary : undefined"
+            :date-group-pages="dateGroupPages"
+            :items-per-page-grouped="itemsPerPageGrouped"
+            :hover-to-expand-enabled="hoverToExpandEnabled"
+            :global-move-mode="globalMoveMode"
+            :recently-added-category="recentlyAddedCategory"
+            @play-audio="playAudio"
+            @edit-word="openEditDialog"
+            @delete-word="deleteWord"
+            @toggle-favorite="toggleFavorite"
+            @view-details="openDetailsDialog"
+            @previous-page="previousPage"
+            @next-page="nextPage"
+            @go-to-page="goToPage"
+            @date-group-previous="(date) => dateGroupPrevious(date, filteredVocabulary)"
+            @date-group-next="(date) => dateGroupNext(date, filteredVocabulary)"
+            @date-group-go-to-page="dateGroupGoToPage"
+            @move-vocabulary="handleMoveVocabulary"
+            @open-note-dialog="openNoteDialog"
+            @open-add-vocabulary-dialog="openAddVocabularyForDate"
+            @open-grammar-manager="openGrammarManagerForDate"
+            @batch-move-category="handleBatchMoveCategory"
+          />
+        </div>
       </LazyLoadComponent>
     </div>
 
@@ -170,7 +232,7 @@
           <!-- Tooltip -->
           <div
             v-if="showStickyTooltip"
-            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-black dark:text-white dark:border dark:border-gray-600 rounded shadow-lg whitespace-nowrap z-50"
+            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-black dark:text-white dark:border dark:border-dark-bg-mute rounded shadow-lg whitespace-nowrap z-50"
           >
             {{ t('vocabulary.addNew', 'Add New Word') }}
             <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-black"></div>

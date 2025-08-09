@@ -1,23 +1,36 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-[#0a0a0a]">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0a0a0a] dark:to-[#0f0f0f] relative overflow-x-hidden">
+    <!-- Animated Background Elements to match Dashboard style -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <div class="floating-shapes">
+        <div class="absolute top-16 left-8 w-64 h-64 bg-blue-300 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob"></div>
+        <div class="absolute top-36 right-8 w-72 h-72 bg-purple-300 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-10 left-24 w-80 h-80 bg-pink-300 dark:bg-pink-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+    </div>
     <!-- Header -->
-    <div class="bg-white dark:bg-[#0a0a0a] shadow-sm border-b border-gray-200 dark:border-gray-700">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+    <div class="relative z-10 max-w-full sm:max-w-full md:max-w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-6">
+      <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] p-3 sm:p-4 md:p-5 lg:p-6">
+        <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <button
               @click="goBackToGrammarDetail"
-              class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              class="p-2 rounded-lg text-gray-600 dark:text-white/70 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0f0f0f] transition-colors"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <div>
-              <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
-                {{ t('grammar.practice.title', 'Practice') }}
-              </h1>
-              <p class="text-sm text-gray-500 dark:text-gray-400">
+              <div class="flex items-center mb-1">
+                <div class="animate-pulse-slow">
+                  <div class="w-2.5 h-2.5 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mr-2.5"></div>
+                </div>
+                <h1 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                  {{ t('grammar.practice.title', 'Practice') }}
+                </h1>
+              </div>
+              <p class="text-sm text-gray-600 dark:text-white/70">
                 {{ t('grammar.practice.subtitle', 'Choose a mode to practice grammar with interactive exercises') }}
               </p>
             </div>
@@ -25,14 +38,14 @@
           
           <!-- Settings and Progress -->
           <div class="flex items-center space-x-4">
-            <div class="text-sm text-gray-500 dark:text-gray-400">
+            <div class="text-sm text-gray-600 dark:text-white/70">
               {{ t('grammar.practice.score', 'Score') }}: <span class="font-medium text-blue-600 dark:text-blue-400">{{ totalScore }}</span>
             </div>
             
             <!-- Exercise Management Button -->
             <button
               @click="showExerciseManager = true"
-              class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              class="p-2 rounded-lg text-gray-600 dark:text-white/70 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0f0f0f] transition-colors"
               :title="t('grammar.practice.exerciseManager.title', 'Manage exercises')"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +56,7 @@
             <!-- Settings Button -->
             <button
               @click="showSettings = true"
-              class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              class="p-2 rounded-lg text-gray-600 dark:text-white/70 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0f0f0f] transition-colors"
               :title="t('grammar.practice.settings.title', 'Settings')"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,14 +70,14 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Exercise Type Selection -->
       <div v-if="!selectedExercise" class="space-y-6">
         <div class="text-center">
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-4">
             {{ t('grammar.practice.chooseExercise', 'Choose an exercise') }}
           </h2>
-          <p class="text-gray-600 dark:text-gray-400 mb-8">
+          <p class="text-gray-700 dark:text-white/70 mb-8">
             {{ t('grammar.practice.chooseDescription', 'Select a practice type below to get started') }}
           </p>
         </div>
@@ -75,7 +88,7 @@
             v-for="exercise in exerciseTypes"
             :key="exercise.type"
             @click="startExercise(exercise.type)"
-            class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-200 group"
+            class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 dark:border-white/10 p-6 cursor-pointer hover:shadow-2xl hover:scale-[1.03] transition-all duration-300"
           >
             <div class="text-center">
               <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" :class="exercise.colorClass">
@@ -84,10 +97,10 @@
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 {{ tf(`grammar.practice.exercises.${exercise.type}.title`, exercise.title) }}
               </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <p class="text-sm text-gray-600 dark:text-white/70 mb-4">
                 {{ tf(`grammar.practice.exercises.${exercise.type}.description`, exercise.description) }}
               </p>
-              <div class="flex items-center justify-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+              <div class="flex items-center justify-center space-x-4 text-xs text-gray-500 dark:text-white/60">
                 <span>{{ exercise.duration }}</span>
                 <span>•</span>
                 <span>{{ exercise.difficulty }}</span>

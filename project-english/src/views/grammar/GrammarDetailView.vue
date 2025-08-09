@@ -1,8 +1,16 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-black">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0a0a0a] dark:to-[#0f0f0f] relative overflow-x-hidden">
+    <!-- Animated Background Elements to match Dashboard style -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <div class="floating-shapes">
+        <div class="absolute top-20 left-10 w-64 h-64 bg-blue-300 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob"></div>
+        <div class="absolute top-40 right-10 w-72 h-72 bg-purple-300 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-80 h-80 bg-pink-300 dark:bg-pink-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+    </div>
     <!-- Loading State -->
-    <div v-if="isLoading" class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+    <div v-if="isLoading" class="relative z-10 max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
         <div class="animate-pulse">
           <div class="h-8 bg-gray-200 dark:bg-dark-bg-mute rounded w-1/2 mb-4"></div>
           <div class="space-y-3">
@@ -15,11 +23,11 @@
     </div>
 
     <!-- Content -->
-    <div v-else class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div v-else class="relative z-10 max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6 mb-6">
+      <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 p-6 mb-6 transition-all duration-500">
         <div class="flex items-center justify-between mb-4">
-          <button @click="goBack" class="text-gray-500 dark:text-white/70 hover:text-gray-700 dark:hover:text-white">
+          <button @click="goBack" class="p-2 rounded-lg text-gray-600 dark:text-white/70 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0f0f0f] transition-colors">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
             </svg>
@@ -43,8 +51,11 @@
         
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ lesson.title }}</h1>
-            <p class="mt-2 text-gray-600 dark:text-white/80">{{ lesson.description }}</p>
+            <div class="flex items-center mb-1">
+              <div class="animate-pulse-slow"><div class="w-2.5 h-2.5 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mr-2.5"></div></div>
+              <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">{{ lesson.title }}</h1>
+            </div>
+            <p class="mt-2 text-gray-700 dark:text-white/80">{{ lesson.description }}</p>
           </div>
           
           <div class="text-right">
@@ -57,7 +68,7 @@
         
         <!-- Progress Bar -->
         <div class="mt-6">
-          <div class="flex justify-between text-sm text-gray-600 dark:text-white/80 mb-2">
+          <div class="flex justify-between text-sm text-gray-700 dark:text-white/80 mb-2">
             <span>{{ t('grammar.progress', 'Progress') }}</span>
             <span>{{ lesson.progress }}%</span>
           </div>
@@ -72,7 +83,7 @@
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-6">
           <!-- Theory Section -->
-          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+          <div class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ t('grammar.detail.theory', 'Theory') }}</h2>
             <div class="prose dark:prose-invert max-w-none">
               <div v-html="lesson.theory"></div>
@@ -80,7 +91,7 @@
           </div>
 
           <!-- Examples Section -->
-          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+          <div class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ t('grammar.detail.examples', 'Examples') }}</h2>
             <div class="space-y-4">
               <div v-for="example in lesson.examples" :key="example.id" class="border-l-4 border-blue-500 pl-4">
@@ -92,7 +103,7 @@
           </div>
 
           <!-- Usage Rules -->
-          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+          <div class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ t('grammar.detail.usageRules', 'Usage Rules') }}</h2>
             <div class="space-y-3">
               <div v-for="rule in lesson.rules" :key="rule.id" class="flex items-start space-x-3">
@@ -108,13 +119,13 @@
           </div>
 
           <!-- Common Mistakes -->
-          <div v-if="lesson.commonMistakes && lesson.commonMistakes.length > 0" class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+          <div v-if="lesson.commonMistakes && lesson.commonMistakes.length > 0" class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ t('grammar.detail.commonMistakes', 'Common Mistakes') }}</h2>
             <div class="space-y-4">
               <div v-for="mistake in lesson.commonMistakes" :key="mistake.id" class="bg-red-50 dark:bg-dark-bg-mute border border-red-200 dark:border-red-900 rounded-lg p-4">
                 <div class="flex items-start space-x-3">
                   <svg class="w-5 h-5 text-red-500 dark:text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
                   </svg>
                   <div>
                     <p class="text-red-800 dark:text-red-400 font-medium">❌ {{ mistake.wrong }}</p>
@@ -130,7 +141,7 @@
         <!-- Sidebar -->
         <div class="space-y-6">
           <!-- Quick Info -->
-          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+          <div class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ t('grammar.detail.info', 'Info') }}</h3>
             <div class="space-y-3">
               <div class="flex justify-between">
@@ -158,10 +169,10 @@
           </div>
 
           <!-- Related Lessons -->
-          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+          <div class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ t('grammar.detail.relatedLessons', 'Related Lessons') }}</h3>
             <div class="space-y-3">
-              <div v-for="related in relatedLessons" :key="related.id" class="border border-gray-200 dark:border-dark-bg-mute rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-dark-bg-mute cursor-pointer" @click="viewRelatedLesson(related)">
+              <div v-for="related in relatedLessons" :key="related.id" class="border border-white/20 dark:border-white/10 rounded-lg p-3 hover:bg-white/60 dark:hover:bg-[#0f0f0f] transition-colors cursor-pointer" @click="viewRelatedLesson(related)">
                 <p class="text-sm font-medium text-gray-900 dark:text-white">{{ related.title }}</p>
                 <p class="text-xs text-gray-500 dark:text-white/60">{{ related.category }}</p>
               </div>
@@ -169,7 +180,7 @@
           </div>
 
           <!-- Quick Actions -->
-          <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-6">
+          <div class="bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 dark:border-white/10 p-6">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ t('common.actions', 'Actions') }}</h3>
             <div class="space-y-3">
               <button @click="markAsCompleted" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">

@@ -6,17 +6,17 @@
         <!-- Top Row: Back button + Title -->
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center">
-            <button @click="$emit('go-back')" class="mr-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <button @click="$emit('go-back')" class="mr-3 text-gray-500 dark:text-white/70 hover:text-gray-700 dark:hover:text-white">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
               </svg>
             </button>
             <div>
-              <h1 class="text-xl font-bold text-gray-900 dark:text-white">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</h1>
+              <h1 class="text-xl font-bold text-gray-900 dark:text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</h1>
             </div>
           </div>
           <div class="text-right">
-            <p class="text-xs text-gray-500">{{ t('flashcard.header.progress', 'Progress') }}</p>
+            <p class="text-xs text-gray-500 dark:text-white/60">{{ t('flashcard.header.progress', 'Progress') }}</p>
             <p class="text-sm font-semibo ld text-gray-900 dark:text-white">{{ currentIndex + 1 }}/{{ totalCards }}</p>
           </div>
         </div>
@@ -25,7 +25,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <!-- History Button -->
-            <button @click="$emit('show-history')" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :title="t('flashcard.header.history', 'History')">
+            <button @click="$emit('show-history')" class="text-gray-500 dark:text-white/70 hover:text-gray-700 dark:hover:text-white" :title="t('flashcard.header.history', 'History')">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
               </svg>
@@ -36,7 +36,7 @@
               @click="onShowSettings"
               :disabled="practiceStarted"
               :aria-disabled="practiceStarted ? 'true' : 'false'"
-              class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              class="text-gray-500 dark:text-white/70 hover:text-gray-700 dark:hover:text-white"
               :class="practiceStarted ? 'opacity-50 cursor-not-allowed' : ''"
               :title="practiceStarted ? t('flashcard.settings.disabledDuringPractice', 'Settings are disabled during practice') : t('flashcard.header.settings', 'Settings')"
             >
@@ -174,14 +174,14 @@
       <!-- Tablet & Desktop Layout (sm and above) -->
       <div class="hidden sm:flex items-center justify-between">
         <div class="flex items-center">
-          <button @click="$emit('go-back')" class="mr-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+          <button @click="$emit('go-back')" class="mr-4 text-gray-500 dark:text-white/70 hover:text-gray-700 dark:hover:text-white">
             <svg class="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
             </svg>
           </button>
           <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</h1>
-            <p class="mt-1 md:mt-2 text-sm md:text-base text-gray-600 dark:text-gray-300">{{ t('flashcard.header.description', 'Practice vocabulary with flashcards') }}</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</h1>
+            <p class="mt-1 md:mt-2 text-sm md:text-base text-gray-600 dark:text-white/70">{{ t('flashcard.header.description', 'Practice vocabulary with flashcards') }}</p>
           </div>
         </div>
         
@@ -195,7 +195,7 @@
 
           <!-- Shuffle Toggle -->
           <div class="flex items-center space-x-2 md:space-x-3">
-            <span class="text-sm md:text-base text-gray-600 dark:text-gray-300">{{ t('flashcard.settings.shuffle', 'Shuffle') }}</span>
+            <span class="text-sm md:text-base text-gray-600 dark:text-white/70">{{ t('flashcard.settings.shuffle', 'Shuffle') }}</span>
             <button
               @click="$emit('toggle-shuffle')"
               :disabled="practiceStarted"
@@ -218,7 +218,7 @@
           </div>
 
           <div class="text-right">
-            <p class="text-sm md:text-base text-gray-500">{{ t('flashcard.header.progress', 'Progress') }}</p>
+            <p class="text-sm md:text-base text-gray-500 dark:text-white/60">{{ t('flashcard.header.progress', 'Progress') }}</p>
             <p class="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">{{ currentIndex + 1 }} / {{ totalCards }}</p>
           </div>
           

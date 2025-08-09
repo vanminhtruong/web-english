@@ -1,12 +1,20 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0a0a0a] dark:to-[#0f0f0f] relative overflow-x-hidden">
+    <!-- Animated Background Elements to match Dashboard style -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <div class="floating-shapes">
+        <div class="absolute top-20 left-10 w-64 h-64 bg-blue-300 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob"></div>
+        <div class="absolute top-40 right-10 w-72 h-72 bg-purple-300 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-80 h-80 bg-pink-300 dark:bg-pink-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+    </div>
     <!-- Header -->
     <LazyLoadComponent animation-type="fade-up">
       <GrammarHeader @add-lesson="openAddDialog" />
     </LazyLoadComponent>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div class="relative z-10 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <!-- Filters -->
       <LazyLoadComponent animation-type="slide-left" :threshold="0.2" root-margin="100px">
         <GrammarFilters

@@ -5,7 +5,7 @@
     @mouseenter="handleVocabularyListMouseEnter"
   >
     <div class="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-700">
-      <h3 class="text-base sm:text-lg font-medium text-gray-900 dark:text-white">
+      <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
         {{ t('vocabulary.vocabularyList', 'Vocabulary List') }} ({{ totalCount }})
       </h3>
     </div>

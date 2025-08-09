@@ -40,15 +40,15 @@
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ card?.meaning }}</p>
         </div>
       </div>
-      <div v-else class="max-w-xl mx-auto">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 justify-items-center mx-auto max-w-[560px] sm:max-w-[520px]">
+      <div v-else class="w-full px-2 sm:px-3 md:px-0">
+        <div class="grid grid-cols-1 grid-2-cols-480 sm:grid-cols-2 gap-2 sm:gap-3 justify-items-stretch w-full max-w-none">
           <button
             v-for="(opt, idx) in listeningQuizOptions"
             :key="idx"
             @click="onSelectListeningOption(opt)"
             :disabled="listeningQuizAnswered"
             translate="no"
-            class="notranslate px-3 py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full max-w-[260px] sm:max-w-[240px]"
+            class="notranslate px-3 py-2 rounded-md border text-[13px] sm:text-sm transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed text-left flex items-center gap-2 w-full min-w-0"
             :class="[
               listeningQuizAnswered
                 ? (isOptionCorrect(opt)
@@ -59,10 +59,10 @@
                 : 'bg-white dark:bg-gray-custom text-gray-900 dark:text-white border-gray-300 dark:border-gray-custom/60 hover:shadow-sm hover:scale-[1.01] dark:hover:bg-white/5'
             ]"
           >
-            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80">
+            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 dark:bg-white/10 dark:text-white/80 shrink-0">
               {{ String.fromCharCode(65 + idx) }}
             </span>
-            <span class="truncate">{{ opt }}</span>
+            <span class="truncate overflow-hidden min-w-0">{{ opt }}</span>
           </button>
         </div>
         <div v-if="listeningAnswered" class="mt-4 text-center">
@@ -164,3 +164,11 @@ const onSelectListeningOption = (opt: string) => {
 const isOptionSelected = (opt: string) => props.listeningQuizSelected === opt
 const isOptionCorrect = (opt: string) => props.card ? opt.trim().toLowerCase() === props.card.word.trim().toLowerCase() : false
 </script>
+
+<style scoped>
+@media (min-width: 480px) {
+  .grid-2-cols-480 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>

@@ -1,5 +1,13 @@
 <template>
-  <div class="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-dark-bg dark:to-dark-bg-soft">
+  <div class="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-dark-bg-soft dark:to-dark-bg-mute relative">
+    <!-- Animated Background Elements (match Dashboard) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="floating-shapes">
+        <div class="absolute top-24 left-8 w-64 h-64 bg-blue-300 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob"></div>
+        <div class="absolute top-40 right-10 w-72 h-72 bg-purple-300 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-10 left-24 w-80 h-80 bg-pink-300 dark:bg-pink-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+    </div>
     <!-- Header -->
     <FlashcardHeader
       :current-index="currentIndex"
@@ -30,7 +38,7 @@
     <!-- Voice Settings -->
     <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
       <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-dark-bg-mute p-3 sm:p-4 md:p-5">
+        <div class="group bg-white/80 dark:bg-dark-bg-soft/80 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 dark:border-dark-bg-mute transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5 p-3 sm:p-4 md:p-5">
           <VoiceSelector :show-voice-info="false" />
         </div>
       </div>
@@ -39,7 +47,7 @@
     <!-- Date Filter -->
     <LazyLoadComponent animation-type="slide-right" :threshold="0.1" root-margin="-50px">
       <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
-        <div class="bg-white/80 dark:bg-[#0a0a0a] backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-dark-bg-mute p-3 sm:p-4 md:p-5">
+        <div class="group relative overflow-hidden bg-white/80 dark:bg-dark-bg-soft/80 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 dark:border-dark-bg-mute transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5 p-3 sm:p-4 md:p-5">
           <FlashcardDateFilter
             :vocabularies="allVocabularies"
             :selectedDate="selectedDate"
@@ -53,139 +61,146 @@
     <!-- Practice Container -->
     <div class="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       <div v-if="currentFlashcards.length > 0" class="relative">
-        <!-- Practice Timer -->
-        <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
-          <PracticeTimer
-            ref="practiceTimerRef"
-            :max-time="30"
-            @start="handlePracticeStart"
-            @timeout="handleTimeout"
-            @restart="handleTimerRestart"
-            @skip="handleSkip"
-          />
-        </LazyLoadComponent>
+        <!-- Practice Glass Container -->
+        <div class="group relative overflow-hidden bg-white/80 dark:bg-dark-bg-soft/80 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 dark:border-dark-bg-mute transition-all duration-500 p-3 sm:p-4 md:p-6">
+          <div class="space-y-4 sm:space-y-5 md:space-y-6">
+            <!-- Practice Timer -->
+            <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
+              <div class="flex justify-center max-w-md mx-auto">
+                <PracticeTimer
+                  ref="practiceTimerRef"
+                  :max-time="30"
+                  @start="handlePracticeStart"
+                  @timeout="handleTimeout"
+                  @restart="handleTimerRestart"
+                  @skip="handleSkip"
+                />
+              </div>
+            </LazyLoadComponent>
 
-        <!-- Practice Content (only show after started) -->
-        <div v-if="practiceStarted">
-          <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-            <template v-if="practiceMode === 'flashcard'">
-              <FlashcardCard
-                :current-card="currentShuffledCard"
-                :is-flipped="isFlipped"
-                @flip-card="flipCard"
-              />
-            </template>
-            <template v-else-if="practiceMode === 'pictionary'">
-              <PictionaryMode
-                :card="currentShuffledCard"
-                :pictionary-answer="pictionaryAnswer"
-                :pictionary-answered="pictionaryAnswered"
-                :pictionary-correct="pictionaryCorrect"
-                :get-topic-name="getTopicName"
-                @update:pictionary-answer="pictionaryAnswer = $event"
-                @check-answer="handlePictionaryAnswer"
-              />
-            </template>
-            <template v-else-if="practiceMode === 'quiz'">
-              <FlashcardQuiz
-                :current-card="currentShuffledCard"
-                :quiz-options="quizOptions"
-                :selected-answer="selectedAnswer"
-                :quiz-answered="quizAnswered"
-                @select-answer="handleQuizAnswer"
-              />
-            </template>
-            <template v-else-if="practiceMode === 'typing'">
-              <FlashcardTyping
-                :current-card="currentShuffledCard"
-                :typing-answer="typingAnswer"
-                :typing-answered="typingAnswered"
-                :typing-correct="typingCorrect"
-                :typing-quiz-enabled="typingQuizEnabled"
-                :typing-quiz-options="typingQuizOptions"
-                :typing-quiz-selected="typingQuizSelected"
-                :typing-quiz-answered="typingQuizAnswered"
-                @update:typing-answer="typingAnswer = $event"
-                @check-answer="handleTypingAnswer"
-                @select-typing-quiz-answer="handleTypingQuizAnswer($event)"
-              />
-            </template>
-            <template v-else-if="practiceMode === 'image'">
-              <FlashcardImage
-                :current-card="currentShuffledCard"
-                :image-answer="imageAnswer"
-                :image-answered="imageAnswered"
-                :image-correct="imageCorrect"
-                :image-quiz-enabled="imageQuizEnabled"
-                :image-quiz-options="imageQuizOptions"
-                :image-quiz-selected="imageQuizSelected"
-                :image-quiz-answered="imageQuizAnswered"
-                @update:image-answer="imageAnswer = $event"
-                @check-answer="handleImageAnswer"
-                @update:image-quiz-enabled="onToggleImageQuiz($event)"
-                @select-image-quiz-answer="handleImageQuizAnswer($event)"
-              />
-            </template>
-            <template v-else-if="practiceMode === 'listening'">
-              <ListeningMode
-                :card="currentShuffledCard"
-                :listening-answer="listeningAnswer"
-                @update:listening-answer="listeningAnswer = $event"
-                :listening-answered="listeningAnswered"
-                :listening-correct="listeningCorrect"
-                :listening-quiz-enabled="listeningQuizEnabled"
-                :listening-quiz-options="listeningQuizOptions"
-                :listening-quiz-selected="listeningQuizSelected"
-                :listening-quiz-answered="listeningQuizAnswered"
-                :get-topic-name="getTopicName"
-                @check-answer="handleListeningAnswer"
-                @play-audio="playAudio"
-                @select-listening-quiz-answer="handleListeningQuizAnswer($event)"
-              />
-            </template>
-            <template v-else-if="practiceMode === 'pronunciation'">
-              <PronunciationMode
-                :card="currentShuffledCard"
-                :is-recording="isRecording"
-                :pronunciation-result="pronunciationResult"
-                :pronunciation-answered="pronunciationAnswered"
-                :pronunciation-correct="pronunciationCorrect"
-                :is-speech-recognition-supported="isSpeechRecognitionSupported"
-                :get-topic-name="getTopicName"
-                @start-recording="startRecording"
-              />
-            </template>
-          </LazyLoadComponent>
+            <!-- Practice Content (only show after started) -->
+            <div v-if="practiceStarted">
+              <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
+                <template v-if="practiceMode === 'flashcard'">
+                  <FlashcardCard
+                    :current-card="currentShuffledCard"
+                    :is-flipped="isFlipped"
+                    @flip-card="flipCard"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'pictionary'">
+                  <PictionaryMode
+                    :card="currentShuffledCard"
+                    :pictionary-answer="pictionaryAnswer"
+                    :pictionary-answered="pictionaryAnswered"
+                    :pictionary-correct="pictionaryCorrect"
+                    :get-topic-name="getTopicName"
+                    @update:pictionary-answer="pictionaryAnswer = $event"
+                    @check-answer="handlePictionaryAnswer"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'quiz'">
+                  <FlashcardQuiz
+                    :current-card="currentShuffledCard"
+                    :quiz-options="quizOptions"
+                    :selected-answer="selectedAnswer"
+                    :quiz-answered="quizAnswered"
+                    @select-answer="handleQuizAnswer"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'typing'">
+                  <FlashcardTyping
+                    :current-card="currentShuffledCard"
+                    :typing-answer="typingAnswer"
+                    :typing-answered="typingAnswered"
+                    :typing-correct="typingCorrect"
+                    :typing-quiz-enabled="typingQuizEnabled"
+                    :typing-quiz-options="typingQuizOptions"
+                    :typing-quiz-selected="typingQuizSelected"
+                    :typing-quiz-answered="typingQuizAnswered"
+                    @update:typing-answer="typingAnswer = $event"
+                    @check-answer="handleTypingAnswer"
+                    @select-typing-quiz-answer="handleTypingQuizAnswer($event)"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'image'">
+                  <FlashcardImage
+                    :current-card="currentShuffledCard"
+                    :image-answer="imageAnswer"
+                    :image-answered="imageAnswered"
+                    :image-correct="imageCorrect"
+                    :image-quiz-enabled="imageQuizEnabled"
+                    :image-quiz-options="imageQuizOptions"
+                    :image-quiz-selected="imageQuizSelected"
+                    :image-quiz-answered="imageQuizAnswered"
+                    @update:image-answer="imageAnswer = $event"
+                    @check-answer="handleImageAnswer"
+                    @update:image-quiz-enabled="onToggleImageQuiz($event)"
+                    @select-image-quiz-answer="handleImageQuizAnswer($event)"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'listening'">
+                  <ListeningMode
+                    :card="currentShuffledCard"
+                    :listening-answer="listeningAnswer"
+                    @update:listening-answer="listeningAnswer = $event"
+                    :listening-answered="listeningAnswered"
+                    :listening-correct="listeningCorrect"
+                    :listening-quiz-enabled="listeningQuizEnabled"
+                    :listening-quiz-options="listeningQuizOptions"
+                    :listening-quiz-selected="listeningQuizSelected"
+                    :listening-quiz-answered="listeningQuizAnswered"
+                    :get-topic-name="getTopicName"
+                    @check-answer="handleListeningAnswer"
+                    @play-audio="playAudio"
+                    @select-listening-quiz-answer="handleListeningQuizAnswer($event)"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'pronunciation'">
+                  <PronunciationMode
+                    :card="currentShuffledCard"
+                    :is-recording="isRecording"
+                    :pronunciation-result="pronunciationResult"
+                    :pronunciation-answered="pronunciationAnswered"
+                    :pronunciation-correct="pronunciationCorrect"
+                    :is-speech-recognition-supported="isSpeechRecognitionSupported"
+                    :get-topic-name="getTopicName"
+                    @start-recording="startRecording"
+                  />
+                </template>
+              </LazyLoadComponent>
 
-          <!-- Controls -->
-          <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
-            <FlashcardControls
-              :practice-mode="practiceMode"
-              :current-index="currentIndex"
-              :total-cards="currentFlashcards.length"
-              :can-proceed="getCanProceed()[practiceMode]"
-              :practice-started="practiceStarted"
-              :typing-answer="typingAnswer"
-              :typing-answered="typingAnswered"
-              :listening-answer="listeningAnswer"
-              :listening-answered="listeningAnswered"
-              :image-answer="imageAnswer"
-              :image-answered="imageAnswered"
-              @mark-difficult="enhancedMarkDifficult"
-              @mark-easy="enhancedMarkEasy"
-              @previous-card="enhancedPreviousCard"
-              @next-card="enhancedNextCard"
-              @check-typing-answer="handleTypingAnswer"
-              @check-listening-answer="handleListeningAnswer"
-              @check-image-answer="handleImageAnswer"
-              @exit-practice="handleExitPractice"
-            />
-          </LazyLoadComponent>
+              <!-- Controls -->
+              <LazyLoadComponent animation-type="slide-left" :threshold="0.1" root-margin="-50px">
+                <FlashcardControls
+                  :practice-mode="practiceMode"
+                  :current-index="currentIndex"
+                  :total-cards="currentFlashcards.length"
+                  :can-proceed="getCanProceed()[practiceMode]"
+                  :practice-started="practiceStarted"
+                  :typing-answer="typingAnswer"
+                  :typing-answered="typingAnswered"
+                  :listening-answer="listeningAnswer"
+                  :listening-answered="listeningAnswered"
+                  :image-answer="imageAnswer"
+                  :image-answered="imageAnswered"
+                  @mark-difficult="enhancedMarkDifficult"
+                  @mark-easy="enhancedMarkEasy"
+                  @previous-card="enhancedPreviousCard"
+                  @next-card="enhancedNextCard"
+                  @check-typing-answer="handleTypingAnswer"
+                  @check-listening-answer="handleListeningAnswer"
+                  @check-image-answer="handleImageAnswer"
+                  @exit-practice="handleExitPractice"
+                />
+              </LazyLoadComponent>
 
-          <!-- Stats -->
-          <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-            <PracticeStats :stats="stats" :mode="practiceMode" />
-          </LazyLoadComponent>
+              <!-- Stats -->
+              <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
+                <PracticeStats :stats="stats" :mode="practiceMode" />
+              </LazyLoadComponent>
+            </div>
+          </div>
         </div>
       </div>
 
