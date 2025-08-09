@@ -181,22 +181,21 @@ const levels = getLevels;
 const categoryDropdownOpen = ref(false);
 const categorySearchQuery = ref('');
 
-// Filter categories based on selected date
+// Categories to display: only those that actually exist in vocabularies.
+// If a date filter is active, restrict to vocabularies from that date; otherwise use all vocabularies.
 const categories = computed(() => {
-  if (!props.dateFilterEnabled || !props.selectedDate) {
-    return getCategories.value;
+  // If date filter is active and has a selected date, use vocabularies from that date
+  if (props.dateFilterEnabled && props.selectedDate) {
+    const vocabulariesForDate = allVocabularies.value.filter(vocab => {
+      return vocab.createdAt && vocab.createdAt.startsWith(props.selectedDate!);
+    });
+    const categoriesForDate = new Set(vocabulariesForDate.map(vocab => vocab.category));
+    return Array.from(categoriesForDate);
   }
-  
-  // Get vocabularies for the selected date
-  const vocabulariesForDate = allVocabularies.value.filter(vocab => {
-    return vocab.createdAt && vocab.createdAt.startsWith(props.selectedDate!);
-  });
-  
-  // Get unique categories from vocabularies for this date
-  const categoriesForDate = new Set(vocabulariesForDate.map(vocab => vocab.category));
-  
-  // Filter the available categories to only include ones used on this date
-  return getCategories.value.filter(category => categoriesForDate.has(category));
+
+  // Otherwise, compute unique categories from all available vocabularies
+  const categorySet = new Set(allVocabularies.value.map(v => v.category));
+  return Array.from(categorySet);
 });
 
 // Filtered categories based on search query
