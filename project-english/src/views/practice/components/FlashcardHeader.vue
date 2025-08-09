@@ -66,6 +66,7 @@
                     practiceMode === 'typing' ? t('flashcard.modes.typing', 'Typing') :
                     practiceMode === 'listening' ? t('flashcard.modes.listening', 'Listening') :
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
+                    practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
                   }}
                 </span>
@@ -128,6 +129,18 @@
                         :aria-label="t('flashcard.image.quizToggle', 'Multiple Choice')"
                       >
                         <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', imageQuizEnabled ? 'translate-x-4' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        @click="selectMode('pictionary')"
+                        :disabled="!pictionaryModeAvailable"
+                        :aria-disabled="!pictionaryModeAvailable ? 'true' : 'false'"
+                        :title="!pictionaryModeAvailable ? t('flashcard.pictionary.unavailable', 'Pictionary mode is unavailable for the selected date') : t('flashcard.modes.pictionary', 'Pictionary')"
+                        :class="!pictionaryModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.pictionary', 'Pictionary') }}
                       </button>
                     </li>
                     <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
@@ -228,6 +241,7 @@
                     practiceMode === 'typing' ? t('flashcard.modes.typing', 'Typing') :
                     practiceMode === 'listening' ? t('flashcard.modes.listening', 'Listening') :
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
+                    practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
                   }}
                 </span>
@@ -290,6 +304,18 @@
                         <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', imageQuizEnabled ? 'translate-x-5' : 'translate-x-0.5']" />
                       </button>
                     </li>
+                    <li>
+                      <button 
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        @click="selectMode('pictionary')"
+                        :disabled="!pictionaryModeAvailable"
+                        :aria-disabled="!pictionaryModeAvailable ? 'true' : 'false'"
+                        :title="!pictionaryModeAvailable ? t('flashcard.pictionary.unavailable', 'Pictionary mode is unavailable for the selected date') : t('flashcard.modes.pictionary', 'Pictionary')"
+                        :class="!pictionaryModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.pictionary', 'Pictionary') }}
+                      </button>
+                    </li>
                     <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
                   </ul>
                 </div>
@@ -329,6 +355,7 @@ interface Props {
   listeningQuizEnabled?: boolean
   typingQuizEnabled?: boolean
   imageModeAvailable?: boolean
+  pictionaryModeAvailable?: boolean
 }
 
 const props = defineProps<Props>()
@@ -336,6 +363,7 @@ const imageQuizEnabled = computed(() => props.imageQuizEnabled ?? false)
 const listeningQuizEnabled = computed(() => props.listeningQuizEnabled ?? false)
 const typingQuizEnabled = computed(() => props.typingQuizEnabled ?? false)
 const imageModeAvailable = computed(() => props.imageModeAvailable ?? true)
+const pictionaryModeAvailable = computed(() => props.pictionaryModeAvailable ?? true)
 
 const { t } = useI18n()
 
@@ -383,6 +411,11 @@ const selectMode = (mode: PracticeMode) => {
   }
   if (mode === 'image' && !imageModeAvailable.value) {
     // Prevent selecting Image mode when unavailable for current date filter
+    closeAll()
+    return
+  }
+  if (mode === 'pictionary' && !pictionaryModeAvailable.value) {
+    // Prevent selecting Pictionary mode when unavailable for current date filter
     closeAll()
     return
   }

@@ -65,6 +65,11 @@ export function useFlashcardModes(
   const imageQuizSelected = ref('')
   const imageQuizAnswered = ref(false)
 
+  // Pictionary mode states
+  const pictionaryAnswer = ref('')
+  const pictionaryAnswered = ref(false)
+  const pictionaryCorrect = ref(false)
+
   // Persist toggle states in localStorage
   const STORAGE_KEYS = {
     image: 'pe_imageQuizEnabled',
@@ -419,6 +424,21 @@ export function useFlashcardModes(
     return imageCorrect.value
   }
 
+  // Pictionary mode methods (answer by typing based on image hint)
+  const checkPictionaryAnswer = () => {
+    if (!currentCard.value || pictionaryAnswered.value) return
+    pictionaryAnswered.value = true
+    const userAnswer = pictionaryAnswer.value.toLowerCase().trim()
+    const correctAnswer = currentCard.value.word.toLowerCase().trim()
+    pictionaryCorrect.value = userAnswer === correctAnswer
+    if (pictionaryCorrect.value) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
+    return pictionaryCorrect.value
+  }
+
   const playAudio = async () => {
     if (!currentCard.value) return
     
@@ -473,6 +493,12 @@ export function useFlashcardModes(
     imageQuizAnswered.value = false
   }
 
+  const resetPictionaryMode = () => {
+    pictionaryAnswer.value = ''
+    pictionaryAnswered.value = false
+    pictionaryCorrect.value = false
+  }
+
   const resetPronunciationMode = () => {
     if (recognition && isRecording.value) {
       recognition.stop()
@@ -489,6 +515,7 @@ export function useFlashcardModes(
     resetListeningMode()
     resetImageMode()
     resetPronunciationMode()
+    resetPictionaryMode()
   }
 
   // Helper to check if can proceed to next card
@@ -500,6 +527,7 @@ export function useFlashcardModes(
       listening: listeningAnswered.value,
       image: imageAnswered.value,
       pronunciation: pronunciationAnswered.value,
+      pictionary: pictionaryAnswered.value,
     }
   }
 
@@ -560,6 +588,13 @@ export function useFlashcardModes(
     imageQuizAnswered,
     generateImageQuizOptions,
     selectImageQuizAnswer,
+
+    // Pictionary mode
+    pictionaryAnswer,
+    pictionaryAnswered,
+    pictionaryCorrect,
+    checkPictionaryAnswer,
+    resetPictionaryMode,
 
     // Pronunciation mode
     isRecording,

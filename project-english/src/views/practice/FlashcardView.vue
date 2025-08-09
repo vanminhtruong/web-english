@@ -11,6 +11,7 @@
       :listening-quiz-enabled="listeningQuizEnabled"
       :typing-quiz-enabled="typingQuizEnabled"
       :image-mode-available="imageModeAvailable"
+      :pictionary-mode-available="pictionaryModeAvailable"
       @go-back="handleExitPractice"
       @show-history="showHistory = true"
       @change-practice-mode="changePracticeMode"
@@ -72,6 +73,17 @@
                 :current-card="currentShuffledCard"
                 :is-flipped="isFlipped"
                 @flip-card="flipCard"
+              />
+            </template>
+            <template v-else-if="practiceMode === 'pictionary'">
+              <PictionaryMode
+                :card="currentShuffledCard"
+                :pictionary-answer="pictionaryAnswer"
+                :pictionary-answered="pictionaryAnswered"
+                :pictionary-correct="pictionaryCorrect"
+                :get-topic-name="getTopicName"
+                @update:pictionary-answer="pictionaryAnswer = $event"
+                @check-answer="handlePictionaryAnswer"
               />
             </template>
             <template v-else-if="practiceMode === 'quiz'">
@@ -259,6 +271,7 @@ const PronunciationMode = defineAsyncComponent(() => import('./components/Pronun
 const ListeningMode = defineAsyncComponent(() => import('./components/ListeningMode.vue'))
 const PracticeStats = defineAsyncComponent(() => import('./components/PracticeStats.vue'))
 const FlashcardEmptyState = defineAsyncComponent(() => import('./components/FlashcardEmptyState.vue'))
+const PictionaryMode = defineAsyncComponent(() => import('./components/PictionaryMode.vue'))
 
 // Composables
 import { useFlashcardGame } from './composables/useFlashcardGame'
@@ -363,6 +376,21 @@ const imageModeAvailable = computed(() => {
   const cards = baseFlashcards.value
   if (cards.length === 0) return false
   // Image mode is available only if ALL cards in the current effective set have a non-empty image
+  return cards.every((v: Vocabulary) => {
+    const img: any = (v as any).image
+    if (img == null) return false
+    const s = typeof img === 'string' ? img : String(img)
+    return s.trim().length > 0
+  })
+})
+
+// Determine if Pictionary mode is available for the CURRENT effective set (date + category + difficulty)
+// This ensures that when a date contains multiple topics, Pictionary mode is only enabled if the selected
+// topic (and difficulty) actually has images.
+const pictionaryModeAvailable = computed(() => {
+  const cards = baseFlashcards.value
+  if (cards.length === 0) return false
+  // Pictionary mode is available only if ALL cards in the current effective set have a non-empty image
   return cards.every((v: Vocabulary) => {
     const img: any = (v as any).image
     if (img == null) return false
@@ -546,6 +574,19 @@ watch(imageModeAvailable, (available) => {
   }
 }, { immediate: true })
 
+// Auto-switch away from Pictionary mode if it becomes unavailable
+watch(pictionaryModeAvailable, (available) => {
+  if (practiceMode.value === 'pictionary' && !available) {
+    // Respect rule: do not change mode during active session
+    if (practiceStarted.value) {
+      console.log('[Flashcard] Pictionary mode became unavailable but practice is active; not switching mode.')
+      return
+    }
+    console.log('[Flashcard] Pictionary mode unavailable for current filter; switching to flashcard mode.')
+    changePracticeMode('flashcard')
+  }
+}, { immediate: true })
+
 // Stats composable - must be after useFlashcardGame
 const {
   sessionStats,
@@ -623,6 +664,12 @@ const {
   imageCorrect,
   checkImageAnswer,
   resetImageMode,
+  // Pictionary
+  pictionaryAnswer,
+  pictionaryAnswered,
+  pictionaryCorrect,
+  checkPictionaryAnswer,
+  resetPictionaryMode,
   imageQuizEnabled,
   imageQuizOptions,
   imageQuizSelected,
@@ -686,6 +733,11 @@ interface CardState {
   pronunciationResult?: string
   pronunciationAnswered?: boolean
   pronunciationCorrect?: boolean
+
+  // Pictionary mode
+  pictionaryAnswer?: string
+  pictionaryAnswered?: boolean
+  pictionaryCorrect?: boolean
 }
 
 const cardStateStorage = ref<Record<number, CardState>>({})
@@ -731,6 +783,11 @@ const saveCurrentCardState = () => {
     pronunciationResult: pronunciationResult.value || undefined,
     pronunciationAnswered: pronunciationAnswered.value || undefined,
     pronunciationCorrect: pronunciationCorrect.value || undefined,
+
+    // Pictionary mode
+    pictionaryAnswer: pictionaryAnswer.value || undefined,
+    pictionaryAnswered: pictionaryAnswered.value || undefined,
+    pictionaryCorrect: pictionaryCorrect.value || undefined,
   }
 }
 
@@ -825,6 +882,17 @@ const restoreCardState = () => {
     if (savedState.pronunciationCorrect !== undefined) {
       pronunciationCorrect.value = savedState.pronunciationCorrect
     }
+
+    // Restore pictionary mode
+    if (savedState.pictionaryAnswer !== undefined) {
+      pictionaryAnswer.value = savedState.pictionaryAnswer
+    }
+    if (savedState.pictionaryAnswered !== undefined) {
+      pictionaryAnswered.value = savedState.pictionaryAnswered
+    }
+    if (savedState.pictionaryCorrect !== undefined) {
+      pictionaryCorrect.value = savedState.pictionaryCorrect
+    }
   }
 }
 
@@ -883,6 +951,11 @@ const onToggleImageQuiz = (enabled: boolean) => {
 const handleImageQuizAnswer = (answer: string) => {
   const isCorrect = selectImageQuizAnswer(answer)
   recordAnswer(!!isCorrect)
+}
+
+const handlePictionaryAnswer = () => {
+  checkPictionaryAnswer()
+  recordAnswer(pictionaryCorrect.value)
 }
 const resetAndRestoreCard = () => {
   // First, reset all modes to ensure a clean slate from the previous card.

@@ -288,7 +288,8 @@
       "settings": "Settings",
       "progress": "Progress",
       "description": "Practice vocabulary with flashcards",
-      "exit": "Exit"
+      "exit": "Exit",
+      "selectMode": "Select mode"
     },
     "empty": {
       "title": "No flashcards",
@@ -305,7 +306,8 @@
       "advanced": "Advanced",
       "autoFlip": "Auto flip card after 3 seconds",
       "shuffle": "Shuffle order",
-      "shuffle_disabled_during_practice": "Cannot shuffle during practice"
+      "shuffle_disabled_during_practice": "Shuffle is disabled during practice",
+      "disabledDuringPractice": "Settings are disabled during practice"
     },
     "history": {
       "title": "Practice History",
@@ -337,7 +339,10 @@
       "typing": "Typing",
       "listening": "Listening",
       "image": "Image",
-      "pronunciation": "Pronunciation"
+      "pictionary": "Pictionary",
+      "pronunciation": "Pronunciation",
+      "change_disabled_during_practice": "Mode change is disabled during practice",
+      "selectMode": "Select mode"
     },
     "image": {
       "imageAlt": "Vocabulary image",
@@ -345,13 +350,24 @@
       "noImage": "No image available",
       "placeholder": "Type the word...",
       "instruction": "Look at the image and type the corresponding word:",
-      "correctAnswer": "Correct answer"
+      "correctAnswer": "Correct answer",
+      "unavailable": "Image mode is unavailable for the selected date",
+      "quizToggle": "Multiple Choice"
+    },
+    "pictionary": {
+      "imageAlt": "Pictionary image",
+      "instruction": "Click the boxes and type to fill in the missing letters. Press Enter to check.",
+      "unavailable": "Pictionary mode is unavailable for the selected date"
     },
     "listening": {
       "instruction": "Listen and type the word you hear:",
       "placeholder": "Type the word you hear...",
       "correct": "✓ Correct!",
-      "incorrect": "✗ Correct answer:"
+      "incorrect": "✗ Correct answer:",
+      "quizToggle": "Multiple Choice"
+    },
+    "typing": {
+      "quizToggle": "Multiple Choice"
     },
     "dateFilter": {
       "enable": "Filter by creation date",

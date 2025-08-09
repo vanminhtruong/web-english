@@ -1,4 +1,4 @@
-export type PracticeMode = 'flashcard' | 'quiz' | 'typing' | 'image' | 'pronunciation' | 'listening';
+export type PracticeMode = 'flashcard' | 'quiz' | 'typing' | 'image' | 'pronunciation' | 'listening' | 'pictionary';
 
 export interface GameSettings {
   cardCount: number;
@@ -13,4 +13,4 @@ export interface GameSettings {
   practiceMode?: PracticeMode;
   category?: string;
   level?: string;
-} 
+}

@@ -309,7 +309,8 @@
       "settings": "Cài đặt",
       "progress": "Tiến độ",
       "description": "Luyện tập từ vựng với thẻ ghi nhớ",
-      "exit": "Thoát"
+      "exit": "Thoát",
+      "selectMode": "Chọn chế độ"
     },
     "empty": {
       "title": "Không có flashcard nào",
@@ -326,7 +327,8 @@
       "advanced": "Nâng cao",
       "autoFlip": "Tự động lật thẻ sau 3 giây",
       "shuffle": "Xáo trộn thứ tự",
-      "shuffle_disabled_during_practice": "Không thể xáo trộn trong quá trình luyện tập"
+      "shuffle_disabled_during_practice": "Không thể xáo trộn trong quá trình luyện tập",
+      "disabledDuringPractice": "Cài đặt bị vô hiệu hóa trong quá trình luyện tập"
     },
     "history": {
       "title": "Lịch sử luyện tập",
@@ -358,7 +360,10 @@
       "typing": "Gõ từ",
       "listening": "Nghe",
       "image": "Nhìn ảnh",
-      "pronunciation": "Phát âm"
+      "pictionary": "Đuổi hình bắt chữ",
+      "pronunciation": "Phát âm",
+      "change_disabled_during_practice": "Không thể thay đổi chế độ trong quá trình luyện tập",
+      "selectMode": "Chọn chế độ"
     },
     "image": {
       "imageAlt": "Hình ảnh từ vựng",
@@ -366,13 +371,24 @@
       "noImage": "Không có hình ảnh",
       "placeholder": "Nhập từ vựng...",
       "instruction": "Nhìn vào hình ảnh và nhập từ vựng tương ứng:",
-      "correctAnswer": "Đáp án đúng"
+      "correctAnswer": "Đáp án đúng",
+      "unavailable": "Chế độ nhìn ảnh không khả dụng cho ngày đã chọn",
+      "quizToggle": "Trắc nghiệm"
+    },
+    "pictionary": {
+      "imageAlt": "Hình ảnh đuổi hình bắt chữ",
+      "instruction": "Nhấp vào các ô và gõ để điền các chữ cái còn thiếu. Nhấn Enter để kiểm tra.",
+      "unavailable": "Chế độ đuổi hình bắt chữ không khả dụng cho ngày đã chọn"
     },
     "listening": {
       "instruction": "Nghe và nhập từ bạn nghe được:",
       "placeholder": "Nhập từ bạn nghe được...",
       "correct": "✓ Chính xác!",
-      "incorrect": "✗ Đáp án đúng:"
+      "incorrect": "✗ Đáp án đúng:",
+      "quizToggle": "Trắc nghiệm"
+    },
+    "typing": {
+      "quizToggle": "Trắc nghiệm"
     },
     "dateFilter": {
       "enable": "Lọc theo ngày tạo",

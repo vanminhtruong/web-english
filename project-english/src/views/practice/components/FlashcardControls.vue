@@ -52,8 +52,8 @@
       </button>
     </template>
 
-    <!-- Controls for Quiz, Typing, Listening, Image, and Pronunciation Modes -->
-    <template v-else-if="['quiz', 'typing', 'listening', 'image', 'pronunciation'].includes(practiceMode)">
+    <!-- Controls for Quiz, Typing, Listening, Image, Pronunciation, and Pictionary Modes -->
+    <template v-else-if="['quiz', 'typing', 'listening', 'image', 'pronunciation', 'pictionary'].includes(practiceMode)">
       <button
         @click="$emit('previous-card')"
         :disabled="currentIndex === 0"
@@ -91,7 +91,7 @@
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  practiceMode: 'flashcard' | 'quiz' | 'typing' | 'listening' | 'image' | 'pronunciation'
+  practiceMode: 'flashcard' | 'quiz' | 'typing' | 'listening' | 'image' | 'pronunciation' | 'pictionary'
   currentIndex: number
   totalCards: number
   canProceed: boolean
