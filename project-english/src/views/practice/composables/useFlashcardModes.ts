@@ -70,11 +70,15 @@ export function useFlashcardModes(
   const pictionaryAnswered = ref(false)
   const pictionaryCorrect = ref(false)
 
+  // Bubble Shooter mode states
+  const bubbleShooterVietnameseMode = ref(false)
+
   // Persist toggle states in localStorage
   const STORAGE_KEYS = {
     image: 'pe_imageQuizEnabled',
     listening: 'pe_listeningQuizEnabled',
     typing: 'pe_typingQuizEnabled',
+    bubbleShooterVietnamese: 'pe_bubbleShooterVietnameseMode',
     imagePos: 'pe_imageQuiz_correct_pos',
     listeningPos: 'pe_listeningQuiz_correct_pos',
     typingPos: 'pe_typingQuiz_correct_pos',
@@ -93,6 +97,7 @@ export function useFlashcardModes(
   imageQuizEnabled.value = readBool(STORAGE_KEYS.image, false)
   listeningQuizEnabled.value = readBool(STORAGE_KEYS.listening, false)
   typingQuizEnabled.value = readBool(STORAGE_KEYS.typing, false)
+  bubbleShooterVietnameseMode.value = readBool(STORAGE_KEYS.bubbleShooterVietnamese, false)
 
   const writeBool = (key: string, val: boolean) => {
     try {
@@ -119,6 +124,7 @@ export function useFlashcardModes(
   watch(imageQuizEnabled, (v) => writeBool(STORAGE_KEYS.image, v))
   watch(listeningQuizEnabled, (v) => writeBool(STORAGE_KEYS.listening, v))
   watch(typingQuizEnabled, (v) => writeBool(STORAGE_KEYS.typing, v))
+  watch(bubbleShooterVietnameseMode, (v) => writeBool(STORAGE_KEYS.bubbleShooterVietnamese, v))
 
   // Rotating indices for correct-answer position (A,B,C,D => 0..3)
   const imageCorrectPos = ref(readNumber(STORAGE_KEYS.imagePos, Math.floor(Math.random() * 4)))
@@ -596,6 +602,9 @@ export function useFlashcardModes(
     pictionaryCorrect,
     checkPictionaryAnswer,
     resetPictionaryMode,
+
+    // Bubble Shooter mode
+    bubbleShooterVietnameseMode,
 
     // Pronunciation mode
     isRecording,

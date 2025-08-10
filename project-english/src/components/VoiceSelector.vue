@@ -9,7 +9,7 @@
       <button
         @click="showDropdown = !showDropdown"
         ref="dropdownButton"
-        class="flex w-full sm:w-[200px] md:w-[220px] lg:w-[240px] xl:w-[240px] 2xl:w-[280px] items-center justify-between px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
+        class="flex w-full min-w-[240px] sm:min-w-[260px] md:min-w-[280px] lg:min-w-[300px] items-center justify-between px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
       >
         <div class="flex items-center space-x-2">
           <span class="text-sm md:text-base lg:text-lg">{{ currentVoiceOption?.icon }}</span>
@@ -27,7 +27,7 @@
         v-if="showDropdown"
         ref="dropdownMenu"
         :style="dropdownStyle"
-        class="bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden z-[9998] xl:w-[200px] 2xl:w-[200px]"
+        class="bg-white dark:bg-[#0f0f0f] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden z-[9998] min-w-[240px] sm:min-w-[260px] md:min-w-[280px] lg:min-w-[300px]"
       >
         <div class="overflow-y-auto max-h-60">
         <div
@@ -35,22 +35,22 @@
           :key="option.value"
           @click="selectVoiceOption(option)"
           :class="[
-            'flex items-center justify-between space-x-2 px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 text-left text-sm md:text-sm lg:text-base transition-colors cursor-pointer',
+            'flex items-center justify-between gap-2 px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 text-left text-sm md:text-sm lg:text-base transition-colors cursor-pointer',
             currentVoiceType === option.value
               ? 'bg-blue-50 dark:bg-[#2d3436] text-blue-600 dark:text-blue-400'
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
           ]"
         >
-          <div class="flex items-center space-x-2">
-          <span class="text-sm md:text-base lg:text-lg">{{ option.icon }}</span>
-          <span class="truncate">{{ option.label }}</span>
+          <div class="flex items-center space-x-2 min-w-0 flex-1">
+          <span class="text-sm md:text-base lg:text-lg flex-shrink-0">{{ option.icon }}</span>
+          <span class="truncate flex-1">{{ option.label }}</span>
           </div>
-          <div class="flex items-center">
-            <svg v-if="currentVoiceType === option.value" class="w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <div class="flex items-center space-x-1 flex-shrink-0">
+            <svg v-if="currentVoiceType === option.value" class="inline-block w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
           </svg>
-            <button @click.stop="openVoiceSettings(option)" class="ml-1 sm:ml-2 p-1 md:p-1 lg:p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-500">
-              <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-4 md:h-4 lg:w-4 lg:h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <button @click.stop="openVoiceSettings(option)" class="inline-block p-1 md:p-1 lg:p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-500 flex-shrink-0">
+              <svg class="inline-block w-3 h-3 sm:w-4 sm:h-4 md:w-4 md:h-4 lg:w-4 lg:h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
         </button>
           </div>
         </div>

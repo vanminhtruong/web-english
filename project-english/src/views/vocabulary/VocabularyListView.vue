@@ -441,6 +441,12 @@ const onVocabularySaved = (data?: { category: string }) => {
     console.log('Recently added category:', data.category);
   }
   
+  // Trigger auto-save when vocabulary is added/updated
+  if (autoSaveEnabled.value) {
+    debounceAutoSave();
+    console.log('Auto-save triggered from Add Word in date group');
+  }
+  
   // Reload grouping state to ensure new vocabulary appears in correct date group
   if (useGrouping.value) {
     nextTick(() => {
@@ -633,6 +639,13 @@ onMounted(() => {
     }
   });
   
+  // Listen for grammar rules updates
+  window.addEventListener('grammar-rules-updated', () => {
+    if (autoSaveEnabled.value) {
+      debounceAutoSave();
+    }
+  });
+  
   // Add scroll event listener for sticky button
   window.addEventListener('scroll', handleScroll, { passive: true });
   
@@ -817,6 +830,7 @@ watch(globalMoveMode, (newValue) => {
 onUnmounted(() => {
   window.removeEventListener('vocabularyImportComplete', () => {});
   window.removeEventListener('vocabulary-notes-updated', () => {});
+  window.removeEventListener('grammar-rules-updated', () => {});
   window.removeEventListener('scroll', handleScroll);
   // Clean up modal-open class
   document.body.classList.remove('modal-open');

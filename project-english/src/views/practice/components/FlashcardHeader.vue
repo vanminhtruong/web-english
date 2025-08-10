@@ -144,7 +144,30 @@
                         {{ t('flashcard.modes.pictionary', 'Pictionary') }}
                       </button>
                     </li>
-                    <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('bubble-shooter')">{{ t('flashcard.modes.bubbleShooter', 'Bubble Shooter') }}</button></li>
+                    <!-- Bubble Shooter option with inline toggle -->
+                    <li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-2">
+                      <button 
+                        class="text-left flex-1 truncate"
+                        @click="selectMode('bubble-shooter')"
+                        :disabled="!bubbleShooterModeAvailable"
+                        :aria-disabled="!bubbleShooterModeAvailable ? 'true' : 'false'"
+                        :title="!bubbleShooterModeAvailable ? t('flashcard.bubbleShooter.unavailable', 'Bubble Shooter mode is disabled for dates with more than 8 vocabulary words') : t('flashcard.modes.bubbleShooter', 'Bubble Shooter')"
+                        :class="!bubbleShooterModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.bubbleShooter', 'Bubble Shooter') }}
+                      </button>
+                      <button
+                        class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="[
+                          bubbleShooterModeAvailable ? (bubbleShooterVietnameseMode ? 'bg-orange-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="bubbleShooterModeAvailable && toggleBubbleShooterVietnameseMode()"
+                        :title="t('flashcard.bubbleShooter.vietnameseModeToggle', 'Vietnamese First Letter Mode')"
+                        :aria-label="t('flashcard.bubbleShooter.vietnameseModeToggle', 'Vietnamese First Letter Mode')"
+                      >
+                        <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', bubbleShooterVietnameseMode ? 'translate-x-4' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
                     <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
                   </ul>
                 </div>
@@ -319,7 +342,29 @@
                         {{ t('flashcard.modes.pictionary', 'Pictionary') }}
                       </button>
                     </li>
-                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('bubble-shooter')">{{ t('flashcard.modes.bubbleShooter', 'Bubble Shooter') }}</button></li>
+                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
+                      <button
+                        class="text-left flex-1 truncate"
+                        @click="selectMode('bubble-shooter')"
+                        :disabled="!bubbleShooterModeAvailable"
+                        :aria-disabled="!bubbleShooterModeAvailable ? 'true' : 'false'"
+                        :title="!bubbleShooterModeAvailable ? t('flashcard.bubbleShooter.unavailable', 'Bubble Shooter mode is disabled for dates with more than 8 vocabulary words') : t('flashcard.modes.bubbleShooter', 'Bubble Shooter')"
+                        :class="!bubbleShooterModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.bubbleShooter', 'Bubble Shooter') }}
+                      </button>
+                      <button
+                        class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="[
+                          bubbleShooterModeAvailable ? (bubbleShooterVietnameseMode ? 'bg-orange-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="bubbleShooterModeAvailable && toggleBubbleShooterVietnameseMode()"
+                        :title="t('flashcard.bubbleShooter.vietnameseModeToggle', 'Vietnamese First Letter Mode')"
+                        :aria-label="t('flashcard.bubbleShooter.vietnameseModeToggle', 'Vietnamese First Letter Mode')"
+                      >
+                        <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', bubbleShooterVietnameseMode ? 'translate-x-5' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
                     <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
                   </ul>
                 </div>
@@ -360,6 +405,8 @@ interface Props {
   typingQuizEnabled?: boolean
   imageModeAvailable?: boolean
   pictionaryModeAvailable?: boolean
+  bubbleShooterModeAvailable?: boolean
+  bubbleShooterVietnameseMode?: boolean
 }
 
 const props = defineProps<Props>()
@@ -368,6 +415,8 @@ const listeningQuizEnabled = computed(() => props.listeningQuizEnabled ?? false)
 const typingQuizEnabled = computed(() => props.typingQuizEnabled ?? false)
 const imageModeAvailable = computed(() => props.imageModeAvailable ?? true)
 const pictionaryModeAvailable = computed(() => props.pictionaryModeAvailable ?? true)
+const bubbleShooterModeAvailable = computed(() => props.bubbleShooterModeAvailable ?? true)
+const bubbleShooterVietnameseMode = computed(() => props.bubbleShooterVietnameseMode ?? false)
 
 const { t } = useI18n()
 
@@ -380,6 +429,7 @@ const emit = defineEmits<{
   'update:image-quiz-enabled': [enabled: boolean]
   'update:listening-quiz-enabled': [enabled: boolean]
   'update:typing-quiz-enabled': [enabled: boolean]
+  'update:bubble-shooter-vietnamese-mode': [enabled: boolean]
 }>()
 
 const handlePracticeModeChange = (event: Event) => {
@@ -423,6 +473,11 @@ const selectMode = (mode: PracticeMode) => {
     closeAll()
     return
   }
+  if (mode === 'bubble-shooter' && !bubbleShooterModeAvailable.value) {
+    // Prevent selecting Bubble Shooter mode when too many vocabulary words (>8) for selected date
+    closeAll()
+    return
+  }
   emit('change-practice-mode', mode)
   closeAll()
 }
@@ -442,6 +497,13 @@ const toggleListeningQuizFromDropdown = () => {
 const toggleTypingQuizFromDropdown = () => {
   if (props.practiceStarted) return
   emit('update:typing-quiz-enabled', !typingQuizEnabled.value)
+}
+
+const toggleBubbleShooterVietnameseMode = () => {
+  // Prevent toggling during active practice or when bubble shooter mode is unavailable
+  if (props.practiceStarted) return
+  if (!bubbleShooterModeAvailable.value) return
+  emit('update:bubble-shooter-vietnamese-mode', !bubbleShooterVietnameseMode.value)
 }
 
 // Guarded settings emitter to prevent opening during active practice

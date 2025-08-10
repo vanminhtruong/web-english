@@ -154,7 +154,7 @@
                     {{ isEditing ? t('grammar.manager.editGrammar', 'Edit Grammar Rule') : t('grammar.manager.addNew', 'Add New Grammar Rule') }}
                   </h4>
                   
-                  <form @submit.prevent="saveGrammar" class="space-y-4">
+                  <form @submit.prevent="submitForm" class="space-y-4">
                     <!-- Title -->
                     <div class="animate-fade-in-up" style="animation-delay: 0.2s">
                       <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
@@ -668,14 +668,11 @@ const removeExample = (index: number) => {
   }
 }
 
-const saveGrammar = () => {
-  if (!formData.value.title || !formData.value.category || !formData.value.level) {
-    return
-  }
-
+const submitForm = () => {
   const now = new Date()
+  let ruleId = '';
   
-  if (isEditing.value && editingId.value) {
+  if (isEditing.value) {
     // Update existing rule
     const index = grammarRules.value.findIndex(rule => rule.id === editingId.value)
     if (index !== -1) {
@@ -689,6 +686,7 @@ const saveGrammar = () => {
         examples: formData.value.examples.filter(ex => ex.trim()),
         updatedAt: now
       }
+      ruleId = editingId.value || '';
     }
   } else {
     // Add new rule
@@ -705,9 +703,21 @@ const saveGrammar = () => {
       dateGroup: perDateMode.value ? props.selectedDate || undefined : undefined
     }
     grammarRules.value.push(newRule)
+    ruleId = newRule.id;
   }
   
   saveToLocalStorage()
+  
+  // Trigger auto-save event
+  const event = new CustomEvent('grammar-rules-updated', {
+    detail: {
+      action: isEditing.value ? 'updated' : 'added',
+      ruleId: ruleId,
+      dateGroup: perDateMode.value ? props.selectedDate || undefined : undefined
+    }
+  });
+  window.dispatchEvent(event);
+  
   resetForm()
 }
 
@@ -737,6 +747,17 @@ const deleteGrammar = (id: string) => {
       onConfirm: () => {
         grammarRules.value = grammarRules.value.filter(rule => rule.id !== id)
         saveToLocalStorage()
+        
+        // Trigger auto-save event
+        const event = new CustomEvent('grammar-rules-updated', {
+          detail: {
+            action: 'deleted',
+            ruleId: id,
+            dateGroup: rule.dateGroup
+          }
+        });
+        window.dispatchEvent(event);
+        
         toast.success(t('grammar.manager.ruleDeleted', 'Grammar rule deleted successfully'))
         toast.dismiss(toastId)
       },

@@ -20,14 +20,17 @@
       :typing-quiz-enabled="typingQuizEnabled"
       :image-mode-available="imageModeAvailable"
       :pictionary-mode-available="pictionaryModeAvailable"
+      :bubble-shooter-mode-available="bubbleShooterModeAvailable"
+      :bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode"
       @go-back="handleExitPractice"
       @show-history="showHistory = true"
       @change-practice-mode="changePracticeMode"
       @show-settings="showSettingsDialog = true"
       @toggle-shuffle="toggleShuffle"
-      @update:image-quiz-enabled="onToggleImageQuiz($event)"
-      @update:listening-quiz-enabled="onToggleListeningQuiz($event)"
-      @update:typing-quiz-enabled="onToggleTypingQuiz($event)"
+      @update:image-quiz-enabled="imageQuizEnabled = $event"
+      @update:listening-quiz-enabled="listeningQuizEnabled = $event"
+      @update:typing-quiz-enabled="typingQuizEnabled = $event"
+      @update:bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode = $event"
     />
 
     <!-- Progress Bar -->
@@ -184,6 +187,7 @@
                 <template v-else-if="practiceMode === 'bubble-shooter'">
                   <BubbleShooterMode
                     :words="currentFlashcards"
+                    :vietnamese-mode="bubbleShooterVietnameseMode"
                     @game-complete="handleBubbleShooterComplete"
                   />
                 </template>
@@ -362,6 +366,41 @@ watch(selectedDate, () => {
   saveDateFilterState()
 })
 
+// Bubble Shooter Vietnamese Mode Toggle State with localStorage support
+const bubbleShooterVietnameseMode = ref(false)
+
+// Load from localStorage on init
+const loadBubbleShooterVietnameseModeFromStorage = () => {
+  try {
+    const saved = localStorage.getItem('pe_bubbleShooterVietnameseMode')
+    return saved === null ? false : saved === 'true'
+  } catch {
+    return false
+  }
+}
+
+// Save to localStorage
+const saveBubbleShooterVietnameseModeToStorage = (enabled: boolean) => {
+  try {
+    localStorage.setItem('pe_bubbleShooterVietnameseMode', String(enabled))
+  } catch {}
+}
+
+// Initialize from localStorage
+bubbleShooterVietnameseMode.value = loadBubbleShooterVietnameseModeFromStorage()
+
+// Watch for changes and save to localStorage
+watch(bubbleShooterVietnameseMode, (newVal) => {
+  saveBubbleShooterVietnameseModeToStorage(newVal)
+})
+
+// Toggle function for FlashcardHeader
+const toggleBubbleShooterVietnameseMode = () => {
+  bubbleShooterVietnameseMode.value = !bubbleShooterVietnameseMode.value
+}
+
+// Event handlers for FlashcardHeader events - using existing implementations
+
 // Settings composable  
 const {
   showSettings: showSettingsDialog,
@@ -432,6 +471,24 @@ const pictionaryModeAvailable = computed(() => {
     const s = typeof img === 'string' ? img : String(img)
     return s.trim().length > 0
   })
+})
+
+// Determine if Bubble Shooter mode is available based on vocabulary count
+// Bubble Shooter mode is disabled when the selected date contains more than 8 vocabulary words
+// to avoid gameplay issues with too many balls
+const bubbleShooterModeAvailable = computed(() => {
+  // If no date is selected, count all vocabularies
+  if (!selectedDate.value) {
+    return filteredVocabularies.value.length <= 8
+  }
+  
+  // Count vocabularies for the selected date (before category/difficulty filtering)
+  const dateFilteredVocabs = allVocabularies.value.filter((vocab: Vocabulary) => {
+    const vocabDateKey = getDateKey(vocab.createdAt)
+    return vocabDateKey === selectedDate.value
+  })
+  
+  return dateFilteredVocabs.length <= 8
 })
 
 // Practice Timer State
@@ -943,13 +1000,6 @@ const handleTypingAnswer = () => {
   recordAnswer(typingCorrect.value)
 }
 // Typing-quiz handlers
-const onToggleTypingQuiz = (enabled: boolean) => {
-  typingQuizEnabled.value = enabled
-  resetTypingMode()
-  if (enabled) {
-    generateTypingQuizOptions()
-  }
-}
 
 const handleTypingQuizAnswer = (answer: string) => {
   const isCorrect = selectTypingQuizAnswer(answer)
@@ -1235,6 +1285,10 @@ watch(baseFlashcards, (newCards) => {
   }
 }, { immediate: false })
 
+// Event handlers for toggle options  
+const onToggleBubbleShooterVietnameseMode = (enabled: boolean) => {
+  bubbleShooterVietnameseMode.value = enabled
+}
 
 // Initialize on mount
 onMounted(() => {
