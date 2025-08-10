@@ -374,6 +374,7 @@
       "listening": "Nghe",
       "image": "Nhìn ảnh",
       "pictionary": "Đuổi hình bắt chữ",
+      "bubbleShooter": "Bắn bóng từ vựng",
       "pronunciation": "Phát âm",
       "change_disabled_during_practice": "Không thể thay đổi chế độ trong quá trình luyện tập",
       "selectMode": "Chọn chế độ"
@@ -392,6 +393,16 @@
       "imageAlt": "Hình ảnh đuổi hình bắt chữ",
       "instruction": "Nhấp vào các ô và gõ để điền các chữ cái còn thiếu. Nhấn Enter để kiểm tra.",
       "unavailable": "Chế độ đuổi hình bắt chữ không khả dụng cho ngày đã chọn"
+    },
+    "bubbleShooter": {
+      "title": "Bắn Bóng Từ Vựng",
+      "instruction": "Bắn những quả bóng để ghép 4 từ giống nhau trở lên!",
+      "score": "Điểm",
+      "currentWord": "Từ Hiện Tại",
+      "gameComplete": "Hoàn Thành Game!",
+      "finalScore": "Điểm Cuối: {score}",
+      "wordsMatched": "Từ Đã Ghép: {count}",
+      "playAgain": "Chơi Lại"
     },
     "listening": {
       "instruction": "Nghe và nhập từ bạn nghe được:",

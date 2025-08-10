@@ -67,6 +67,7 @@
                     practiceMode === 'listening' ? t('flashcard.modes.listening', 'Listening') :
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
                     practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
+                    practiceMode === 'bubble-shooter' ? t('flashcard.modes.bubbleShooter', 'Bubble Shooter') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
                   }}
                 </span>
@@ -143,6 +144,7 @@
                         {{ t('flashcard.modes.pictionary', 'Pictionary') }}
                       </button>
                     </li>
+                    <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('bubble-shooter')">{{ t('flashcard.modes.bubbleShooter', 'Bubble Shooter') }}</button></li>
                     <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
                   </ul>
                 </div>
@@ -242,6 +244,7 @@
                     practiceMode === 'listening' ? t('flashcard.modes.listening', 'Listening') :
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
                     practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
+                    practiceMode === 'bubble-shooter' ? t('flashcard.modes.bubbleShooter', 'Bubble Shooter') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
                   }}
                 </span>
@@ -316,6 +319,7 @@
                         {{ t('flashcard.modes.pictionary', 'Pictionary') }}
                       </button>
                     </li>
+                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('bubble-shooter')">{{ t('flashcard.modes.bubbleShooter', 'Bubble Shooter') }}</button></li>
                     <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
                   </ul>
                 </div>

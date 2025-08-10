@@ -340,6 +340,7 @@
       "listening": "Listening",
       "image": "Image",
       "pictionary": "Pictionary",
+      "bubbleShooter": "Bubble Shooter",
       "pronunciation": "Pronunciation",
       "change_disabled_during_practice": "Mode change is disabled during practice",
       "selectMode": "Select mode"
@@ -358,6 +359,16 @@
       "imageAlt": "Pictionary image",
       "instruction": "Click the boxes and type to fill in the missing letters. Press Enter to check.",
       "unavailable": "Pictionary mode is unavailable for the selected date"
+    },
+    "bubbleShooter": {
+      "title": "Bubble Shooter",
+      "instruction": "Shoot bubbles to match 4 or more words!",
+      "score": "Score",
+      "currentWord": "Current Word",
+      "gameComplete": "Game Complete!",
+      "finalScore": "Final Score: {score}",
+      "wordsMatched": "Words Matched: {count}",
+      "playAgain": "Play Again"
     },
     "listening": {
       "instruction": "Listen and type the word you hear:",

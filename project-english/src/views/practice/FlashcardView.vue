@@ -64,17 +64,30 @@
         <!-- Practice Glass Container -->
         <div class="group relative overflow-hidden bg-white/80 dark:bg-dark-bg-soft/80 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 dark:border-dark-bg-mute transition-all duration-500 p-3 sm:p-4 md:p-6">
           <div class="space-y-4 sm:space-y-5 md:space-y-6">
-            <!-- Practice Timer -->
+            <!-- Practice Timer / Start Button -->
             <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
               <div class="flex justify-center max-w-md mx-auto">
-                <PracticeTimer
-                  ref="practiceTimerRef"
-                  :max-time="30"
-                  @start="handlePracticeStart"
-                  @timeout="handleTimeout"
-                  @restart="handleTimerRestart"
-                  @skip="handleSkip"
-                />
+                <!-- Simple Start Button for Bubble Shooter Mode -->
+                <template v-if="practiceMode === 'bubble-shooter'">
+                  <button
+                    v-if="!practiceStarted"
+                    @click="handlePracticeStart"
+                    class="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 dark:from-purple-700 dark:to-pink-700 dark:hover:from-purple-800 dark:hover:to-pink-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  >
+                    {{ t('practice.startGame', 'Start Game') }}
+                  </button>
+                </template>
+                <!-- Normal Timer for Other Modes -->
+                <template v-else>
+                  <PracticeTimer
+                    ref="practiceTimerRef"
+                    :max-time="30"
+                    @start="handlePracticeStart"
+                    @timeout="handleTimeout"
+                    @restart="handleTimerRestart"
+                    @skip="handleSkip"
+                  />
+                </template>
               </div>
             </LazyLoadComponent>
 
@@ -166,6 +179,12 @@
                     :is-speech-recognition-supported="isSpeechRecognitionSupported"
                     :get-topic-name="getTopicName"
                     @start-recording="startRecording"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'bubble-shooter'">
+                  <BubbleShooterMode
+                    :words="currentFlashcards"
+                    @game-complete="handleBubbleShooterComplete"
                   />
                 </template>
               </LazyLoadComponent>
@@ -287,6 +306,7 @@ const ListeningMode = defineAsyncComponent(() => import('./components/ListeningM
 const PracticeStats = defineAsyncComponent(() => import('./components/PracticeStats.vue'))
 const FlashcardEmptyState = defineAsyncComponent(() => import('./components/FlashcardEmptyState.vue'))
 const PictionaryMode = defineAsyncComponent(() => import('./components/PictionaryMode.vue'))
+const BubbleShooterMode = defineAsyncComponent(() => import('./components/BubbleShooterMode.vue'))
 
 // Composables
 import { useFlashcardGame } from './composables/useFlashcardGame'
@@ -973,6 +993,14 @@ const handlePictionaryAnswer = () => {
   checkPictionaryAnswer()
   recordAnswer(pictionaryCorrect.value)
 }
+
+// Bubble Shooter mode handler
+const handleBubbleShooterComplete = () => {
+  // Record completion as successful
+  recordAnswer(true)
+  // Complete the session since Bubble Shooter is a complete game mode
+  handleSessionComplete()
+}
 const resetAndRestoreCard = () => {
   // First, reset all modes to ensure a clean slate from the previous card.
   resetAllModes();
@@ -1206,6 +1234,7 @@ watch(baseFlashcards, (newCards) => {
     currentIndex.value = 0
   }
 }, { immediate: false })
+
 
 // Initialize on mount
 onMounted(() => {
