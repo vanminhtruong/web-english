@@ -94,6 +94,7 @@ export interface IAudioSystem {
   playImpactSound(): void
   playExplosionSound(): void
   playBounceSound(): void
+  playVocabularySound(text: string, language?: 'en' | 'vi'): void
   createAudioContext(): AudioContext | null
 }
 
@@ -107,7 +108,9 @@ export interface IPhysicsEngine {
     vx: number,
     vy: number,
     onLand: (bubble: Bubble) => void,
-    existingBubbles?: Bubble[]
+    existingBubbles?: Bubble[],
+    canvasWidth?: number,
+    canvasHeight?: number
   ): void
   checkCollision(bubble1: Bubble, bubble2: Bubble): boolean
   snapToGrid(bubble: Bubble, existingBubbles: Bubble[]): void
@@ -132,7 +135,7 @@ export interface ICanvasRenderer {
   initializeCanvas(): boolean
   clearCanvas(): void
   drawBubble(bubble: Bubble): void
-  drawShooter(position: Position, word: string, color: string): void
+  drawShooter(position: Position, word: string, color: string, displayText?: string): void
   drawShootingBubble(bubble: Bubble): void
   drawExplosions(explosions: Explosion[]): void
   drawAimLine(aimLine: AimLine, shooterPosition: Position): void

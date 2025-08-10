@@ -56,22 +56,28 @@ export class CanvasRenderer implements ICanvasRenderer {
   public drawBubble(bubble: Bubble): void {
     if (!this.ctx) return
     
+    // Align to half-pixel to reduce anti-aliasing artifacts
+    const cx = Math.round(bubble.x * 2) / 2
+    const cy = Math.round(bubble.y * 2) / 2
+    // Render radius strictly below physical radius to avoid visual overlap
+    const r = this.BUBBLE_SIZE / 2 - 1
+    
     // Add subtle bubble glow
     this.ctx.save()
     this.ctx.shadowColor = bubble.color
-    this.ctx.shadowBlur = 8
+    this.ctx.shadowBlur = 6
     
     // Draw bubble with gradient
     const gradient = this.ctx.createRadialGradient(
-      bubble.x - this.BUBBLE_SIZE / 6, bubble.y - this.BUBBLE_SIZE / 6, 0,
-      bubble.x, bubble.y, this.BUBBLE_SIZE / 2
+      cx - this.BUBBLE_SIZE / 6, cy - this.BUBBLE_SIZE / 6, 0,
+      cx, cy, r
     )
     gradient.addColorStop(0, this.lightenColor(bubble.color, 0.3))
     gradient.addColorStop(1, bubble.color)
     
     this.ctx.fillStyle = gradient
     this.ctx.beginPath()
-    this.ctx.arc(bubble.x, bubble.y, this.BUBBLE_SIZE / 2, 0, Math.PI * 2)
+    this.ctx.arc(cx, cy, r, 0, Math.PI * 2)
     this.ctx.fill()
     
     // Draw enhanced border with inner highlight
@@ -83,7 +89,7 @@ export class CanvasRenderer implements ICanvasRenderer {
     this.ctx.strokeStyle = 'rgba(255,255,255,0.4)'
     this.ctx.lineWidth = 1
     this.ctx.beginPath()
-    this.ctx.arc(bubble.x, bubble.y, this.BUBBLE_SIZE / 2 - 3, 0, Math.PI * 2)
+    this.ctx.arc(cx, cy, r - 3, 0, Math.PI * 2)
     this.ctx.stroke()
     
     this.ctx.restore()
@@ -103,11 +109,11 @@ export class CanvasRenderer implements ICanvasRenderer {
     // Show display text (supports both English and Vietnamese mode)
     const text = bubble.displayText || bubble.word.charAt(0).toUpperCase()
     
-    this.ctx.fillText(text, bubble.x, bubble.y)
+    this.ctx.fillText(text, cx, cy)
     this.ctx.restore()
   }
 
-  public drawShooter(position: Position, word: string, color: string): void {
+  public drawShooter(position: Position, word: string, color: string, displayText?: string): void {
     if (!this.ctx) return
     
     // Enhanced shooter with pulsing effect
@@ -157,8 +163,8 @@ export class CanvasRenderer implements ICanvasRenderer {
     this.ctx.textAlign = 'center'
     this.ctx.textBaseline = 'middle'
     
-    // Show only first character of the current shooter word
-    const text = word.charAt(0).toUpperCase()
+    // Use displayText if provided, otherwise fallback to first character
+    const text = displayText || word.charAt(0).toUpperCase()
     
     this.ctx.fillText(text, position.x, position.y)
     this.ctx.restore()
@@ -174,20 +180,23 @@ export class CanvasRenderer implements ICanvasRenderer {
     this.ctx.shadowColor = bubble.color
     this.ctx.shadowBlur = 15
     
-    // Pulsing effect
-    const pulseIntensity = 0.9 + 0.1 * Math.sin(Date.now() * 0.01)
+    // Pulsing effect (never exceeds static radius)
+    const pulseIntensity = 0.98 + 0.02 * Math.sin(Date.now() * 0.01)
     
     // Draw bubble with extra bright gradient
+    const sx = Math.round(bubble.x * 2) / 2
+    const sy = Math.round(bubble.y * 2) / 2
+    const r0 = this.BUBBLE_SIZE / 2 - 1
     const gradient = this.ctx.createRadialGradient(
-      bubble.x - this.BUBBLE_SIZE / 5, bubble.y - this.BUBBLE_SIZE / 5, 0,
-      bubble.x, bubble.y, this.BUBBLE_SIZE / 2
+      sx - this.BUBBLE_SIZE / 5, sy - this.BUBBLE_SIZE / 5, 0,
+      sx, sy, r0
     )
     gradient.addColorStop(0, this.lightenColor(bubble.color, 0.5))
     gradient.addColorStop(1, bubble.color)
     
     this.ctx.fillStyle = gradient
     this.ctx.beginPath()
-    this.ctx.arc(bubble.x, bubble.y, (this.BUBBLE_SIZE / 2) * pulseIntensity, 0, Math.PI * 2)
+    this.ctx.arc(sx, sy, r0 * pulseIntensity, 0, Math.PI * 2)
     this.ctx.fill()
     
     // Enhanced border for shooting bubble
@@ -199,7 +208,7 @@ export class CanvasRenderer implements ICanvasRenderer {
     this.ctx.strokeStyle = 'rgba(255,255,255,0.6)'
     this.ctx.lineWidth = 1
     this.ctx.beginPath()
-    this.ctx.arc(bubble.x, bubble.y, (this.BUBBLE_SIZE / 2 - 4) * pulseIntensity, 0, Math.PI * 2)
+    this.ctx.arc(sx, sy, (r0 - 3) * pulseIntensity, 0, Math.PI * 2)
     this.ctx.stroke()
     
     this.ctx.restore()
@@ -216,10 +225,10 @@ export class CanvasRenderer implements ICanvasRenderer {
     this.ctx.textAlign = 'center'
     this.ctx.textBaseline = 'middle'
     
-    // Show only first character of the word
-    const text = bubble.word.charAt(0).toUpperCase()
+    // Use displayText if available, otherwise fallback to first character
+    const text = bubble.displayText || bubble.word.charAt(0).toUpperCase()
     
-    this.ctx.fillText(text, bubble.x, bubble.y)
+    this.ctx.fillText(text, sx, sy)
     this.ctx.restore()
   }
 

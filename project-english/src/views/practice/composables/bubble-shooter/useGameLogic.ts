@@ -103,27 +103,31 @@ export class GameLogic implements IGameLogic {
   public setupInitialBubbles(words: Vocabulary[], vietnameseMode: boolean = false): Bubble[] {
     const bubbles: Bubble[] = []
     
-    // Create 3 initial bubbles with proper hexagonal grid spacing - no gaps
-    const initialWords = words.slice(0, 3)
+    // Create bubbles for all words with proper hexagonal grid spacing
+    const bubblesPerRow = 8 // Maximum bubbles per row to fit screen
     
-    for (let i = 0; i < Math.min(3, initialWords.length); i++) {
-      // Position bubbles in top row with exact spacing to touch each other
-      const row = 0
-      const col = i
+    for (let i = 0; i < words.length; i++) {
+      // Calculate row and column position
+      const row = Math.floor(i / bubblesPerRow)
+      const col = i % bubblesPerRow
       const offsetX = row % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
       
+      // Calculate position with proper spacing
+      const x = col * this.BUBBLE_SIZE + this.BUBBLE_SIZE / 2 + offsetX + 5
+      const y = row * ((this.BUBBLE_SIZE * Math.sqrt(3)) / 2) + this.BUBBLE_SIZE / 2 + 5
+      
       const bubble: Bubble = {
-        x: col * this.BUBBLE_SIZE + this.BUBBLE_SIZE / 2 + offsetX + 5,
-        y: row * this.BUBBLE_SIZE + this.BUBBLE_SIZE / 2 + 5,
-        word: initialWords[i].word,
-        color: this.getColorForWord(initialWords[i].word), // Use consistent color for same word
+        x,
+        y,
+        word: words[i].word,
+        color: this.getColorForWord(words[i].word), // Use consistent color for same word
         id: `initial-${i}`,
         row,
         col,
-        vietnameseMeaning: initialWords[i].meaning, // Store Vietnamese meaning
-        displayText: vietnameseMode && initialWords[i].meaning 
-          ? initialWords[i].meaning.charAt(0).toUpperCase() // Vietnamese first letter if mode enabled
-          : initialWords[i].word.charAt(0).toUpperCase() // Default to English first letter
+        vietnameseMeaning: words[i].meaning, // Store Vietnamese meaning
+        displayText: vietnameseMode && words[i].meaning 
+          ? words[i].meaning.substring(0, 2).toUpperCase() // Vietnamese first 2 letters if mode enabled
+          : words[i].word.charAt(0).toUpperCase() // Default to English first 1 letter
       }
       
       bubbles.push(bubble)

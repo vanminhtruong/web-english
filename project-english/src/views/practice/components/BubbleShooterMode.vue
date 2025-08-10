@@ -1,5 +1,5 @@
 <template>
-  <div class="bubble-shooter-game h-full flex flex-col">
+  <div class="bubble-shooter-game h-full min-h-[600px] sm:min-h-[500px] md:min-h-0 flex flex-col">
     <!-- Game Header -->
     <div class="p-4 sm:p-6 md:p-8 bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-800 dark:to-pink-800 text-white">
       <div class="flex justify-between items-center">
@@ -15,7 +15,7 @@
     </div>
 
     <!-- Game Area -->
-    <div class="flex-1 relative bg-gradient-to-b from-blue-100 to-blue-200 dark:from-[#0a0a0a] dark:to-[#0f0f0f] overflow-hidden">
+    <div class="flex-1 min-h-[450px] sm:min-h-[350px] md:min-h-0 relative bg-gradient-to-b from-blue-100 to-blue-200 dark:from-[#0a0a0a] dark:to-[#0f0f0f] overflow-hidden">
       <canvas
         ref="gameCanvas"
         class="w-full h-full cursor-crosshair"
@@ -119,6 +119,21 @@ const score = computed(() => game.stateManager.score.value)
 const wordsMatched = computed(() => game.stateManager.wordsMatched.value)
 const gameOver = computed(() => game.stateManager.gameOver.value)
 const currentShooterWord = computed(() => game.stateManager.currentShooterWord.value)
+const currentShooterDisplay = computed(() => {
+  const word = game.stateManager.currentShooterWord.value
+  if (!word) return ''
+  
+  // Find the vocabulary item for this word to get Vietnamese meaning
+  const vocab = props.words.find(w => w.word === word)
+  
+  if (props.vietnameseMode && vocab?.meaning) {
+    // Vietnamese mode: show first 2 letters of Vietnamese meaning
+    return vocab.meaning.substring(0, 2).toUpperCase()
+  } else {
+    // Normal mode: show first 1 letter of English word
+    return word.charAt(0).toUpperCase()
+  }
+})
 const aimLine = computed(() => game.stateManager.aimLine.value)
 const shooterPosition = computed(() => game.stateManager.shooterPosition.value)
 

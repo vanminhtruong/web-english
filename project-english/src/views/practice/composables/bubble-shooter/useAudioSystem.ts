@@ -1,6 +1,8 @@
 import type { IAudioSystem } from './interfaces'
+import { useVoiceStore } from '@/stores/voiceStore'
 
 export class AudioSystem implements IAudioSystem {
+  private voiceStore = useVoiceStore()
   public createAudioContext(): AudioContext | null {
     try {
       return new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -92,6 +94,39 @@ export class AudioSystem implements IAudioSystem {
       oscillator.stop(audioContext.currentTime + 0.08)
     } catch (error) {
       console.log('Bounce sound failed:', error)
+    }
+  }
+
+  public playVocabularySound(text: string, language: 'en' | 'vi' = 'en'): void {
+    try {
+      // Kiểm tra xem browser có hỗ trợ Speech Synthesis API không
+      if (!('speechSynthesis' in window)) {
+        console.log('Speech Synthesis not supported')
+        return
+      }
+
+      // Hủy bỏ bất kỳ speech nào đang phát
+      window.speechSynthesis.cancel()
+
+      // Use voice store to create utterance with user's selected voice settings
+      const utterance = this.voiceStore.createUtterance(text)
+      
+      // Override language if Vietnamese is requested
+      if (language === 'vi') {
+        utterance.lang = 'vi-VN'
+        // For Vietnamese, find a Vietnamese voice if available
+        const vietnameseVoices = window.speechSynthesis.getVoices().filter(voice => 
+          voice.lang.startsWith('vi')
+        )
+        if (vietnameseVoices.length > 0) {
+          utterance.voice = vietnameseVoices[0]
+        }
+      }
+
+      // Phát âm thanh với voice settings từ voice selector
+      window.speechSynthesis.speak(utterance)
+    } catch (error) {
+      console.log('Vocabulary sound failed:', error)
     }
   }
 }
