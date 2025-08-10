@@ -12,6 +12,7 @@ export interface Bubble {
   col: number
   vietnameseMeaning?: string // For Vietnamese mode display
   displayText?: string // Text currently being displayed (English or Vietnamese first letter)
+  isBomb?: boolean // Special bomb bubble that triggers massive explosion
 }
 
 export interface AimLine {

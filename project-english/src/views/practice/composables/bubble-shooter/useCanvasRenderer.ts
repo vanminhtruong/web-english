@@ -109,7 +109,35 @@ export class CanvasRenderer implements ICanvasRenderer {
     // Show display text (supports both English and Vietnamese mode)
     const text = bubble.displayText || bubble.word.charAt(0).toUpperCase()
     
-    this.ctx.fillText(text, cx, cy)
+    if (bubble.isBomb) {
+      // Draw bomb icon with pulsing effect for bomb bubbles
+      const time = Date.now() / 1000
+      const pulse = 0.9 + 0.1 * Math.sin(time * 8) // Fast pulsing
+      
+      this.ctx.save()
+      this.ctx.scale(pulse, pulse)
+      this.ctx.fillStyle = '#FFA500' // Orange color (not gray, following rules)
+      this.ctx.font = 'bold 22px Arial'
+      this.ctx.fillText('💣', cx / pulse, (cy - 2) / pulse)
+      this.ctx.restore()
+      
+      // Add small text indicator below bomb
+      this.ctx.fillStyle = '#fff'
+      this.ctx.font = 'bold 10px Arial'
+      this.ctx.fillText(text, cx, cy + 14)
+      
+      // Add danger indicator ring
+      this.ctx.strokeStyle = '#FF4444'
+      this.ctx.lineWidth = 2
+      this.ctx.setLineDash([5, 5])
+      this.ctx.beginPath()
+      this.ctx.arc(cx, cy, r + 5, 0, Math.PI * 2)
+      this.ctx.stroke()
+      this.ctx.setLineDash([])
+    } else {
+      // Normal text display
+      this.ctx.fillText(text, cx, cy)
+    }
     this.ctx.restore()
   }
 

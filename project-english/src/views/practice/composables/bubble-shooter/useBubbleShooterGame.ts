@@ -38,6 +38,9 @@ export class BubbleShooterGame implements IBubbleShooterGame {
   private rowInsertTimer: number | null = null
   private readonly ROW_INSERT_INTERVAL = 20000
   private rowAnimationActive = false
+  
+  // Bomb system
+  private bombHits = new Map<string, number>() // Track hits per bomb bubble
   private rowAnimationStart = 0
   private readonly rowAnimationDuration = 600 // ms
   private rowShiftAmount: number = 34 // will be recalculated in constructor
@@ -108,18 +111,23 @@ export class BubbleShooterGame implements IBubbleShooterGame {
       const color = this.physicsEngine.getColorForWord(word)
       const x = col * this.physicsEngine.BUBBLE_SIZE + this.physicsEngine.BUBBLE_SIZE / 2 + offsetX + 5
       const startY = -this.physicsEngine.BUBBLE_SIZE // start above view
+      
+      // Random chance to create bomb bubble (20% chance for more excitement)
+      const isBomb = Math.random() < 0.2
+      
       const bubble: Bubble = {
         x,
         y: startY,
         word,
-        color,
+        color: isBomb ? '#FF4444' : color, // Bomb bubbles are red
         id: `row-${Date.now()}-${col}`,
         row: -1,
         col,
         vietnameseMeaning: vocab?.meaning || '',
         displayText: this.vietnameseMode && vocab?.meaning
           ? vocab.meaning.substring(0, 2).toUpperCase()
-          : word.charAt(0).toUpperCase()
+          : word.charAt(0).toUpperCase(),
+        isBomb
       }
       this.stateManager.addBubble(bubble)
       this.newRowBubbles.push(bubble)
@@ -326,11 +334,9 @@ export class BubbleShooterGame implements IBubbleShooterGame {
         ctx.restore()
       }
       
-      // Check win condition
+      // Check if game is won
       if (this.gameLogic.isGameWon(this.stateManager.bubbles.value)) {
-        setTimeout(() => {
-          this.stateManager.setGameOver(true)
-        }, 500)
+        this.stateManager.setGameOver(true)
         return
       }
       
@@ -488,6 +494,9 @@ export class BubbleShooterGame implements IBubbleShooterGame {
     // Add bubble to game state
     this.stateManager.addBubble(bubble)
     
+    // Check if landed bubble hit a bomb
+    this.checkBombHits(bubble)
+    
     // Check for matches
     const matchResult = this.gameLogic.checkForMatches(bubble, this.stateManager.bubbles.value)
     
@@ -542,6 +551,131 @@ export class BubbleShooterGame implements IBubbleShooterGame {
       // Bonus points for floating bubbles
       const bonusScore = this.gameLogic.calculateScore(0, floatingResult.removedBubbles.length)
       this.stateManager.updateScore(bonusScore)
+    }
+  }
+
+  private checkBombHits(landedBubble: Bubble): void {
+    // Find adjacent bomb bubbles to the landed bubble
+    const adjacentBombs = this.stateManager.bubbles.value.filter(bubble => {
+      if (!bubble.isBomb) return false
+      const dx = bubble.x - landedBubble.x
+      const dy = bubble.y - landedBubble.y
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      return distance <= this.physicsEngine.BUBBLE_SIZE * 1.1 // Adjacent or touching
+    })
+
+    // Increment hit count for each adjacent bomb
+    adjacentBombs.forEach(bomb => {
+      const currentHits = this.bombHits.get(bomb.id) || 0
+      const newHits = currentHits + 1
+      this.bombHits.set(bomb.id, newHits)
+      
+      console.log(`Bomb ${bomb.id} hit ${newHits}/2 times`)
+      
+      if (newHits >= 2) {
+        // Trigger massive explosion!
+        this.triggerMassiveExplosion(bomb)
+        this.bombHits.delete(bomb.id) // Reset hit count
+      }
+    })
+  }
+
+  private triggerMassiveExplosion(bombBubble: Bubble): void {
+    console.log('💥 MASSIVE BOMB EXPLOSION! DEVASTATION!')
+    
+    // Create multiple massive explosion effects
+    for (let i = 0; i < 3; i++) {
+      const offsetX = (Math.random() - 0.5) * this.physicsEngine.BUBBLE_SIZE * 2
+      const offsetY = (Math.random() - 0.5) * this.physicsEngine.BUBBLE_SIZE * 2
+      const massiveExplosion = this.visualEffects.createExplosion(
+        bombBubble.x + offsetX, 
+        bombBubble.y + offsetY, 
+        '#FF4444'
+      )
+      
+      // Make it MUCH bigger and more intense
+      massiveExplosion.shockwave.maxRadius = this.physicsEngine.BUBBLE_SIZE * 12
+      massiveExplosion.particles.forEach(particle => {
+        particle.size *= 4
+        particle.maxLife *= 3
+        particle.vx *= 3
+        particle.vy *= 3
+      })
+      
+      this.stateManager.addExplosion(massiveExplosion)
+    }
+    
+    // Add MASSIVE particle storm
+    for (let i = 0; i < 60; i++) {
+      const angle = (Math.PI * 2 * i) / 60
+      const speed = 20 + Math.random() * 15
+      const explosionParticles = {
+        x: bombBubble.x,
+        y: bombBubble.y,
+        particles: [{
+          x: bombBubble.x,
+          y: bombBubble.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 12 + Math.random() * 8,
+          color: ['#FF2222', '#FF4444', '#FF6666', '#FFAA44', '#FFFF44', '#FF8844'][Math.floor(Math.random() * 6)],
+          life: 150,
+          maxLife: 150,
+          type: 'burst' as const,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 0.5
+        }],
+        active: true,
+        shockwave: {
+          radius: 0,
+          maxRadius: this.physicsEngine.BUBBLE_SIZE * 10,
+          intensity: 1
+        },
+        radius: 0,
+        maxRadius: this.physicsEngine.BUBBLE_SIZE * 10,
+        intensity: 1
+      }
+      this.stateManager.addExplosion(explosionParticles)
+    }
+    
+    // MASSIVE destruction radius - destroy everything in large area
+    const explosionRadius = this.physicsEngine.BUBBLE_SIZE * 6
+    const bubblesInRange = this.stateManager.bubbles.value.filter(bubble => {
+      const dx = bubble.x - bombBubble.x
+      const dy = bubble.y - bombBubble.y
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      return distance <= explosionRadius
+    })
+    
+    // Remove bubbles in explosion range
+    const bubbleIds = bubblesInRange.map(b => b.id)
+    this.stateManager.removeBubbles(bubbleIds)
+    
+    // Clean up bomb hits for removed bubbles
+    bubblesInRange.forEach(bubble => {
+      if (bubble.isBomb) {
+        this.bombHits.delete(bubble.id)
+      }
+    })
+    
+    // EXTREME screen shake and multiple sound effects
+    this.stateManager.addScreenShake(35)
+    this.audioSystem.playExplosionSound()
+    // Play multiple explosion sounds for dramatic effect
+    setTimeout(() => this.audioSystem.playExplosionSound(), 100)
+    setTimeout(() => this.audioSystem.playExplosionSound(), 200)
+    
+    // MASSIVE bonus points
+    this.stateManager.updateScore(1000 + bubblesInRange.length * 50)
+    
+    console.log(`💥 BOMB DEVASTATION: Destroyed ${bubblesInRange.length} bubbles!`)
+    
+    // Check for floating bubbles after explosion
+    const floatingResult = this.gameLogic.removeFloatingBubbles(this.stateManager.bubbles.value)
+    if (floatingResult.removedBubbles.length > 0) {
+      this.stateManager.removeBubbles(floatingResult.removedBubbles.map(b => b.id))
+      const floatingScore = this.gameLogic.calculateScore(0, floatingResult.removedBubbles.length)
+      this.stateManager.updateScore(floatingScore)
     }
   }
 }
