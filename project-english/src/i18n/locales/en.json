@@ -341,6 +341,7 @@
       "image": "Image",
       "pictionary": "Pictionary",
       "bubbleShooter": "Bubble Shooter",
+      "snakeGame": "Snake Hunt",
       "pronunciation": "Pronunciation",
       "change_disabled_during_practice": "Mode change is disabled during practice",
       "selectMode": "Select mode"
@@ -369,6 +370,17 @@
       "finalScore": "Final Score: {score}",
       "wordsMatched": "Words Matched: {count}",
       "playAgain": "Play Again"
+    },
+    "snakeGame": {
+      "title": "Snake Hunt",
+      "instruction": "Guide the snake to eat the foods with matching first letters!",
+      "score": "Score",
+      "currentWord": "Current Word",
+      "gameComplete": "Game Complete!",
+      "finalScore": "Final Score: {score}",
+      "wordsEaten": "Words Eaten: {count}",
+      "playAgain": "Play Again",
+      "gameOver": "Game Over!"
     },
     "listening": {
       "instruction": "Listen and type the word you hear:",

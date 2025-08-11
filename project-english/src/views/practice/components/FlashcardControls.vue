@@ -91,7 +91,7 @@
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  practiceMode: 'flashcard' | 'quiz' | 'typing' | 'listening' | 'image' | 'pronunciation' | 'pictionary' | 'bubble-shooter'
+  practiceMode: 'flashcard' | 'quiz' | 'typing' | 'listening' | 'image' | 'pronunciation' | 'pictionary' | 'bubble-shooter' | 'snake-game'
   currentIndex: number
   totalCards: number
   canProceed: boolean

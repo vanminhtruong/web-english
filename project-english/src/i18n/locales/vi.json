@@ -375,6 +375,7 @@
       "image": "Nhìn ảnh",
       "pictionary": "Đuổi hình bắt chữ",
       "bubbleShooter": "Bắn bóng từ vựng",
+      "snakeGame": "Rắn săn từ",
       "pronunciation": "Phát âm",
       "change_disabled_during_practice": "Không thể thay đổi chế độ trong quá trình luyện tập",
       "selectMode": "Chọn chế độ"
@@ -403,6 +404,17 @@
       "finalScore": "Điểm Cuối: {score}",
       "wordsMatched": "Từ Đã Ghép: {count}",
       "playAgain": "Chơi Lại"
+    },
+    "snakeGame": {
+      "title": "Rắn Săn Từ",
+      "instruction": "Điều khiển rắn ăn những thức ăn có chữ cái đầu phù hợp!",
+      "score": "Điểm",
+      "currentWord": "Từ Hiện Tại",
+      "gameComplete": "Hoàn Thành Game!",
+      "finalScore": "Điểm Cuối: {score}",
+      "wordsEaten": "Từ Đã Ăn: {count}",
+      "playAgain": "Chơi Lại",
+      "gameOver": "Game Over!"
     },
     "listening": {
       "instruction": "Nghe và nhập từ bạn nghe được:",

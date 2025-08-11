@@ -191,6 +191,13 @@
                     @game-complete="handleBubbleShooterComplete"
                   />
                 </template>
+                <template v-else-if="practiceMode === 'snake-game'">
+                  <SnakeGameMode
+                    :words="currentFlashcards"
+                    :vietnamese-mode="bubbleShooterVietnameseMode"
+                    @game-complete="handleSnakeGameComplete"
+                  />
+                </template>
               </LazyLoadComponent>
 
               <!-- Controls -->
@@ -311,6 +318,7 @@ const PracticeStats = defineAsyncComponent(() => import('./components/PracticeSt
 const FlashcardEmptyState = defineAsyncComponent(() => import('./components/FlashcardEmptyState.vue'))
 const PictionaryMode = defineAsyncComponent(() => import('./components/PictionaryMode.vue'))
 const BubbleShooterMode = defineAsyncComponent(() => import('./components/BubbleShooterMode.vue'))
+const SnakeGameMode = defineAsyncComponent(() => import('./components/SnakeGameMode.vue'))
 
 // Composables
 import { useFlashcardGame } from './composables/useFlashcardGame'
@@ -1187,6 +1195,12 @@ const handleCompletionGoBack = () => {
   modalStore.setCompletionModal(false)
   // Then navigate back
   goBack()
+}
+
+// Snake Game completion handler
+const handleSnakeGameComplete = () => {
+  // Handle snake game completion similar to bubble shooter
+  showCompletionModal.value = true
 }
 
 // Auto flip functionality

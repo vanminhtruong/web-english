@@ -534,6 +534,7 @@ export function useFlashcardModes(
       image: imageAnswered.value,
       pronunciation: pronunciationAnswered.value,
       pictionary: pictionaryAnswered.value,
+      'snake-game': true,
       'bubble-shooter': true,
     }
   }

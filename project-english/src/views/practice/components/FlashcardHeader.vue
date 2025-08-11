@@ -68,6 +68,7 @@
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
                     practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
                     practiceMode === 'bubble-shooter' ? t('flashcard.modes.bubbleShooter', 'Bubble Shooter') :
+                    practiceMode === 'snake-game' ? t('flashcard.modes.snakeGame', 'Snake Hunt') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
                   }}
                 </span>
@@ -166,6 +167,16 @@
                         :aria-label="t('flashcard.bubbleShooter.vietnameseModeToggle', 'Vietnamese First Letter Mode')"
                       >
                         <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', bubbleShooterVietnameseMode ? 'translate-x-4' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
+                    <!-- Snake Game option -->
+                    <li>
+                      <button 
+                        class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        @click="selectMode('snake-game')"
+                        :title="t('flashcard.modes.snakeGame', 'Snake Hunt')"
+                      >
+                        {{ t('flashcard.modes.snakeGame', 'Snake Hunt') }}
                       </button>
                     </li>
                     <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
@@ -268,6 +279,7 @@
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
                     practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
                     practiceMode === 'bubble-shooter' ? t('flashcard.modes.bubbleShooter', 'Bubble Shooter') :
+                    practiceMode === 'snake-game' ? t('flashcard.modes.snakeGame', 'Snake Hunt') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
                   }}
                 </span>
@@ -363,6 +375,16 @@
                         :aria-label="t('flashcard.bubbleShooter.vietnameseModeToggle', 'Vietnamese First Letter Mode')"
                       >
                         <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', bubbleShooterVietnameseMode ? 'translate-x-5' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
+                    <!-- Snake Game option -->
+                    <li>
+                      <button 
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        @click="selectMode('snake-game')"
+                        :title="t('flashcard.modes.snakeGame', 'Snake Hunt')"
+                      >
+                        {{ t('flashcard.modes.snakeGame', 'Snake Hunt') }}
                       </button>
                     </li>
                     <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
