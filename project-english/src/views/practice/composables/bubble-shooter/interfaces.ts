@@ -13,6 +13,9 @@ export interface Bubble {
   vietnameseMeaning?: string // For Vietnamese mode display
   displayText?: string // Text currently being displayed (English or Vietnamese first letter)
   isBomb?: boolean // Special bomb bubble that triggers massive explosion
+  // Stable positions for collision detection during animations
+  stableX?: number // Grid-based X position for collision
+  stableY?: number // Grid-based Y position for collision
 }
 
 export interface AimLine {
@@ -73,12 +76,14 @@ export interface IGameStateManager {
   readonly screenShake: Ref<ScreenShake>
   readonly aimLine: Ref<AimLine>
   readonly shooterPosition: Ref<Position>
+  readonly rowAnimationActive: Ref<boolean>
   
   // Methods
   resetGame(): void
   updateScore(points: number): void
   incrementWordsMatched(): void
   setGameOver(gameOver: boolean): void
+  setRowAnimationActive(active: boolean): void
   addBubble(bubble: Bubble): void
   removeBubbles(bubbleIds: string[]): void
   setShootingBubble(bubble: Bubble | null): void

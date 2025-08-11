@@ -1,10 +1,17 @@
-import type { IPhysicsEngine, Bubble } from './interfaces'
+import type { IPhysicsEngine, IGameStateManager, Bubble } from './interfaces'
 
 export class PhysicsEngine implements IPhysicsEngine {
   public readonly BUBBLE_SIZE = 40
   public readonly COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#FFB347']
+  // Small epsilon to treat tiny gaps as contact to avoid visible spacing
+  public readonly CONTACT_EPS = 8
 
   private readonly wordColorMap = new Map<string, string>()
+  private stateManager?: IGameStateManager
+
+  constructor(stateManager?: IGameStateManager) {
+    this.stateManager = stateManager
+  }
   
   public getColorForWord(word: string): string {
     if (!this.wordColorMap.has(word)) {
@@ -23,8 +30,8 @@ export class PhysicsEngine implements IPhysicsEngine {
     const dx = bubble2.x - bubble1.x
     const dy = bubble2.y - bubble1.y
     const distance = Math.sqrt(dx * dx + dy * dy)
-    // Collision threshold slightly before tangency to allow precise positioning
-    return distance <= this.BUBBLE_SIZE * 0.95
+    // Collision threshold at exactly one diameter - perfect tangency
+    return distance <= this.BUBBLE_SIZE
   }
 
   public animateShootingBubble(
@@ -48,14 +55,29 @@ export class PhysicsEngine implements IPhysicsEngine {
       // CRITICAL FIX: Check collision with existing bubbles FIRST
       if (existingBubbles) {
         for (const existing of existingBubbles) {
-          if (this.checkCollision(bubble, existing)) {
-            console.log('Collision detected! Placing at exact tangency grid position')
-            
-            // Step 1: Find exact tangent position relative to the collided bubble
-            let dx = bubble.x - existing.x
-            let dy = bubble.y - existing.y
-            let dist = Math.sqrt(dx * dx + dy * dy)
-            
+          // Use stable positions during animation for collision detection
+          const isAnimating = this.stateManager?.rowAnimationActive.value
+          const existingX = isAnimating && existing.stableX !== undefined ? existing.stableX : existing.x
+          const existingY = isAnimating && existing.stableY !== undefined ? existing.stableY : existing.y
+          
+          // Compute distance and detect collision or near-contact when approaching/slow
+          const dx0 = bubble.x - existingX
+          const dy0 = bubble.y - existingY
+          const dist0 = Math.sqrt(dx0 * dx0 + dy0 * dy0)
+          // Near-contact detection - reduce threshold to avoid false collision with new rows
+          const nearThreshold = this.BUBBLE_SIZE + this.CONTACT_EPS
+
+          // Only consider near-contact if we are APPROACHING the existing bubble
+          const approaching = (dx0 * currentVx + dy0 * currentVy) <= 0
+
+          if (dist0 <= nearThreshold && approaching) {
+            console.log('Collision/near-contact detected! Computing tangent and triple-contact placement')
+
+            // Step 1: Find exact tangent direction relative to the collided bubble
+            let dx = dx0
+            let dy = dy0
+            let dist = dist0
+
             if (dist < 0.01) {
               // Use velocity direction for separation
               dx = -currentVx || 0
@@ -67,63 +89,33 @@ export class PhysicsEngine implements IPhysicsEngine {
               dx /= dist
               dy /= dist
             }
-            
-            // Step 2: Calculate perfect tangent position (exactly one diameter away)
-            const tangentX = existing.x + dx * this.BUBBLE_SIZE
-            const tangentY = existing.y + dy * this.BUBBLE_SIZE
-            
-            // Step 3: Snap tangent position to nearest hex grid that maintains spacing
-            const verticalSpacing = (this.BUBBLE_SIZE * Math.sqrt(3)) / 2
-            const baseX = this.BUBBLE_SIZE / 2 + 5
-            const baseY = this.BUBBLE_SIZE / 2 + 5
-            
-            const targetRow = Math.max(0, Math.round((tangentY - baseY) / verticalSpacing))
-            
-            // Determine row offset based on existing bubbles in target row
-            const rowBubbles = existingBubbles.filter(b => {
-              const r = Math.round((b.y - baseY) / verticalSpacing)
-              return r === targetRow
-            })
-            
-            let offsetX = targetRow % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
-            if (rowBubbles.length > 0) {
-              let devEven = 0, devOdd = 0
-              for (const b of rowBubbles) {
-                const colEven = Math.round((b.x - (baseX + 0)) / this.BUBBLE_SIZE)
-                const snapEven = baseX + colEven * this.BUBBLE_SIZE
-                devEven += Math.abs(b.x - snapEven)
 
-                const colOdd = Math.round((b.x - (baseX + this.BUBBLE_SIZE / 2)) / this.BUBBLE_SIZE)
-                const snapOdd = baseX + this.BUBBLE_SIZE / 2 + colOdd * this.BUBBLE_SIZE
-                devOdd += Math.abs(b.x - snapOdd)
-              }
-              offsetX = devEven <= devOdd ? 0 : this.BUBBLE_SIZE / 2
-            }
-            
-            const targetCol = Math.max(0, Math.round((tangentX - baseX - offsetX) / this.BUBBLE_SIZE))
-            const finalX = baseX + offsetX + targetCol * this.BUBBLE_SIZE
-            const finalY = baseY + targetRow * verticalSpacing
-            
-            // Verify this position maintains exactly one diameter distance from all neighbors
-            const isValidPosition = existingBubbles.every(ex => {
-              const dx = ex.x - finalX
-              const dy = ex.y - finalY
-              const dist = Math.sqrt(dx * dx + dy * dy)
-              return dist >= this.BUBBLE_SIZE * 0.99 // At least 99% of diameter
-            })
-            
-            if (isValidPosition) {
-              bubble.x = finalX
-              bubble.y = finalY
-              bubble.row = targetRow
-              bubble.col = targetCol
+            // Step 2: Calculate perfect tangent position (centers one diameter apart)
+            // Use stable position for tangent calculation during animation
+            const tangentX = existingX + dx * this.BUBBLE_SIZE
+            const tangentY = existingY + dy * this.BUBBLE_SIZE
+
+            // Step 3: Use simple tangent position for now (disable triple-contact to fix grid alignment)
+            bubble.x = tangentX
+            bubble.y = tangentY
+
+            // Always snap to proper hex grid position after collision
+            if (existingBubbles) {
+              this.snapToGrid(bubble, existingBubbles)
+              // Force exact hex grid position to ensure proper alignment and avoid occupied seats
+              this.forceToNearestFreeSeat(bubble, existingBubbles, canvasWidth, canvasHeight)
             } else {
-              // Fallback: place at clamped tangent position
-              bubble.x = Math.max(this.BUBBLE_SIZE / 2, Math.min(canvasWidth - this.BUBBLE_SIZE / 2, tangentX))
-              bubble.y = Math.max(this.BUBBLE_SIZE / 2, Math.min(canvasHeight - this.BUBBLE_SIZE / 2, tangentY))
-              bubble.row = targetRow
-              bubble.col = targetCol
+              const verticalSpacing = (this.BUBBLE_SIZE * Math.sqrt(3)) / 2
+              const baseX = this.BUBBLE_SIZE / 2
+              const baseY = this.BUBBLE_SIZE / 2
+              bubble.row = Math.max(0, Math.round((bubble.y - baseY) / verticalSpacing))
+              bubble.col = Math.max(0, Math.round((bubble.x - baseX) / this.BUBBLE_SIZE))
             }
+
+            // Stop all movement to prevent sliding
+            currentVx = 0
+            currentVy = 0
+            
             onLand(bubble)
             return
           }
@@ -139,9 +131,17 @@ export class PhysicsEngine implements IPhysicsEngine {
         bubble.x = Math.max(this.BUBBLE_SIZE / 2, Math.min(canvasWidth - this.BUBBLE_SIZE / 2, bubble.x))
       }
       
-      // Top boundary - bubble sticks immediately (no bounce)
+      // Top boundary - bubble sticks immediately (no bounce) with proper grid positioning
       if (bubble.y <= this.BUBBLE_SIZE / 2) {
         bubble.y = this.BUBBLE_SIZE / 2
+        
+        // ALWAYS snap to exact grid position for top row to ensure even spacing
+        const baseX = this.BUBBLE_SIZE / 2
+        const targetCol = Math.round((bubble.x - baseX) / this.BUBBLE_SIZE)
+        bubble.x = baseX + targetCol * this.BUBBLE_SIZE
+        bubble.row = 0
+        bubble.col = Math.max(0, targetCol)
+        
         currentVy = 0
         bounceCount = maxBounces // Force bubble to land
       }
@@ -171,6 +171,56 @@ export class PhysicsEngine implements IPhysicsEngine {
       )
       
       if ((bubble.y <= this.BUBBLE_SIZE / 2 && currentVy <= 0) || bounceCount >= maxBounces || stickToWall) {
+        // Before finalizing landing, if we're near any existing bubble, snap to tangency (and try triple-contact)
+        if (existingBubbles && existingBubbles.length > 0) {
+          const captureRadius = this.BUBBLE_SIZE + this.CONTACT_EPS // capture near-miss seats consistently
+          let nearest: Bubble | null = null
+          let bestDist = Number.POSITIVE_INFINITY
+          for (const b of existingBubbles) {
+            const dx = bubble.x - b.x
+            const dy = bubble.y - b.y
+            const d = Math.sqrt(dx * dx + dy * dy)
+            // Only capture if approaching this bubble (avoid grabbing moving/retreating targets)
+            const dot = dx * currentVx + dy * currentVy
+            if (dot > 0) continue
+            if (d < captureRadius && d < bestDist) {
+              nearest = b
+              bestDist = d
+            }
+          }
+
+          if (nearest) {
+            // Compute tangent point relative to the nearest bubble
+            let ndx = bubble.x - nearest.x
+            let ndy = bubble.y - nearest.y
+            const nlen = Math.sqrt(ndx * ndx + ndy * ndy) || 1
+            ndx /= nlen
+            ndy /= nlen
+            const tangentX = nearest.x + ndx * this.BUBBLE_SIZE
+            const tangentY = nearest.y + ndy * this.BUBBLE_SIZE
+
+            // Try triple-contact slide using the nearest as the collided reference
+            const triple = this.findTripleContactPosition(
+              nearest,
+              existingBubbles,
+              { x: tangentX, y: tangentY },
+              canvasWidth,
+              canvasHeight
+            )
+            const finalX = triple ? triple.x : tangentX
+            const finalY = triple ? triple.y : tangentY
+
+            bubble.x = finalX
+            bubble.y = finalY
+            this.snapToGrid(bubble, existingBubbles)
+            // Force exact hex grid position to ensure proper alignment and avoid occupied seats
+            this.forceToNearestFreeSeat(bubble, existingBubbles, canvasWidth, canvasHeight)
+            
+            onLand(bubble)
+            return
+          }
+        }
+
         // Bubble has landed - trigger callback
         onLand(bubble)
         return
@@ -181,38 +231,213 @@ export class PhysicsEngine implements IPhysicsEngine {
     animate()
   }
 
+  // Attempt to find a position where the new bubble touches the collided bubble
+  // and one of its neighbors simultaneously (triple-contact). Returns null if none valid.
+  private findTripleContactPosition(
+    collided: Bubble,
+    existingBubbles: Bubble[],
+    tangentPoint: { x: number; y: number },
+    canvasWidth: number,
+    canvasHeight: number
+  ): { x: number; y: number } | null {
+    const R = this.BUBBLE_SIZE // We use center-to-center distance equal to diameter for tangency
+    const rWall = this.BUBBLE_SIZE / 2
+
+    // Helper: circle-circle intersections where both radii are R
+    const intersections = (ax: number, ay: number, bx: number, by: number): { x: number; y: number }[] => {
+      const dx = bx - ax
+      const dy = by - ay
+      const d = Math.sqrt(dx * dx + dy * dy)
+      if (d < 1e-6 || d > 2 * R) return []
+      const a = d / 2
+      const h2 = R * R - a * a
+      if (h2 < -1e-6) return []
+      const h = h2 > 0 ? Math.sqrt(Math.max(0, h2)) : 0
+      const mx = ax + (a * dx) / d
+      const my = ay + (a * dy) / d
+      const rx = (-dy * h) / d
+      const ry = (dx * h) / d
+      return [
+        { x: mx + rx, y: my + ry },
+        { x: mx - rx, y: my - ry },
+      ]
+    }
+
+    // Helper: within canvas bounds considering radius
+    const inBounds = (x: number, y: number) => (
+      x >= rWall && x <= canvasWidth - rWall && y >= rWall && y <= canvasHeight - rWall
+    )
+
+    // Helper: ensure no overlap with other bubbles (allow exact tangency)
+    const positionFree = (x: number, y: number) => {
+      for (const b of existingBubbles) {
+        const dx = b.x - x
+        const dy = b.y - y
+        const d = Math.sqrt(dx * dx + dy * dy)
+        if (d < this.BUBBLE_SIZE - 0.1) return false
+      }
+      return true
+    }
+
+    // Consider neighbors of the collided bubble (those close to one diameter)
+    const neighbors = existingBubbles.filter(b => b !== collided).filter(b => {
+      const dx = b.x - collided.x
+      const dy = b.y - collided.y
+      const d = Math.sqrt(dx * dx + dy * dy)
+      return d > 0.5 * this.BUBBLE_SIZE && d < 1.5 * this.BUBBLE_SIZE
+    })
+
+    let best: { x: number; y: number } | null = null
+    let bestScore = Number.POSITIVE_INFINITY
+
+    for (const nb of neighbors) {
+      const pts = intersections(collided.x, collided.y, nb.x, nb.y)
+      for (const p of pts) {
+        if (!inBounds(p.x, p.y)) continue
+        if (!positionFree(p.x, p.y)) continue
+        // Score by proximity to tangent point (simulate sliding to nearest seat)
+        const dx = p.x - tangentPoint.x
+        const dy = p.y - tangentPoint.y
+        const score = dx * dx + dy * dy
+        if (score < bestScore) {
+          best = p
+          bestScore = score
+        }
+      }
+    }
+
+    return best
+  }
+
+  // Quantize the dynamic baseY to the nearest valid grid line to stabilize row/column mapping
+  private getQuantizedBaseY(existingBubbles: Bubble[]): number {
+    if (!existingBubbles || existingBubbles.length === 0) return this.BUBBLE_SIZE / 2
+    const verticalSpacing = (this.BUBBLE_SIZE * Math.sqrt(3)) / 2
+    const baseRef = this.BUBBLE_SIZE / 2
+    
+    // CRITICAL FIX: Check if row animation is active
+    const isAnimating = this.stateManager?.rowAnimationActive.value
+    
+    if (isAnimating) {
+      // During animation: Use the stable reference Y position of row 0 bubbles
+      // Filter out new row bubbles (negative row numbers) to get stable grid reference
+      const stableRowBubbles = existingBubbles.filter(b => (b.row ?? 0) >= 0)
+      if (stableRowBubbles.length === 0) return baseRef
+      
+      // Use the minimum actual row number (not animated position)
+      const minRow = Math.min(...stableRowBubbles.map(b => b.row ?? 0))
+      const quantized = baseRef + minRow * verticalSpacing
+      
+      console.log('getQuantizedBaseY (ANIMATION): minRow =', minRow, 'quantized baseY =', quantized)
+      return quantized
+    } else {
+      // Normal operation: Use row-based calculation
+      const minRow = Math.min(...existingBubbles.map(b => b.row ?? 0))
+      const quantized = baseRef + minRow * verticalSpacing
+      
+      console.log('getQuantizedBaseY (NORMAL): minRow =', minRow, 'quantized baseY =', quantized)
+      return quantized
+    }
+  }
+
+  // Compute the pixel center for a given grid seat (row, col)
+  private getSeatCenter(row: number, col: number, existingBubbles: Bubble[]): { x: number; y: number } {
+    const verticalSpacing = (this.BUBBLE_SIZE * Math.sqrt(3)) / 2
+    const baseX = this.BUBBLE_SIZE / 2
+    const baseY = this.getQuantizedBaseY(existingBubbles)
+    const offsetX = row % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
+    const x = baseX + offsetX + col * this.BUBBLE_SIZE
+    const y = baseY + row * verticalSpacing
+    return { x, y }
+  }
+
+  // Check if a seat (by center coords) is already occupied by an existing bubble
+  private isSeatOccupied(x: number, y: number, existingBubbles: Bubble[]): boolean {
+    const seatTol = 0.25 // tolerance for seat center equality
+    const isAnimating = this.stateManager?.rowAnimationActive.value
+    
+    for (const b of existingBubbles) {
+      // Use stable positions during animation for accurate seat occupancy check
+      const bubbleX = isAnimating && b.stableX !== undefined ? b.stableX : b.x
+      const bubbleY = isAnimating && b.stableY !== undefined ? b.stableY : b.y
+      
+      const dx = bubbleX - x
+      const dy = bubbleY - y
+      const d = Math.sqrt(dx * dx + dy * dy)
+      if (d <= seatTol) return true
+    }
+    return false
+  }
+
+  // Force bubble to its computed seat or the nearest free seat to avoid overlaps/mis-seating
+  private forceToNearestFreeSeat(
+    bubble: Bubble,
+    existingBubbles: Bubble[],
+    canvasWidth: number,
+    canvasHeight: number
+  ): void {
+    const rWall = this.BUBBLE_SIZE / 2
+    const inBounds = (x: number, y: number) => (
+      x >= rWall && x <= canvasWidth - rWall && y >= rWall && y <= canvasHeight - rWall
+    )
+
+    // First try the intended seat
+    let center = this.getSeatCenter(bubble.row!, bubble.col!, existingBubbles)
+    if (inBounds(center.x, center.y) && !this.isSeatOccupied(center.x, center.y, existingBubbles)) {
+      bubble.x = center.x
+      bubble.y = center.y
+      return
+    }
+
+    // Search nearby seats within a small window for a free slot nearest to current position
+    let best: { row: number; col: number; x: number; y: number } | null = null
+    let bestScore = Number.POSITIVE_INFINITY
+    const MAX_DELTA = 2
+    for (let dr = -MAX_DELTA; dr <= MAX_DELTA; dr++) {
+      const rr = Math.max(0, bubble.row! + dr)
+      for (let dc = -MAX_DELTA; dc <= MAX_DELTA; dc++) {
+        const cc = Math.max(0, bubble.col! + dc)
+        center = this.getSeatCenter(rr, cc, existingBubbles)
+        if (!inBounds(center.x, center.y)) continue
+        if (this.isSeatOccupied(center.x, center.y, existingBubbles)) continue
+        const dx = center.x - bubble.x
+        const dy = center.y - bubble.y
+        const score = dx * dx + dy * dy
+        if (score < bestScore) {
+          bestScore = score
+          best = { row: rr, col: cc, x: center.x, y: center.y }
+        }
+      }
+    }
+
+    if (best) {
+      bubble.row = best.row
+      bubble.col = best.col
+      bubble.x = best.x
+      bubble.y = best.y
+    } else {
+      // Fallback: clamp to bounds at least
+      bubble.x = Math.max(rWall, Math.min(canvasWidth - rWall, center.x))
+      bubble.y = Math.max(rWall, Math.min(canvasHeight - rWall, center.y))
+    }
+  }
+
   public snapToGrid(bubble: Bubble, existingBubbles: Bubble[]): void {
     console.log('Snapping bubble to grid. Current position:', bubble.x, bubble.y)
     
     // Simplified approach: Keep bubble at its collision-corrected position 
     // and only assign grid coordinates (row/col) without moving it
     const verticalSpacing = (this.BUBBLE_SIZE * Math.sqrt(3)) / 2
-    const baseX = this.BUBBLE_SIZE / 2 + 5
-    const baseY = this.BUBBLE_SIZE / 2 + 5
+    const baseX = this.BUBBLE_SIZE / 2  // Remove +5 to align with initial bubbles at edge
+    
+    // Use dynamic baseY to handle row insertion animation (same as collision logic)
+    const baseY = this.getQuantizedBaseY(existingBubbles)
     
     // Calculate row/col based on current position
     const targetRow = Math.max(0, Math.round((bubble.y - baseY) / verticalSpacing))
     
-    // Determine effective offset for this row based on existing bubbles
-    const rowBubbles = existingBubbles.filter(b => {
-      const r = Math.round((b.y - baseY) / verticalSpacing)
-      return r === targetRow
-    })
-    
-    let offsetX = targetRow % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
-    if (rowBubbles.length > 0) {
-      let devEven = 0, devOdd = 0
-      for (const b of rowBubbles) {
-        const colEven = Math.round((b.x - (baseX + 0)) / this.BUBBLE_SIZE)
-        const snapEven = baseX + colEven * this.BUBBLE_SIZE
-        devEven += Math.abs(b.x - snapEven)
-
-        const colOdd = Math.round((b.x - (baseX + this.BUBBLE_SIZE / 2)) / this.BUBBLE_SIZE)
-        const snapOdd = baseX + this.BUBBLE_SIZE / 2 + colOdd * this.BUBBLE_SIZE
-        devOdd += Math.abs(b.x - snapOdd)
-      }
-      offsetX = devEven <= devOdd ? 0 : this.BUBBLE_SIZE / 2
-    }
+    // Deterministic row parity for offset (avoid heuristic that can flip during row insertion)
+    const offsetX = targetRow % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
     
     const targetCol = Math.max(0, Math.round((bubble.x - baseX - offsetX) / this.BUBBLE_SIZE))
     
@@ -236,6 +461,6 @@ export class PhysicsEngine implements IPhysicsEngine {
   }
 }
 
-export const usePhysicsEngine = (): IPhysicsEngine => {
-  return new PhysicsEngine()
+export const usePhysicsEngine = (stateManager?: IGameStateManager): IPhysicsEngine => {
+  return new PhysicsEngine(stateManager)
 }

@@ -50,10 +50,12 @@ export class BubbleShooterGame implements IBubbleShooterGame {
   private newRowDelays = new Map<string, number>()
 
   constructor() {
-    // Initialize all dependencies
+    // Initialize state manager first
     this.stateManager = useGameStateManager()
+    
+    // Initialize other dependencies, pass stateManager to physicsEngine
     this.audioSystem = useAudioSystem()
-    this.physicsEngine = usePhysicsEngine()
+    this.physicsEngine = usePhysicsEngine(this.stateManager)
     this.visualEffects = useVisualEffects()
     this.canvasRenderer = useCanvasRenderer()
     this.inputHandler = useInputHandler()
@@ -69,21 +71,32 @@ export class BubbleShooterGame implements IBubbleShooterGame {
     if (this.stateManager.shootingBubble.value) return
     // Prepare animation state
     this.rowAnimationActive = true
+    this.stateManager.setRowAnimationActive(true)
     this.rowAnimationStart = performance.now()
     this.rowStartYMap.clear()
     this.rowStartXMap.clear()
     this.newRowBubbles = []
     this.newRowDelays.clear()
 
-    // Capture starting X,Y for existing bubbles
+    // Capture starting X,Y for existing bubbles and set stable positions
     this.stateManager.bubbles.value.forEach(b => {
       this.rowStartYMap.set(b.id, b.y)
       this.rowStartXMap.set(b.id, b.x)
+      
+      // Set stable collision positions based on current grid positions
+      // These will remain fixed during animation for collision detection
+      const verticalSpacing = (this.physicsEngine.BUBBLE_SIZE * Math.sqrt(3)) / 2
+      const baseX = this.physicsEngine.BUBBLE_SIZE / 2
+      const baseY = this.physicsEngine.BUBBLE_SIZE / 2
+      const offsetX = (b.row ?? 0) % 2 === 0 ? 0 : this.physicsEngine.BUBBLE_SIZE / 2
+      
+      b.stableX = baseX + offsetX + (b.col ?? 0) * this.physicsEngine.BUBBLE_SIZE
+      b.stableY = baseY + (b.row ?? 0) * verticalSpacing
     })
 
     // Decide desired offset for the new top row (row 0) to complement current top row (which will become row 1)
     const B = this.physicsEngine.BUBBLE_SIZE
-    const baseX = B / 2 + 5
+    const baseX = B / 2
     const currentTop = this.stateManager.bubbles.value.filter(b => (b.row ?? 0) === 0)
     const nearestGridX = (x: number, offsetX: number) => {
       const colF = Math.round((x - (baseX + offsetX)) / B)
@@ -109,7 +122,7 @@ export class BubbleShooterGame implements IBubbleShooterGame {
       const vocab = this.currentWords[Math.floor(Math.random() * Math.max(1, this.currentWords.length))]
       const word = vocab?.word || '·'
       const color = this.physicsEngine.getColorForWord(word)
-      const x = col * this.physicsEngine.BUBBLE_SIZE + this.physicsEngine.BUBBLE_SIZE / 2 + offsetX + 5
+      const x = col * this.physicsEngine.BUBBLE_SIZE + this.physicsEngine.BUBBLE_SIZE / 2 + offsetX  // Remove +5 to touch left edge
       const startY = -this.physicsEngine.BUBBLE_SIZE // start above view
       
       // Random chance to create bomb bubble (20% chance for more excitement)
@@ -157,7 +170,7 @@ export class BubbleShooterGame implements IBubbleShooterGame {
     })
 
     // Drop new row from above to top line, left->right stagger
-    const targetTopY = this.physicsEngine.BUBBLE_SIZE / 2 + 5
+    const targetTopY = this.physicsEngine.BUBBLE_SIZE / 2  // Remove +5 to touch top edge
     // Ensure the new row never overlaps the moving row beneath during animation using per-bubble nearest neighbor clamp
     const movingTopY = targetTopY + ease * this.rowShiftAmount
     const epsilon = 1.0 // safety to avoid any visual overlap due to AA
@@ -205,19 +218,19 @@ export class BubbleShooterGame implements IBubbleShooterGame {
         if (startX != null) b.x = startX
         b.row = nextRow
         // Snap to exact Y grid based on row index (half-pixel aligned)
-        const yExact = (this.physicsEngine.BUBBLE_SIZE / 2 + 5) + nextRow * this.rowShiftAmount
+        const yExact = (this.physicsEngine.BUBBLE_SIZE / 2) + nextRow * this.rowShiftAmount  // Remove +5
         b.y = Math.round(yExact * 2) / 2
         // Preserve X; recompute column under new parity based on current X
         const offsetX = nextRow % 2 === 0 ? 0 : this.physicsEngine.BUBBLE_SIZE / 2
         const colF = Math.round(
-          (b.x - (this.physicsEngine.BUBBLE_SIZE / 2 + offsetX + 5)) / this.physicsEngine.BUBBLE_SIZE
-        )
+          (b.x - (this.physicsEngine.BUBBLE_SIZE / 2 + offsetX)) / this.physicsEngine.BUBBLE_SIZE
+        )  // Remove +5
         b.col = Math.max(0, colF)
       })
 
       // New row: set row=0 and ensure exact Y; preserve X and compute col using the same desired offset
       const B2 = this.physicsEngine.BUBBLE_SIZE
-      const baseX2 = B2 / 2 + 5
+      const baseX2 = B2 / 2  // Remove +5 to align with edge
       const currentTop2 = this.stateManager.bubbles.value.filter(b => (b.row ?? 0) === 1)
       let sumEven2 = 0, sumOdd2 = 0
       if (currentTop2.length > 0) {
@@ -240,8 +253,15 @@ export class BubbleShooterGame implements IBubbleShooterGame {
       this.stateManager.addScreenShake(4)
       this.audioSystem.playImpactSound()
 
+      // Clear stable positions now that animation is complete
+      this.stateManager.bubbles.value.forEach(b => {
+        delete b.stableX
+        delete b.stableY
+      })
+
       // Reset animation state
       this.rowAnimationActive = false
+      this.stateManager.setRowAnimationActive(false)
       this.rowStartYMap.clear()
       this.rowStartXMap.clear()
       this.newRowDelays.clear()
@@ -274,9 +294,11 @@ export class BubbleShooterGame implements IBubbleShooterGame {
     this.stateManager.selectNextShooterWord(words)
     this.startGameLoop()
 
-    // Start timed row insertion
-    if (this.rowInsertTimer) window.clearInterval(this.rowInsertTimer)
-    this.rowInsertTimer = window.setInterval(() => this.triggerRowInsertion(), this.ROW_INSERT_INTERVAL)
+    // TEMPORARY FIX: Disable row insertion to test grid alignment issue
+    // Set up row insertion timer
+    // if (this.rowInsertTimer) window.clearInterval(this.rowInsertTimer)
+    // this.rowInsertTimer = window.setInterval(() => this.triggerRowInsertion(), this.ROW_INSERT_INTERVAL)
+    console.log('Row insertion DISABLED for testing grid alignment')
   }
 
   public startGameLoop(): void {

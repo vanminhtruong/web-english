@@ -24,6 +24,7 @@ export class GameStateManager implements IGameStateManager {
   public readonly screenShake: Ref<ScreenShake> = ref({ x: 0, y: 0, intensity: 0 })
   public readonly aimLine: Ref<AimLine> = ref({ visible: false, x: 0, y: 0 })
   public readonly shooterPosition: Ref<Position> = ref({ x: 400, y: 550 })
+  public readonly rowAnimationActive: Ref<boolean> = ref(false)
 
   // Private state for color mapping
   private readonly wordColorMap = new Map<string, string>()
@@ -54,6 +55,10 @@ export class GameStateManager implements IGameStateManager {
 
   public setGameOver(gameOver: boolean): void {
     this.gameOver.value = gameOver
+  }
+
+  public setRowAnimationActive(active: boolean): void {
+    this.rowAnimationActive.value = active
   }
 
   // Bubble Management

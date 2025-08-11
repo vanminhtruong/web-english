@@ -103,18 +103,23 @@ export class GameLogic implements IGameLogic {
   public setupInitialBubbles(words: Vocabulary[], vietnameseMode: boolean = false): Bubble[] {
     const bubbles: Bubble[] = []
     
-    // Create bubbles for all words with proper hexagonal grid spacing
+    // Use EXACT same spacing calculations as PhysicsEngine to ensure perfect alignment
+    const verticalSpacing = (this.BUBBLE_SIZE * Math.sqrt(3)) / 2
+    const baseX = this.BUBBLE_SIZE / 2  // Remove +5 to make bubbles touch left edge
+    const baseY = this.BUBBLE_SIZE / 2  // Remove +5 to make bubbles touch top edge
     const bubblesPerRow = 8 // Maximum bubbles per row to fit screen
     
     for (let i = 0; i < words.length; i++) {
       // Calculate row and column position
       const row = Math.floor(i / bubblesPerRow)
       const col = i % bubblesPerRow
+      
+      // Use EXACT same offset logic as PhysicsEngine
       const offsetX = row % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
       
-      // Calculate position with proper spacing
-      const x = col * this.BUBBLE_SIZE + this.BUBBLE_SIZE / 2 + offsetX + 5
-      const y = row * ((this.BUBBLE_SIZE * Math.sqrt(3)) / 2) + this.BUBBLE_SIZE / 2 + 5
+      // Calculate position using EXACT same formula as PhysicsEngine
+      const x = baseX + offsetX + col * this.BUBBLE_SIZE
+      const y = baseY + row * verticalSpacing
       
       const bubble: Bubble = {
         x,
