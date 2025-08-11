@@ -22,15 +22,17 @@
       :pictionary-mode-available="pictionaryModeAvailable"
       :bubble-shooter-mode-available="bubbleShooterModeAvailable"
       :bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode"
-      @go-back="handleExitPractice"
+      :snake-double-bait-enabled="snakeDoubleBaitMode"
+      @go-back="goBack"
       @show-history="showHistory = true"
-      @change-practice-mode="changePracticeMode"
+      @change-practice-mode="changePracticeMode($event)"
       @show-settings="showSettingsDialog = true"
       @toggle-shuffle="toggleShuffle"
       @update:image-quiz-enabled="imageQuizEnabled = $event"
       @update:listening-quiz-enabled="listeningQuizEnabled = $event"
       @update:typing-quiz-enabled="typingQuizEnabled = $event"
       @update:bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode = $event"
+      @update:snake-double-bait-enabled="snakeDoubleBaitMode = $event"
     />
 
     <!-- Progress Bar -->
@@ -70,8 +72,8 @@
             <!-- Practice Timer / Start Button -->
             <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
               <div class="flex justify-center max-w-md mx-auto">
-                <!-- Simple Start Button for Bubble Shooter Mode -->
-                <template v-if="practiceMode === 'bubble-shooter'">
+                <!-- Simple Start Button for Bubble Shooter & Snake modes (no countdown timer) -->
+                <template v-if="practiceMode === 'bubble-shooter' || practiceMode === 'snake-game'">
                   <button
                     v-if="!practiceStarted"
                     @click="handlePracticeStart"
@@ -195,7 +197,10 @@
                   <SnakeGameMode
                     :words="currentFlashcards"
                     :vietnamese-mode="bubbleShooterVietnameseMode"
+                    :double-bait-mode="snakeDoubleBaitMode"
                     @game-complete="handleSnakeGameComplete"
+                    @correct-food-eaten="handleSnakeCorrectFoodEaten"
+                    @wrong-food-eaten="handleSnakeWrongFoodEaten"
                   />
                 </template>
               </LazyLoadComponent>
@@ -376,6 +381,8 @@ watch(selectedDate, () => {
 
 // Bubble Shooter Vietnamese Mode Toggle State with localStorage support
 const bubbleShooterVietnameseMode = ref(false)
+// Snake Game Double Bait Mode Toggle State with localStorage support
+const snakeDoubleBaitMode = ref(false)
 
 // Load from localStorage on init
 const loadBubbleShooterVietnameseModeFromStorage = () => {
@@ -394,12 +401,32 @@ const saveBubbleShooterVietnameseModeToStorage = (enabled: boolean) => {
   } catch {}
 }
 
+// Load/Save helpers for Snake Double Bait mode
+const loadSnakeDoubleBaitModeFromStorage = () => {
+  try {
+    const saved = localStorage.getItem('pe_snakeDoubleBaitMode')
+    return saved === null ? false : saved === 'true'
+  } catch {
+    return false
+  }
+}
+
+const saveSnakeDoubleBaitModeToStorage = (enabled: boolean) => {
+  try {
+    localStorage.setItem('pe_snakeDoubleBaitMode', String(enabled))
+  } catch {}
+}
+
 // Initialize from localStorage
 bubbleShooterVietnameseMode.value = loadBubbleShooterVietnameseModeFromStorage()
+snakeDoubleBaitMode.value = loadSnakeDoubleBaitModeFromStorage()
 
 // Watch for changes and save to localStorage
 watch(bubbleShooterVietnameseMode, (newVal) => {
   saveBubbleShooterVietnameseModeToStorage(newVal)
+})
+watch(snakeDoubleBaitMode, (newVal) => {
+  saveSnakeDoubleBaitModeToStorage(newVal)
 })
 
 // Toggle function for FlashcardHeader
@@ -1201,6 +1228,22 @@ const handleCompletionGoBack = () => {
 const handleSnakeGameComplete = () => {
   // Handle snake game completion similar to bubble shooter
   showCompletionModal.value = true
+}
+
+// Snake Game food eaten handlers
+const handleSnakeCorrectFoodEaten = () => {
+  // Count as a correct answer in practice stats
+  recordAnswer(true)
+}
+
+const handleSnakeWrongFoodEaten = () => {
+  // Count as an incorrect answer in practice stats
+  recordAnswer(false)
+}
+
+// Snake Game food eaten handler -> count as a correct answer in practice stats
+const handleSnakeFoodEaten = () => {
+  recordAnswer(true)
 }
 
 // Auto flip functionality

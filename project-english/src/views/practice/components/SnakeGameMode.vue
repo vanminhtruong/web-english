@@ -31,7 +31,8 @@
       >
         <div class="text-center">
           <div class="text-sm sm:text-base font-bold text-gray-800 dark:text-white">{{ currentTargetWord }}</div>
-          <div class="text-xs text-gray-600 dark:text-white/70">{{ t('flashcard.snakeGame.target', 'Target') }}</div>
+          <div v-if="currentTargetPronunciationDisplay" class="text-xs sm:text-sm text-gray-700 dark:text-white/80">{{ currentTargetPronunciationDisplay }}</div>
+          <div class="text-[11px] sm:text-xs text-gray-600 dark:text-white/70">{{ t('flashcard.snakeGame.target', 'Target') }}</div>
         </div>
       </div>
 
@@ -156,10 +157,13 @@ import { ref, onMounted, onUnmounted, nextTick, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 import { useSnakeGame, type ISnakeGame } from '../composables/snake-game'
+import { useVoiceStore } from '../../../stores/voiceStore'
 
 interface Props {
   words: Vocabulary[]
   vietnameseMode?: boolean
+  // Enable dual-food mode (correct + incorrect bait)
+  doubleBaitMode?: boolean
 }
 
 const props = defineProps<Props>()
@@ -167,6 +171,8 @@ const { t } = useI18n()
 
 const emit = defineEmits<{
   'game-complete': []
+  'correct-food-eaten': []
+  'wrong-food-eaten': []
 }>()
 
 // Initialize main game controller with OOP pattern
@@ -201,6 +207,61 @@ const snakeHeadDisplayStyle = computed(() => {
   }
 })
 
+// Resolve pronunciation for the current target word
+const currentTargetPronunciation = computed(() => {
+  const w = currentTargetWord.value
+  if (!w) return ''
+  const found = props.words.find(v => v.word === w)
+  return found?.pronunciation || ''
+})
+
+// Display pronunciation with exactly one leading and trailing slash
+const currentTargetPronunciationDisplay = computed(() => {
+  const raw = (currentTargetPronunciation.value || '').trim()
+  if (!raw) return ''
+  // Remove any leading/trailing slashes, brackets or whitespace
+  const stripped = raw.replace(/^\s*[\/\[\]()]+|[\/\[\]()]+\s*$/g, '')
+  return stripped ? `/${stripped}/` : ''
+})
+
+// Emit events whenever correct or wrong eaten counters increment
+const prevWordsCompleted = ref<number>(0)
+const stopWordsWatch = watch(
+  () => game.stateManager.wordsCompleted.value,
+  (newVal, oldVal) => {
+    if (typeof oldVal === 'number' && newVal > oldVal) {
+      emit('correct-food-eaten')
+      // Speak the eaten word using selected voice
+      const last = (game.stateManager as any).lastEatenWord?.value as string | undefined
+      if (last) {
+        const { playAudio } = useVoiceStore()
+        // Fire and forget; internal store handles support/errors
+        playAudio(last).catch(() => {})
+      }
+    }
+    prevWordsCompleted.value = newVal
+  }
+)
+
+// Watch wrong eaten counter
+const prevWrongEaten = ref<number>(0)
+const stopWrongWatch = watch(
+  // wrongEatenCount was added to state manager for double bait mode
+  () => (game.stateManager as any).wrongEatenCount?.value,
+  (newVal, oldVal) => {
+    if (typeof newVal === 'number' && typeof oldVal === 'number' && newVal > oldVal) {
+      emit('wrong-food-eaten')
+      // Speak the eaten word (wrong pick) too
+      const last = (game.stateManager as any).lastEatenWord?.value as string | undefined
+      if (last) {
+        const { playAudio } = useVoiceStore()
+        playAudio(last).catch(() => {})
+      }
+    }
+    if (typeof newVal === 'number') prevWrongEaten.value = newVal
+  }
+)
+
 // Watch for game over to emit completion event
 const stopGameOverWatch = watch(
   () => game.stateManager.gameOver.value,
@@ -217,6 +278,13 @@ watch(() => props.vietnameseMode, (newValue) => {
   // Regenerate food with new mode
   if (game.stateManager.gameRunning.value) {
     game.stateManager.generateFood(props.words, newValue ?? false)
+  }
+})
+
+// Watch for double bait mode changes and update state manager
+watch(() => props.doubleBaitMode, (enabled) => {
+  if ((game.stateManager as any).setDoubleBaitMode) {
+    ;(game.stateManager as any).setDoubleBaitMode(!!enabled, props.words, props.vietnameseMode ?? false)
   }
 })
 
@@ -237,6 +305,10 @@ const restartGame = () => {
   game.stateManager.resetGame()
   if (gameCanvas.value) {
     game.initialize(gameCanvas.value, props.words, props.vietnameseMode)
+    // Re-apply double bait mode on restart so both foods show immediately if enabled
+    if ((game.stateManager as any).setDoubleBaitMode) {
+      ;(game.stateManager as any).setDoubleBaitMode(!!props.doubleBaitMode, props.words, props.vietnameseMode ?? false)
+    }
   }
 }
 
@@ -260,6 +332,10 @@ onMounted(async () => {
   if (!gameCanvas.value) return
   
   game.initialize(gameCanvas.value, props.words, props.vietnameseMode)
+  // Initialize double bait mode on mount
+  if ((game.stateManager as any).setDoubleBaitMode) {
+    ;(game.stateManager as any).setDoubleBaitMode(!!props.doubleBaitMode, props.words, props.vietnameseMode ?? false)
+  }
   
   // Add global keyboard listener
   document.addEventListener('keydown', handleKeyPress)
@@ -267,6 +343,8 @@ onMounted(async () => {
 
 onUnmounted(() => {
   stopGameOverWatch()
+  stopWordsWatch()
+  stopWrongWatch()
   document.removeEventListener('keydown', handleKeyPress)
   game.cleanup()
 })
