@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="space-y-2">
-          <dt class="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">{{ t('dashboard.stats.vocabularyLearned', locale === 'vi' ? 'Từ vựng đã học' : 'Vocabulary Learned') }}</dt>
+          <dt class="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">{{ t('dashboard.stats.vocabularyLearned', 'Vocabulary Learned') }}</dt>
           <dd class="text-3xl font-bold text-gray-900 dark:text-white counter-animate">{{ stats.vocabularyLearned }}</dd>
           <div class="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2">
             <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full animate-progress-slide" style="width: 75%"></div>
@@ -54,7 +54,7 @@
           </div>
         </div>
         <div class="space-y-2">
-          <dt class="text-sm font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide">{{ t('dashboard.stats.grammarLessons', locale === 'vi' ? 'Bài học ngữ pháp' : 'Grammar Lessons') }}</dt>
+          <dt class="text-sm font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide">{{ t('dashboard.stats.grammarLessons', 'Grammar Lessons') }}</dt>
           <dd class="text-3xl font-bold text-gray-900 dark:text-white counter-animate">{{ stats.grammarLessons }}</dd>
           <div class="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2">
             <div class="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full animate-progress-slide" style="width: 60%"></div>
@@ -86,8 +86,8 @@
           </div>
         </div>
         <div class="space-y-2">
-          <dt class="text-sm font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wide">{{ t('dashboard.stats.currentStreak', locale === 'vi' ? 'Chuỗi ngày học' : 'Current Streak') }}</dt>
-          <dd class="text-3xl font-bold text-gray-900 dark:text-white counter-animate">{{ stats.currentStreak }} <span class="text-lg font-medium">{{ t('dashboard.stats.days', locale === 'vi' ? 'ngày' : 'days') }}</span></dd>
+          <dt class="text-sm font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wide">{{ t('dashboard.stats.currentStreak', 'Current Streak') }}</dt>
+          <dd class="text-3xl font-bold text-gray-900 dark:text-white counter-animate">{{ stats.currentStreak }} <span class="text-lg font-medium">{{ t('dashboard.stats.days', 'days') }}</span></dd>
           <div class="w-full bg-orange-100 dark:bg-orange-900/30 rounded-full h-2">
             <div class="bg-gradient-to-r from-yellow-500 to-orange-600 h-2 rounded-full animate-progress-slide" style="width: 85%"></div>
           </div>
@@ -118,8 +118,8 @@
           </div>
         </div>
         <div class="space-y-2">
-          <dt class="text-sm font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{{ t('dashboard.stats.totalTime', locale === 'vi' ? 'Tổng thời gian' : 'Total Time') }}</dt>
-          <dd class="text-3xl font-bold text-gray-900 dark:text-white counter-animate">{{ stats.totalTime }} <span class="text-lg font-medium">{{ t('dashboard.stats.hours', locale === 'vi' ? 'giờ' : 'hours') }}</span></dd>
+          <dt class="text-sm font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{{ t('dashboard.stats.totalTime', 'Total Time') }}</dt>
+          <dd class="text-3xl font-bold text-gray-900 dark:text-white counter-animate">{{ stats.totalTime }} <span class="text-lg font-medium">{{ t('dashboard.stats.hours', 'hours') }}</span></dd>
           <div class="w-full bg-purple-100 dark:bg-purple-900/30 rounded-full h-2">
             <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full animate-progress-slide" style="width: 90%"></div>
           </div>
@@ -133,7 +133,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 interface Stats {
   vocabularyLearned: number
