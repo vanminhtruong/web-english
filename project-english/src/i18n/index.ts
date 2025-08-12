@@ -37,7 +37,7 @@ export function setLocale(locale: 'en' | 'vi') {
   try {
     localStorage.setItem('locale', locale)
   } catch (error) {
-    console.warn('Could not save locale to localStorage:', error)
+    console.warn('Could not save locale to localStorage 1:', error)
   }
   document.querySelector('html')?.setAttribute('lang', locale)
 }
