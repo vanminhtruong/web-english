@@ -296,7 +296,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, defineAsyncComponent } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useVocabularyStore } from '../../composables/useVocabularyStore'
@@ -308,32 +308,11 @@ import { useModalStore } from '../../stores/modalStore'
 const { t } = useI18n()
 const router = useRouter()
 
-// Component imports using defineAsyncComponent
-const LazyLoadComponent = defineAsyncComponent(() => import('../../components/LazyLoadComponent.vue'))
-const FlashcardHeader = defineAsyncComponent(() => import('./components/FlashcardHeader.vue'))
-const FlashcardProgress = defineAsyncComponent(() => import('./components/FlashcardProgress.vue'))
-const FlashcardDateFilter = defineAsyncComponent(() => import('./components/FlashcardDateFilter.vue'))
-const FlashcardCard = defineAsyncComponent(() => import('./components/FlashcardCard.vue'))
-const FlashcardQuiz = defineAsyncComponent(() => import('./components/FlashcardQuiz.vue'))
-const FlashcardTyping = defineAsyncComponent(() => import('./components/FlashcardTyping.vue'))
-const FlashcardImage = defineAsyncComponent(() => import('./components/FlashcardImage.vue'))
-const FlashcardControls = defineAsyncComponent(() => import('./components/FlashcardControls.vue'))
-const PracticeTimer = defineAsyncComponent(() => import('./components/PracticeTimer.vue'))
-const VoiceSelector = defineAsyncComponent(() => import('../../components/VoiceSelector.vue'))
+// Single-line import of all async components (local composable)
+import AsyncComponents from './composables/asyncComponents'
 
-// New component imports
-const ExitWarningModal = defineAsyncComponent(() => import('./components/ExitWarningModal.vue'))
-const CompletionModal = defineAsyncComponent(() => import('./components/CompletionModal.vue'))
-const HistoryModal = defineAsyncComponent(() => import('./components/HistoryModal.vue'))
-const SessionDetailModal = defineAsyncComponent(() => import('./components/SessionDetailModal.vue'))
-const SettingsModal = defineAsyncComponent(() => import('./components/SettingsModal.vue'))
-const PronunciationMode = defineAsyncComponent(() => import('./components/PronunciationMode.vue'))
-const ListeningMode = defineAsyncComponent(() => import('./components/ListeningMode.vue'))
-const PracticeStats = defineAsyncComponent(() => import('./components/PracticeStats.vue'))
-const FlashcardEmptyState = defineAsyncComponent(() => import('./components/FlashcardEmptyState.vue'))
-const PictionaryMode = defineAsyncComponent(() => import('./components/PictionaryMode.vue'))
-const BubbleShooterMode = defineAsyncComponent(() => import('./components/BubbleShooterMode.vue'))
-const SnakeGameMode = defineAsyncComponent(() => import('./components/SnakeGameMode.vue'))
+// Register all async components for template usage
+defineOptions({ components: AsyncComponents })
 
 // Composables
 import { useFlashcardGame } from './composables/useFlashcardGame'
