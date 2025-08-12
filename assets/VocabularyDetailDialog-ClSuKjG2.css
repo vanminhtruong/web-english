@@ -1,0 +1,60 @@
+
+/* Fade in up animation */
+@keyframes fadeInUp-f572d301 {
+from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+}
+to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+}
+.animate-fade-in-up[data-v-f572d301] {
+  animation: fadeInUp-f572d301 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+/* Enhanced focus states */
+.focus\:ring-2[data-v-f572d301]:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Button active states */
+button[data-v-f572d301]:active {
+  transform: scale(0.95);
+}
+
+/* Smooth transitions for all interactive elements */
+[data-v-f572d301] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom scrollbar styling */
+[data-v-f572d301]::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Light mode scrollbar */
+[data-v-f572d301]::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+}
+[data-v-f572d301]::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 4px;
+}
+[data-v-f572d301]::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+/* Dark mode scrollbar */
+.dark[data-v-f572d301] ::-webkit-scrollbar-track {
+  background-color: #0f0f0f;
+}
+.dark[data-v-f572d301] ::-webkit-scrollbar-thumb {
+  background-color: #374151;
+  border-radius: 4px;
+}
+.dark[data-v-f572d301] ::-webkit-scrollbar-thumb:hover {
+  background-color: #4b5563;
+}

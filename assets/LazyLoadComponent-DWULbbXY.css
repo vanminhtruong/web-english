@@ -1,0 +1,132 @@
+
+.lazy-wrapper[data-v-e3e20eb0] {
+  transition: all 0.4s ease-out;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+/* Default hidden state - COMPLETELY HIDDEN */
+.lazy-wrapper.is-hidden[data-v-e3e20eb0] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.2s ease-out; /* Ẩn nhanh hơn hiện */
+}
+.lazy-wrapper.is-visible[data-v-e3e20eb0] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Fade up animation - LESS DRAMATIC */
+.fade-up.is-hidden[data-v-e3e20eb0] {
+  transform: translateY(30px) scale(0.98);
+  opacity: 0;
+}
+.fade-up.is-visible[data-v-e3e20eb0] {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  animation: smoothFadeUp-e3e20eb0 0.4s ease-out;
+}
+
+/* Slide left animation - LESS DRAMATIC */
+.slide-left.is-hidden[data-v-e3e20eb0] {
+  transform: translateX(-30px) scale(0.98);
+  opacity: 0;
+}
+.slide-left.is-visible[data-v-e3e20eb0] {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  animation: smoothSlideLeft-e3e20eb0 0.4s ease-out;
+}
+
+/* Slide right animation - LESS DRAMATIC */
+.slide-right.is-hidden[data-v-e3e20eb0] {
+  transform: translateX(30px) scale(0.98);
+  opacity: 0;
+}
+.slide-right.is-visible[data-v-e3e20eb0] {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  animation: smoothSlideRight-e3e20eb0 0.4s ease-out;
+}
+
+/* Scale animation - LESS DRAMATIC */
+.scale.is-hidden[data-v-e3e20eb0] {
+  transform: scale(0.9);
+  opacity: 0;
+}
+.scale.is-visible[data-v-e3e20eb0] {
+  transform: scale(1);
+  opacity: 1;
+  animation: smoothScaleIn-e3e20eb0 0.4s ease-out;
+}
+
+/* Blur animation - LESS DRAMATIC */
+.blur.is-hidden[data-v-e3e20eb0] {
+  filter: blur(5px);
+  transform: translateY(20px) scale(0.98);
+  opacity: 0;
+}
+.blur.is-visible[data-v-e3e20eb0] {
+  filter: blur(0);
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  animation: smoothBlurIn-e3e20eb0 0.4s ease-out;
+}
+
+/* Smoother keyframe animations */
+@keyframes smoothFadeUp-e3e20eb0 {
+0% {
+    transform: translateY(30px) scale(0.98);
+    opacity: 0;
+}
+100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+}
+@keyframes smoothSlideLeft-e3e20eb0 {
+0% {
+    transform: translateX(-30px) scale(0.98);
+    opacity: 0;
+}
+100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+}
+@keyframes smoothSlideRight-e3e20eb0 {
+0% {
+    transform: translateX(30px) scale(0.98);
+    opacity: 0;
+}
+100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+}
+@keyframes smoothScaleIn-e3e20eb0 {
+0% {
+    transform: scale(0.9);
+    opacity: 0;
+}
+100% {
+    transform: scale(1);
+    opacity: 1;
+}
+}
+@keyframes smoothBlurIn-e3e20eb0 {
+0% {
+    filter: blur(5px);
+    transform: translateY(20px) scale(0.98);
+    opacity: 0;
+}
+100% {
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+}
