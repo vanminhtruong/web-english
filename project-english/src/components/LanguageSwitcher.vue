@@ -15,18 +15,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { toggleLocale, getLocale, isEnglish as checkIsEnglish } from '../i18n'
+import { computed } from 'vue'
+import { toggleLocale, getLocale } from '../i18n'
 
-const isEnglish = ref(false)
-
-// Update the isEnglish ref when the component mounts
-onMounted(() => {
-  isEnglish.value = checkIsEnglish()
-})
+// Sử dụng computed để luôn lấy giá trị locale hiện tại từ i18n
+const isEnglish = computed(() => getLocale() === 'en')
 
 const toggleLanguage = () => {
   toggleLocale()
-  isEnglish.value = !isEnglish.value
 }
-</script> 
+</script>
