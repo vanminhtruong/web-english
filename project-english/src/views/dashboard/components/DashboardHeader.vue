@@ -22,14 +22,14 @@
         
         <div class="flex-1">
           <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent animate-fade-in-up">
-            {{ t('dashboard.title', locale === 'vi' ? 'Bảng điều khiển' : 'Dashboard') }}
+            {{ t('dashboard.title', 'Dashboard') }}
           </h1>
           <div class="flex items-center mt-2 space-x-2">
             <div class="animate-pulse-slow">
               <div class="w-2 h-2 bg-gradient-to-r from-green-400 to-blue-500 rounded-full"></div>
             </div>
-            <p class="text-sm sm:text-base text-gray-600 dark:text-white/70 font-medium">
-              {{ t('dashboard.description', locale === 'vi' ? 'Dưới đây là tóm tắt quá trình học của bạn.' : 'Here is a summary of your learning progress.') }}
+            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-medium">
+              {{ t('dashboard.description', 'Here is a summary of your learning progress.') }}
             </p>
           </div>
         </div>
@@ -56,5 +56,5 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 </script>

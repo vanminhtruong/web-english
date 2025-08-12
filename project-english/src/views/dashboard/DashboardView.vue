@@ -31,7 +31,7 @@
                   <div class="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3"></div>
                 </div>
                 <h3 class="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                  {{ t('dashboard.quickActions', locale === 'vi' ? 'Thao tác nhanh' : 'Quick Actions') }}
+                  {{ t('dashboard.quickActions', 'Quick Actions') }}
                 </h3>
               </div>
               
@@ -44,7 +44,7 @@
                     <svg class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 mx-auto mb-2 transform group-hover/btn:rotate-180 transition-transform duration-500" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.addVocabulary', locale === 'vi' ? 'Thêm từ vựng' : 'Add Vocabulary') }}</span>
+                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.addVocabulary', 'Add Vocabulary') }}</span>
                   </div>
                   <div class="absolute inset-0 bg-white opacity-0 group-hover/btn:opacity-20 transition-opacity duration-300"></div>
                 </button>
@@ -57,7 +57,7 @@
                     <svg class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 mx-auto mb-2 transform group-hover/btn:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
                     </svg>
-                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.practiceFlashcard', locale === 'vi' ? 'Luyện flashcard' : 'Practice Flashcard') }}</span>
+                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.practiceFlashcard', 'Practice Flashcard') }}</span>
                   </div>
                   <div class="absolute inset-0 bg-white opacity-0 group-hover/btn:opacity-20 transition-opacity duration-300"></div>
                 </button>
@@ -70,7 +70,7 @@
                     <svg class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 mx-auto mb-2 transform group-hover/btn:bounce" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.takeQuiz', locale === 'vi' ? 'Làm bài kiểm tra' : 'Take a Quiz') }}</span>
+                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.takeQuiz', 'Take a Quiz') }}</span>
                   </div>
                   <div class="absolute inset-0 bg-white opacity-0 group-hover/btn:opacity-20 transition-opacity duration-300"></div>
                 </button>
@@ -83,7 +83,7 @@
                     <svg class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 mx-auto mb-2 transform group-hover/btn:rotate-12 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
                     </svg>
-                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.learnGrammar', locale === 'vi' ? 'Học ngữ pháp' : 'Learn Grammar') }}</span>
+                    <span class="text-xs sm:text-sm md:text-base font-medium">{{ t('dashboard.actions.learnGrammar', 'Learn Grammar') }}</span>
                   </div>
                   <div class="absolute inset-0 bg-white opacity-0 group-hover/btn:opacity-20 transition-opacity duration-300"></div>
                 </button>
@@ -101,7 +101,7 @@
                   <div class="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mr-3"></div>
                 </div>
                 <h3 class="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
-                  {{ t('dashboard.recentActivity', locale === 'vi' ? 'Hoạt động gần đây' : 'Recent Activity') }}
+                  {{ t('dashboard.recentActivity', 'Recent Activity') }}
                 </h3>
               </div>
               
@@ -155,7 +155,7 @@ const DashboardStats = defineAsyncComponent(
 )
 
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const vocabularyStore = useVocabularyStore()
 
 // Helper function to format relative time
@@ -227,23 +227,9 @@ const recentActivities = computed(() => {
     activities.push({
       id: index + 1,
       title: isUpdated 
-        ? t(
-            'dashboard.activity.updated',
-            { word: vocab.word, category: categoryTranslated },
-            locale.value === 'vi'
-              ? `Đã cập nhật '${vocab.word}' trong ${categoryTranslated}`
-              : `Updated '${vocab.word}' in ${categoryTranslated}`
-          )
-        : t(
-            'dashboard.activity.added',
-            { word: vocab.word, category: categoryTranslated },
-            locale.value === 'vi'
-              ? `Đã thêm '${vocab.word}' vào ${categoryTranslated}`
-              : `Added '${vocab.word}' to ${categoryTranslated}`
-          ),
-      time: timeStr
-        ? formatRelativeTime(timeStr)
-        : t('dashboard.activity.justNow', locale.value === 'vi' ? 'Vừa xong' : 'Just now'),
+        ? t('dashboard.activity.updated', { word: vocab.word, category: categoryTranslated }, `Updated '${vocab.word}' in ${categoryTranslated}`)
+        : t('dashboard.activity.added', { word: vocab.word, category: categoryTranslated }, `Added '${vocab.word}' to ${categoryTranslated}`),
+      time: timeStr ? formatRelativeTime(timeStr) : t('dashboard.activity.justNow', 'Just now'),
       iconColor: isUpdated ? 'bg-blue-500' : 'bg-green-500'
     })
   })
@@ -252,17 +238,9 @@ const recentActivities = computed(() => {
   if (activities.length === 0) {
     activities.push({
       id: 1,
-      title: t(
-        'dashboard.activity.noActivity',
-        locale.value === 'vi' ? 'Chưa có hoạt động gần đây' : 'No recent activity'
-      ),
-      time: t(
-        'dashboard.activity.addFirstVocab',
-        locale.value === 'vi'
-          ? 'Hãy thêm từ vựng đầu tiên để bắt đầu!'
-          : 'Add your first vocabulary to get started!'
-      ),
-      iconColor: 'bg-cyan-600'
+      title: t('dashboard.activity.noActivity', 'No recent activity'),
+      time: t('dashboard.activity.addFirstVocab', 'Add your first vocabulary to get started!'),
+      iconColor: 'bg-gray-500'
     })
   }
   
