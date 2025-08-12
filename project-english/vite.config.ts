@@ -12,15 +12,20 @@ export default defineConfig({
     }
   },
   build: {
-    target: 'es2015',
-    outDir: 'dist',
-    assetsDir: 'assets',
+    assetsInlineLimit: 0, // Don't inline any assets
+    minify: false, // Không sử dụng minify để tránh lỗi JavaScript
+    sourcemap: true, // Thêm sourcemap để dễ debug
     rollupOptions: {
       output: {
-        manualChunks: () => 'everything.js',
-        chunkFileNames: 'assets/[name].js',
-        entryFileNames: 'assets/[name].js',
-        assetFileNames: 'assets/[name].[ext]'
+        manualChunks: (id) => {
+          // Split the code into chunks to avoid large files
+          if (id.includes('node_modules')) {
+            if (id.includes('vue-toastification')) {
+              return 'vendor-toast';
+            }
+            return 'vendor';
+          }
+        }
       }
     }
   },

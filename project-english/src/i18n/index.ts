@@ -1,9 +1,7 @@
 import { createI18n } from 'vue-i18n'
+import type { I18n } from 'vue-i18n'
 import en from './locales/en.json'
 import vi from './locales/vi.json'
-
-// Type definitions for messages
-type MessageSchema = typeof en
 
 // Safe locale getter with fallback
 function getInitialLocale(): 'en' | 'vi' {
@@ -16,15 +14,15 @@ function getInitialLocale(): 'en' | 'vi' {
   }
 }
 
-const i18n = createI18n({
-  legacy: false, // you must set `false`, to use Composition API
-  locale: getInitialLocale(), // set default locale
-  fallbackLocale: 'en', // set fallback locale
-  globalInjection: true, // Enable global $t function
-  missingWarn: false, // Disable missing translation warnings
-  fallbackWarn: false, // Disable fallback warnings
-  silentTranslationWarn: true, // Silence translation warnings
-  silentFallbackWarn: true, // Silence fallback warnings
+const i18n: I18n = createI18n({
+  legacy: false,
+  locale: getInitialLocale(),
+  fallbackLocale: 'en',
+  globalInjection: true,
+  missingWarn: false,
+  fallbackWarn: false,
+  silentTranslationWarn: true,
+  silentFallbackWarn: true,
   messages: {
     en,
     vi
