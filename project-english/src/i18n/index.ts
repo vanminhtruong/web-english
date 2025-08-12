@@ -33,28 +33,41 @@ export default i18n
 
 // Utility function to change locale
 export function setLocale(locale: 'en' | 'vi') {
-  i18n.global.locale = locale
+  // In vue-i18n v9 with legacy: false, locale is a ref
+  if (typeof i18n.global.locale === 'object' && 'value' in i18n.global.locale) {
+    i18n.global.locale.value = locale
+  } else {
+    i18n.global.locale = locale
+  }
   try {
     localStorage.setItem('locale', locale)
   } catch (error) {
-    console.warn('Could not save locale to localStorage 1:', error)
+    console.warn('Could not save locale to localStorage:', error)
   }
   document.querySelector('html')?.setAttribute('lang', locale)
 }
 
 // Utility function to get current locale
 export function getLocale(): 'en' | 'vi' {
-  return i18n.global.locale as 'en' | 'vi'
+  // Check if locale is a ref or plain value
+  const locale = typeof i18n.global.locale === 'object' && 'value' in i18n.global.locale
+    ? i18n.global.locale.value
+    : i18n.global.locale
+  return locale as 'en' | 'vi'
 }
 
 // Utility function to check if current locale is English
 export function isEnglish(): boolean {
-  return i18n.global.locale === 'en'
+  const locale = typeof i18n.global.locale === 'object' && 'value' in i18n.global.locale
+    ? i18n.global.locale.value
+    : i18n.global.locale
+  return locale === 'en'
 }
 
 // Utility function to toggle locale
 export function toggleLocale(): 'en' | 'vi' {
-  const newLocale = i18n.global.locale === 'en' ? 'vi' : 'en'
+  const currentLocale = getLocale()
+  const newLocale = currentLocale === 'en' ? 'vi' : 'en'
   setLocale(newLocale)
   return newLocale
 }
