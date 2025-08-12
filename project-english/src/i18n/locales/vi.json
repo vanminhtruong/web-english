@@ -204,6 +204,14 @@
         "corsWarning": "Hình ảnh đã được chấp nhận nhưng có thể không hiển thị do bảo mật website gốc."
       }
     },
+    "imageInfo": {
+      "title": "Thiếu hình ảnh",
+      "none": "Tất cả từ vựng đều có hình ảnh",
+      "date": "Ngày",
+      "category": "Chủ đề",
+      "missingCount": "{count} không có ảnh",
+      "aria": "Hiển thị thông tin về các từ thiếu hình ảnh"
+    },
     "save": {
       "mode": "Chế độ lưu:",
       "auto": "Tự động",
@@ -357,7 +365,16 @@
       "accuracy": "Độ chính xác",
       "result": "Kết quả",
       "pass": "Đạt",
-      "fail": "Chưa đạt"
+      "fail": "Chưa đạt",
+      "viewDetails": "Xem chi tiết",
+      "noDetails": "Không có chi tiết",
+      "details": {
+        "title": "Chi tiết phiên luyện tập",
+        "noData": "Không có chi tiết cho phiên luyện tập này",
+        "yourAnswer": "Câu trả lời của bạn",
+        "noAnswer": "Chưa trả lời",
+        "correctAnswer": "Đáp án đúng"
+      }
     },
     "completion": {
       "title": "Hoàn thành!",
@@ -378,7 +395,8 @@
       "snakeGame": "Rắn săn từ",
       "pronunciation": "Phát âm",
       "change_disabled_during_practice": "Không thể thay đổi chế độ trong quá trình luyện tập",
-      "selectMode": "Chọn chế độ"
+      "selectMode": "Chọn chế độ",
+      "mode": "Chế độ"
     },
     "image": {
       "imageAlt": "Hình ảnh từ vựng",

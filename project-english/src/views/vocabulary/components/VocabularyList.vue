@@ -5,9 +5,47 @@
     @mouseenter="handleVocabularyListMouseEnter"
   >
     <div class="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-700">
-      <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-        {{ t('vocabulary.vocabularyList', 'Vocabulary List') }} ({{ totalCount }})
-      </h3>
+      <div class="flex items-center justify-between">
+        <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+          {{ t('vocabulary.vocabularyList', 'Vocabulary List') }} ({{ totalCount }})
+        </h3>
+        <!-- Info tooltip for missing images by date/category -->
+        <div class="relative group ml-2 select-none" aria-hidden="false">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-blue-200 text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-300 dark:bg-dark-bg-soft dark:border-dark-bg-mute dark:hover:bg-dark-bg-mute transition"
+            :aria-label="t('vocabulary.imageInfo.aria', 'Show dates/categories missing images')"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.75 15h-1.5v-6h1.5v6zm0-8h-1.5V7h1.5v2z"/>
+            </svg>
+          </button>
+          <!-- Tooltip Panel -->
+          <div
+            class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-150 absolute right-0 mt-2 w-72 sm:w-80 max-h-64 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-dark-bg-mute"
+          >
+            <div class="text-sm font-semibold mb-2">
+              {{ t('vocabulary.imageInfo.title', 'Missing images by date') }}
+            </div>
+            <div v-if="missingImagesByDate.length === 0" class="text-sm text-gray-600 dark:text-white/70">
+              {{ t('vocabulary.imageInfo.none', 'All categories have images for the current list') }}
+            </div>
+            <div v-else class="space-y-2">
+              <div v-for="item in missingImagesByDate" :key="item.date" class="border border-gray-200 rounded-md p-2 dark:border-dark-bg-mute">
+                <div class="text-xs font-medium text-gray-700 mb-1 dark:text-white/80">
+                  {{ t('vocabulary.imageInfo.date', 'Date') }}: <span class="font-semibold">{{ item.date }}</span>
+                </div>
+                <ul class="text-xs list-disc pl-4 space-y-0.5">
+                  <li v-for="cat in item.categories" :key="cat.name">
+                    <span class="font-medium">{{ t('vocabulary.imageInfo.category', 'Category') }}:</span>
+                    <span> {{ cat.name }} — {{ t('vocabulary.imageInfo.missingCount', { count: cat.count }) || `${cat.count} without image` }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Grouped vocabulary display with accordion -->
@@ -188,6 +226,7 @@ import { ref, computed, onMounted, nextTick, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../../utils/import-helper'
 import { groupVocabulariesByDateAndTopic, type GroupedVocabulary } from '../../../utils/dateUtils'
+import { getTopicName } from '../../../utils/topicUtils'
 import { useToast } from 'vue-toastification'
 
 const { t, locale } = useI18n()
@@ -253,19 +292,9 @@ const restoreGroupTopics = (topics: Record<string, string>) => {
   }
 }
 
-interface Word {
-  id: number
-  word: string
-  pronunciation: string
-  partOfSpeech: string
-  meaning: string
-  example?: string
-  level: string
-  category: string
-  favorite?: boolean
-  createdAt?: string
-  updatedAt?: string
-}
+import type { Vocabulary } from '../../../composables/useVocabularyStore'
+
+type Word = Vocabulary & { categoryName?: string }
 
 interface Props {
   paginatedWords: Word[]
@@ -285,6 +314,51 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+// Tooltip data: group words missing images by date and category
+const missingImagesByDate = computed(() => {
+  // Decide source words
+  const source: Word[] = (props.useGrouping ? (props.allWords || []) : (props.paginatedWords || []))
+  if (!Array.isArray(source) || source.length === 0) return [] as Array<{ date: string; categories: { name: string; count: number }[] }>
+
+  // Helper to normalize date to yyyy-mm-dd
+  const normalizeDate = (d?: string) => {
+    if (!d) return 'Unknown'
+    const dt = new Date(d)
+    return isNaN(dt.getTime()) ? 'Unknown' : dt.toISOString().slice(0, 10)
+  }
+
+  // Build map: date -> displayCategoryName -> count
+  const map = new Map<string, Map<string, number>>()
+  for (const w of source) {
+    const img = (w.image ?? '').trim()
+    if (img) continue // has image
+    const dateKey = normalizeDate(w.createdAt)
+    // Prefer human-readable categoryName if available (imported data), otherwise translate built-in key
+    const catKey = w.category || 'uncategorized'
+    // Resolve display name via categoryName -> custom topic -> built-in translation -> fallback
+    const displayCat = (w as any).categoryName || getTopicName(catKey, w)
+
+    if (!map.has(dateKey)) map.set(dateKey, new Map<string, number>())
+    const catMap = map.get(dateKey)!
+    catMap.set(displayCat, (catMap.get(displayCat) || 0) + 1)
+  }
+
+  // Convert to sorted array by date desc (Unknown last)
+  const result: { date: string; categories: { name: string; count: number }[] }[] = []
+  for (const [date, catMap] of map.entries()) {
+    const categories = Array.from(catMap.entries()).map(([name, count]) => ({ name, count }))
+    result.push({ date, categories })
+  }
+
+  result.sort((a, b) => {
+    if (a.date === 'Unknown') return 1
+    if (b.date === 'Unknown') return -1
+    return new Date(b.date).getTime() - new Date(a.date).getTime()
+  })
+
+  return result
+})
 
 // Date group pagination state
 const dateGroupCurrentPage = ref(1)
@@ -394,49 +468,22 @@ const previousDateGroupPage = () => {
   }
 }
 
-// Generate visible page numbers for date group pagination
+// Generate visible page numbers for date group pagination (simple windowed pagination)
 const visibleDateGroupPages = computed(() => {
   const totalPages = dateGroupPaginationInfo.value.totalPages
   const currentPage = dateGroupCurrentPage.value
+
+  if (totalPages <= 0) return []
+
   const pages: number[] = []
-  
-  if (totalPages <= 7) {
-    // Show all pages if total is 7 or less
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i)
-    }
-  } else {
-    // Show smart pagination
-    if (currentPage <= 4) {
-      // Show first 5 pages + ... + last page
-      for (let i = 1; i <= 5; i++) {
-        pages.push(i)
-      }
-      if (totalPages > 6) {
-        pages.push(-1) // ellipsis
-        pages.push(totalPages)
-      }
-    } else if (currentPage >= totalPages - 3) {
-      // Show first page + ... + last 5 pages
-      pages.push(1)
-      if (totalPages > 6) {
-        pages.push(-1) // ellipsis
-      }
-      for (let i = totalPages - 4; i <= totalPages; i++) {
-        pages.push(i)
-      }
-    } else {
-      // Show first + ... + current-1, current, current+1 + ... + last
-      pages.push(1)
-      pages.push(-1) // ellipsis
-      for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-        pages.push(i)
-      }
-      pages.push(-1) // ellipsis
-      pages.push(totalPages)
-    }
+  const maxVisible = 5
+  let start = Math.max(1, currentPage - Math.floor(maxVisible / 2))
+  let end = Math.min(totalPages, start + maxVisible - 1)
+  start = Math.max(1, end - maxVisible + 1)
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
   }
-  
   return pages
 })
 

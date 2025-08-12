@@ -13,6 +13,8 @@ export interface PracticeHistoryItem {
   duration: number
   score: number
   categories?: string[]
+  // Whether this session has detailed per-card logs stored
+  hasDetails?: boolean
 }
 
 export function useFlashcardHistory() {
@@ -24,7 +26,17 @@ export function useFlashcardHistory() {
   const loadPracticeHistory = () => {
     const saved = localStorage.getItem('flashcard-practice-history')
     if (saved) {
-      practiceHistory.value = JSON.parse(saved)
+      const parsed: PracticeHistoryItem[] = JSON.parse(saved)
+      // Backfill hasDetails for older sessions by checking stored details key
+      practiceHistory.value = parsed.map((item) => {
+        if (item.hasDetails === undefined) {
+          const has = !!localStorage.getItem(`flashcard-session-details:${item.id}`)
+          return { ...item, hasDetails: has }
+        }
+        return item
+      })
+      // Persist backfilled flags so future loads are consistent
+      savePracticeHistory()
     }
   }
 
@@ -33,8 +45,8 @@ export function useFlashcardHistory() {
     localStorage.setItem('flashcard-practice-history', JSON.stringify(practiceHistory.value))
   }
 
-  // Save current session to history
-  const saveSessionToHistory = (stats: GameStats, totalCards: number) => {
+  // Save current session to history and return the session id
+  const saveSessionToHistory = (stats: GameStats, totalCards: number, sessionId?: string): string => {
     const duration = stats.endTime && stats.startTime 
       ? Math.round((stats.endTime.getTime() - stats.startTime.getTime()) / 1000)
       : 0
@@ -43,8 +55,10 @@ export function useFlashcardHistory() {
     const accuracy = total > 0 ? Math.round((stats.correct / total) * 100) : 0
     const score = Math.round(accuracy * (totalCards / 100))
 
+    const id = sessionId || Date.now().toString()
+
     const historyItem: PracticeHistoryItem = {
-      id: Date.now().toString(),
+      id,
       date: new Date().toISOString(),
       mode: stats.mode,
       totalCards,
@@ -53,7 +67,8 @@ export function useFlashcardHistory() {
       accuracy,
       duration,
       score,
-      categories: stats.categories || []
+      categories: stats.categories || [],
+      hasDetails: true,
     }
 
     practiceHistory.value.unshift(historyItem)
@@ -64,6 +79,7 @@ export function useFlashcardHistory() {
     }
     
     savePracticeHistory()
+    return id
   }
 
   // Helper functions for history display
@@ -83,6 +99,10 @@ export function useFlashcardHistory() {
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
       case 'pronunciation':
         return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200'
+      case 'bubble-shooter':
+        return 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200'
+      case 'snake-game':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
       default:
         // Avoid gray in dark mode per UI rules
         return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
@@ -92,19 +112,23 @@ export function useFlashcardHistory() {
   const getModeText = (mode: string) => {
     switch (mode) {
       case 'flashcard':
-        return t('flashcard.modes.flashcard')
+        return t('flashcard.modes.flashcard', 'Flashcard')
       case 'quiz':
-        return t('flashcard.modes.quiz')
+        return t('flashcard.modes.quiz', 'Quiz')
       case 'typing':
-        return t('flashcard.modes.typing')
+        return t('flashcard.modes.typing', 'Typing')
       case 'listening':
-        return t('flashcard.modes.listening')
+        return t('flashcard.modes.listening', 'Listening')
       case 'image':
-        return t('flashcard.modes.image')
+        return t('flashcard.modes.image', 'Image')
       case 'pictionary':
-        return t('flashcard.modes.pictionary')
+        return t('flashcard.modes.pictionary', 'Pictionary')
       case 'pronunciation':
-        return t('flashcard.modes.pronunciation')
+        return t('flashcard.modes.pronunciation', 'Pronunciation')
+      case 'bubble-shooter':
+        return t('flashcard.modes.bubbleShooter', 'Bubble Shooter')
+      case 'snake-game':
+        return t('flashcard.modes.snakeGame', 'Snake Hunt')
       default:
         return 'Unknown'
     }

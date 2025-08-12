@@ -133,14 +133,14 @@
           tabindex="-1"
           aria-hidden="true"
           autocomplete="off"
+          autocapitalize="off"
           spellcheck="false"
           inputmode="text"
-          autocapitalize="off"
-          @paste.prevent
           @beforeinput.stop.prevent="handleBeforeInput"
           @input.stop.prevent="handleInput"
           @keydown.stop.prevent="handleKeydown"
           @compositionstart="onCompositionStart"
+          @compositionupdate="onCompositionUpdate"
           @compositionend="onCompositionEnd"
           @focus="isFocused = true"
           @blur="onHiddenBlur"
@@ -205,6 +205,7 @@
 import { ref, watch, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
+import { useVoiceStore } from '../../../stores/voiceStore'
 
 interface Props {
   card: Vocabulary | null
@@ -217,17 +218,20 @@ interface Props {
 interface Emits {
   (e: 'update:pictionary-answer', value: string): void
   (e: 'check-answer'): void
+  (e: 'pictionary-snapshot', value: { slots: Slot[] }): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
+const { playAudio } = useVoiceStore()
 
 const imageError = ref(false)
 const hiddenInput = ref<HTMLInputElement | null>(null)
 const isFocused = ref(false)
-// Track IME composition to avoid retroactively altering previous letters
+// Track IME composition to avoid altering previous characters
 const isComposing = ref(false)
+let compositionBuffer = ''
 // Drag & drop mode state
 const dragMode = ref(false)
 const letterBank = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
@@ -306,6 +310,12 @@ const pushAnswer = () => {
   emit('update:pictionary-answer', answer)
 }
 
+const emitSnapshot = () => {
+  // Emit a deep copy of slot states to avoid mutation by parent consumers
+  const snapshot = slots.value.map(s => ({ char: s.char, fixed: s.fixed, separator: s.separator }))
+  emit('pictionary-snapshot', { slots: snapshot })
+}
+
 const focusInput = async () => {
   await nextTick()
   try {
@@ -353,12 +363,15 @@ const stripDiacritics = (s: string) => s
 
 const handleKeydown = (e: KeyboardEvent) => {
   if (props.pictionaryAnswered) return
-  // While composing with an IME, ignore keydown so we don't affect previous slots
+  // Ignore keydown while composing (IME in progress)
   if (isComposing.value) return
   const key = e.key
   // In drag mode, ignore typing except Enter
   if (dragMode.value) {
-    if (key === 'Enter') emit('check-answer')
+    if (key === 'Enter') {
+      emitSnapshot()
+      emit('check-answer')
+    }
     return
   }
   // Support desktop physical keyboards (sanitize Vietnamese diacritics)
@@ -378,12 +391,17 @@ const handleKeydown = (e: KeyboardEvent) => {
       pushAnswer()
     }
   } else if (key === 'Enter') {
+    emitSnapshot()
     emit('check-answer')
   }
 }
 
 const handleBeforeInput = (e: Event) => {
   if (props.pictionaryAnswered) return
+  // Ignore programmatic updates while composing; we'll handle on compositionend
+  if (isComposing.value) {
+    return
+  }
   if (dragMode.value) {
     // ignore text input events while in drag mode, but still clear input value
     if (hiddenInput.value) hiddenInput.value.value = ''
@@ -391,11 +409,6 @@ const handleBeforeInput = (e: Event) => {
   }
   const ie = e as InputEvent
   const type = ie.inputType as string | undefined
-  // If composing (IME), defer handling until compositionend
-  if (isComposing.value || type === 'insertCompositionText' || type === 'deleteCompositionText') {
-    // do not modify slots during composition
-    return
-  }
   // Handle character insertion from soft keyboards (Android/iOS)
   if (type === 'insertText') {
     const data = stripDiacritics(((ie as any).data || ''))
@@ -413,6 +426,7 @@ const handleBeforeInput = (e: Event) => {
       pushAnswer()
     }
   } else if (type === 'insertLineBreak') {
+    emitSnapshot()
     emit('check-answer')
   }
   // Always clear the hidden input value so it doesn't accumulate text
@@ -421,27 +435,35 @@ const handleBeforeInput = (e: Event) => {
 
 const handleInput = (e: Event) => {
   // Clear any stray value in the hidden input
+  if (isComposing.value) return
   if (hiddenInput.value) hiddenInput.value.value = ''
 }
 
-// IME composition handlers to prevent altering prior letters
+// IME composition handlers to prevent retroactive edits to previous letters
 const onCompositionStart = () => {
   isComposing.value = true
+  compositionBuffer = ''
+}
+
+const onCompositionUpdate = (e: CompositionEvent) => {
+  // Keep a sanitized view of current composition text
+  const data = (e.data || '').toString()
+  compositionBuffer = stripDiacritics(data)
 }
 
 const onCompositionEnd = (e: CompositionEvent) => {
-  // When composition ends, process the resulting character once
-  const data = (e.data || hiddenInput.value?.value || '')
-  const sanitized = stripDiacritics(data)
-  if (/^[a-z]$/i.test(sanitized)) {
+  // Finalize composition and insert letters sequentially without changing previous ones
+  const dataRaw = (e.data || hiddenInput.value?.value || '').toString()
+  const finalized = stripDiacritics(dataRaw).toUpperCase()
+  for (const ch of finalized) {
+    if (!/^[A-Z]$/.test(ch)) continue
     const idx = nextEditableIndex()
-    if (idx !== -1) {
-      slots.value[idx].char = sanitized.toUpperCase()
-      pushAnswer()
-    }
+    if (idx === -1) break
+    slots.value[idx].char = ch
   }
-  // Clear and reset state
+  pushAnswer()
   if (hiddenInput.value) hiddenInput.value.value = ''
+  compositionBuffer = ''
   isComposing.value = false
 }
 
@@ -453,6 +475,7 @@ const allEditableFilled = () => {
 // In drag mode, auto-check when all letters are filled
 const maybeAutoCheck = () => {
   if (dragMode.value && !props.pictionaryAnswered && allEditableFilled()) {
+    emitSnapshot()
     emit('check-answer')
   }
 }
@@ -493,6 +516,11 @@ watch(() => props.pictionaryAnswered, (newVal) => {
       triggerFirework.value = true
       triggerSound.value = true
     }, 50)
+  }
+  // When answered correctly, pronounce the word using project voice settings
+  if (newVal && props.pictionaryCorrect && props.card?.word) {
+    // Fire and forget; ignore errors if TTS unsupported
+    Promise.resolve(playAudio(props.card.word)).catch(() => {})
   }
   if (newVal) {
     // Hide caret when answered

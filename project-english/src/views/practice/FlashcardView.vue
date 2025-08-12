@@ -114,6 +114,7 @@
                     :pictionary-correct="pictionaryCorrect"
                     :get-topic-name="getTopicName"
                     @update:pictionary-answer="pictionaryAnswer = $event"
+                    @pictionary-snapshot="onPictionarySnapshot($event)"
                     @check-answer="handlePictionaryAnswer"
                   />
                 </template>
@@ -266,6 +267,14 @@
       :format-date="formatDate"
       :format-duration="formatDuration"
       @close="showHistory = false"
+      @open-details="openHistoryDetails"
+    />
+
+    <!-- Session Detail Modal -->
+    <SessionDetailModal
+      :show="showSessionDetail"
+      :details="selectedSessionDetails"
+      @close="showSessionDetail = false"
     />
 
     <!-- Completion Modal -->
@@ -316,6 +325,7 @@ const VoiceSelector = defineAsyncComponent(() => import('../../components/VoiceS
 const ExitWarningModal = defineAsyncComponent(() => import('./components/ExitWarningModal.vue'))
 const CompletionModal = defineAsyncComponent(() => import('./components/CompletionModal.vue'))
 const HistoryModal = defineAsyncComponent(() => import('./components/HistoryModal.vue'))
+const SessionDetailModal = defineAsyncComponent(() => import('./components/SessionDetailModal.vue'))
 const SettingsModal = defineAsyncComponent(() => import('./components/SettingsModal.vue'))
 const PronunciationMode = defineAsyncComponent(() => import('./components/PronunciationMode.vue'))
 const ListeningMode = defineAsyncComponent(() => import('./components/ListeningMode.vue'))
@@ -332,12 +342,36 @@ import { useFlashcardHistory } from './composables/useFlashcardHistory'
 import { useFlashcardSettings } from './composables/useFlashcardSettings'
 import { useFlashcardStats } from './composables/useFlashcardStats'
 import { getTopicName } from '../../utils/topicUtils'
+import { usePracticeSessionDetails } from './composables/usePracticeSessionDetails'
 
 // Vocabulary store
 const { allVocabularies } = useVocabularyStore()
 
 // Modal store for controlling back to top and body scroll
 const modalStore = useModalStore()
+
+// Session details logging
+const {
+  startSessionDetails,
+  appendAnswer,
+  loadDetails,
+} = usePracticeSessionDetails()
+const activeSessionId = ref<string | null>(null)
+const showSessionDetail = ref(false)
+const selectedSessionDetails = ref<ReturnType<typeof loadDetails>>(null)
+
+// Capture pictionary slot snapshots emitted by PictionaryMode for detailed history
+const latestPictionarySnapshot = ref<{ slots: { char: string; fixed: boolean; separator?: boolean }[] } | null>(null)
+const onPictionarySnapshot = (payload: { slots: { char: string; fixed: boolean; separator?: boolean }[] }) => {
+  latestPictionarySnapshot.value = payload
+}
+
+// Open details modal from history list
+const openHistoryDetails = (sessionId: string) => {
+  const details = loadDetails(sessionId)
+  selectedSessionDetails.value = details
+  showSessionDetail.value = true
+}
 
 // Date filter state with localStorage persistence
 const STORAGE_KEY = 'flashcard-date-filter'
@@ -540,6 +574,9 @@ const allowExit = ref(false)
 const handlePracticeStart = () => {
   practiceStarted.value = true
   console.log('Practice started!')
+  // Start a new session details log
+  activeSessionId.value = `${Date.now()}`
+  startSessionDetails(activeSessionId.value, practiceMode.value)
 }
 
 const handleExitPractice = () => {
@@ -1028,22 +1065,66 @@ const restoreCardState = () => {
 const handleQuizAnswer = (answer: string) => {
   const isCorrect = selectQuizAnswer(answer)
   recordAnswer(!!isCorrect)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: answer,
+      correctAnswer: getShortMeaning(currentShuffledCard.value.meaning),
+      isCorrect: !!isCorrect,
+      mode: 'quiz',
+    })
+  }
 }
 
 const handleTypingAnswer = () => {
   checkTypingAnswer()
   recordAnswer(typingCorrect.value)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: typingAnswer.value,
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!typingCorrect.value,
+      mode: 'typing',
+    })
+  }
 }
 // Typing-quiz handlers
 
 const handleTypingQuizAnswer = (answer: string) => {
   const isCorrect = selectTypingQuizAnswer(answer)
   recordAnswer(!!isCorrect)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: answer,
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!isCorrect,
+      mode: 'typing-quiz',
+    })
+  }
 }
 
 const handleListeningAnswer = () => {
   checkListeningAnswer()
   recordAnswer(listeningCorrect.value)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: listeningAnswer.value,
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!listeningCorrect.value,
+      mode: 'listening',
+    })
+  }
 }
 // Listening-quiz handlers (within listening mode)
 const onToggleListeningQuiz = (enabled: boolean) => {
@@ -1057,6 +1138,17 @@ const onToggleListeningQuiz = (enabled: boolean) => {
 const handleListeningQuizAnswer = (answer: string) => {
   const isCorrect = selectListeningQuizAnswer(answer)
   recordAnswer(!!isCorrect)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: answer,
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!isCorrect,
+      mode: 'listening-quiz',
+    })
+  }
 }
 // Image-quiz handlers (image mode multiple-choice)
 const onToggleImageQuiz = (enabled: boolean) => {
@@ -1072,17 +1164,58 @@ const onToggleImageQuiz = (enabled: boolean) => {
 const handleImageQuizAnswer = (answer: string) => {
   const isCorrect = selectImageQuizAnswer(answer)
   recordAnswer(!!isCorrect)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: answer,
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!isCorrect,
+      mode: 'image-quiz',
+    })
+  }
 }
 
 const handlePictionaryAnswer = () => {
   checkPictionaryAnswer()
   recordAnswer(pictionaryCorrect.value)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: pictionaryAnswer.value || '',
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!pictionaryCorrect.value,
+      mode: 'pictionary',
+      extra: {
+        pictionary: {
+          image: currentShuffledCard.value.image,
+          slots: latestPictionarySnapshot.value?.slots || [],
+        }
+      }
+    })
+    // Clear snapshot after recording
+    latestPictionarySnapshot.value = null
+  }
 }
 
 // Bubble Shooter mode handler
 const handleBubbleShooterComplete = () => {
   // Record completion as successful
   recordAnswer(true)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: 'completed',
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: true,
+      mode: 'bubble-shooter',
+    })
+  }
   // Complete the session since Bubble Shooter is a complete game mode
   handleSessionComplete()
 }
@@ -1148,6 +1281,17 @@ const enhancedNextCard = () => {
   // For pronunciation mode, record the answer just before proceeding.
   if (practiceMode.value === 'pronunciation' && pronunciationAnswered.value) {
     recordAnswer(pronunciationCorrect.value)
+    if (currentShuffledCard.value && activeSessionId.value) {
+      appendAnswer({
+        cardId: currentShuffledCard.value.id,
+        word: currentShuffledCard.value.word,
+        meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+        userAnswer: pronunciationResult.value,
+        correctAnswer: currentShuffledCard.value.word,
+        isCorrect: !!pronunciationCorrect.value,
+        mode: 'pronunciation',
+      })
+    }
   }
 
   if (currentIndex.value < currentFlashcards.value.length - 1) {
@@ -1190,7 +1334,10 @@ const enhancedMarkDifficult = () => {
 const handleSessionComplete = () => {
   completeSession()
   const totalCards = currentFlashcards.value.length
-  saveSessionToHistory(stats.value, totalCards)
+  const id = saveSessionToHistory(stats.value, totalCards, activeSessionId.value || undefined)
+  if (!activeSessionId.value) {
+    activeSessionId.value = id
+  }
 }
 
 const handleRestartSession = () => {
@@ -1283,14 +1430,13 @@ watch(showCompletionModal, (newValue) => {
     }
     // Update modal store to hide back to top and control body scroll
     modalStore.setCompletionModal(true)
-    saveSessionToHistory(stats.value, currentFlashcards.value.length)
   } else {
     // Reset modal store when completion modal is closed
     modalStore.setCompletionModal(false)
   }
 })
 
-// Prevent body scroll when modal is open
+// Prevent body scroll when history modal is open
 watch(showHistory, (newValue) => {
   if (newValue) {
     document.body.classList.add('modal-open')
@@ -1299,8 +1445,8 @@ watch(showHistory, (newValue) => {
   }
 })
 
-// Prevent body scroll when history modal is open
-watch(showHistory, (newValue) => {
+// Prevent body scroll when session detail modal is open
+watch(showSessionDetail, (newValue) => {
   if (newValue) {
     document.body.classList.add('modal-open')
   } else {
