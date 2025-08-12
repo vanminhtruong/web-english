@@ -2,6 +2,8 @@ import { createI18n } from 'vue-i18n'
 
 // Note: We load locale messages asynchronously from public/locales at runtime
 // to ensure correct behavior on GitHub Pages (subpath deployments).
+import enSrc from './locales/en.json'
+import viSrc from './locales/vi.json'
 
 // Safe locale getter with fallback
 function getInitialLocale(): 'en' | 'vi' {
@@ -34,12 +36,15 @@ const loadedLocales = new Set<string>()
 async function loadMessages(locale: 'en' | 'vi') {
   if (loadedLocales.has(locale)) return
   try {
-    const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
-    const url = `${base}/locales/${locale}.json`
+    const publicBase = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+    const url = `${publicBase}/locales/${locale}.json`
     const res = await fetch(url, { cache: 'no-cache' })
     if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`)
     const messages = await res.json()
-    i18n.global.setLocaleMessage(locale, messages)
+    // Merge with src fallbacks to ensure no missing keys render '.'
+    const fallbackMsgs = (locale === 'en' ? enSrc : viSrc) as Record<string, any>
+    const merged = { ...(fallbackMsgs as Record<string, any>), ...(messages as Record<string, any>) }
+    i18n.global.setLocaleMessage(locale, merged)
     loadedLocales.add(locale)
     // Force re-render if this is the active locale
     if (i18n.global.locale.value === locale) {
