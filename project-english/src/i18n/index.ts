@@ -41,6 +41,12 @@ async function loadMessages(locale: 'en' | 'vi') {
     const messages = await res.json()
     i18n.global.setLocaleMessage(locale, messages)
     loadedLocales.add(locale)
+    // Force re-render if this is the active locale
+    if (i18n.global.locale.value === locale) {
+      // Re-assign the same value to trigger watchers
+      i18n.global.locale.value = locale
+    }
+    console.info(`[i18n] Loaded messages for ${locale} from`, url)
   } catch (err) {
     console.error('Error loading locale messages:', err)
   }
@@ -67,6 +73,15 @@ export function setLocale(locale: 'en' | 'vi') {
     console.warn('Could not save locale to localStorage:', error)
   }
   document.querySelector('html')?.setAttribute('lang', locale)
+}
+
+// Ensure i18n resources are ready before app mount
+export async function ensureI18nReady(): Promise<void> {
+  const current = i18n.global.locale.value as 'en' | 'vi'
+  await loadMessages(current)
+  if (current !== 'en') {
+    await loadMessages('en')
+  }
 }
 
 // Utility function to get current locale
