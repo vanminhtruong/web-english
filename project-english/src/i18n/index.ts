@@ -33,7 +33,7 @@ export default i18n
 
 // Utility function to change locale
 export function setLocale(locale: 'en' | 'vi') {
-  i18n.global.locale.value = locale
+  i18n.global.locale = locale
   try {
     localStorage.setItem('locale', locale)
   } catch (error) {
@@ -44,17 +44,17 @@ export function setLocale(locale: 'en' | 'vi') {
 
 // Utility function to get current locale
 export function getLocale(): 'en' | 'vi' {
-  return i18n.global.locale.value as 'en' | 'vi'
+  return i18n.global.locale as 'en' | 'vi'
 }
 
 // Utility function to check if current locale is English
 export function isEnglish(): boolean {
-  return i18n.global.locale.value === 'en'
+  return i18n.global.locale === 'en'
 }
 
 // Utility function to toggle locale
 export function toggleLocale(): 'en' | 'vi' {
-  const newLocale = i18n.global.locale.value === 'en' ? 'vi' : 'en'
+  const newLocale = i18n.global.locale === 'en' ? 'vi' : 'en'
   setLocale(newLocale)
   return newLocale
 }
