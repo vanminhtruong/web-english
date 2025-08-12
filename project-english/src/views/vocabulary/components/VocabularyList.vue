@@ -10,7 +10,7 @@
           {{ t('vocabulary.vocabularyList', 'Vocabulary List') }} ({{ totalCount }})
         </h3>
         <!-- Info tooltip for missing images by date/category -->
-        <div class="relative group ml-2 select-none" aria-hidden="false">
+        <div class="relative group/mi-tooltip ml-2 select-none" aria-hidden="false">
           <button
             type="button"
             class="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-blue-200 text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-300 dark:bg-dark-bg-soft dark:border-dark-bg-mute dark:hover:bg-dark-bg-mute transition"
@@ -22,7 +22,7 @@
           </button>
           <!-- Tooltip Panel -->
           <div
-            class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-150 absolute right-0 mt-2 w-72 sm:w-80 max-h-64 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-dark-bg-mute"
+            class="invisible opacity-0 group-hover/mi-tooltip:visible group-hover/mi-tooltip:opacity-100 transition-opacity duration-150 absolute right-0 mt-2 w-72 sm:w-80 max-h-64 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-dark-bg-mute"
           >
             <div class="text-sm font-semibold mb-2">
               {{ t('vocabulary.imageInfo.title', 'Missing images by date') }}
