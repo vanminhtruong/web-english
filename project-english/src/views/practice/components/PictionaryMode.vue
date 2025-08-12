@@ -139,7 +139,7 @@
           @input.stop.prevent="handleInput"
           @keydown.stop.prevent="handleKeydown"
           @focus="isFocused = true"
-          @blur="isFocused = false"
+          @blur="onHiddenBlur"
         />
       </div>
 
@@ -198,7 +198,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick, defineAsyncComponent, computed } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 
@@ -311,6 +311,21 @@ const focusInput = async () => {
   isFocused.value = true
 }
 
+// Ensure focus stays on the hidden input when in typing mode and not answered
+const ensureFocusIfNeeded = () => {
+  if (!props.pictionaryAnswered && !dragMode.value) {
+    if (document.activeElement !== hiddenInput.value) {
+      focusInput()
+    }
+  }
+}
+
+const onHiddenBlur = () => {
+  isFocused.value = false
+  // Immediately refocus if still eligible to type
+  ensureFocusIfNeeded()
+}
+
 const nextEditableIndex = () => slots.value.findIndex(s => !s.fixed && !s.char)
 const lastFilledEditableIndex = () => {
   for (let i = slots.value.length - 1; i >= 0; i--) {
@@ -320,6 +335,16 @@ const lastFilledEditableIndex = () => {
   return -1
 }
 
+// Remove Vietnamese diacritics so input is handled without accents
+// Special-case: map all forms of 'ư' to 'w' so Unikey 'w' is preserved
+const stripDiacritics = (s: string) => s
+  .replace(/[ưừứửữự]/g, 'w')
+  .replace(/[ƯỪỨỬỮỰ]/g, 'W')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd')
+  .replace(/Đ/g, 'D')
+
 const handleKeydown = (e: KeyboardEvent) => {
   if (props.pictionaryAnswered) return
   const key = e.key
@@ -328,11 +353,12 @@ const handleKeydown = (e: KeyboardEvent) => {
     if (key === 'Enter') emit('check-answer')
     return
   }
-  // Support desktop physical keyboards
-  if (/^[a-z]$/i.test(key)) {
+  // Support desktop physical keyboards (sanitize Vietnamese diacritics)
+  const alpha = stripDiacritics(key)
+  if (/^[a-z]$/i.test(alpha)) {
     const idx = nextEditableIndex()
     if (idx !== -1) {
-      slots.value[idx].char = key.toUpperCase()
+      slots.value[idx].char = alpha.toUpperCase()
       pushAnswer()
     }
     return
@@ -359,7 +385,7 @@ const handleBeforeInput = (e: Event) => {
   const type = ie.inputType as string | undefined
   // Handle character insertion from soft keyboards (Android/iOS)
   if (type === 'insertText') {
-    const data = (ie as any).data || ''
+    const data = stripDiacritics(((ie as any).data || ''))
     if (/^[a-z]$/i.test(data)) {
       const idx = nextEditableIndex()
       if (idx !== -1) {
@@ -400,11 +426,19 @@ const maybeAutoCheck = () => {
 watch(() => props.card, (c) => {
   imageError.value = false
   if (c?.word) buildSlots(c.word)
+  // Focus on new card in typing mode
+  ensureFocusIfNeeded()
 })
 
 onMounted(() => {
   if (props.card?.word) buildSlots(props.card.word)
   focusInput()
+  // As a safeguard, re-focus on visibility regain (e.g., after dialogs)
+  document.addEventListener('visibilitychange', ensureFocusIfNeeded)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('visibilitychange', ensureFocusIfNeeded)
 })
 
 const handleImageError = () => {
@@ -429,6 +463,10 @@ watch(() => props.pictionaryAnswered, (newVal) => {
   if (newVal) {
     // Hide caret when answered
     isFocused.value = false
+  }
+  // When the answer state resets (moving to next card), restore focus
+  if (!newVal) {
+    ensureFocusIfNeeded()
   }
 })
 
@@ -462,6 +500,8 @@ const onSlotDrop = (idx: number, ev: DragEvent) => {
   if (/^[A-Z]$/.test(ch)) {
     s.char = ch
     pushAnswer()
+    // Clear search query after successfully placing a letter
+    clearLetterQuery()
     // After filling a letter via drag, auto-check if all slots are filled in drag mode
     maybeAutoCheck()
   }

@@ -26,6 +26,7 @@
 
       <div v-if="!listeningQuizEnabled" class="max-w-md mx-auto">
         <input
+          ref="listeningInput"
           :value="listeningAnswer"
           @input="onInput"
           @keyup.enter="handleCheckAnswer"
@@ -33,6 +34,11 @@
           :disabled="listeningAnswered"
           class="w-full p-4 text-center text-lg sm:text-xl md:text-2xl border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 select-text"
           :placeholder="t('flashcard.listening.placeholder', 'Type the word you hear...')"
+          inputmode="text"
+          autocapitalize="none"
+          autocomplete="off"
+          spellcheck="false"
+          @blur="onListeningBlur"
         />
         <div v-if="listeningAnswered" class="mt-4">
           <p v-if="listeningCorrect" class="text-green-600 dark:text-green-400 font-medium">{{ t('flashcard.listening.correct', '✓ Correct!') }}</p>
@@ -85,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineAsyncComponent } from 'vue'
+import { ref, watch, defineAsyncComponent, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n';
 import type { Vocabulary } from '../../../composables/useVocabularyStore';
 
@@ -112,9 +118,52 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:listeningAnswer', 'check-answer', 'play-audio', 'select-listening-quiz-answer']);
 
-const onInput = (event: Event) => {
-  emit('update:listeningAnswer', (event.target as HTMLInputElement).value)
+// Remove Vietnamese diacritics so input is saved without accents
+// Special-case: map all forms of 'ư' to 'w' so Unikey 'w' is preserved
+const stripDiacritics = (s: string) => s
+  .replace(/[ưừứửữự]/g, 'w')
+  .replace(/[ƯỪỨỬỮỰ]/g, 'W')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd')
+  .replace(/Đ/g, 'D')
+
+// ---------------- Auto-focus listening input (variant OFF) ----------------
+const listeningInput = ref<HTMLInputElement | null>(null)
+
+const focusListeningInput = async () => {
+  await nextTick()
+  try {
+    listeningInput.value?.focus({ preventScroll: true })
+  } catch {
+    listeningInput.value?.focus()
+  }
 }
+
+const ensureListeningFocus = () => {
+  if (!props.listeningQuizEnabled && !props.listeningAnswered) {
+    if (document.activeElement !== listeningInput.value) {
+      focusListeningInput()
+    }
+  }
+}
+
+const onListeningBlur = () => {
+  ensureListeningFocus()
+}
+
+const onInput = (event: Event) => {
+  const el = event.target as HTMLInputElement
+  const sanitized = stripDiacritics(el.value)
+  if (sanitized !== el.value) {
+    el.value = sanitized
+  }
+  emit('update:listeningAnswer', sanitized)
+}
+
+onMounted(() => {
+  ensureListeningFocus()
+})
 
 // Handle check answer with effects
 const handleCheckAnswer = () => {
@@ -151,6 +200,17 @@ watch(() => props.listeningAnswered, (newValue) => {
       triggerSound.value = true
     }, 50)
   }
+})
+
+// Refocus when answer resets, card changes, or toggling back to typing
+watch(() => props.listeningAnswered, (answered) => {
+  if (!answered) ensureListeningFocus()
+})
+watch(() => props.card, () => {
+  ensureListeningFocus()
+})
+watch(() => props.listeningQuizEnabled, (val) => {
+  if (!val) ensureListeningFocus()
 })
 
 const { t } = useI18n();

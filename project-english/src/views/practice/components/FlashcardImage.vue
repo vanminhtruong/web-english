@@ -48,12 +48,18 @@
         <!-- Typing input when toggle is OFF -->
         <div v-if="!imageQuizEnabled">
           <input
+            ref="imageTypingInput"
             v-model="userAnswer"
             @keyup.enter="checkAnswer"
             type="text"
             :disabled="imageAnswered"
             :placeholder="t('flashcard.image.placeholder', 'Enter your answer...')"
             class="w-full px-4 py-3 text-center text-lg border border-gray-300 dark:border-dark-bg-mute rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-dark-bg-soft text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-white/50 disabled:opacity-50 disabled:cursor-not-allowed select-text"
+            inputmode="text"
+            autocapitalize="none"
+            autocomplete="off"
+            spellcheck="false"
+            @blur="onImageTypingBlur"
           />
         </div>
 
@@ -147,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineAsyncComponent, onMounted } from 'vue'
+import { ref, watch, defineAsyncComponent, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore'
 import { getTopicName } from '../../../utils/topicUtils'
@@ -187,15 +193,30 @@ const { t } = useI18n()
 // Local reactive data
 const userAnswer = ref('')
 const imageError = ref(false)
+const imageTypingInput = ref<HTMLInputElement | null>(null)
 
 // Watch for changes in imageAnswer prop to sync with local state
 watch(() => props.imageAnswer, (newValue) => {
   userAnswer.value = newValue
 })
 
-// Watch for changes in local userAnswer to emit updates
+// Remove Vietnamese diacritics so input is saved without accents
+// Special-case: map all forms of 'ư' to 'w' so Unikey 'w' is preserved
+const stripDiacritics = (s: string) => s
+  .replace(/[ưừứửữự]/g, 'w')
+  .replace(/[ƯỪỨỬỮỰ]/g, 'W')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd')
+  .replace(/Đ/g, 'D')
+
+// Watch for changes in local userAnswer to sanitize and emit updates
 watch(userAnswer, (newValue) => {
-  emit('update:imageAnswer', newValue)
+  const sanitized = stripDiacritics(newValue)
+  if (sanitized !== newValue) {
+    userAnswer.value = sanitized
+  }
+  emit('update:imageAnswer', sanitized)
 })
 
 // Watch for card changes to reset error state
@@ -259,6 +280,7 @@ onMounted(() => {
   } catch (e) {
     // ignore storage errors
   }
+  ensureImageTypingFocus()
 })
 
 watch(() => props.imageQuizEnabled, (newVal) => {
@@ -267,6 +289,7 @@ watch(() => props.imageQuizEnabled, (newVal) => {
   } catch (e) {
     // ignore storage errors
   }
+  if (!newVal) ensureImageTypingFocus()
 })
 
 // Toggle handled in FlashcardHeader dropdown; no local toggle UI here
@@ -279,4 +302,34 @@ const onSelectImageOption = (opt: string) => {
 }
 const isOptionSelected = (opt: string) => props.imageQuizSelected === opt
 const isOptionCorrect = (opt: string) => props.currentCard ? opt.trim().toLowerCase() === props.currentCard.word.trim().toLowerCase() : false
+
+// ---------------- Auto-focus typing input (variant OFF) ----------------
+const focusImageTypingInput = async () => {
+  await nextTick()
+  try {
+    imageTypingInput.value?.focus({ preventScroll: true })
+  } catch {
+    imageTypingInput.value?.focus()
+  }
+}
+
+const ensureImageTypingFocus = () => {
+  if (!props.imageQuizEnabled && !props.imageAnswered) {
+    if (document.activeElement !== imageTypingInput.value) {
+      focusImageTypingInput()
+    }
+  }
+}
+
+const onImageTypingBlur = () => {
+  ensureImageTypingFocus()
+}
+
+// Refocus on key prop changes
+watch(() => props.imageAnswered, (answered) => {
+  if (!answered) ensureImageTypingFocus()
+})
+watch(() => props.currentCard, () => {
+  ensureImageTypingFocus()
+})
 </script>

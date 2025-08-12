@@ -25,6 +25,7 @@
         <div v-if="!typingQuizEnabled" class="max-w-lg mx-auto w-full">
           <div class="relative">
             <input
+              ref="typingInput"
               :value="typingAnswer"
               @input="handleInput"
               @keyup.enter="handleCheckAnswer"
@@ -32,6 +33,11 @@
               :disabled="typingAnswered"
               class="w-full p-3 text-center text-xl sm:text-2xl md:text-3xl border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 disabled:bg-gray-100 dark:disabled:bg-gray-700 select-text"
               :placeholder="t('flashcard.typing.placeholder', 'Type the word...')"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              @blur="onTypingBlur"
             />
             
             <!-- Result indicator -->
@@ -112,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineAsyncComponent } from 'vue'
+import { ref, watch, defineAsyncComponent, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getTopicName } from '../../../utils/topicUtils'
 
@@ -155,9 +161,24 @@ const emit = defineEmits<{
   'select-typing-quiz-answer': [answer: string]
 }>()
 
+// Remove Vietnamese diacritics so input is saved without accents
+// Special-case: map all forms of 'ư' to 'w' so Unikey 'w' is preserved
+const stripDiacritics = (s: string) => s
+  // map ư-variants to w, before normalization removes marks
+  .replace(/[ưừứửữự]/g, 'w')
+  .replace(/[ƯỪỨỬỮỰ]/g, 'W')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd')
+  .replace(/Đ/g, 'D')
+
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
-  emit('update:typingAnswer', target.value)
+  const sanitized = stripDiacritics(target.value)
+  if (sanitized !== target.value) {
+    target.value = sanitized
+  }
+  emit('update:typingAnswer', sanitized)
 }
 
 const getShortMeaning = (meaning: string) => {
@@ -212,4 +233,48 @@ const onSelectTypingOption = (opt: string) => {
 }
 const isOptionSelected = (opt: string) => props.typingQuizSelected === opt
 const isOptionCorrect = (opt: string) => opt.trim().toLowerCase() === props.currentCard.word.trim().toLowerCase()
+
+// ---------------- Auto-focus typing input (variant OFF) ----------------
+const typingInput = ref<HTMLInputElement | null>(null)
+
+const focusTypingInput = async () => {
+  await nextTick()
+  try {
+    typingInput.value?.focus({ preventScroll: true })
+  } catch {
+    typingInput.value?.focus()
+  }
+}
+
+const ensureTypingFocus = () => {
+  if (!props.typingQuizEnabled && !props.typingAnswered) {
+    if (document.activeElement !== typingInput.value) {
+      focusTypingInput()
+    }
+  }
+}
+
+const onTypingBlur = () => {
+  // Refocus if still eligible
+  ensureTypingFocus()
+}
+
+onMounted(() => {
+  ensureTypingFocus()
+})
+
+// Focus when toggling back to typing mode
+watch(() => props.typingQuizEnabled, (val) => {
+  if (!val) ensureTypingFocus()
+})
+
+// Focus when answer resets (e.g., next card)
+watch(() => props.typingAnswered, (answered) => {
+  if (!answered) ensureTypingFocus()
+})
+
+// Focus on card change
+watch(() => props.currentCard, () => {
+  ensureTypingFocus()
+})
 </script>
