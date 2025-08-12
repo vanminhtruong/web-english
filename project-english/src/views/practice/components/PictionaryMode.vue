@@ -135,9 +135,13 @@
           autocomplete="off"
           spellcheck="false"
           inputmode="text"
+          autocapitalize="off"
+          @paste.prevent
           @beforeinput.stop.prevent="handleBeforeInput"
           @input.stop.prevent="handleInput"
           @keydown.stop.prevent="handleKeydown"
+          @compositionstart="onCompositionStart"
+          @compositionend="onCompositionEnd"
           @focus="isFocused = true"
           @blur="onHiddenBlur"
         />
@@ -222,6 +226,8 @@ const { t } = useI18n()
 const imageError = ref(false)
 const hiddenInput = ref<HTMLInputElement | null>(null)
 const isFocused = ref(false)
+// Track IME composition to avoid retroactively altering previous letters
+const isComposing = ref(false)
 // Drag & drop mode state
 const dragMode = ref(false)
 const letterBank = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
@@ -347,6 +353,8 @@ const stripDiacritics = (s: string) => s
 
 const handleKeydown = (e: KeyboardEvent) => {
   if (props.pictionaryAnswered) return
+  // While composing with an IME, ignore keydown so we don't affect previous slots
+  if (isComposing.value) return
   const key = e.key
   // In drag mode, ignore typing except Enter
   if (dragMode.value) {
@@ -383,6 +391,11 @@ const handleBeforeInput = (e: Event) => {
   }
   const ie = e as InputEvent
   const type = ie.inputType as string | undefined
+  // If composing (IME), defer handling until compositionend
+  if (isComposing.value || type === 'insertCompositionText' || type === 'deleteCompositionText') {
+    // do not modify slots during composition
+    return
+  }
   // Handle character insertion from soft keyboards (Android/iOS)
   if (type === 'insertText') {
     const data = stripDiacritics(((ie as any).data || ''))
@@ -409,6 +422,27 @@ const handleBeforeInput = (e: Event) => {
 const handleInput = (e: Event) => {
   // Clear any stray value in the hidden input
   if (hiddenInput.value) hiddenInput.value.value = ''
+}
+
+// IME composition handlers to prevent altering prior letters
+const onCompositionStart = () => {
+  isComposing.value = true
+}
+
+const onCompositionEnd = (e: CompositionEvent) => {
+  // When composition ends, process the resulting character once
+  const data = (e.data || hiddenInput.value?.value || '')
+  const sanitized = stripDiacritics(data)
+  if (/^[a-z]$/i.test(sanitized)) {
+    const idx = nextEditableIndex()
+    if (idx !== -1) {
+      slots.value[idx].char = sanitized.toUpperCase()
+      pushAnswer()
+    }
+  }
+  // Clear and reset state
+  if (hiddenInput.value) hiddenInput.value.value = ''
+  isComposing.value = false
 }
 
 // Determines if all editable, non-separator slots are filled
