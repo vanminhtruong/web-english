@@ -9,7 +9,7 @@ import 'vue-toastification/dist/index.css'
 import App from './App.vue'
 import router from './router'
 import { useThemeStore } from './stores/theme'
-import i18n, { ensureI18nReady } from './i18n'
+import i18n from './i18n'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -39,8 +39,4 @@ app.use(Toast, options)
 const themeStore = useThemeStore()
 themeStore.initTheme()
 
-// Ensure i18n messages are loaded before mount to avoid flashing keys
-;(async () => {
-  await ensureI18nReady()
-  app.mount('#app')
-})()
+app.mount('#app')
