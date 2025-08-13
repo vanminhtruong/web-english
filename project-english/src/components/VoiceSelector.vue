@@ -220,7 +220,15 @@ const testVoice = async () => {
   
   isTesting.value = true
   try {
-    const testText = t('voice.testText', 'Hello, this is a test of the selected voice.')
+    // Use appropriate test text based on voice type
+    let testText = t('voice.testText', 'Hello, this is a test of the selected voice.')
+    
+    // For Korean voices, use Korean test text
+    if (currentVoiceType.value === 'korean-female' || currentVoiceType.value === 'korean-male') {
+      testText = t('voice.testTextKorean', '안녕하세요! 이것은 음성 테스트입니다.')
+    }
+    
+    console.log('Testing voice:', currentVoiceType.value, 'with text:', testText)
     await playAudio(testText)
   } catch (error) {
     console.error('Error testing voice:', error)

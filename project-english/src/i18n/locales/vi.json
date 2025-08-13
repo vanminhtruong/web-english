@@ -940,7 +940,9 @@
       "female_professional": "Giọng nữ Chuyên nghiệp",
       "male_strong": "Giọng nam Mạnh mẽ",
       "male_gentle": "Giọng nam Dịu dàng",
-      "male_deep": "Giọng nam Trầm ấm"
+      "male_deep": "Giọng nam Trầm ấm",
+      "korean_female": "Giọng nữ Hàn Quốc",
+      "korean_male": "Giọng nam Hàn Quốc"
     },
     "info": {
       "name": "Tên",
@@ -948,8 +950,9 @@
       "gender": "Giới tính"
     },
     "test": "Thử nghiệm giọng",
-    "testing": "Đang thử...",
-    "testText": "Xin chào! Đây là một bài kiểm tra giọng nói.",
+    "testing": "Đang thử nghiệm...",
+    "testText": "Xin chào! Đây là bài kiểm tra giọng nói.",
+    "testTextKorean": "안녕하세요! 이것은 음성 테스트입니다.",
     "settings": {
       "title": "Cài đặt giọng nói",
       "rate": "Tốc độ",

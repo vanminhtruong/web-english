@@ -884,7 +884,9 @@
       "female_professional": "Professional Female",
       "male_strong": "Strong Male",
       "male_gentle": "Gentle Male",
-      "male_deep": "Deep Male"
+      "male_deep": "Deep Male",
+      "korean_female": "Korean Female",
+      "korean_male": "Korean Male"
     },
     "info": {
       "name": "Voice Name",
@@ -894,6 +896,7 @@
     "test": "Test Voice",
     "testing": "Testing...",
     "testText": "Hello! This is a voice test.",
+    "testTextKorean": "안녕하세요! 이것은 음성 테스트입니다.",
     "settings": {
       "title": "Voice Settings",
       "rate": "Rate",
