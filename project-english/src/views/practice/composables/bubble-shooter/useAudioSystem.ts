@@ -97,7 +97,7 @@ export class AudioSystem implements IAudioSystem {
     }
   }
 
-  public playVocabularySound(text: string, language: 'en' | 'vi' = 'en'): void {
+  public playVocabularySound(text: string, language: 'en' | 'vi' | 'ko' = 'en'): void {
     try {
       // Kiểm tra xem browser có hỗ trợ Speech Synthesis API không
       if (!('speechSynthesis' in window)) {
@@ -111,7 +111,7 @@ export class AudioSystem implements IAudioSystem {
       // Use voice store to create utterance with user's selected voice settings
       const utterance = this.voiceStore.createUtterance(text)
       
-      // Override language if Vietnamese is requested
+      // Override language if specific locale is requested
       if (language === 'vi') {
         utterance.lang = 'vi-VN'
         // For Vietnamese, find a Vietnamese voice if available
@@ -120,6 +120,15 @@ export class AudioSystem implements IAudioSystem {
         )
         if (vietnameseVoices.length > 0) {
           utterance.voice = vietnameseVoices[0]
+        }
+      } else if (language === 'ko') {
+        utterance.lang = 'ko-KR'
+        // For Korean, find a Korean voice if available
+        const koreanVoices = window.speechSynthesis.getVoices().filter(voice => 
+          voice.lang.startsWith('ko')
+        )
+        if (koreanVoices.length > 0) {
+          utterance.voice = koreanVoices[0]
         }
       }
 

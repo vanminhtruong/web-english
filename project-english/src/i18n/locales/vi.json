@@ -112,7 +112,9 @@
       "saveSuccess": "Đã lưu ghi chú thành công!",
       "autoSaveNotice": "Đã bật lưu tự động. Ghi chú của bạn sẽ được đưa vào bản sao lưu tiếp theo.",
       "today": "Hôm nay",
-      "yesterday": "Hôm qua",
+      "yesterday": "Hôm qua"
+    },
+    "notes": {
       "grammarCheck": "Bật kiểm tra ngữ pháp (tiếng Anh)",
       "preview": "Xem trước với gợi ý ngữ pháp",
       "grammarDisclaimer": "Kiểm tra ngữ pháp sử dụng LanguageTool (public API) và có thể bị giới hạn tần suất.",
@@ -212,7 +214,11 @@
       "missingCount": "{count} không có ảnh",
       "aria": "Hiển thị thông tin về các từ thiếu hình ảnh"
     },
+    "filters": {
+      "title": "Bộ lọc"
+    },
     "save": {
+      "title": "Lưu & Đồng bộ",
       "mode": "Chế độ lưu:",
       "auto": "Tự động",
       "manual": "Thủ công",
@@ -296,6 +302,28 @@
       "batchMoveError": "Lỗi khi di chuyển chủ đề",
       "filterBySameTopic": "Lọc theo cùng chủ đề",
       "noMatchingDates": "Không có ngày nào chứa từ vựng cùng chủ đề"
+    },
+    "topicManager": {
+      "title": "Quản lý chủ đề",
+      "editTopic": "Sửa chủ đề",
+      "addNewTopic": "Thêm chủ đề mới",
+      "topicKey": "Mã chủ đề",
+      "topicKeyPlaceholder": "Ví dụ: cooking, programming...",
+      "keyDescription": "Mã này sẽ được sử dụng trong hệ thống. Chỉ dùng chữ thường, số và dấu gạch dưới.",
+      "vietnameseName": "Tên tiếng Việt",
+      "vietnameseNamePlaceholder": "Ví dụ: Nấu ăn, Lập trình...",
+      "englishName": "Tên tiếng Anh",
+      "englishNamePlaceholder": "Ví dụ: Cooking, Programming...",
+      "existingTopics": "Chủ đề hiện có",
+      "noCustomTopics": "Chưa có chủ đề tùy chỉnh nào.",
+      "cannotDeleteInUse": "Không thể xóa chủ đề đang được sử dụng",
+      "confirmDeleteTitle": "Xác nhận xóa chủ đề",
+      "confirmDeleteMessage": "Bạn có chắc chắn muốn xóa chủ đề \"{topic}\"?",
+      "duplicateKey": "Mã chủ đề đã tồn tại!",
+      "builtInTopics": "Chủ đề có sẵn",
+      "builtInTopicsDescription": "Hệ thống có 16 chủ đề có sẵn như Công nghệ, Kinh doanh, Du lịch... Bạn có thể thêm chủ đề tùy chỉnh tại đây.",
+      "builtIn": "Có sẵn",
+      "manageTopics": "Quản lý chủ đề"
     },
     "flashcard": {
       "header": {
@@ -821,6 +849,15 @@
       "justNow": "Vừa xong",
       "noActivity": "Chưa có hoạt động từ vựng nào",
       "addFirstVocab": "Hãy thêm từ vựng đầu tiên!"
+    }
+  },
+  "time": {
+    "ago": {
+      "justNow": "Vừa xong",
+      "minutesAgo": "{minutes} phút trước",
+      "hoursAgo": "{hours} giờ trước",
+      "daysAgo": "{days} ngày trước",
+      "yesterday": "Hôm qua"
     }
   },
   "practice": {

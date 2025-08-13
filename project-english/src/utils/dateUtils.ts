@@ -52,7 +52,7 @@ export const formatDateTime = (dateString: string | undefined, locale: string = 
 /**
  * Get relative time from now (e.g., "2 hours ago", "yesterday", "3 days ago")
  */
-export const getRelativeTime = (dateString: string | undefined, locale: string = 'vi-VN'): string => {
+export const getRelativeTime = (dateString: string | undefined, t?: (key: string, params?: any) => string): string => {
   if (!dateString) return ''
   
   try {
@@ -65,17 +65,17 @@ export const getRelativeTime = (dateString: string | undefined, locale: string =
     if (diffInHours < 1) {
       const diffInMinutes = Math.floor(diffInMs / (1000 * 60))
       if (diffInMinutes < 1) {
-        return locale === 'vi-VN' ? 'Vừa xong' : 'Just now'
+        return t ? t('time.ago.justNow') : 'Just now'
       }
-      return locale === 'vi-VN' ? `${diffInMinutes} phút trước` : `${diffInMinutes} minutes ago`
+      return t ? t('time.ago.minutesAgo', { minutes: diffInMinutes }) : `${diffInMinutes} minutes ago`
     } else if (diffInHours < 24) {
-      return locale === 'vi-VN' ? `${diffInHours} giờ trước` : `${diffInHours} hours ago`
+      return t ? t('time.ago.hoursAgo', { hours: diffInHours }) : `${diffInHours} hours ago`
     } else if (diffInDays === 1) {
-      return locale === 'vi-VN' ? 'Hôm qua' : 'Yesterday'
+      return t ? t('time.ago.yesterday') : 'Yesterday'
     } else if (diffInDays < 7) {
-      return locale === 'vi-VN' ? `${diffInDays} ngày trước` : `${diffInDays} days ago`
+      return t ? t('time.ago.daysAgo', { days: diffInDays }) : `${diffInDays} days ago`
     } else {
-      return formatDate(dateString, locale)
+      return formatDate(dateString)
     }
   } catch (error) {
     return ''

@@ -100,7 +100,7 @@ export interface IAudioSystem {
   playImpactSound(): void
   playExplosionSound(): void
   playBounceSound(): void
-  playVocabularySound(text: string, language?: 'en' | 'vi'): void
+  playVocabularySound(text: string, language?: 'en' | 'vi' | 'ko'): void
   createAudioContext(): AudioContext | null
 }
 

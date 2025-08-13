@@ -96,6 +96,12 @@
       "today": "Today",
       "yesterday": "Yesterday"
     },
+    "filters": {
+      "title": "Filters"
+    },
+    "save": {
+      "title": "Save & Sync"
+    },
     "lazyLoading": {
       "loading": "Loading...",
       "componentVisible": "Component is now visible",
@@ -787,6 +793,15 @@
       "justNow": "Just now",
       "noActivity": "No vocabulary activity yet",
       "addFirstVocab": "Add your first vocabulary!"
+    }
+  },
+  "time": {
+    "ago": {
+      "justNow": "Just now",
+      "minutesAgo": "{minutes} minutes ago",
+      "hoursAgo": "{hours} hours ago",
+      "daysAgo": "{days} days ago",
+      "yesterday": "Yesterday"
     }
   },
   "practice": {

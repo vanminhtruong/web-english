@@ -143,6 +143,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { loadComponentSafely } from '../../utils/import-helper'
 import { useVocabularyStore } from '../../composables/useVocabularyStore'
+import { getRelativeTime } from '../../utils/dateUtils'
 // Sử dụng defineAsyncComponent để import components an toàn
 const LazyLoadComponent = defineAsyncComponent(
   loadComponentSafely(() => import('../../components/LazyLoadComponent.vue'))
@@ -158,25 +159,7 @@ const router = useRouter()
 const { t } = useI18n()
 const vocabularyStore = useVocabularyStore()
 
-// Helper function to format relative time
-const formatRelativeTime = (dateString: string) => {
-  const now = new Date()
-  const date = new Date(dateString)
-  const diffInMs = now.getTime() - date.getTime()
-  const diffInMinutes = Math.floor(diffInMs / (1000 * 60))
-  const diffInHours = Math.floor(diffInMinutes / 60)
-  const diffInDays = Math.floor(diffInHours / 24)
 
-  if (diffInMinutes < 60) {
-    return `${diffInMinutes} phút trước`
-  } else if (diffInHours < 24) {
-    return `${diffInHours} giờ trước`
-  } else if (diffInDays === 1) {
-    return '1 ngày trước'
-  } else {
-    return `${diffInDays} ngày trước`
-  }
-}
 
 // Computed stats data based on real vocabulary data
 const stats = computed(() => {
@@ -229,7 +212,7 @@ const recentActivities = computed(() => {
       title: isUpdated 
         ? t('dashboard.activity.updated', { word: vocab.word, category: categoryTranslated }, `Updated '${vocab.word}' in ${categoryTranslated}`)
         : t('dashboard.activity.added', { word: vocab.word, category: categoryTranslated }, `Added '${vocab.word}' to ${categoryTranslated}`),
-      time: timeStr ? formatRelativeTime(timeStr) : t('dashboard.activity.justNow', 'Just now'),
+      time: timeStr ? getRelativeTime(timeStr, t) : t('dashboard.activity.justNow', 'Just now'),
       iconColor: isUpdated ? 'bg-blue-500' : 'bg-green-500'
     })
   })
