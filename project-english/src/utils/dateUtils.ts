@@ -1,4 +1,3 @@
-import { useI18n } from 'vue-i18n'
 import type { TopicGroup } from '../views/vocabulary/types'
 
 export interface GroupedVocabulary {
@@ -209,9 +208,19 @@ export const getGroupDisplayDate = (dateKey: string, locale: string = 'vi-VN', t
     const yesterdayKey = getDateKey(yesterday.toISOString())
     
     if (dateKey === todayKey) {
-      return locale === 'vi-VN' ? 'Hôm nay' : 'Today'
+      // Prefer i18n if provided
+      if (t) return t('time.today') || 'Today'
+      // Fallback by locale (support vi and ko)
+      const l = locale.toLowerCase()
+      if (l.startsWith('vi')) return 'Hôm nay'
+      if (l.startsWith('ko')) return '오늘'
+      return 'Today'
     } else if (dateKey === yesterdayKey) {
-      return locale === 'vi-VN' ? 'Hôm qua' : 'Yesterday'
+      if (t) return t('time.yesterday') || 'Yesterday'
+      const l = locale.toLowerCase()
+      if (l.startsWith('vi')) return 'Hôm qua'
+      if (l.startsWith('ko')) return '어제'
+      return 'Yesterday'
     } else {
       return formatDate(date.toISOString(), locale)
     }

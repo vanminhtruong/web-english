@@ -294,11 +294,9 @@ export class BubbleShooterGame implements IBubbleShooterGame {
     this.stateManager.selectNextShooterWord(words)
     this.startGameLoop()
 
-    // TEMPORARY FIX: Disable row insertion to test grid alignment issue
-    // Set up row insertion timer
-    // if (this.rowInsertTimer) window.clearInterval(this.rowInsertTimer)
-    // this.rowInsertTimer = window.setInterval(() => this.triggerRowInsertion(), this.ROW_INSERT_INTERVAL)
-    console.log('Row insertion DISABLED for testing grid alignment')
+    // Set up row insertion timer (every 20s add a new top row and shift others down)
+    if (this.rowInsertTimer) window.clearInterval(this.rowInsertTimer)
+    this.rowInsertTimer = window.setInterval(() => this.triggerRowInsertion(), this.ROW_INSERT_INTERVAL)
   }
 
   public startGameLoop(): void {
@@ -457,6 +455,10 @@ export class BubbleShooterGame implements IBubbleShooterGame {
     
     this.stateManager.selectNextShooterWord(words)
     this.startGameLoop()
+
+    // Re-arm row insertion timer after restart
+    if (this.rowInsertTimer) window.clearInterval(this.rowInsertTimer)
+    this.rowInsertTimer = window.setInterval(() => this.triggerRowInsertion(), this.ROW_INSERT_INTERVAL)
   }
 
   public updateVietnameseMode(enabled: boolean): void {

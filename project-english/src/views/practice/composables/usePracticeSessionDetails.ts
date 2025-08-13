@@ -39,6 +39,11 @@ export interface SessionDetailEntryExtra {
     wrongEatenCount: number
     snakeBody: { x: number; y: number }[]
     direction: { x: number; y: number }
+    // Optional timeline frames for accurate replay (when recording is enabled)
+    timelineFrames?: Array<{
+      body: { x: number; y: number }[]
+      direction: { x: number; y: number }
+    }>
   }
 }
 

@@ -164,6 +164,8 @@ interface Props {
   vietnameseMode?: boolean
   // Enable dual-food mode (correct + incorrect bait)
   doubleBaitMode?: boolean
+  // When enabled, record per-frame snake states for accurate replay timeline
+  recordTimeline?: boolean
 }
 
 const props = defineProps<Props>()
@@ -179,6 +181,9 @@ const emit = defineEmits<{
     gameScore: number
     wordsCompleted: number
     wrongEatenCount: number
+    snakeBody: { x: number; y: number }[]
+    direction: { x: number; y: number }
+    timelineFrames?: Array<{ body: { x: number; y: number }[]; direction: { x: number; y: number } }>
   }]
   'wrong-food-eaten': [details: {
     word: string
@@ -188,6 +193,9 @@ const emit = defineEmits<{
     gameScore: number
     wordsCompleted: number
     wrongEatenCount: number
+    snakeBody: { x: number; y: number }[]
+    direction: { x: number; y: number }
+    timelineFrames?: Array<{ body: { x: number; y: number }[]; direction: { x: number; y: number } }>
   }]
 }>()
 
@@ -205,6 +213,34 @@ const gameOver = computed(() => game.stateManager.gameOver.value)
 const gameRunning = computed(() => game.stateManager.gameRunning.value)
 const currentTargetWord = computed(() => game.stateManager.currentTargetWord.value)
 const snakeHead = computed(() => game.stateManager.snake.value.body[0])
+
+// Timeline recording for accurate replay
+const timelineFrames = ref<Array<{ body: { x: number; y: number }[]; direction: { x: number; y: number } }>>([])  
+
+// Timeline callback for recording actual move frames
+const handleTimelineFrame = (body: { x: number; y: number }[], direction: { x: number; y: number }) => {
+  if (!props.recordTimeline) return
+  timelineFrames.value.push({
+    body: [...body],
+    direction: { ...direction }
+  })
+}
+
+// Watch recordTimeline prop changes to update callback during runtime
+watch(
+  () => props.recordTimeline,
+  (enabled) => {
+    if (enabled) {
+      game.stateManager.setTimelineCallback(handleTimelineFrame)
+      timelineFrames.value = [] // Clear any existing frames
+    } else {
+      game.stateManager.setTimelineCallback(undefined)
+      timelineFrames.value = []
+    }
+  }
+)
+
+
 
 // Calculate snake head position for word display
 const snakeHeadDisplayStyle = computed(() => {
@@ -258,9 +294,15 @@ const stopWordsWatch = watch(
         snakeLength: game.stateManager.snake.value.body.length,
         gameScore: game.stateManager.score.value,
         wordsCompleted: game.stateManager.wordsCompleted.value,
-        wrongEatenCount: (game.stateManager as any).wrongEatenCount?.value || 0,
-        snakeBody: [...game.stateManager.snake.value.body], // Copy snake body positions
-        direction: { ...game.stateManager.snake.value.direction } // Copy snake direction
+        wrongEatenCount: (game.stateManager as any).wrongEatenCount?.value as number ?? 0,
+        snakeBody: [...game.stateManager.snake.value.body],
+        direction: { ...game.stateManager.snake.value.direction },
+        timelineFrames: props.recordTimeline && timelineFrames.value.length
+          ? [...timelineFrames.value.map(f => ({
+              body: f.body.map(seg => ({ x: seg.x, y: seg.y })),
+              direction: { x: f.direction.x, y: f.direction.y }
+            }))]
+          : undefined
       }
       
       console.log('[DEBUG] Snake correct food details:', details)
@@ -268,6 +310,7 @@ const stopWordsWatch = watch(
       console.log('[DEBUG] Snake direction:', details.direction)
       
       emit('correct-food-eaten', details)
+      if (props.recordTimeline) timelineFrames.value = []
       
       // Speak the eaten word using selected voice
       if (lastWord) {
@@ -283,7 +326,6 @@ const stopWordsWatch = watch(
 // Watch wrong eaten counter
 const prevWrongEaten = ref<number>(0)
 const stopWrongWatch = watch(
-  // wrongEatenCount was added to state manager for double bait mode
   () => (game.stateManager as any).wrongEatenCount?.value,
   (newVal, oldVal) => {
     if (typeof newVal === 'number' && typeof oldVal === 'number' && newVal > oldVal) {
@@ -300,11 +342,19 @@ const stopWrongWatch = watch(
         gameScore: game.stateManager.score.value,
         wordsCompleted: game.stateManager.wordsCompleted.value,
         wrongEatenCount: newVal,
-        snakeBody: [...game.stateManager.snake.value.body], // Copy snake body positions
-        direction: { ...game.stateManager.snake.value.direction } // Copy snake direction
+        snakeBody: [...game.stateManager.snake.value.body],
+        direction: { ...game.stateManager.snake.value.direction },
+        timelineFrames: props.recordTimeline && timelineFrames.value.length
+          ? [...timelineFrames.value.map(f => ({
+              body: f.body.map(seg => ({ x: seg.x, y: seg.y })),
+              direction: { x: f.direction.x, y: f.direction.y }
+            }))]
+          : undefined
       }
       
       emit('wrong-food-eaten', details)
+      // Reset timeline after emitting wrong food eaten to start fresh for next food
+      if (props.recordTimeline) timelineFrames.value = []
       
       // Speak the eaten word (wrong pick) too
       if (lastWord) {
@@ -363,6 +413,12 @@ const restartGame = () => {
     if ((game.stateManager as any).setDoubleBaitMode) {
       ;(game.stateManager as any).setDoubleBaitMode(!!props.doubleBaitMode, props.words, props.vietnameseMode ?? false)
     }
+    // Re-setup timeline callback if enabled
+    if (props.recordTimeline) {
+      game.stateManager.setTimelineCallback(handleTimelineFrame)
+    } else {
+      game.stateManager.setTimelineCallback(undefined)
+    }
   }
 }
 
@@ -389,6 +445,13 @@ onMounted(async () => {
   // Initialize double bait mode on mount
   if ((game.stateManager as any).setDoubleBaitMode) {
     ;(game.stateManager as any).setDoubleBaitMode(!!props.doubleBaitMode, props.words, props.vietnameseMode ?? false)
+  }
+  
+  // Set up timeline recording callback if enabled
+  if (props.recordTimeline) {
+    game.stateManager.setTimelineCallback(handleTimelineFrame)
+  } else {
+    game.stateManager.setTimelineCallback(undefined)
   }
   
   // Add global keyboard listener

@@ -37,6 +37,9 @@
     "vocabulary": {
       "title": "어휘",
       "description": "영어 어휘를 관리하고 학습하세요",
+      "header": {
+        "title": "어휘"
+      },
       "addNew": "새 단어 추가",
       "addWord": "단어 추가",
       "addVocabulary": "새 어휘 추가",
@@ -793,7 +796,13 @@
         "addFirstVocab": "첫 번째 어휘를 추가하세요!"
       }
     },
+    "app": {
+      "title": "영어 학습 앱",
+      "titleShort": "영어 앱"
+    },
     "time": {
+      "today": "오늘",
+      "yesterday": "어제",
       "ago": {
         "justNow": "방금 전",
         "minutesAgo": "{minutes}분 전",

@@ -37,6 +37,9 @@
   "vocabulary": {
     "title": "Vocabulary",
     "description": "Manage and learn English vocabulary",
+    "header": {
+      "title": "Vocabulary"
+    },
     "addNew": "Add New Word",
     "addWord": "Add Word",
     "addVocabulary": "Add New Vocabulary",
@@ -795,7 +798,13 @@
       "addFirstVocab": "Add your first vocabulary!"
     }
   },
+  "app": {
+    "title": "English Learning App",
+    "titleShort": "English App"
+  },
   "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
     "ago": {
       "justNow": "Just now",
       "minutesAgo": "{minutes} minutes ago",

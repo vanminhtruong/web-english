@@ -43,6 +43,9 @@
   "vocabulary": {
     "title": "Từ vựng",
     "description": "Quản lý và học từ vựng tiếng Anh",
+    "header": {
+      "title": "Từ vựng"
+    },
     "addNew": "Thêm từ mới",
     "addWord": "Thêm từ",
     "addVocabulary": "Thêm từ vựng mới",
@@ -851,7 +854,13 @@
       "addFirstVocab": "Hãy thêm từ vựng đầu tiên!"
     }
   },
+  "app": {
+    "title": "Ứng dụng Học Tiếng Anh",
+    "titleShort": "Ứng dụng Tiếng Anh"
+  },
   "time": {
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
     "ago": {
       "justNow": "Vừa xong",
       "minutesAgo": "{minutes} phút trước",

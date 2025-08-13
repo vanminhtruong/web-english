@@ -331,20 +331,84 @@ export class CanvasRenderer implements ICanvasRenderer {
   public drawAimLine(aimLine: AimLine, shooterPosition: Position): void {
     if (!this.ctx || !aimLine.visible) return
     
-    this.ctx.strokeStyle = 'rgba(255,255,255,0.8)'
-    this.ctx.lineWidth = 2
-    this.ctx.setLineDash([5, 5])
-    this.ctx.beginPath()
-    this.ctx.moveTo(shooterPosition.x, shooterPosition.y)
-    this.ctx.lineTo(aimLine.x, aimLine.y)
-    this.ctx.stroke()
-    this.ctx.setLineDash([])
+    const ctx = this.ctx
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)'
+    ctx.lineWidth = 2
+    ctx.setLineDash([5, 5])
+    
+    // Compute a reflective aim preview with up to 2 bounces on the side walls
+    const leftX = this.BUBBLE_SIZE / 2
+    const rightX = this.canvasWidth.value - this.BUBBLE_SIZE / 2
+    const topY = this.BUBBLE_SIZE / 2
+    
+    let px = shooterPosition.x
+    let py = shooterPosition.y
+    
+    // Direction vector from shooter to pointer
+    let vx = aimLine.x - shooterPosition.x
+    let vy = aimLine.y - shooterPosition.y
+    const len = Math.sqrt(vx * vx + vy * vy) || 1
+    vx /= len
+    vy /= len
+    
+    // Ensure pointing upwards for preview
+    if (vy > -0.01) vy = -0.01
+    
+    ctx.beginPath()
+    ctx.moveTo(px, py)
+    
+    let bounces = 0
+    const maxBounces = 2
+    let safeGuard = 0
+    while (bounces <= maxBounces && safeGuard++ < 10) {
+      // Time to hit top boundary
+      const tTop = (topY - py) / vy // vy is negative
+      
+      // Time to hit side wall
+      let tWall = Number.POSITIVE_INFINITY
+      let wallX = px
+      if (vx > 0) {
+        tWall = (rightX - px) / vx
+        wallX = rightX
+      } else if (vx < 0) {
+        tWall = (leftX - px) / vx
+        wallX = leftX
+      }
+      
+      // Choose the earliest positive intersection
+      const tMin = Math.min(
+        tTop > 0 ? tTop : Number.POSITIVE_INFINITY,
+        tWall > 0 ? tWall : Number.POSITIVE_INFINITY
+      )
+      
+      // End point for this segment
+      const nx = px + vx * tMin
+      const ny = py + vy * tMin
+      ctx.lineTo(nx, ny)
+      
+      // If we reached top, stop drawing
+      if (tTop > 0 && tTop <= tMin + 1e-6) {
+        break
+      }
+      
+      // Otherwise we hit a wall: reflect and continue
+      px = wallX
+      py = ny
+      vx = -vx
+      bounces++
+      
+      // Continue path from reflection point
+      ctx.moveTo(px, py)
+    }
+    
+    ctx.stroke()
+    ctx.setLineDash([])
     
     // Add aim line glow effect
-    this.ctx.shadowColor = '#fff'
-    this.ctx.shadowBlur = 10
-    this.ctx.stroke()
-    this.ctx.shadowBlur = 0
+    ctx.shadowColor = '#fff'
+    ctx.shadowBlur = 10
+    ctx.stroke()
+    ctx.shadowBlur = 0
   }
 
   private lightenColor(color: string, amount: number): string {

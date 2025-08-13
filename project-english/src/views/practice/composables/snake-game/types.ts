@@ -48,6 +48,7 @@ export interface ISnakeStateManager {
   setGameOver(): void
   setGameRunning(running: boolean): void
   setDoubleBaitMode(enabled: boolean): void
+  setTimelineCallback(callback?: (body: Position[], direction: Position) => void): void
 }
 
 export interface ISnakeCanvasRenderer {

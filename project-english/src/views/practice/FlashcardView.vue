@@ -199,6 +199,7 @@
                     :words="currentFlashcards"
                     :vietnamese-mode="bubbleShooterVietnameseMode"
                     :double-bait-mode="snakeDoubleBaitMode"
+                    :record-timeline="true"
                     @game-complete="handleSnakeGameComplete"
                     @correct-food-eaten="handleSnakeCorrectFoodEaten"
                     @wrong-food-eaten="handleSnakeWrongFoodEaten"
@@ -1377,6 +1378,7 @@ const handleSnakeCorrectFoodEaten = (details?: {
   wrongEatenCount: number
   snakeBody: { x: number; y: number }[]
   direction: { x: number; y: number }
+  timelineFrames?: Array<{ body: { x: number; y: number }[]; direction: { x: number; y: number } }>
 }) => {
   // Count as a correct answer in practice stats
   console.log('[DEBUG] Snake correct food eaten, recording answer true')
@@ -1408,7 +1410,8 @@ const handleSnakeCorrectFoodEaten = (details?: {
           wordsCompleted: details.wordsCompleted,
           wrongEatenCount: details.wrongEatenCount,
           snakeBody: details.snakeBody,
-          direction: details.direction
+          direction: details.direction,
+          timelineFrames: details.timelineFrames
         }
       }
     })
@@ -1425,6 +1428,7 @@ const handleSnakeWrongFoodEaten = (details?: {
   wrongEatenCount: number
   snakeBody: { x: number; y: number }[]
   direction: { x: number; y: number }
+  timelineFrames?: Array<{ body: { x: number; y: number }[]; direction: { x: number; y: number } }>
 }) => {
   // Count as an incorrect answer in practice stats
   recordAnswer(false)
@@ -1449,7 +1453,8 @@ const handleSnakeWrongFoodEaten = (details?: {
           wordsCompleted: details.wordsCompleted,
           wrongEatenCount: details.wrongEatenCount,
           snakeBody: details.snakeBody,
-          direction: details.direction
+          direction: details.direction,
+          timelineFrames: details.timelineFrames
         }
       }
     })

@@ -163,50 +163,7 @@
                               <!-- Visual food position indicator -->
                               <div class="mt-3">
                                 <div class="text-xs text-gray-500 dark:text-white/70 mb-2">Snake Movement & Food Position:</div>
-                                <div class="relative bg-gray-100 dark:bg-[#0f0f0f] rounded-md p-2 overflow-hidden">
-                                  <div class="grid grid-cols-15 gap-px" style="grid-template-columns: repeat(15, minmax(0, 1fr));">
-                                    <div v-for="i in 225" :key="i" 
-                                         class="w-2 h-2 transition-all duration-500"
-                                         :class="getSnakeGridCellClass(i - 1, e.extra.snakeGame)">
-                                    </div>
-                                  </div>
-                                  
-                                  <!-- Animated snake head with direction indicator -->
-                                  <div class="absolute inset-0 pointer-events-none">
-                                    <div v-if="e.extra.snakeGame.snakeBody && e.extra.snakeGame.snakeBody.length > 0"
-                                         class="w-3 h-3 rounded-full animate-pulse bg-green-500 border border-green-300"
-                                         :style="getSnakeHeadPositionStyle(e.extra.snakeGame.snakeBody[0])">
-                                      <!-- Direction arrow -->
-                                      <div class="w-full h-full flex items-center justify-center">
-                                        <div class="w-1 h-1 bg-white rounded-full animate-bounce"
-                                             :style="getDirectionIndicatorStyle(e.extra.snakeGame.direction)">
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  
-                                  <!-- Animated pulse on food position -->
-                                  <div class="absolute inset-0 pointer-events-none">
-                                    <div class="w-3 h-3 rounded-full animate-ping"
-                                         :class="e.extra.snakeGame.wasCorrect ? 'bg-emerald-400' : 'bg-red-400'"
-                                         :style="getFoodPositionStyle(e.extra.snakeGame.position)">
-                                    </div>
-                                  </div>
-                                  
-                                  <!-- Movement trail animation -->
-                                  <div class="absolute inset-0 pointer-events-none">
-                                    <div v-for="(segment, idx) in (e.extra.snakeGame.snakeBody || []).slice(1)" 
-                                         :key="`trail-${idx}`"
-                                         class="w-2 h-2 rounded-full bg-green-300 animate-fade-in-up"
-                                         :style="{ 
-                                           ...getSnakeSegmentPositionStyle(segment),
-                                           animationDelay: `${idx * 100}ms`,
-                                           opacity: Math.max(0.3, 1 - idx * 0.1)
-                                         }">
-                                    </div>
-                                  </div>
-                                </div>
-                                
+                                <SnakeReplay :data="e.extra.snakeGame" />
                                 <!-- Movement summary -->
                                 <div class="mt-2 text-xs text-gray-500 dark:text-white/70 flex items-center gap-4">
                                   <span>🐍 Length: {{ e.extra.snakeGame.snakeLength }}</span>
@@ -288,8 +245,9 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 import type { SessionDetails } from '../composables/usePracticeSessionDetails'
+const SnakeReplay = defineAsyncComponent(() => import('./SnakeReplay.vue'))
 
 const props = defineProps<{
   show: boolean
@@ -321,150 +279,6 @@ const openZoom = (entry: any) => {
 
 const closeZoom = () => {
   zoomOpen.value = false
-}
-
-// Snake Game grid visualization functions
-const getGridCellClass = (index: number, foodPosition: { x: number; y: number }) => {
-  const gridWidth = 15 // Scaled down from 30x20 to 15x10 for display
-  const gridHeight = 10
-  const x = index % gridWidth
-  const y = Math.floor(index / gridWidth)
-  
-  // Scale food position to mini grid
-  const scaledFoodX = Math.floor(foodPosition.x / 2)
-  const scaledFoodY = Math.floor(foodPosition.y / 2)
-  
-  if (x === scaledFoodX && y === scaledFoodY) {
-    return 'bg-emerald-400 dark:bg-emerald-500 animate-pulse'
-  }
-  return 'bg-gray-200 dark:bg-[#0f0f0f]'
-}
-
-const getFoodPositionStyle = (position: { x: number; y: number }) => {
-  const gridWidth = 15
-  const cellSize = 8 // w-2 = 8px
-  const gap = 1 // gap-px = 1px
-  
-  // Scale position to mini grid
-  const scaledX = Math.floor(position.x / 2)
-  const scaledY = Math.floor(position.y / 2)
-  
-  const left = scaledX * (cellSize + gap) + 8 // 8px padding
-  const top = scaledY * (cellSize + gap) + 8
-  
-  return {
-    left: `${left}px`,
-    top: `${top}px`
-  }
-}
-
-// Enhanced Snake Game visualization functions
-const getSnakeGridCellClass = (index: number, snakeData: any) => {
-  const gridWidth = 15 // Scaled down from 30x20 to 15x10 for display
-  const x = index % gridWidth
-  const y = Math.floor(index / gridWidth)
-  
-  // Debug logging
-  if (index === 0) {
-    console.log('[DEBUG] getSnakeGridCellClass - snakeData:', snakeData)
-    console.log('[DEBUG] getSnakeGridCellClass - snakeBody:', snakeData.snakeBody)
-  }
-  
-  // Scale food position to mini grid
-  const scaledFoodX = Math.floor((snakeData.position?.x || 0) / 2)
-  const scaledFoodY = Math.floor((snakeData.position?.y || 0) / 2)
-  
-  // Check if this cell contains part of the snake body
-  if (snakeData.snakeBody && Array.isArray(snakeData.snakeBody) && snakeData.snakeBody.length > 0) {
-    for (let i = 0; i < snakeData.snakeBody.length; i++) {
-      const segment = snakeData.snakeBody[i]
-      if (!segment || typeof segment.x !== 'number' || typeof segment.y !== 'number') {
-        continue
-      }
-      
-      const scaledSegmentX = Math.floor(segment.x / 2)
-      const scaledSegmentY = Math.floor(segment.y / 2)
-      
-      if (x === scaledSegmentX && y === scaledSegmentY) {
-        // Snake head (first segment) gets special styling
-        if (i === 0) {
-          return 'bg-green-500 dark:bg-green-400 animate-pulse border border-green-300 shadow-md'
-        }
-        // Snake body segments with index-based opacity
-        const opacity = Math.max(0.5, 1 - i * 0.1)
-        return `bg-green-300 dark:bg-green-600 animate-fade-in-up opacity-${Math.floor(opacity * 100)}`
-      }
-    }
-  }
-  
-  // Food position
-  if (x === scaledFoodX && y === scaledFoodY) {
-    return snakeData.wasCorrect 
-      ? 'bg-emerald-400 dark:bg-emerald-500 animate-bounce shadow-lg' 
-      : 'bg-red-400 dark:bg-red-500 animate-ping shadow-lg'
-  }
-  
-  return 'bg-gray-200 dark:bg-[#0f0f0f] hover:bg-gray-300 dark:hover:bg-[#1a1a1a] transition-colors'
-}
-
-const getSnakeHeadPositionStyle = (headPosition: { x: number; y: number }) => {
-  const gridWidth = 15
-  const cellSize = 8 // w-2 = 8px
-  const gap = 1 // gap-px = 1px
-  
-  // Scale position to mini grid
-  const scaledX = Math.floor(headPosition.x / 2)
-  const scaledY = Math.floor(headPosition.y / 2)
-  
-  const left = scaledX * (cellSize + gap) + 8 // 8px padding
-  const top = scaledY * (cellSize + gap) + 8
-  
-  return {
-    left: `${left}px`,
-    top: `${top}px`,
-    zIndex: 10
-  } as const
-}
-
-const getSnakeSegmentPositionStyle = (segment: { x: number; y: number }) => {
-  const gridWidth = 15
-  const cellSize = 8 // w-2 = 8px
-  const gap = 1 // gap-px = 1px
-  
-  // Scale position to mini grid
-  const scaledX = Math.floor(segment.x / 2)
-  const scaledY = Math.floor(segment.y / 2)
-  
-  const left = scaledX * (cellSize + gap) + 8 // 8px padding
-  const top = scaledY * (cellSize + gap) + 8
-  
-  return {
-    position: 'absolute' as const,
-    left: `${left}px`,
-    top: `${top}px`,
-    zIndex: 5
-  } as const
-}
-
-const getDirectionIndicatorStyle = (direction: { x: number; y: number }) => {
-  let transform = 'translateX(-50%) translateY(-50%)'
-  
-  if (direction.x === 1) { // Right
-    transform += ' translateX(25%)'
-  } else if (direction.x === -1) { // Left
-    transform += ' translateX(-25%)'
-  } else if (direction.y === 1) { // Down
-    transform += ' translateY(25%)'
-  } else if (direction.y === -1) { // Up
-    transform += ' translateY(-25%)'
-  }
-  
-  return {
-    transform,
-    position: 'absolute' as const,
-    left: '50%',
-    top: '50%'
-  } as const
 }
 
 const getDirectionName = (direction: { x: number; y: number }) => {

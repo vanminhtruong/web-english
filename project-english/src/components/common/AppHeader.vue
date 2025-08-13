@@ -37,8 +37,8 @@
             @keydown.enter.prevent="handleLogoClick"
             @keydown.space.prevent="handleLogoClick"
           >
-            <span class="hidden sm:inline">English Learning App</span>
-            <span class="sm:hidden">English App</span>
+            <span class="hidden sm:inline">{{ t('app.title', 'English Learning App') }}</span>
+            <span class="sm:hidden">{{ t('app.titleShort', 'English App') }}</span>
           </h1>
         </div>
 

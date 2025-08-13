@@ -55,10 +55,17 @@ export class PhysicsEngine implements IPhysicsEngine {
       // CRITICAL FIX: Check collision with existing bubbles FIRST
       if (existingBubbles) {
         for (const existing of existingBubbles) {
-          // Use stable positions during animation for collision detection
+          // Use stable positions during animation for collision detection.
+          // SPECIAL CASE: for the newly inserted row (row < 0) while animating,
+          // use its final settled Y so shots interact with the row as if already at the ceiling line.
           const isAnimating = this.stateManager?.rowAnimationActive.value
-          const existingX = isAnimating && existing.stableX !== undefined ? existing.stableX : existing.x
-          const existingY = isAnimating && existing.stableY !== undefined ? existing.stableY : existing.y
+          const isNewRow = isAnimating && (existing.row ?? 0) < 0
+          const existingX = isNewRow
+            ? existing.x
+            : (isAnimating && existing.stableX !== undefined ? existing.stableX : existing.x)
+          const existingY = isNewRow
+            ? this.BUBBLE_SIZE / 2
+            : (isAnimating && existing.stableY !== undefined ? existing.stableY : existing.y)
           
           // Compute distance and detect collision or near-contact when approaching/slow
           const dx0 = bubble.x - existingX
@@ -177,8 +184,12 @@ export class PhysicsEngine implements IPhysicsEngine {
           let nearest: Bubble | null = null
           let bestDist = Number.POSITIVE_INFINITY
           for (const b of existingBubbles) {
-            const dx = bubble.x - b.x
-            const dy = bubble.y - b.y
+            const isAnimating = this.stateManager?.rowAnimationActive.value
+            const isNewRow = isAnimating && (b.row ?? 0) < 0
+            const bx = isNewRow ? b.x : (isAnimating && b.stableX !== undefined ? b.stableX : b.x)
+            const by = isNewRow ? this.BUBBLE_SIZE / 2 : (isAnimating && b.stableY !== undefined ? b.stableY : b.y)
+            const dx = bubble.x - bx
+            const dy = bubble.y - by
             const d = Math.sqrt(dx * dx + dy * dy)
             // Only capture if approaching this bubble (avoid grabbing moving/retreating targets)
             const dot = dx * currentVx + dy * currentVy
@@ -191,13 +202,17 @@ export class PhysicsEngine implements IPhysicsEngine {
 
           if (nearest) {
             // Compute tangent point relative to the nearest bubble
-            let ndx = bubble.x - nearest.x
-            let ndy = bubble.y - nearest.y
+            const isAnimating2 = this.stateManager?.rowAnimationActive.value
+            const isNewRow2 = isAnimating2 && (nearest.row ?? 0) < 0
+            const nx = isNewRow2 ? nearest.x : (isAnimating2 && nearest.stableX !== undefined ? nearest.stableX : nearest.x)
+            const ny = isNewRow2 ? this.BUBBLE_SIZE / 2 : (isAnimating2 && nearest.stableY !== undefined ? nearest.stableY : nearest.y)
+            let ndx = bubble.x - nx
+            let ndy = bubble.y - ny
             const nlen = Math.sqrt(ndx * ndx + ndy * ndy) || 1
             ndx /= nlen
             ndy /= nlen
-            const tangentX = nearest.x + ndx * this.BUBBLE_SIZE
-            const tangentY = nearest.y + ndy * this.BUBBLE_SIZE
+            const tangentX = nx + ndx * this.BUBBLE_SIZE
+            const tangentY = ny + ndy * this.BUBBLE_SIZE
 
             // Try triple-contact slide using the nearest as the collided reference
             const triple = this.findTripleContactPosition(
@@ -345,10 +360,31 @@ export class PhysicsEngine implements IPhysicsEngine {
     const verticalSpacing = (this.BUBBLE_SIZE * Math.sqrt(3)) / 2
     const baseX = this.BUBBLE_SIZE / 2
     const baseY = this.getQuantizedBaseY(existingBubbles)
-    const offsetX = row % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
-    const x = baseX + offsetX + col * this.BUBBLE_SIZE
+    const topOffset = this.getTopRowOffset(existingBubbles)
+    const rowOffset = row % 2 === 0 ? topOffset : (topOffset === 0 ? this.BUBBLE_SIZE / 2 : 0)
+    const x = baseX + rowOffset + col * this.BUBBLE_SIZE
     const y = baseY + row * verticalSpacing
     return { x, y }
+  }
+
+  // Infer the current top-row horizontal offset (0 or B/2) from existing row-0 bubbles
+  // Uses stableX during row animation to avoid drift.
+  private getTopRowOffset(existingBubbles: Bubble[]): number {
+    const B = this.BUBBLE_SIZE
+    const baseX = B / 2
+    const isAnimating = this.stateManager?.rowAnimationActive.value
+    const row0 = existingBubbles.filter(b => (b.row ?? 0) === 0)
+    if (row0.length === 0) return 0
+    let sumEven = 0
+    let sumOdd = 0
+    for (const b of row0) {
+      const bx = isAnimating && b.stableX !== undefined ? b.stableX : b.x
+      const nearestEven = baseX + Math.round((bx - baseX) / B) * B
+      const nearestOdd = baseX + B / 2 + Math.round((bx - (baseX + B / 2)) / B) * B
+      sumEven += Math.abs(bx - nearestEven)
+      sumOdd  += Math.abs(bx - nearestOdd)
+    }
+    return sumEven <= sumOdd ? 0 : B / 2
   }
 
   // Check if a seat (by center coords) is already occupied by an existing bubble
@@ -436,8 +472,9 @@ export class PhysicsEngine implements IPhysicsEngine {
     // Calculate row/col based on current position
     const targetRow = Math.max(0, Math.round((bubble.y - baseY) / verticalSpacing))
     
-    // Deterministic row parity for offset (avoid heuristic that can flip during row insertion)
-    const offsetX = targetRow % 2 === 0 ? 0 : this.BUBBLE_SIZE / 2
+    // Use inferred top-row offset so new-row animation maintains correct horizontal parity
+    const topOffset = this.getTopRowOffset(existingBubbles)
+    const offsetX = targetRow % 2 === 0 ? topOffset : (topOffset === 0 ? this.BUBBLE_SIZE / 2 : 0)
     
     const targetCol = Math.max(0, Math.round((bubble.x - baseX - offsetX) / this.BUBBLE_SIZE))
     

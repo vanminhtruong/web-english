@@ -29,6 +29,8 @@ class SnakeStateManager implements ISnakeStateManager {
 
   // Audio context for sound effects
   private audioContext: AudioContext | null = null
+  // Timeline recording callback
+  private onMoveCallback?: (body: Position[], direction: Position) => void
 
   resetGame() {
     this.snake.value = {
@@ -122,6 +124,11 @@ class SnakeStateManager implements ISnakeStateManager {
     } else {
       // No food eaten -> move normally
       snake.body.pop()
+    }
+  
+    // Emit timeline frame after each successful move
+    if (this.onMoveCallback) {
+      this.onMoveCallback([...snake.body.map(seg => ({ x: seg.x, y: seg.y }))], { x: snake.direction.x, y: snake.direction.y })
     }
   }
 
@@ -249,6 +256,11 @@ class SnakeStateManager implements ISnakeStateManager {
     if (this.gameRunning.value && !this.gameOver.value) {
       this.generateFood(this.words, this.vietnameseMode)
     }
+  }
+
+  // Set timeline recording callback
+  setTimelineCallback(callback?: (body: Position[], direction: Position) => void) {
+    this.onMoveCallback = callback
   }
 
   private initializeAudioContext() {
