@@ -171,8 +171,24 @@ const { t } = useI18n()
 
 const emit = defineEmits<{
   'game-complete': []
-  'correct-food-eaten': []
-  'wrong-food-eaten': []
+  'correct-food-eaten': [details: {
+    word: string
+    meaningShort: string
+    position: { x: number; y: number }
+    snakeLength: number
+    gameScore: number
+    wordsCompleted: number
+    wrongEatenCount: number
+  }]
+  'wrong-food-eaten': [details: {
+    word: string
+    meaningShort: string
+    position: { x: number; y: number }
+    snakeLength: number
+    gameScore: number
+    wordsCompleted: number
+    wrongEatenCount: number
+  }]
 }>()
 
 // Initialize main game controller with OOP pattern
@@ -230,13 +246,34 @@ const stopWordsWatch = watch(
   () => game.stateManager.wordsCompleted.value,
   (newVal, oldVal) => {
     if (typeof oldVal === 'number' && newVal > oldVal) {
-      emit('correct-food-eaten')
+      // Get details for session tracking
+      const lastWord = (game.stateManager as any).lastEatenWord?.value as string | undefined || ''
+      const lastPosition = (game.stateManager as any).lastEatenFoodPos?.value as { x: number; y: number } || { x: 0, y: 0 }
+      const currentVocab = props.words.find(w => w.word === lastWord)
+      
+      const details = {
+        word: lastWord,
+        meaningShort: currentVocab?.meaning || lastWord,
+        position: lastPosition,
+        snakeLength: game.stateManager.snake.value.body.length,
+        gameScore: game.stateManager.score.value,
+        wordsCompleted: game.stateManager.wordsCompleted.value,
+        wrongEatenCount: (game.stateManager as any).wrongEatenCount?.value || 0,
+        snakeBody: [...game.stateManager.snake.value.body], // Copy snake body positions
+        direction: { ...game.stateManager.snake.value.direction } // Copy snake direction
+      }
+      
+      console.log('[DEBUG] Snake correct food details:', details)
+      console.log('[DEBUG] Snake body:', details.snakeBody)
+      console.log('[DEBUG] Snake direction:', details.direction)
+      
+      emit('correct-food-eaten', details)
+      
       // Speak the eaten word using selected voice
-      const last = (game.stateManager as any).lastEatenWord?.value as string | undefined
-      if (last) {
+      if (lastWord) {
         const { playAudio } = useVoiceStore()
         // Fire and forget; internal store handles support/errors
-        playAudio(last).catch(() => {})
+        playAudio(lastWord).catch(() => {})
       }
     }
     prevWordsCompleted.value = newVal
@@ -250,12 +287,29 @@ const stopWrongWatch = watch(
   () => (game.stateManager as any).wrongEatenCount?.value,
   (newVal, oldVal) => {
     if (typeof newVal === 'number' && typeof oldVal === 'number' && newVal > oldVal) {
-      emit('wrong-food-eaten')
+      // Get details for session tracking
+      const lastWord = (game.stateManager as any).lastEatenWord?.value as string | undefined || ''
+      const lastPosition = (game.stateManager as any).lastEatenFoodPos?.value as { x: number; y: number } || { x: 0, y: 0 }
+      const currentVocab = props.words.find(w => w.word === lastWord)
+      
+      const details = {
+        word: lastWord,
+        meaningShort: currentVocab?.meaning || lastWord,
+        position: lastPosition,
+        snakeLength: game.stateManager.snake.value.body.length,
+        gameScore: game.stateManager.score.value,
+        wordsCompleted: game.stateManager.wordsCompleted.value,
+        wrongEatenCount: newVal,
+        snakeBody: [...game.stateManager.snake.value.body], // Copy snake body positions
+        direction: { ...game.stateManager.snake.value.direction } // Copy snake direction
+      }
+      
+      emit('wrong-food-eaten', details)
+      
       // Speak the eaten word (wrong pick) too
-      const last = (game.stateManager as any).lastEatenWord?.value as string | undefined
-      if (last) {
+      if (lastWord) {
         const { playAudio } = useVoiceStore()
-        playAudio(last).catch(() => {})
+        playAudio(lastWord).catch(() => {})
       }
     }
     if (typeof newVal === 'number') prevWrongEaten.value = newVal

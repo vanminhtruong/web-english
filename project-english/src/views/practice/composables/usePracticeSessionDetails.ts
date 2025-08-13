@@ -29,6 +29,17 @@ export interface SessionDetailEntryExtra {
     image?: string
     slots: { char: string; fixed: boolean; separator?: boolean }[]
   }
+  snakeGame?: {
+    position: { x: number; y: number }
+    wasCorrect: boolean
+    foodType: 'primary' | 'secondary'
+    snakeLength: number
+    gameScore: number
+    wordsCompleted: number
+    wrongEatenCount: number
+    snakeBody: { x: number; y: number }[]
+    direction: { x: number; y: number }
+  }
 }
 
 const makeKey = (sessionId: string) => `flashcard-session-details:${sessionId}`

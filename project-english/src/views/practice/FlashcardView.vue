@@ -1353,18 +1353,107 @@ const handleCompletionGoBack = () => {
 // Snake Game completion handler
 const handleSnakeGameComplete = () => {
   // Handle snake game completion similar to bubble shooter
-  showCompletionModal.value = true
+  // Ensure final word is recorded if missed due to race condition
+  const expectedCorrect = currentFlashcards.value.length
+  const actualCorrect = stats.value.correct
+  
+  if (actualCorrect < expectedCorrect) {
+    // Missing the last word due to race condition, record it
+    recordAnswer(true)
+  }
+  
+  // Complete the session to finalize stats before showing modal
+  handleSessionComplete()
 }
 
 // Snake Game food eaten handlers
-const handleSnakeCorrectFoodEaten = () => {
+const handleSnakeCorrectFoodEaten = (details?: {
+  word: string
+  meaningShort: string
+  position: { x: number; y: number }
+  snakeLength: number
+  gameScore: number
+  wordsCompleted: number
+  wrongEatenCount: number
+  snakeBody: { x: number; y: number }[]
+  direction: { x: number; y: number }
+}) => {
   // Count as a correct answer in practice stats
+  console.log('[DEBUG] Snake correct food eaten, recording answer true')
+  console.log('[DEBUG] Stats before:', { correct: stats.value.correct, incorrect: stats.value.incorrect, total: stats.value.total })
   recordAnswer(true)
+  console.log('[DEBUG] Stats after:', { correct: stats.value.correct, incorrect: stats.value.incorrect, total: stats.value.total })
+  
+  // Record detailed session history if details provided
+  if (details && activeSessionId.value) {
+    console.log('[DEBUG] FlashcardView - Recording snake correct food:', details)
+    console.log('[DEBUG] FlashcardView - Snake body to save:', details.snakeBody)
+    console.log('[DEBUG] FlashcardView - Snake direction to save:', details.direction)
+    
+    appendAnswer({
+      cardId: Date.now(), // Unique numeric ID for snake game food eaten
+      word: details.word,
+      meaningShort: details.meaningShort,
+      userAnswer: details.word, // Correct food eaten
+      correctAnswer: details.word,
+      isCorrect: true,
+      mode: 'snake-game',
+      extra: {
+        snakeGame: {
+          position: details.position,
+          wasCorrect: true,
+          foodType: 'primary', // Correct food is always primary target
+          snakeLength: details.snakeLength,
+          gameScore: details.gameScore,
+          wordsCompleted: details.wordsCompleted,
+          wrongEatenCount: details.wrongEatenCount,
+          snakeBody: details.snakeBody,
+          direction: details.direction
+        }
+      }
+    })
+  }
 }
 
-const handleSnakeWrongFoodEaten = () => {
+const handleSnakeWrongFoodEaten = (details?: {
+  word: string
+  meaningShort: string
+  position: { x: number; y: number }
+  snakeLength: number
+  gameScore: number
+  wordsCompleted: number
+  wrongEatenCount: number
+  snakeBody: { x: number; y: number }[]
+  direction: { x: number; y: number }
+}) => {
   // Count as an incorrect answer in practice stats
   recordAnswer(false)
+  
+  // Record detailed session history if details provided
+  if (details && activeSessionId.value) {
+    appendAnswer({
+      cardId: Date.now(), // Unique numeric ID for snake game food eaten
+      word: details.word,
+      meaningShort: details.meaningShort,
+      userAnswer: details.word, // Wrong food eaten
+      correctAnswer: '', // No specific correct answer for wrong food
+      isCorrect: false,
+      mode: 'snake-game',
+      extra: {
+        snakeGame: {
+          position: details.position,
+          wasCorrect: false,
+          foodType: 'secondary', // Wrong food is secondary/decoy
+          snakeLength: details.snakeLength,
+          gameScore: details.gameScore,
+          wordsCompleted: details.wordsCompleted,
+          wrongEatenCount: details.wrongEatenCount,
+          snakeBody: details.snakeBody,
+          direction: details.direction
+        }
+      }
+    })
+  }
 }
 
 // Snake Game food eaten handler -> count as a correct answer in practice stats
@@ -1471,6 +1560,7 @@ watch(baseFlashcards, (newCards) => {
 const onToggleBubbleShooterVietnameseMode = (enabled: boolean) => {
   bubbleShooterVietnameseMode.value = enabled
 }
+
 
 // Initialize on mount
 onMounted(() => {

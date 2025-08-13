@@ -21,6 +21,7 @@ class SnakeStateManager implements ISnakeStateManager {
   lastEatenWord = ref<string | null>(null)
   doubleBaitMode = ref(false)
   wrongEatenCount = ref(0)
+  private isLastWord: boolean = false
 
   private words: Vocabulary[] = []           
   private vietnameseMode: boolean = false
@@ -47,6 +48,7 @@ class SnakeStateManager implements ISnakeStateManager {
     this.lastEatenWord.value = null
     this.doubleBaitMode.value = false
     this.wrongEatenCount.value = 0
+    this.isLastWord = false
   }
 
   updateDirection(direction: Position) {
@@ -95,6 +97,15 @@ class SnakeStateManager implements ISnakeStateManager {
         this.lastEatenWord.value = this.food.value.word
       }
       this.playEatFoodSound()
+      
+      // Check if this was the last word before generating new food  
+      if (this.isLastWord) {
+        // All words completed, end game immediately
+        // The wordsCompleted++ above will be handled by the Vue watcher
+        this.setGameOver()
+        return
+      }
+      
       // Grow snake (no tail pop)
       this.generateFood(this.words, this.vietnameseMode)
     } else if (hitSecondary) {
@@ -132,6 +143,15 @@ class SnakeStateManager implements ISnakeStateManager {
     const targetWord = availableWords[Math.floor(Math.random() * availableWords.length)]
     this.usedWords.add(targetWord.word)
     this.currentTargetWord.value = targetWord.word
+
+    // Check if this was the last word after adding to usedWords
+    const remainingWords = words.filter(w => !this.usedWords.has(w.word))
+    if (remainingWords.length === 0) {
+      // This was the last word, game will end after this food is eaten
+      this.isLastWord = true
+    } else {
+      this.isLastWord = false
+    }
 
     // Utility: random free position not on snake and not conflicting with provided list
     const randomFreePos = (blocked: Position[] = []): Position => {
