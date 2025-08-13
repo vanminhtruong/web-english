@@ -83,7 +83,7 @@
                         {{ todayWords.length }}
                       </span>
                     </h4>
-                    <div class="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-[#0a0a0a] custom-scrollbar">
+                    <div class="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-white dark:bg-[#0a0a0a] custom-scrollbar">
                       <div v-if="todayWords.length === 0" class="p-4 text-center text-gray-500 dark:text-gray-400">
                         <svg class="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -493,24 +493,43 @@ input[type="checkbox"]:checked {
 /* Custom scrollbar styling */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #0a0a0a #0f0f0f;
+    /* Light mode (default): thumb, track */
+    scrollbar-color: #e5e7eb #ffffff;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
 
+/* Light mode (default) */
 .custom-scrollbar::-webkit-scrollbar-track {
-  background-color: #0f0f0f;
+  background-color: #ffffff; /* white to match project light background */
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #0a0a0a;
+  background-color: #e5e7eb; /* light gray thumb */
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #cbd5e1;
+}
+
+/* Dark mode overrides */
+:global(.dark) .custom-scrollbar {
+  scrollbar-color: #0a0a0a #0f0f0f;
+}
+
+:global(.dark) .custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #0f0f0f;
+}
+
+:global(.dark) .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #0a0a0a;
+}
+
+:global(.dark) .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #000000;
 }
 

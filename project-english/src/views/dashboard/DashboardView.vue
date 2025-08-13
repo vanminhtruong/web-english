@@ -37,7 +37,7 @@
               
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 flex-1">
                 <!-- Add Vocabulary Button -->
-                <button @click="navigateTo('/vocabulary/add')" 
+                <button @click="navigateTo('/vocabulary')" 
                         class="group/btn relative overflow-hidden bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-3 sm:py-4 sm:px-4 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95">
                   <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
                   <div class="relative z-10 text-center">
