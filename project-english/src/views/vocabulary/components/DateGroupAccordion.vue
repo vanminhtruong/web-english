@@ -1284,7 +1284,21 @@ const handleAvailableDatesResponse = (e: Event) => {
 // Navigate to another date/topic from tooltip
 const handleNavigateClick = (targetDate: string, topic: string) => {
   infoHoverTopic.value = null
-  emit('navigate-to-date-topic', { date: targetDate, topic })
+  
+  // If navigating within same date, expand the target topic immediately
+  if (targetDate === props.group.date) {
+    isExpanded.value = true
+    expandedTopics.value[topic] = true
+    nextTick(() => {
+      const el = document.getElementById(`date-group-${props.group.date}-topic-${topic}`)
+      if (el && typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
+  } else {
+    // For different dates, emit to parent for navigation
+    emit('navigate-to-date-topic', { date: targetDate, topic })
+  }
 }
 
 // Receive open instructions from parent to expand and scroll
