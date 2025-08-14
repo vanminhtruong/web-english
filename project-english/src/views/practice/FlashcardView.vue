@@ -658,6 +658,17 @@ const removeNavigationGuard = () => {
 const handleImageAnswer = () => {
   checkImageAnswer()
   recordAnswer(imageCorrect.value)
+  
+  // Auto-advance on xs/sm only (viewport < md) for Image mode
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
+  }
 }
 
 const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -1056,6 +1067,17 @@ const handleQuizAnswer = (answer: string) => {
       mode: 'quiz',
     })
   }
+  
+  // Auto-advance on xs/sm only (viewport < md) for Quiz mode
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
+  }
 }
 
 const handleTypingAnswer = () => {
@@ -1071,6 +1093,17 @@ const handleTypingAnswer = () => {
       isCorrect: !!typingCorrect.value,
       mode: 'typing',
     })
+  }
+  
+  // Auto-advance on xs/sm only (viewport < md) for Typing mode
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
   }
 }
 // Typing-quiz handlers
@@ -1089,6 +1122,17 @@ const handleTypingQuizAnswer = (answer: string) => {
       mode: 'typing-quiz',
     })
   }
+  
+  // Auto-advance on xs/sm only (viewport < md) for Typing-quiz
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
+  }
 }
 
 const handleListeningAnswer = () => {
@@ -1104,6 +1148,17 @@ const handleListeningAnswer = () => {
       isCorrect: !!listeningCorrect.value,
       mode: 'listening',
     })
+  }
+  
+  // Auto-advance on xs/sm only (viewport < md) for Listening mode
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
   }
 }
 // Listening-quiz handlers (within listening mode)
@@ -1128,6 +1183,17 @@ const handleListeningQuizAnswer = (answer: string) => {
       isCorrect: !!isCorrect,
       mode: 'listening-quiz',
     })
+  }
+  
+  // Auto-advance on xs/sm only (viewport < md) for Listening-quiz
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
   }
 }
 // Image-quiz handlers (image mode multiple-choice)
@@ -1155,6 +1221,17 @@ const handleImageQuizAnswer = (answer: string) => {
       mode: 'image-quiz',
     })
   }
+
+  // Auto-advance on xs/sm only (viewport < md) for Image-quiz
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
+  }
 }
 
 const handlePictionaryAnswer = () => {
@@ -1178,6 +1255,18 @@ const handlePictionaryAnswer = () => {
     })
     // Clear snapshot after recording
     latestPictionarySnapshot.value = null
+  }
+
+  // Auto-advance on xs/sm only (viewport < md) for Pictionary mode
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    // Slight delay so feedback is visible before advancing
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
   }
 }
 

@@ -68,6 +68,7 @@
         @click="$emit('next-card')"
         :disabled="!canProceed"
         class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 rounded-full font-medium transition-colors text-xs sm:text-sm md:text-base"
+        :class="(['quiz','typing','listening','image','pictionary'].includes(practiceMode)) ? 'hidden md:inline-flex' : ''"
       >
         {{ currentIndex === totalCards - 1 ? t('practice.controls.complete', 'Complete') : t('practice.controls.next', 'Next') }}
       </button>
