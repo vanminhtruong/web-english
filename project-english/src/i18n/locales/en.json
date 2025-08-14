@@ -32,7 +32,10 @@
     "resetToDefault": "Reset to Default",
     "actions": "Actions",
     "backToTop": "Back to Top",
-    "backToTopTooltip": "Back to Top ({percent}%)"
+    "backToTopTooltip": "Back to Top ({percent}%)",
+    "backspace": "Backspace",
+    "clear": "Clear",
+    "space": "Space"
   },
   "vocabulary": {
     "title": "Vocabulary",
@@ -48,7 +51,17 @@
     "deleteVocabulary": "Delete Vocabulary",
     "vocabularyList": "Vocabulary List",
     "word": "Word",
-    "pronunciation": "Pronunciation",
+    "pronunciation": {
+      "label": "Pronunciation",
+      "ipaPickerTitle": "IPA Picker",
+      "previewPlaceholder": "Start building IPA...",
+      "wrap": "Wrap with slashes",
+      "vowels": "Vowels",
+      "diphthongs": "Diphthongs",
+      "consonants": "Consonants",
+      "marks": "Marks",
+      "openIpaPicker": "Open IPA Picker"
+    },
     "meaning": "Meaning",
     "category": "Category",
     "level": "Level",

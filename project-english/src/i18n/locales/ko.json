@@ -32,7 +32,10 @@
       "resetToDefault": "기본값으로 재설정",
       "actions": "작업",
       "backToTop": "맨 위로",
-      "backToTopTooltip": "맨 위로 ({percent}%)"
+      "backToTopTooltip": "맨 위로 ({percent}%)",
+      "backspace": "백스페이스",
+      "clear": "지우기",
+      "space": "공백"
     },
     "vocabulary": {
       "title": "어휘",
@@ -48,7 +51,17 @@
       "deleteVocabulary": "어휘 삭제",
       "vocabularyList": "어휘 목록",
       "word": "단어",
-      "pronunciation": "발음",
+      "pronunciation": {
+        "label": "발음",
+        "ipaPickerTitle": "IPA 선택기",
+        "previewPlaceholder": "IPA 조합을 시작하세요...",
+        "wrap": "슬래시로 감싸기",
+        "vowels": "모음",
+        "diphthongs": "이중모음",
+        "consonants": "자음",
+        "marks": "표식",
+        "openIpaPicker": "IPA 선택기 열기"
+      },
       "meaning": "의미",
       "category": "카테고리",
       "level": "난이도",

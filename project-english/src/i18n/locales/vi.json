@@ -33,7 +33,10 @@
     "actions": "Thao tác",
     "backToTop": "Lên đầu trang",
     "backToTopTooltip": "Lên đầu trang ({percent}%)",
-    "checking": "Đang kiểm tra..."
+    "checking": "Đang kiểm tra...",
+    "backspace": "Xóa lùi",
+    "clear": "Xóa",
+    "space": "Dấu cách"
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -54,7 +57,17 @@
     "deleteVocabulary": "Xóa từ vựng",
     "vocabularyList": "Danh sách từ vựng",
     "word": "Từ vựng",
-    "pronunciation": "Phát âm",
+    "pronunciation": {
+      "label": "Phát âm",
+      "ipaPickerTitle": "Bảng ký hiệu IPA",
+      "previewPlaceholder": "Bắt đầu xây dựng IPA...",
+      "wrap": "Bọc bằng dấu gạch chéo",
+      "vowels": "Nguyên âm",
+      "diphthongs": "Nguyên âm đôi",
+      "consonants": "Phụ âm",
+      "marks": "Ký hiệu",
+      "openIpaPicker": "Mở bảng IPA"
+    },
     "meaning": "Nghĩa",
     "category": "Chủ đề",
     "level": "Mức độ",
