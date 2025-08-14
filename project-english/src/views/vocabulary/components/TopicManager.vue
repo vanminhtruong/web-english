@@ -53,7 +53,7 @@
                   {{ editingTopic ? t('vocabulary.topicManager.editTopic', 'Edit Topic') : t('vocabulary.topicManager.addNewTopic', 'Add New Topic') }}
                 </h3>
                 
-                <div class="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
+                <div class="space-y-4 sm:space-y-4 md:space-y-3 lg:space-y-4">
                   <div class="animate-fade-in-up" style="animation-delay: 0.2s">
                     <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                       <span class="w-1 h-3 bg-green-500 rounded mr-2"></span>
@@ -75,7 +75,7 @@
                     </p>
                   </div>
 
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-3 lg:gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-4 md:gap-3 lg:gap-4">
                     <div class="animate-fade-in-up" style="animation-delay: 0.3s">
                       <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-3 bg-purple-500 rounded mr-2"></span>
@@ -109,7 +109,7 @@
                     </div>
                   </div>
 
-                  <div class="flex gap-2 sm:gap-3 md:gap-2 lg:gap-3 animate-fade-in-up" style="animation-delay: 0.5s">
+                  <div class="flex gap-3 sm:gap-4 md:gap-3 lg:gap-4 animate-fade-in-up" style="animation-delay: 0.5s">
                     <button
                       @click="saveTopic"
                       :disabled="!canSaveTopic"
@@ -141,7 +141,7 @@
                   {{ t('vocabulary.topicManager.noCustomTopics', 'No custom topics created yet') }}
                 </div>
 
-                <div v-else class="space-y-2 sm:space-y-3 md:space-y-2 lg:space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+                <div v-else class="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
                   <div
                     v-for="(topic, index) in customTopics"
                     :key="topic.key"
@@ -149,7 +149,7 @@
                     :style="{ animationDelay: `${0.7 + index * 0.1}s` }"
                   >
                     <div class="flex-1">
-                      <div class="flex items-center gap-3 mb-2">
+                      <div class="flex items-center gap-4 sm:gap-4 mb-2">
                         <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 
                                      text-xs font-medium rounded">
                           {{ topic.key }}
@@ -158,7 +158,7 @@
                           ({{ getTopicUsageCount(topic.key) }} {{ t('vocabulary.words', 'words') }})
                         </span>
                       </div>
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-sm">
                         <div>
                           <span class="font-medium">VI:</span> {{ topic.vi }}
                         </div>
@@ -168,7 +168,7 @@
                       </div>
                     </div>
 
-                    <div class="flex gap-2 ml-4">
+                    <div class="flex gap-3 sm:gap-4 ml-4">
                       <button
                         @click="editTopic(topic)"
                         class="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200 
@@ -209,11 +209,11 @@
                   {{ t('vocabulary.topicManager.builtInTopicsDescription', 'These are system-provided topics that cannot be modified') }}
                 </p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
                   <div
                     v-for="(topic, index) in builtInTopics"
                     :key="topic.key"
-                    class="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 hover:scale-[1.02] animate-fade-in-up"
+                    class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 hover:scale-[1.02] animate-fade-in-up"
                     :style="{ animationDelay: `${0.9 + index * 0.05}s` }"
                   >
                     <div class="flex-1">

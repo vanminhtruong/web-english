@@ -161,7 +161,7 @@
               </button>
 
               <!-- Manage Notes button (Top Right or Top Left if topic exists) -->
-              <div class="flex">
+              <div class="flex" v-if="showActionButtons">
                 <VocabularyNoteButton
                   :date="group.date"
                   :is-today="isTodayGroup"
@@ -173,6 +173,7 @@
               <!-- Row 2 -->
               <!-- Add Word button (Bottom Left) -->
               <button
+                v-if="showActionButtons"
                 @click.stop="openAddVocabularyDialog"
                 class="flex flex-col items-center justify-center p-2 sm:p-3 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-md border border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[56px] sm:min-h-[64px] hover:scale-[1.02]"
                 :aria-label="t('vocabulary.addWord', 'Add Word')"
@@ -184,7 +185,7 @@
               </button>
               
               <!-- Manager Grammar button (Bottom Right) -->
-              <div class="flex">
+              <div class="flex" v-if="showActionButtons">
                 <GrammarManagerButton
                   :date="group.date"
                   :class="'w-full flex flex-col items-center justify-center p-2 sm:p-3 text-xs sm:text-sm font-medium min-h-[56px] sm:min-h-[64px] hover:scale-[1.02] transition-all duration-200 rounded-md'"
