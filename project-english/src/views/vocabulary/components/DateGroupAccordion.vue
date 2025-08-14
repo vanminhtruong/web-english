@@ -556,6 +556,7 @@
             <div class="bg-gray-50 dark:bg-gray-custom border-b border-gray-200 dark:border-gray-700">
               <!-- Topic name and toggle -->
               <div 
+                :id="`date-group-${group.date}-topic-${topicGroup.topic}`"
                 class="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-custom/50"
                 @click="toggleTopicAccordion(topicGroup.topic)"
               >
@@ -572,6 +573,52 @@
                     {{ getTopicName(topicGroup.topic) }}
                     <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
                   </h5>
+                </div>
+                
+                <!-- Info icon: show other dates with the same topic on hover -->
+                <div 
+                  class="relative mr-2"
+                  @mouseenter.stop="handleInfoMouseEnter(topicGroup.topic)"
+                  @mouseleave="handleInfoMouseLeave"
+                  @click.stop
+                >
+                  <button
+                    type="button"
+                    class="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md"
+                    :aria-label="t('vocabulary.sameTopicDatesAria', 'Show dates with same topic')"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.75 15h-1.5v-6h1.5v6zm0-8h-1.5V7h1.5v2z"/>
+                    </svg>
+                  </button>
+                  <!-- Tooltip panel -->
+                  <div 
+                    v-if="infoHoverTopic === topicGroup.topic"
+                    class="absolute left-full top-1/2 -translate-y-1/2 ml-3 w-64 max-h-60 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-gray-700"
+                    @mouseenter="handleTooltipMouseEnter"
+                    @mouseleave="handleTooltipMouseLeave"
+                  >
+                    <div class="text-xs font-semibold mb-2">
+                      {{ t('vocabulary.sameTopicDatesTitle', 'Dates with same topic') }}
+                    </div>
+                    <div 
+                      v-if="!availableDatesByTopic[topicGroup.topic] || availableDatesByTopic[topicGroup.topic].length === 0"
+                      class="text-xs text-gray-600 dark:text-white/70"
+                    >
+                      {{ t('vocabulary.sameTopicDatesEmpty', 'No other dates found for this topic') }}
+                    </div>
+                    <ul v-else class="text-xs space-y-1">
+                      <li 
+                        v-for="d in availableDatesByTopic[topicGroup.topic]" 
+                        :key="d.date" 
+                        class="flex items-center justify-between hover:bg-gray-custom dark:hover:bg-gray-custom rounded px-2 py-1 cursor-pointer"
+                        @click="handleNavigateClick(d.date, topicGroup.topic)"
+                      >
+                        <span>{{ formatDateForDisplay(d.date) }}</span>
+                        <span class="text-gray-500">({{ d.count }})</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
                 
                 <!-- Batch Move Arrow for Category -->
@@ -1209,6 +1256,64 @@ const handleBatchMoveCategory = (topicGroup: any) => {
   })
 }
 
+// Info tooltip: available dates with same topic
+const availableDatesByTopic = ref<Record<string, { date: string; count: number }[]>>({})
+const infoHoverTopic = ref<string | null>(null)
+
+const handleInfoMouseEnter = (topic: string) => {
+  infoHoverTopic.value = topic
+  emit('request-available-dates', { topic, currentDate: props.group.date })
+}
+
+const handleInfoMouseLeave = () => {
+  // Delay hiding so user can move into tooltip panel
+  setTimeout(() => {
+    if (!isHoveringTooltip.value) {
+      infoHoverTopic.value = null
+    }
+  }, 120)
+}
+
+const handleAvailableDatesResponse = (e: Event) => {
+  const detail = (e as CustomEvent).detail as { topic: string; currentDate: string; availableDates: { date: string; count: number }[] }
+  if (!detail) return
+  if (detail.currentDate !== props.group.date) return
+  availableDatesByTopic.value[detail.topic] = detail.availableDates || []
+}
+
+// Navigate to another date/topic from tooltip
+const handleNavigateClick = (targetDate: string, topic: string) => {
+  infoHoverTopic.value = null
+  emit('navigate-to-date-topic', { date: targetDate, topic })
+}
+
+// Receive open instructions from parent to expand and scroll
+const handleOpenDateTopic = (e: Event) => {
+  const detail = (e as CustomEvent).detail as { date: string; topic: string }
+  if (!detail) return
+  if (detail.date !== props.group.date) return
+  // Expand group and topic, then scroll
+  isExpanded.value = true
+  expandedTopics.value[detail.topic] = true
+  nextTick(() => {
+    const el = document.getElementById(`date-group-${props.group.date}-topic-${detail.topic}`)
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  })
+}
+
+// Track hover state inside tooltip to prevent flicker
+const isHoveringTooltip = ref(false)
+const handleTooltipMouseEnter = () => {
+  isHoveringTooltip.value = true
+}
+const handleTooltipMouseLeave = () => {
+  isHoveringTooltip.value = false
+  // When leaving tooltip, close if icon isn't hovered either
+  infoHoverTopic.value = null
+}
+
 // Initialize component
 onMounted(async () => {
   // Load action buttons state from localStorage
@@ -1238,6 +1343,11 @@ onMounted(async () => {
   // Calculate height for smooth animation
   await nextTick()
   await calculateHeight()
+
+  // Listen for available dates response from parent
+  window.addEventListener('available-dates-response', handleAvailableDatesResponse as EventListener)
+  // Listen for open/scroll command from parent after pagination change
+  window.addEventListener('open-date-topic', handleOpenDateTopic as EventListener)
 })
 
 // Cleanup on unmount
@@ -1254,6 +1364,10 @@ onUnmounted(() => {
       clearTimeout(hoverTimeouts.value[topic])
     }
   })
+
+  // Remove available dates response listener
+  window.removeEventListener('available-dates-response', handleAvailableDatesResponse as EventListener)
+  window.removeEventListener('open-date-topic', handleOpenDateTopic as EventListener)
 })
 
 const emit = defineEmits<{
@@ -1271,6 +1385,7 @@ const emit = defineEmits<{
   'open-grammar-manager': [date: string]
   'move-vocabulary': [data: { word: any, targetDate: string }]
   'request-available-dates': [data: { topic: string, currentDate: string }]
+  'navigate-to-date-topic': [payload: { date: string, topic: string }]
   'batch-move-category': [data: { topic: string, words: any[], sourceDate: string }]
 }>()
 </script>

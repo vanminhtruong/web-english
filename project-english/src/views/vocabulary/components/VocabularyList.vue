@@ -10,7 +10,12 @@
           {{ t('vocabulary.vocabularyList', 'Vocabulary List') }} ({{ totalCount }})
         </h3>
         <!-- Info tooltip for missing images by date/category -->
-        <div class="relative group/mi-tooltip ml-2 select-none" aria-hidden="false">
+        <div 
+          class="relative ml-2 select-none"
+          aria-hidden="false"
+          @mouseenter="handleMissingTooltipEnter"
+          @mouseleave="handleMissingTooltipLeave"
+        >
           <button
             type="button"
             class="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-blue-200 text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-300 dark:bg-dark-bg-soft dark:border-dark-bg-mute dark:hover:bg-dark-bg-mute transition"
@@ -22,7 +27,10 @@
           </button>
           <!-- Tooltip Panel -->
           <div
-            class="invisible opacity-0 group-hover/mi-tooltip:visible group-hover/mi-tooltip:opacity-100 transition-opacity duration-150 absolute right-0 mt-2 w-72 sm:w-80 max-h-64 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-dark-bg-mute"
+            v-if="showMissingTooltip"
+            class="transition-opacity duration-150 absolute right-0 mt-2 w-72 sm:w-80 max-h-64 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-dark-bg-mute"
+            @mouseenter="handleMissingTooltipEnter"
+            @mouseleave="handleMissingTooltipLeave"
           >
             <div class="text-sm font-semibold mb-2">
               {{ t('vocabulary.imageInfo.title', 'Missing images by date') }}
@@ -35,10 +43,18 @@
                 <div class="text-xs font-medium text-gray-700 mb-1 dark:text-white/80">
                   {{ t('vocabulary.imageInfo.date', 'Date') }}: <span class="font-semibold">{{ item.date }}</span>
                 </div>
-                <ul class="text-xs list-disc pl-4 space-y-0.5">
-                  <li v-for="cat in item.categories" :key="cat.name">
+                <ul class="text-xs pl-0 space-y-0.5">
+                  <li 
+                    v-for="cat in item.categories" 
+                    :key="cat.key"
+                    class="flex items-center justify-between rounded px-2 py-1 cursor-pointer hover:bg-gray-custom dark:hover:bg-gray-custom"
+                    @click="handleMissingNavigate(item.date, cat.key)"
+                  >
+                    <div class="min-w-0 pr-2">
                     <span class="font-medium">{{ t('vocabulary.imageInfo.category', 'Category') }}:</span>
-                    <span> {{ cat.name }} — {{ t('vocabulary.imageInfo.missingCount', { count: cat.count }) || `${cat.count} without image` }}</span>
+                      <span class="truncate"> {{ cat.name }}</span>
+                    </div>
+                    <span class="text-gray-500 whitespace-nowrap">{{ t('vocabulary.imageInfo.missingCount', { count: cat.count }) || `${cat.count} without image` }}</span>
                   </li>
                 </ul>
               </div>
@@ -72,6 +88,7 @@
         @open-grammar-manager="$emit('open-grammar-manager', $event)"
         @move-vocabulary="handleMoveVocabulary"
         @request-available-dates="handleRequestAvailableDates"
+        @navigate-to-date-topic="handleNavigateToDateTopic"
         @batch-move-category="$emit('batch-move-category', $event)"
       />
       
@@ -231,6 +248,26 @@ import { useToast } from 'vue-toastification'
 
 const { t, locale } = useI18n()
 const toast = useToast()
+// Hover state control for Missing Images tooltip (to prevent flicker)
+const showMissingTooltip = ref(false)
+let missingTooltipHideTimer: number | null = null
+
+const handleMissingTooltipEnter = () => {
+  if (missingTooltipHideTimer) {
+    clearTimeout(missingTooltipHideTimer)
+    missingTooltipHideTimer = null
+  }
+  showMissingTooltip.value = true
+}
+
+const handleMissingTooltipLeave = () => {
+  // small delay so user can move between button and panel
+  missingTooltipHideTimer = setTimeout(() => {
+    showMissingTooltip.value = false
+    missingTooltipHideTimer = null
+  }, 120)
+}
+
 
 // Sử dụng defineAsyncComponent để import components an toàn
 const VocabularyCard = defineAsyncComponent(
@@ -319,7 +356,7 @@ const props = defineProps<Props>()
 const missingImagesByDate = computed(() => {
   // Decide source words
   const source: Word[] = (props.useGrouping ? (props.allWords || []) : (props.paginatedWords || []))
-  if (!Array.isArray(source) || source.length === 0) return [] as Array<{ date: string; categories: { name: string; count: number }[] }>
+  if (!Array.isArray(source) || source.length === 0) return [] as Array<{ date: string; categories: { key: string; name: string; count: number }[] }>
 
   // Helper to normalize date to yyyy-mm-dd
   const normalizeDate = (d?: string) => {
@@ -328,26 +365,32 @@ const missingImagesByDate = computed(() => {
     return isNaN(dt.getTime()) ? 'Unknown' : dt.toISOString().slice(0, 10)
   }
 
-  // Build map: date -> displayCategoryName -> count
-  const map = new Map<string, Map<string, number>>()
+  // Build map: date -> topicKey -> { name, count }
+  const map = new Map<string, Map<string, { name: string; count: number }>>()
   for (const w of source) {
     const img = (w.image ?? '').trim()
     if (img) continue // has image
     const dateKey = normalizeDate(w.createdAt)
     // Prefer human-readable categoryName if available (imported data), otherwise translate built-in key
     const catKey = w.category || 'uncategorized'
-    // Resolve display name via categoryName -> custom topic -> built-in translation -> fallback
-    const displayCat = (w as any).categoryName || getTopicName(catKey, w)
+    // Resolve display name via categoryName -> built-in translation
+    const displayName = (w as any).categoryName || getTopicName(catKey, w)
 
-    if (!map.has(dateKey)) map.set(dateKey, new Map<string, number>())
+    if (!map.has(dateKey)) map.set(dateKey, new Map<string, { name: string; count: number }>())
     const catMap = map.get(dateKey)!
-    catMap.set(displayCat, (catMap.get(displayCat) || 0) + 1)
+    const prev = catMap.get(catKey) || { name: displayName, count: 0 }
+    prev.count += 1
+    // Keep the first non-empty name
+    if (!prev.name && displayName) {
+      prev.name = displayName
+    }
+    catMap.set(catKey, prev)
   }
 
   // Convert to sorted array by date desc (Unknown last)
-  const result: { date: string; categories: { name: string; count: number }[] }[] = []
+  const result: { date: string; categories: { key: string; name: string; count: number }[] }[] = []
   for (const [date, catMap] of map.entries()) {
-    const categories = Array.from(catMap.entries()).map(([name, count]) => ({ name, count }))
+    const categories = Array.from(catMap.entries()).map(([key, value]) => ({ key, name: value.name, count: value.count }))
     result.push({ date, categories })
   }
 
@@ -591,5 +634,39 @@ const handleRequestAvailableDates = (data: { topic: string, currentDate: string 
     })
     window.dispatchEvent(event)
   })
+}
+
+// Navigate to a specific date/topic (may require changing date-group page)
+const handleNavigateToDateTopic = (payload: { date: string; topic: string }) => {
+  // Find the index of the date group globally
+  const allGroups = groupedWords.value
+  const targetIndex = allGroups.findIndex(g => g.date === payload.date)
+  if (targetIndex === -1) return
+  const targetPage = Math.floor(targetIndex / dateGroupsPerPage) + 1
+
+  const goAndScroll = () => {
+    // Wait for DOM then dispatch event to open and scroll
+    nextTick(() => {
+      const ev = new CustomEvent('open-date-topic', {
+        detail: { date: payload.date, topic: payload.topic }
+      })
+      window.dispatchEvent(ev)
+    })
+  }
+
+  if (dateGroupCurrentPage.value !== targetPage) {
+    dateGroupCurrentPage.value = targetPage
+    nextTick(() => {
+      goAndScroll()
+    })
+  } else {
+    goAndScroll()
+  }
+}
+
+// Handle navigate from Missing Images tooltip
+const handleMissingNavigate = (date: string, topicKey: string) => {
+  // Reuse navigation flow used by category tooltip
+  handleNavigateToDateTopic({ date, topic: topicKey })
 }
 </script>
