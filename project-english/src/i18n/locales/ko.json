@@ -113,6 +113,9 @@
         "saveTopic": "주제 저장",
         "cancelTopic": "취소"
       },
+      "sameTopicDatesTitle": "같은 주제의 다른 날짜",
+      "sameTopicDatesEmpty": "이 주제의 다른 날짜가 없습니다",
+      "sameTopicDatesAria": "같은 주제의 날짜 표시",
       "notFound": "어휘를 찾을 수 없습니다!",
       "updateError": "어휘 업데이트 중 오류가 발생했습니다. 다시 시도하세요.",
       "deleteError": "어휘 삭제 중 오류가 발생했습니다. 다시 시도하세요.",

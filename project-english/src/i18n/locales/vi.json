@@ -115,9 +115,7 @@
       "saveSuccess": "Đã lưu ghi chú thành công!",
       "autoSaveNotice": "Đã bật lưu tự động. Ghi chú của bạn sẽ được đưa vào bản sao lưu tiếp theo.",
       "today": "Hôm nay",
-      "yesterday": "Hôm qua"
-    },
-    "notes": {
+      "yesterday": "Hôm qua",
       "grammarCheck": "Bật kiểm tra ngữ pháp (tiếng Anh)",
       "preview": "Xem trước với gợi ý ngữ pháp",
       "grammarDisclaimer": "Kiểm tra ngữ pháp sử dụng LanguageTool (public API) và có thể bị giới hạn tần suất.",
@@ -145,6 +143,9 @@
       "saveTopic": "Lưu chủ đề",
       "cancelTopic": "Hủy"
     },
+    "sameTopicDatesTitle": "Các ngày có cùng chủ đề",
+    "sameTopicDatesEmpty": "Không tìm thấy ngày nào khác cho chủ đề này",
+    "sameTopicDatesAria": "Hiển thị các ngày có cùng chủ đề",
     "notFound": "Không tìm thấy từ vựng!",
     "updateError": "Có lỗi xảy ra khi cập nhật từ vựng. Vui lòng thử lại.",
     "deleteError": "Có lỗi xảy ra khi xóa từ vựng. Vui lòng thử lại.",

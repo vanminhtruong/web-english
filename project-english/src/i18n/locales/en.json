@@ -102,9 +102,6 @@
     "filters": {
       "title": "Filters"
     },
-    "save": {
-      "title": "Save & Sync"
-    },
     "lazyLoading": {
       "loading": "Loading...",
       "componentVisible": "Component is now visible",
@@ -119,6 +116,9 @@
       "saveTopic": "Save Topic",
       "cancelTopic": "Cancel"
     },
+    "sameTopicDatesTitle": "Dates with same topic",
+    "sameTopicDatesEmpty": "No other dates found for this topic",
+    "sameTopicDatesAria": "Show dates with same topic",
     "notFound": "Vocabulary not found!",
     "updateError": "An error occurred while updating vocabulary. Please try again.",
     "deleteError": "An error occurred while deleting vocabulary. Please try again.",
@@ -192,6 +192,7 @@
       "aria": "Show info about missing images"
     },
     "save": {
+      "title": "Save & Sync",
       "mode": "Save Mode:",
       "auto": "Auto",
       "manual": "Manual",
