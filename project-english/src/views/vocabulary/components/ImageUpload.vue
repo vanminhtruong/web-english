@@ -32,6 +32,18 @@
         >
           {{ t('vocabulary.image.url', 'URL') }}
         </button>
+        <button
+          @click="inputMethod = 'copy'"
+          type="button"
+          :class="[
+            'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+            inputMethod === 'copy'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+          ]"
+        >
+          {{ t('vocabulary.image.copyTab', 'Copy') }}
+        </button>
       </div>
       
       <!-- File Input (Hidden) -->
@@ -100,6 +112,72 @@
           </svg>
           <span>{{ isProcessing ? t('vocabulary.image.loading', 'Loading...') : t('vocabulary.image.loadFromUrl', 'Load from URL') }}</span>
         </button>
+      </div>
+      
+      <!-- Copy Image Zone -->
+      <div v-if="inputMethod === 'copy'" class="space-y-3">
+        <div
+          class="p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 text-sm"
+        >
+          <p>
+            {{ t('vocabulary.image.paste.hint', 'Press Ctrl+V to paste an image, or click the button:') }}
+          </p>
+          <div class="flex items-center space-x-2 mt-2">
+            <button
+              @click="pasteImageFromClipboard"
+              type="button"
+              class="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center space-x-2"
+              :disabled="isProcessing"
+            >
+              <svg v-if="isProcessing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m8-5H8l-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7z" />
+              </svg>
+              <span>{{ t('vocabulary.image.paste.button', 'Paste image from clipboard') }}</span>
+            </button>
+            <span v-if="copyStatus && copyStatus.type === 'success'" class="text-green-600 dark:text-green-400 text-sm">
+              {{ copyStatus.message }}
+            </span>
+          </div>
+        </div>
+        <div
+          class="p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 text-sm"
+        >
+          <p v-if="!imagePreview">
+            {{ t('vocabulary.image.copy.noImage', 'No image to copy. Please upload or load an image first.') }}
+          </p>
+          <div v-else class="space-y-2">
+            <p>
+              {{ t('vocabulary.image.copy.description', 'Copy the current image to your clipboard as an actual image, not just the URL.') }}
+            </p>
+            <div class="flex items-center space-x-2">
+              <button
+                @click="copyImageToClipboard"
+                type="button"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center space-x-2"
+                :disabled="isProcessing"
+              >
+                <svg v-if="isProcessing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-9 8h10a2 2 0 002-2V6a2 2 0 00-2-2H9l-3 3v11a2 2 0 002 2z" />
+                </svg>
+                <span>{{ t('vocabulary.image.copy.button', 'Copy image to clipboard') }}</span>
+              </button>
+              <span v-if="copyStatus && copyStatus.type === 'success'" class="text-green-600 dark:text-green-400 text-sm">
+                {{ copyStatus.message }}
+              </span>
+              <span v-else-if="copyStatus && copyStatus.type === 'warning'" class="text-yellow-600 dark:text-yellow-400 text-sm">
+                {{ copyStatus.message }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Image Preview -->
@@ -223,7 +301,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -248,14 +326,90 @@ const imageInfo = ref<{ name: string; size: number } | null>(null)
 const isDragOver = ref(false)
 const isProcessing = ref(false)
 const errorMessage = ref<string | null>(null)
-const inputMethod = ref<'upload' | 'url'>('upload')
+const inputMethod = ref<'upload' | 'url' | 'copy'>('upload')
 const imageUrl = ref('')
 const newImageUrl = ref('')
 const showUrlEdit = ref(false)
+const copyStatus = ref<{ type: 'success' | 'warning'; message: string } | null>(null)
 
 // Constants
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const SUPPORTED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+
+// Handle paste from clipboard when on Copy tab
+const handlePaste = async (e: ClipboardEvent) => {
+  try {
+    // Don't intercept when typing into inputs/textareas/contenteditable
+    const target = e.target as HTMLElement | null
+    if (target && target.closest('input, textarea, [contenteditable="true"]')) return
+
+    if (inputMethod.value !== 'copy') return
+
+    const cd = e.clipboardData
+    if (!cd) return
+
+    // Prefer image file from clipboard
+    const items = cd.items
+    let imageFile: File | null = null
+    if (items && items.length) {
+      for (let i = 0; i < items.length; i++) {
+        const it = items[i]
+        if (it.kind === 'file' && it.type.startsWith('image/')) {
+          const f = it.getAsFile()
+          if (f) { imageFile = f; break }
+        }
+      }
+    }
+
+    // Fallback: clipboard files
+    if (!imageFile && cd.files && cd.files.length > 0 && cd.files[0].type.startsWith('image/')) {
+      imageFile = cd.files[0]
+    }
+
+    if (imageFile) {
+      e.preventDefault()
+      await processFile(imageFile)
+      copyStatus.value = { type: 'success', message: t('vocabulary.image.paste.success', 'Image pasted!') || 'Image pasted!' }
+      return
+    }
+
+    // Fallback: detect image URL text
+    const text = cd.getData('text/plain')
+    if (text && isValidImageUrl(text)) {
+      e.preventDefault()
+      imageUrl.value = text
+      await handleUrlInput()
+      copyStatus.value = { type: 'success', message: t('vocabulary.image.paste.success', 'Image pasted!') || 'Image pasted!' }
+      return
+    }
+
+    // Nothing useful found
+    errorMessage.value = t('vocabulary.image.paste.noImage', 'Clipboard does not contain an image')
+  } catch (err) {
+    console.error('Paste handler error:', err)
+    errorMessage.value = t('vocabulary.image.paste.error', 'Failed to paste from clipboard')
+  }
+}
+
+// Register paste listener only when Copy tab is active
+onMounted(() => {
+  if (inputMethod.value === 'copy') {
+    window.addEventListener('paste', handlePaste)
+  }
+})
+
+watch(inputMethod, (val, oldVal) => {
+  if (oldVal === 'copy') {
+    window.removeEventListener('paste', handlePaste)
+  }
+  if (val === 'copy') {
+    window.addEventListener('paste', handlePaste)
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('paste', handlePaste)
+})
 
 // Methods
 const triggerFileInput = () => {
@@ -339,6 +493,145 @@ const fileToBase64 = (file: File): Promise<string> => {
     }
     reader.onerror = error => reject(error)
   })
+}
+
+const dataUrlToBlob = async (dataUrl: string): Promise<Blob> => {
+  // Using fetch for data URLs is widely supported and simpler
+  const res = await fetch(dataUrl)
+  return await res.blob()
+}
+
+const fetchImageBlob = async (url: string): Promise<Blob> => {
+  // Try standard CORS fetch first
+  const res = await fetch(url, { mode: 'cors' })
+  if (!res.ok) throw new Error('Fetch failed')
+  return await res.blob()
+}
+
+const urlToBlobViaCanvas = (url: string): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.naturalWidth
+        canvas.height = img.naturalHeight
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return reject(new Error('Canvas not supported'))
+        ctx.drawImage(img, 0, 0)
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob)
+          else reject(new Error('Canvas toBlob failed'))
+        })
+      } catch (e) {
+        reject(e as Error)
+      }
+    }
+    img.onerror = () => reject(new Error('Image load error'))
+    img.src = url
+  })
+}
+
+const copyImageToClipboard = async () => {
+  copyStatus.value = null
+  errorMessage.value = null
+  if (!imagePreview.value) {
+    errorMessage.value = t('vocabulary.image.copy.noImage', 'No image to copy. Please upload or load an image first.')
+    return
+  }
+  // Check support
+  const hasClipboard = !!(navigator.clipboard && (navigator.clipboard as any).write && (window as any).ClipboardItem)
+  if (!hasClipboard) {
+    errorMessage.value = t('vocabulary.image.copy.unsupported', 'Clipboard API for images is not supported in this browser.')
+    return
+  }
+  isProcessing.value = true
+  try {
+    let blob: Blob
+    if (imagePreview.value.startsWith('data:')) {
+      blob = await dataUrlToBlob(imagePreview.value)
+    } else if (imagePreview.value.startsWith('http')) {
+      try {
+        blob = await fetchImageBlob(imagePreview.value)
+      } catch {
+        // Fallback: try canvas route (may fail if CORS not enabled)
+        blob = await urlToBlobViaCanvas(imagePreview.value)
+      }
+    } else {
+      throw new Error('Unknown image source')
+    }
+
+    const mime = blob.type || 'image/png'
+    const item = new (window as any).ClipboardItem({ [mime]: blob })
+    await (navigator.clipboard as any).write([item])
+    copyStatus.value = { type: 'success', message: t('vocabulary.image.copy.success', 'Image copied to clipboard!') || 'Image copied to clipboard!' }
+  } catch (err) {
+    console.error('Copy image failed:', err)
+    // Likely CORS/canvas taint issue
+    errorMessage.value = t('vocabulary.image.copy.failed', 'Failed to copy image. Some images cannot be copied due to browser or CORS restrictions.')
+    // Provide a gentle note if URL source
+    if (imagePreview.value?.startsWith('http')) {
+      copyStatus.value = { type: 'warning', message: t('vocabulary.image.copy.corsNote', 'Tip: Images from some websites block copying. Try uploading the image instead.') || 'Tip: Images from some websites block copying. Try uploading the image instead.' }
+    }
+  } finally {
+    isProcessing.value = false
+    // Auto clear status after short delay
+    setTimeout(() => { copyStatus.value = null }, 2500)
+  }
+}
+
+// Read image from clipboard on button click
+const pasteImageFromClipboard = async () => {
+  copyStatus.value = null
+  errorMessage.value = null
+  
+  // Only act within Copy tab context; the button exists there, but keep the guard
+  if (inputMethod.value !== 'copy') return
+  
+  const canRead = !!(navigator.clipboard && (navigator.clipboard as any).read)
+  isProcessing.value = true
+  try {
+    // Preferred: ClipboardItem API (image blob)
+    if (canRead) {
+      const items = await (navigator.clipboard as any).read()
+      for (const item of items) {
+        const types: string[] = (item.types || []) as any
+        const imageType = types.find(t => t.startsWith('image/'))
+        if (imageType) {
+          const blob = await item.getType(imageType)
+          const ext = (blob.type.split('/')[1] || 'png').replace(/[^a-z0-9]/gi, '')
+          const file = new File([blob], `clipboard-${Date.now()}.${ext}`, { type: blob.type })
+          await processFile(file)
+          copyStatus.value = { type: 'success', message: t('vocabulary.image.paste.success', 'Image pasted!') || 'Image pasted!' }
+          return
+        }
+      }
+    }
+    
+    // Fallback: readText for URL
+    if (navigator.clipboard && (navigator.clipboard as any).readText) {
+      const text = await (navigator.clipboard as any).readText()
+      const url = text?.trim()
+      if (url && isValidImageUrl(url)) {
+        imageUrl.value = url
+        await handleUrlInput()
+        copyStatus.value = { type: 'success', message: t('vocabulary.image.paste.success', 'Image pasted!') || 'Image pasted!' }
+        return
+      }
+    }
+    
+    // No image data found
+    errorMessage.value = t('vocabulary.image.paste.noImage', 'Clipboard does not contain an image')
+  } catch (err) {
+    console.error('pasteImageFromClipboard failed:', err)
+    errorMessage.value = t('vocabulary.image.paste.error', 'Failed to paste from clipboard')
+  } finally {
+    isProcessing.value = false
+    if (copyStatus.value?.type === 'success') {
+      setTimeout(() => { copyStatus.value = null }, 2500)
+    }
+  }
 }
 
 const removeImage = () => {
