@@ -594,10 +594,15 @@
                   <!-- Tooltip panel -->
                   <div 
                     v-if="infoHoverTopic === topicGroup.topic"
-                    class="absolute left-full top-1/2 -translate-y-1/2 ml-3 w-64 max-h-60 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-gray-700"
+                    class="absolute left-full top-1/2 -translate-y-1/2 ml-3 w-64 rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 overflow-visible dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-[#0f0f0f]"
                     @mouseenter="handleTooltipMouseEnter"
                     @mouseleave="handleTooltipMouseLeave"
                   >
+                    <!-- Arrow pointer -->
+                    <span 
+                      aria-hidden="true"
+                      class="pointer-events-none absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-white dark:bg-[#0a0a0a] dark:border dark:border-[#0f0f0f]"
+                    ></span>
                     <div class="text-xs font-semibold mb-2">
                       {{ t('vocabulary.sameTopicDatesTitle', 'Dates with same topic') }}
                     </div>
@@ -607,15 +612,19 @@
                     >
                       {{ t('vocabulary.sameTopicDatesEmpty', 'No other dates found for this topic') }}
                     </div>
-                    <ul v-else class="text-xs space-y-1">
+                    <ul 
+                      v-else 
+                      class="text-xs space-y-1 pr-1 overflow-y-auto"
+                      :class="{ 'max-h-24': (availableDatesByTopic[topicGroup.topic]?.length || 0) >= 4 }"
+                    >
                       <li 
                         v-for="d in availableDatesByTopic[topicGroup.topic]" 
                         :key="d.date" 
-                        class="flex items-center justify-between hover:bg-gray-custom dark:hover:bg-gray-custom rounded px-2 py-1 cursor-pointer"
+                        class="flex items-center justify-between hover:bg-white dark:hover:bg-[#0f0f0f] rounded px-2 py-1 cursor-pointer"
                         @click="handleNavigateClick(d.date, topicGroup.topic)"
                       >
                         <span>{{ formatDateForDisplay(d.date) }}</span>
-                        <span class="text-gray-500">({{ d.count }})</span>
+                        <span class="text-gray-500 dark:text-white/60">({{ d.count }})</span>
                       </li>
                     </ul>
                   </div>
