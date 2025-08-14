@@ -569,66 +569,68 @@
                   >
                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                   </svg>
-                  <h5 class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    {{ getTopicName(topicGroup.topic) }}
-                    <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
-                  </h5>
-                </div>
-                
-                <!-- Info icon: show other dates with the same topic on hover -->
-                <div 
-                  class="relative mr-2"
-                  @mouseenter.stop="handleInfoMouseEnter(topicGroup.topic)"
-                  @mouseleave="handleInfoMouseLeave"
-                  @click.stop
-                >
-                  <button
-                    type="button"
-                    class="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md"
-                    :aria-label="t('vocabulary.sameTopicDatesAria', 'Show dates with same topic')"
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.75 15h-1.5v-6h1.5v6zm0-8h-1.5V7h1.5v2z"/>
-                    </svg>
-                  </button>
-                  <!-- Tooltip panel -->
-                  <div 
-                    v-if="infoHoverTopic === topicGroup.topic"
-                    class="absolute left-full top-1/2 -translate-y-1/2 ml-3 w-64 rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 overflow-visible dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-[#0f0f0f]"
-                    @mouseenter="handleTooltipMouseEnter"
-                    @mouseleave="handleTooltipMouseLeave"
-                  >
-                    <!-- Arrow pointer -->
-                    <span 
-                      aria-hidden="true"
-                      class="pointer-events-none absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-white dark:bg-[#0a0a0a] dark:border dark:border-[#0f0f0f]"
-                    ></span>
-                    <div class="text-xs font-semibold mb-2">
-                      {{ t('vocabulary.sameTopicDatesTitle', 'Dates with same topic') }}
-                    </div>
+                  <div class="flex items-center space-x-1">
+                    <h5 class="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      {{ getTopicName(topicGroup.topic) }}
+                      <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
+                    </h5>
+                    <!-- Info icon moved next to the topic name with tighter spacing -->
                     <div 
-                      v-if="!availableDatesByTopic[topicGroup.topic] || availableDatesByTopic[topicGroup.topic].length === 0"
-                      class="text-xs text-gray-600 dark:text-white/70"
+                      class="relative"
+                      @mouseenter.stop="handleInfoMouseEnter(topicGroup.topic)"
+                      @mouseleave="handleInfoMouseLeave"
+                      @click.stop
                     >
-                      {{ t('vocabulary.sameTopicDatesEmpty', 'No other dates found for this topic') }}
-                    </div>
-                    <ul 
-                      v-else 
-                      class="text-xs space-y-1 pr-1 overflow-y-auto"
-                      :class="{ 'max-h-24': (availableDatesByTopic[topicGroup.topic]?.length || 0) >= 4 }"
-                    >
-                      <li 
-                        v-for="d in availableDatesByTopic[topicGroup.topic]" 
-                        :key="d.date" 
-                        class="flex items-center justify-between hover:bg-white dark:hover:bg-[#0f0f0f] rounded px-2 py-1 cursor-pointer"
-                        @click="handleNavigateClick(d.date, topicGroup.topic)"
+                      <button
+                        type="button"
+                        class="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md"
+                        :aria-label="t('vocabulary.sameTopicDatesAria', 'Show dates with same topic')"
                       >
-                        <span>{{ formatDateForDisplay(d.date) }}</span>
-                        <span class="text-gray-500 dark:text-white/60">({{ d.count }})</span>
-                      </li>
-                    </ul>
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.75 15h-1.5v-6h1.5v6zm0-8h-1.5V7h1.5v2z"/>
+                        </svg>
+                      </button>
+                      <!-- Tooltip panel -->
+                      <div 
+                        v-if="infoHoverTopic === topicGroup.topic"
+                        class="absolute left-full top-1/2 -translate-y-1/2 ml-3 w-64 rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 border border-gray-200 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-[#0f0f0f]"
+                        @mouseenter="handleTooltipMouseEnter"
+                        @mouseleave="handleTooltipMouseLeave"
+                      >
+                        <!-- Arrow pointer -->
+                        <div 
+                          class="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-white dark:bg-[#0a0a0a]"
+                          aria-hidden="true"
+                        />
+                        <div class="text-xs font-semibold mb-2">
+                          {{ t('vocabulary.sameTopicDatesTitle', 'Dates with same topic') }}
+                        </div>
+                        <div 
+                          v-if="!availableDatesByTopic[topicGroup.topic] || availableDatesByTopic[topicGroup.topic].length === 0"
+                          class="text-xs text-gray-600 dark:text-white/70"
+                        >
+                          {{ t('vocabulary.sameTopicDatesEmpty', 'No other dates found for this topic') }}
+                        </div>
+                        <ul 
+                          v-else 
+                          class="text-xs space-y-1 pr-1 overflow-y-auto"
+                          :class="{ 'max-h-24': (availableDatesByTopic[topicGroup.topic]?.length || 0) >= 4 }"
+                        >
+                          <li 
+                            v-for="d in availableDatesByTopic[topicGroup.topic]" 
+                            :key="d.date" 
+                            class="flex items-center justify-between hover:bg-white dark:hover:bg-[#0f0f0f] rounded px-2 py-1 cursor-pointer"
+                            @click="handleNavigateClick(d.date, topicGroup.topic)"
+                          >
+                            <span>{{ formatDateForDisplay(d.date) }}</span>
+                            <span class="text-gray-500 dark:text-white/60">({{ d.count }})</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                
                 
                 <!-- Batch Move Arrow for Category -->
                 <button

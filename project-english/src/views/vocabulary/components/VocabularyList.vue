@@ -28,17 +28,27 @@
           <!-- Tooltip Panel -->
           <div
             v-if="showMissingTooltip"
-            class="transition-opacity duration-150 absolute right-0 mt-2 w-72 sm:w-80 max-h-64 overflow-y-auto rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-dark-bg-mute"
+            class="transition-opacity duration-150 absolute right-0 mt-2 w-72 sm:w-80 rounded-lg shadow-xl ring-1 ring-black/5 bg-white text-gray-800 p-3 z-30 border border-gray-200 dark:bg-[#0a0a0a] dark:text-white dark:border dark:border-dark-bg-mute"
             @mouseenter="handleMissingTooltipEnter"
             @mouseleave="handleMissingTooltipLeave"
           >
+            <!-- Mask top border under the arrow to avoid double line -->
+            <div 
+              class="absolute -top-[2px] right-7 w-4 h-[4px] bg-white dark:bg-[#0a0a0a] pointer-events-none z-10"
+              aria-hidden="true"
+            />
+            <!-- Arrow pointer (no ring to avoid square edges) -->
+            <div 
+              class="absolute -top-1.5 right-[29.5px] w-3 h-3 rotate-45 bg-white pointer-events-none z-20 dark:bg-[#0a0a0a] border-t border-l border-gray-200 dark:border-[#0f0f0f]"
+              aria-hidden="true"
+            />
             <div class="text-sm font-semibold mb-2">
               {{ t('vocabulary.imageInfo.title', 'Missing images by date') }}
             </div>
             <div v-if="missingImagesByDate.length === 0" class="text-sm text-gray-600 dark:text-white/70">
               {{ t('vocabulary.imageInfo.none', 'All categories have images for the current list') }}
             </div>
-            <div v-else class="space-y-2">
+            <div v-else class="max-h-64 overflow-y-auto space-y-2 pr-1">
               <div v-for="item in missingImagesByDate" :key="item.date" class="border border-gray-200 rounded-md p-2 dark:border-dark-bg-mute">
                 <div class="text-xs font-medium text-gray-700 mb-1 dark:text-white/80">
                   {{ t('vocabulary.imageInfo.date', 'Date') }}: <span class="font-semibold">{{ item.date }}</span>
