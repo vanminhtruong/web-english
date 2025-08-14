@@ -1259,6 +1259,8 @@ const handleBatchMoveCategory = (topicGroup: any) => {
 // Info tooltip: available dates with same topic
 const availableDatesByTopic = ref<Record<string, { date: string; count: number }[]>>({})
 const infoHoverTopic = ref<string | null>(null)
+// Pending open key for cross-page navigation fallback
+const PENDING_OPEN_KEY = 'open-date-topic-pending'
 
 const handleInfoMouseEnter = (topic: string) => {
   infoHoverTopic.value = topic
@@ -1281,12 +1283,14 @@ const handleAvailableDatesResponse = (e: Event) => {
   availableDatesByTopic.value[detail.topic] = detail.availableDates || []
 }
 
-// Navigate to another date/topic from tooltip
+// Navigate to another date/topic from tooltip  
 const handleNavigateClick = (targetDate: string, topic: string) => {
+  console.log('🎯 Tooltip navigation:', { targetDate, topic, currentDate: props.group.date })
   infoHoverTopic.value = null
   
   // If navigating within same date, expand the target topic immediately
   if (targetDate === props.group.date) {
+    console.log('📍 Same date navigation - expanding locally')
     isExpanded.value = true
     expandedTopics.value[topic] = true
     nextTick(() => {
@@ -1297,6 +1301,7 @@ const handleNavigateClick = (targetDate: string, topic: string) => {
     })
   } else {
     // For different dates, emit to parent for navigation
+    console.log('🚀 Cross-date navigation - emitting to parent')
     emit('navigate-to-date-topic', { date: targetDate, topic })
   }
 }
@@ -1304,16 +1309,41 @@ const handleNavigateClick = (targetDate: string, topic: string) => {
 // Receive open instructions from parent to expand and scroll
 const handleOpenDateTopic = (e: Event) => {
   const detail = (e as CustomEvent).detail as { date: string; topic: string }
-  if (!detail) return
-  if (detail.date !== props.group.date) return
+  console.log('📨 Received open-date-topic event:', { detail, currentDate: props.group.date })
+  
+  if (!detail) {
+    console.log('❌ No detail in event')
+    return
+  }
+  
+  if (detail.date !== props.group.date) {
+    console.log('⏭️ Event not for this date group')
+    return
+  }
+  
+  console.log('✅ Opening accordion for cross-date navigation:', detail.topic)
   // Expand group and topic, then scroll
   isExpanded.value = true
   expandedTopics.value[detail.topic] = true
+  // Sync with parent for persistence
+  emit('accordion-toggle', props.group.date, true)
+  if (props.accordionState) {
+    // Best-effort local persistence (object is passed by reference from parent)
+    props.accordionState[props.group.date] = true
+  }
   nextTick(() => {
-    const el = document.getElementById(`date-group-${props.group.date}-topic-${detail.topic}`)
-    if (el && typeof el.scrollIntoView === 'function') {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    // Delay a bit to ensure inner topic list has fully rendered
+    setTimeout(() => {
+      const el = document.getElementById(`date-group-${props.group.date}-topic-${detail.topic}`)
+      if (el && typeof el.scrollIntoView === 'function') {
+        console.log('🎯 Scrolling to topic element')
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      } else {
+        console.log('❌ Topic element not found:', `date-group-${props.group.date}-topic-${detail.topic}`)
+      }
+      // Clear pending key if present to avoid later unintended opens
+      try { sessionStorage.removeItem(PENDING_OPEN_KEY) } catch {}
+    }, 100)
   })
 }
 
@@ -1357,6 +1387,34 @@ onMounted(async () => {
   // Calculate height for smooth animation
   await nextTick()
   await calculateHeight()
+
+  // Fallback: If event fired before we mounted, open from sessionStorage
+  try {
+    const raw = sessionStorage.getItem(PENDING_OPEN_KEY)
+    if (raw) {
+      const pending = JSON.parse(raw) as { date: string; topic: string } | null
+      if (pending && pending.date === props.group.date) {
+        console.log('🧭 Applying pending open on mount:', pending)
+        isExpanded.value = true
+        expandedTopics.value[pending.topic] = true
+        emit('accordion-toggle', props.group.date, true)
+        if (props.accordionState) {
+          props.accordionState[props.group.date] = true
+        }
+        nextTick(() => {
+          setTimeout(() => {
+            const el = document.getElementById(`date-group-${props.group.date}-topic-${pending.topic}`)
+            if (el && typeof el.scrollIntoView === 'function') {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+          }, 100)
+        })
+        sessionStorage.removeItem(PENDING_OPEN_KEY)
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to apply pending open-date-topic on mount:', err)
+  }
 
   // Listen for available dates response from parent
   window.addEventListener('available-dates-response', handleAvailableDatesResponse as EventListener)

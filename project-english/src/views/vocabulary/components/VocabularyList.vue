@@ -283,6 +283,8 @@ const accordionState = ref<Record<string, boolean>>({})
 
 // Local storage key for accordion state
 const ACCORDION_STATE_STORAGE_KEY = 'vocabulary-accordion-state'
+// Cross-page open pending key (session scoped)
+const PENDING_OPEN_KEY = 'open-date-topic-pending'
 
 // Load accordion state from localStorage
 const getStoredAccordionState = (): Record<string, boolean> => {
@@ -644,23 +646,35 @@ const handleNavigateToDateTopic = (payload: { date: string; topic: string }) => 
   if (targetIndex === -1) return
   const targetPage = Math.floor(targetIndex / dateGroupsPerPage) + 1
 
-  const goAndScroll = () => {
-    // Wait for DOM then dispatch event to open and scroll
-    nextTick(() => {
-      const ev = new CustomEvent('open-date-topic', {
-        detail: { date: payload.date, topic: payload.topic }
-      })
-      window.dispatchEvent(ev)
+  const dispatchOpenEvent = () => {
+    const ev = new CustomEvent('open-date-topic', {
+      detail: { date: payload.date, topic: payload.topic }
     })
+    window.dispatchEvent(ev)
   }
 
   if (dateGroupCurrentPage.value !== targetPage) {
+    // Persist pending intent so destination accordion can apply it on mount
+    try {
+      sessionStorage.setItem(PENDING_OPEN_KEY, JSON.stringify({ date: payload.date, topic: payload.topic }))
+    } catch {}
+
     dateGroupCurrentPage.value = targetPage
+
+    // Ensure DOM has rendered the new page groups before dispatching
     nextTick(() => {
-      goAndScroll()
+      // One more frame after paint
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          dispatchOpenEvent()
+        }, 50)
+      })
     })
   } else {
-    goAndScroll()
+    // Same page: no need to persist pending state
+    nextTick(() => {
+      dispatchOpenEvent()
+    })
   }
 }
 
