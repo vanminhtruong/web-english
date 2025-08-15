@@ -27,32 +27,54 @@
         </div>
       </div>
 
-      <!-- Image Display as hint -->
+      <!-- Hint Display: Image or Definition based on definitionMode -->
       <div class="flex-1 flex items-center justify-center mb-4 min-h-0">
-        <div v-if="card?.image" class="relative">
-          <img
-            :src="card.image"
-            :alt="t('flashcard.pictionary.imageAlt', 'Pictionary image')"
-            class="max-w-full max-h-40 object-contain rounded-lg shadow-md border border-gray-200 dark:border-dark-bg-mute"
-            @error="handleImageError"
-          />
-          <div v-if="imageError" class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-dark-bg-mute rounded-lg">
-            <div class="text-center">
-              <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        <!-- Definition Mode: Show word meaning -->
+        <div v-if="props.definitionMode" class="flex items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 rounded-xl p-6 w-full max-w-lg border border-teal-200 dark:border-teal-700/50 shadow-sm">
+          <div class="text-center space-y-3">
+            <div class="mx-auto w-12 h-12 bg-teal-100 dark:bg-teal-800/50 rounded-full flex items-center justify-center mb-4">
+              <svg class="w-6 h-6 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
-              <p class="text-sm text-gray-500 dark:text-white/60 mt-2">{{ t('flashcard.image.imageError', 'Could not load image.') }}</p>
+            </div>
+            <div class="max-h-32 overflow-y-auto">
+              <p class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
+                {{ card?.meaning || t('flashcard.pictionary.noDefinition', 'No definition available') }}
+              </p>
+            </div>
+            <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">
+              {{ t('flashcard.pictionary.definitionHint', 'Guess the word from this definition') }}
+            </p>
+          </div>
+        </div>
+        
+        <!-- Image Mode: Show image as before -->
+        <template v-else>
+          <div v-if="card?.image" class="relative">
+            <img
+              :src="card.image"
+              :alt="t('flashcard.pictionary.imageAlt', 'Pictionary image')"
+              class="max-w-full max-h-40 object-contain rounded-lg shadow-md border border-gray-200 dark:border-dark-bg-mute"
+              @error="handleImageError"
+            />
+            <div v-if="imageError" class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-dark-bg-mute rounded-lg">
+              <div class="text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-white/60 mt-2">{{ t('flashcard.image.imageError', 'Could not load image.') }}</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div v-else class="flex items-center justify-center bg-gray-100 dark:bg-dark-bg-mute rounded-lg p-8 w-full max-w-sm">
-          <div class="text-center">
-            <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <p class="text-sm text-gray-500 dark:text-white/60 mt-2">{{ t('flashcard.image.noImage', 'No image available for this card.') }}</p>
+          <div v-else class="flex items-center justify-center bg-gray-100 dark:bg-dark-bg-mute rounded-lg p-8 w-full max-w-sm">
+            <div class="text-center">
+              <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p class="text-sm text-gray-500 dark:text-white/60 mt-2">{{ t('flashcard.image.noImage', 'No image available for this card.') }}</p>
+            </div>
           </div>
-        </div>
+        </template>
       </div>
 
       <!-- Letter slots -->
@@ -183,9 +205,13 @@
 
       <!-- Instruction -->
       <p v-if="!pictionaryAnswered" class="text-center text-sm text-gray-500 dark:text-white/60 mt-3">
-        {{ dragMode
-          ? t('flashcard.pictionary.dragInstruction', 'Drag letters into the boxes, then press Enter to check.')
-          : t('flashcard.pictionary.instruction', 'Click the boxes and type to fill in the missing letters. Press Enter to check.')
+        {{ props.definitionMode 
+          ? (dragMode
+            ? t('flashcard.pictionary.dragInstructionDefinition', 'Look at the definition above, drag letters into the boxes, then press Enter to check.')
+            : t('flashcard.pictionary.instructionDefinition', 'Look at the definition above, click the boxes and type to fill in the missing letters. Press Enter to check.'))
+          : (dragMode
+            ? t('flashcard.pictionary.dragInstruction', 'Drag letters into the boxes, then press Enter to check.')
+            : t('flashcard.pictionary.instruction', 'Click the boxes and type to fill in the missing letters. Press Enter to check.'))
         }}
       </p>
       
@@ -212,6 +238,7 @@ interface Props {
   pictionaryAnswer: string
   pictionaryAnswered: boolean
   pictionaryCorrect: boolean
+  definitionMode?: boolean
   getTopicName: (id: string) => string
 }
 

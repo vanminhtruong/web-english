@@ -133,9 +133,10 @@
                         <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', imageQuizEnabled ? 'translate-x-4' : 'translate-x-0.5']" />
                       </button>
                     </li>
-                    <li>
+                    <!-- Pictionary option with inline definition toggle -->
+                    <li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-2">
                       <button 
-                        class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        class="text-left flex-1 truncate" 
                         @click="selectMode('pictionary')"
                         :disabled="!pictionaryModeAvailable"
                         :aria-disabled="!pictionaryModeAvailable ? 'true' : 'false'"
@@ -143,6 +144,17 @@
                         :class="!pictionaryModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
                       >
                         {{ t('flashcard.modes.pictionary', 'Pictionary') }}
+                      </button>
+                      <button
+                        class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="[
+                          pictionaryModeAvailable ? (pictionaryDefinitionMode ? 'bg-teal-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="pictionaryModeAvailable && togglePictionaryDefinitionModeFromDropdown()"
+                        :title="t('flashcard.pictionary.definitionToggle', 'Definition Mode')"
+                        :aria-label="t('flashcard.pictionary.definitionToggle', 'Definition Mode')"
+                      >
+                        <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', pictionaryDefinitionMode ? 'translate-x-4' : 'translate-x-0.5']" />
                       </button>
                     </li>
                     <!-- Bubble Shooter option with inline toggle -->
@@ -355,9 +367,10 @@
                         <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', imageQuizEnabled ? 'translate-x-5' : 'translate-x-0.5']" />
                       </button>
                     </li>
-                    <li>
+                    <!-- Pictionary option with inline definition toggle -->
+                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
                       <button 
-                        class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        class="text-left flex-1 truncate" 
                         @click="selectMode('pictionary')"
                         :disabled="!pictionaryModeAvailable"
                         :aria-disabled="!pictionaryModeAvailable ? 'true' : 'false'"
@@ -365,6 +378,17 @@
                         :class="!pictionaryModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
                       >
                         {{ t('flashcard.modes.pictionary', 'Pictionary') }}
+                      </button>
+                      <button
+                        class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="[
+                          pictionaryModeAvailable ? (pictionaryDefinitionMode ? 'bg-teal-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="pictionaryModeAvailable && togglePictionaryDefinitionModeFromDropdown()"
+                        :title="t('flashcard.pictionary.definitionToggle', 'Definition Mode')"
+                        :aria-label="t('flashcard.pictionary.definitionToggle', 'Definition Mode')"
+                      >
+                        <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', pictionaryDefinitionMode ? 'translate-x-5' : 'translate-x-0.5']" />
                       </button>
                     </li>
                     <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
@@ -457,6 +481,8 @@ interface Props {
   bubbleShooterVietnameseMode?: boolean
   // Snake game: double bait mode toggle state (prop down from FlashcardView)
   snakeDoubleBaitEnabled?: boolean
+  // Pictionary: definition mode toggle state (prop down from FlashcardView)
+  pictionaryDefinitionMode?: boolean
 }
 
 const props = defineProps<Props>()
@@ -468,6 +494,7 @@ const pictionaryModeAvailable = computed(() => props.pictionaryModeAvailable ?? 
 const bubbleShooterModeAvailable = computed(() => props.bubbleShooterModeAvailable ?? true)
 const bubbleShooterVietnameseMode = computed(() => props.bubbleShooterVietnameseMode ?? false)
 const snakeDoubleBaitEnabled = computed(() => props.snakeDoubleBaitEnabled ?? false)
+const pictionaryDefinitionMode = computed(() => props.pictionaryDefinitionMode ?? false)
 
 const { t } = useI18n()
 
@@ -482,6 +509,7 @@ const emit = defineEmits<{
   'update:typing-quiz-enabled': [enabled: boolean]
   'update:bubble-shooter-vietnamese-mode': [enabled: boolean]
   'update:snake-double-bait-enabled': [enabled: boolean]
+  'update:pictionary-definition-mode': [enabled: boolean]
 }>()
 
 const handlePracticeModeChange = (event: Event) => {
@@ -562,6 +590,13 @@ const toggleBubbleShooterVietnameseMode = () => {
   if (props.practiceStarted) return
   if (!bubbleShooterModeAvailable.value) return
   emit('update:bubble-shooter-vietnamese-mode', !bubbleShooterVietnameseMode.value)
+}
+
+const togglePictionaryDefinitionModeFromDropdown = () => {
+  // Prevent toggling during active practice or when pictionary mode is unavailable
+  if (props.practiceStarted) return
+  if (!pictionaryModeAvailable.value) return
+  emit('update:pictionary-definition-mode', !pictionaryDefinitionMode.value)
 }
 
 // Guarded settings emitter to prevent opening during active practice

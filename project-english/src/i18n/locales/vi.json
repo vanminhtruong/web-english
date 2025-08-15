@@ -456,6 +456,11 @@
     "pictionary": {
       "imageAlt": "Hình ảnh đuổi hình bắt chữ",
       "instruction": "Nhấp vào các ô và gõ để điền các chữ cái còn thiếu. Nhấn Enter để kiểm tra.",
+      "instructionDefinition": "Xem định nghĩa và gõ từ tương ứng. Nhấn Enter để kiểm tra.",
+      "dragInstructionDefinition": "Xem định nghĩa và kéo thả các chữ cái để tạo thành từ.",
+      "definitionToggle": "Chế độ định nghĩa",
+      "definitionHint": "Định nghĩa",
+      "noDefinition": "Không có định nghĩa",
       "unavailable": "Chế độ đuổi hình bắt chữ không khả dụng cho ngày đã chọn"
     },
     "bubbleShooter": {

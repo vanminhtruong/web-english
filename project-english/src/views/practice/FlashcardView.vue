@@ -23,6 +23,7 @@
       :bubble-shooter-mode-available="bubbleShooterModeAvailable"
       :bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode"
       :snake-double-bait-enabled="snakeDoubleBaitMode"
+      :pictionary-definition-mode="pictionaryDefinitionMode"
       @go-back="goBack"
       @show-history="showHistory = true"
       @change-practice-mode="changePracticeMode($event)"
@@ -33,6 +34,7 @@
       @update:typing-quiz-enabled="typingQuizEnabled = $event"
       @update:bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode = $event"
       @update:snake-double-bait-enabled="snakeDoubleBaitMode = $event"
+      @update:pictionary-definition-mode="pictionaryDefinitionMode = $event"
     />
 
     <!-- Progress Bar -->
@@ -112,10 +114,11 @@
                     :pictionary-answer="pictionaryAnswer"
                     :pictionary-answered="pictionaryAnswered"
                     :pictionary-correct="pictionaryCorrect"
+                    :definition-mode="pictionaryDefinitionMode"
                     :get-topic-name="getTopicName"
                     @update:pictionary-answer="pictionaryAnswer = $event"
-                    @pictionary-snapshot="onPictionarySnapshot($event)"
                     @check-answer="handlePictionaryAnswer"
+                    @pictionary-snapshot="onPictionarySnapshot"
                   />
                 </template>
                 <template v-else-if="practiceMode === 'quiz'">
@@ -397,6 +400,8 @@ watch(selectedDate, () => {
 const bubbleShooterVietnameseMode = ref(false)
 // Snake Game Double Bait Mode Toggle State with localStorage support
 const snakeDoubleBaitMode = ref(false)
+// Pictionary Definition Mode Toggle State with localStorage support
+const pictionaryDefinitionMode = ref(false)
 
 // Load from localStorage on init
 const loadBubbleShooterVietnameseModeFromStorage = () => {
@@ -431,9 +436,26 @@ const saveSnakeDoubleBaitModeToStorage = (enabled: boolean) => {
   } catch {}
 }
 
+// Load/Save helpers for Pictionary Definition mode
+const loadPictionaryDefinitionModeFromStorage = () => {
+  try {
+    const saved = localStorage.getItem('pe_pictionaryDefinitionMode')
+    return saved === null ? false : saved === 'true'
+  } catch {
+    return false
+  }
+}
+
+const savePictionaryDefinitionModeToStorage = (enabled: boolean) => {
+  try {
+    localStorage.setItem('pe_pictionaryDefinitionMode', String(enabled))
+  } catch {}
+}
+
 // Initialize from localStorage
 bubbleShooterVietnameseMode.value = loadBubbleShooterVietnameseModeFromStorage()
 snakeDoubleBaitMode.value = loadSnakeDoubleBaitModeFromStorage()
+pictionaryDefinitionMode.value = loadPictionaryDefinitionModeFromStorage()
 
 // Watch for changes and save to localStorage
 watch(bubbleShooterVietnameseMode, (newVal) => {
@@ -441,6 +463,9 @@ watch(bubbleShooterVietnameseMode, (newVal) => {
 })
 watch(snakeDoubleBaitMode, (newVal) => {
   saveSnakeDoubleBaitModeToStorage(newVal)
+})
+watch(pictionaryDefinitionMode, (newVal) => {
+  savePictionaryDefinitionModeToStorage(newVal)
 })
 
 // Toggle function for FlashcardHeader

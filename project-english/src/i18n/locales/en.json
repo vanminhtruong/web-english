@@ -400,6 +400,11 @@
     "pictionary": {
       "imageAlt": "Pictionary image",
       "instruction": "Click the boxes and type to fill in the missing letters. Press Enter to check.",
+      "instructionDefinition": "Look at the definition and type the word. Press Enter to check.",
+      "dragInstructionDefinition": "Look at the definition and drag letters to form the word.",
+      "definitionToggle": "Definition Mode",
+      "definitionHint": "Definition",
+      "noDefinition": "No definition available",
       "unavailable": "Pictionary mode is unavailable for the selected date"
     },
     "bubbleShooter": {
