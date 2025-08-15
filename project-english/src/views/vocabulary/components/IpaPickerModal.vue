@@ -19,7 +19,7 @@
           leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
         >
           <div class="w-full max-w-2xl">
-            <div class="bg-white dark:bg-dark-bg-soft shadow-2xl rounded-xl border border-gray-200 dark:border-dark-bg-mute overflow-hidden transform" @click.stop>
+            <div class="bg-white dark:bg-dark-bg-soft shadow-2xl rounded-xl border border-gray-200 dark:border-dark-bg-mute overflow-hidden transform flex flex-col max-sm:max-h-[80vh] max-xs:max-h-[75vh]" @click.stop>
               <!-- Header -->
               <div class="px-5 py-4 border-b border-gray-200 dark:border-dark-bg-mute bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-bg-soft dark:to-dark-bg-soft flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
@@ -29,7 +29,7 @@
                 <button
                   type="button"
                   @click="closeModal"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-all duration-300 hover:scale-110 hover:rotate-90 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-dark-bg-mute"
                   :title="t('common.close', 'Close')"
                   :aria-label="t('common.close', 'Close')"
                 >
@@ -40,9 +40,9 @@
               </div>
 
               <!-- Body -->
-              <div class="px-5 py-4 space-y-4">
+              <div class="px-5 py-4 space-y-4 overflow-y-auto flex-1 min-h-0">
                 <!-- Preview -->
-                <div class="p-3 rounded-lg border border-gray-200 dark:border-dark-bg-mute bg-white dark:bg-gray-custom">
+                <div class="p-3 rounded-lg border border-gray-200 dark:border-dark-bg-mute bg-white dark:bg-dark-bg-mute">
                   <div class="text-2xl md:text-3xl font-mono text-gray-900 dark:text-white break-words min-h-[2.5rem]">
                     {{ ipaDraft || t('vocabulary.pronunciation.previewPlaceholder', 'Start building IPA...') }}
                   </div>
@@ -53,7 +53,7 @@
                   <button
                     type="button"
                     @click="wrapWithSlashes"
-                    class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-dark-bg-mute text-gray-800 dark:text-white dark:bg-gray-custom hover:bg-gray-100 dark:hover:bg-gray-custom"
+                    class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-dark-bg-mute text-gray-800 dark:text-white dark:bg-dark-bg-mute hover:bg-gray-100 dark:hover:bg-dark-bg-soft"
                     :title="t('vocabulary.pronunciation.wrap', 'Wrap with slashes')"
                     :aria-label="t('vocabulary.pronunciation.wrap', 'Wrap with slashes')"
                   >
@@ -62,7 +62,7 @@
                   <button
                     type="button"
                     @click="backspaceIpa"
-                    class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-dark-bg-mute text-gray-800 dark:text-white dark:bg-gray-custom hover:bg-gray-100 dark:hover:bg-gray-custom"
+                    class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-dark-bg-mute text-gray-800 dark:text-white dark:bg-dark-bg-mute hover:bg-gray-100 dark:hover:bg-dark-bg-soft"
                     :title="t('common.backspace', 'Backspace')"
                     :aria-label="t('common.backspace', 'Backspace')"
                   >
@@ -71,7 +71,7 @@
                   <button
                     type="button"
                     @click="clearIpa"
-                    class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-dark-bg-mute text-gray-800 dark:text-white dark:bg-gray-custom hover:bg-gray-100 dark:hover:bg-gray-custom"
+                    class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-dark-bg-mute text-gray-800 dark:text-white dark:bg-dark-bg-mute hover:bg-gray-100 dark:hover:bg-dark-bg-soft"
                     :title="t('common.clear', 'Clear')"
                     :aria-label="t('common.clear', 'Clear')"
                   >
@@ -94,7 +94,7 @@
                   <div>
                     <div class="text-sm font-medium text-gray-600 dark:text-white/70 mb-2">{{ t('vocabulary.pronunciation.vowels', 'Vowels') }}</div>
                     <div class="flex flex-wrap gap-2">
-                      <button v-for="s in IPA_VOWELS" :key="'v-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-gray-custom hover:bg-gray-100 dark:hover:bg-gray-custom">
+                      <button v-for="s in IPA_VOWELS" :key="'v-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-dark-bg-mute hover:bg-gray-100 dark:hover:bg-dark-bg-soft">
                         {{ s }}
                       </button>
                     </div>
@@ -104,7 +104,7 @@
                   <div>
                     <div class="text-sm font-medium text-gray-600 dark:text-white/70 mb-2">{{ t('vocabulary.pronunciation.diphthongs', 'Diphthongs') }}</div>
                     <div class="flex flex-wrap gap-2">
-                      <button v-for="s in IPA_DIPHTHONGS" :key="'d-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-gray-custom hover:bg-gray-100 dark:hover:bg-gray-custom">
+                      <button v-for="s in IPA_DIPHTHONGS" :key="'d-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-dark-bg-mute hover:bg-gray-100 dark:hover:bg-dark-bg-soft">
                         {{ s }}
                       </button>
                     </div>
@@ -114,7 +114,7 @@
                   <div>
                     <div class="text-sm font-medium text-gray-600 dark:text-white/70 mb-2">{{ t('vocabulary.pronunciation.consonants', 'Consonants') }}</div>
                     <div class="flex flex-wrap gap-2">
-                      <button v-for="s in IPA_CONSONANTS" :key="'c-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-gray-custom hover:bg-gray-100 dark:hover:bg-gray-custom">
+                      <button v-for="s in IPA_CONSONANTS" :key="'c-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-dark-bg-mute hover:bg-gray-100 dark:hover:bg-dark-bg-soft">
                         {{ s }}
                       </button>
                     </div>
@@ -124,7 +124,7 @@
                   <div>
                     <div class="text-sm font-medium text-gray-600 dark:text-white/70 mb-2">{{ t('vocabulary.pronunciation.marks', 'Marks') }}</div>
                     <div class="flex flex-wrap gap-2">
-                      <button v-for="s in IPA_MARKS" :key="'m-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-gray-custom hover:bg-gray-100 dark:hover:bg-gray-custom">
+                      <button v-for="s in IPA_MARKS" :key="'m-'+s" type="button" @click="appendIpa(s)" class="px-2.5 py-1.5 rounded-md border border-gray-300 dark:border-dark-bg-mute text-gray-900 dark:text-white dark:bg-dark-bg-mute hover:bg-gray-100 dark:hover:bg-dark-bg-soft">
                         {{ s === ' ' ? t('common.space', 'Space') : s }}
                       </button>
                     </div>
