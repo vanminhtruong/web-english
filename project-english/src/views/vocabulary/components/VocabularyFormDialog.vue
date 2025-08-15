@@ -505,6 +505,16 @@
       </div>
     </Transition>
   </Teleport>
+
+  <!-- Topic Manager Modal (no click-outside close) -->
+  <TopicManager
+    v-if="showTopicManager"
+    v-model="showTopicManager"
+    :vocabulary-usage="categoryUsage"
+    @topic-added="onTopicAdded"
+    @topic-updated="onTopicUpdated"
+    @topic-deleted="onTopicDeleted"
+  />
 </div>
 </template>
 
@@ -1054,15 +1064,21 @@ const selectCategory = (key: string) => {
 
 // Topic event handlers
 const onTopicAdded = (newTopic: any) => {
-  // Force re-computation of categories
-  refreshTrigger.value++
-  // Refresh custom topics from store
-  vocabularyStore.refreshCustomTopics()
-  // Update form category if it was empty
-  if (!form.category) {
-    form.category = newTopic.key
-  }
   console.log('Topic added, refreshing categories:', newTopic.key)
+  
+  // Add small delay to ensure localStorage has been updated by TopicManager
+  setTimeout(() => {
+    // Refresh custom topics from store first
+    vocabularyStore.refreshCustomTopics()
+    
+    // Then force re-computation of categories
+    refreshTrigger.value++
+    
+    // Update form category to the new topic (auto-select it)
+    form.category = newTopic.key
+    
+    console.log('Categories refreshed, new topic selected:', newTopic.key)
+  }, 150) // 150ms delay to ensure data consistency
 }
 
 const onTopicUpdated = () => {
