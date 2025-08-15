@@ -682,6 +682,7 @@ const showStickyTooltip = ref(false);
 const headerHeight = ref(0);
 const isScrollingDown = ref(false);
 const lastScrollY = ref(0);
+const accordionState = ref(true); // Track accordion state
 
 // Scroll handler for sticky button
 const handleScroll = () => {
@@ -693,21 +694,46 @@ const handleScroll = () => {
     headerHeight.value = (headerElement as HTMLElement).offsetHeight;
   }
   
+  // Update accordion state from localStorage first
+  const currentAccordionState = (() => {
+    try {
+      const stored = localStorage.getItem('accordion-vocabulary-header');
+      return stored !== null ? JSON.parse(stored) : true; // default is true
+    } catch {
+      return true;
+    }
+  })();
+  accordionState.value = currentAccordionState;
+  
   // Find the original add button position
-  const originalAddButton = document.querySelector('[data-original-add-button]') || 
-                           document.querySelector('.vocabulary-header button');
+  const originalAddButton = document.querySelector('[data-original-add-button]');
   
   let originalButtonVisible = false;
   if (originalAddButton) {
     const rect = originalAddButton.getBoundingClientRect();
-    // Button is visible if it's in viewport (top part of screen)
-    originalButtonVisible = rect.top >= 0 && rect.top < window.innerHeight / 2;
+    const computedStyle = window.getComputedStyle(originalAddButton);
+    // Button is visible if it has dimensions and is not hidden
+    originalButtonVisible = rect.height > 0 && rect.width > 0 && 
+                           computedStyle.display !== 'none' && 
+                           computedStyle.visibility !== 'hidden' &&
+                           computedStyle.opacity !== '0';
   }
   
-  // Show sticky button when scrolled past header and original button is not visible
-  // Hide when original button becomes visible again (even partially)
+  // Show sticky button logic
   const headerBottom = headerHeight.value || 120;
-  const shouldShowSticky = scrollY > headerBottom && !originalButtonVisible;
+  let shouldShowSticky;
+  
+  if (!accordionState.value) {
+    // Accordion is closed - show sticky button always
+    shouldShowSticky = true;
+  } else if (originalButtonVisible) {
+    // Accordion is open and original button is visible - hide sticky
+    shouldShowSticky = false;
+  } else {
+    // Accordion is open but original button not visible - show sticky based on scroll
+    shouldShowSticky = scrollY > headerBottom;
+  }
+  
   showStickyButton.value = shouldShowSticky;
   
   lastScrollY.value = scrollY;
@@ -836,14 +862,36 @@ watch(globalMoveMode, (newValue) => {
   toggleMoveMode(newValue);
 });
 
+// Handle localStorage changes for accordion state
+const handleStorageChange = (e: StorageEvent) => {
+  if (e.key === 'accordion-vocabulary-header') {
+    // Accordion state changed, update sticky button immediately
+    setTimeout(() => handleScroll(), 50); // Small delay to ensure DOM is updated
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('scroll', handleScroll);
+  window.addEventListener('storage', handleStorageChange);
+  
+  // Listen for clicks on accordion button to immediately update sticky button
+  const accordionButton = document.querySelector('[data-vocabulary-header] button');
+  if (accordionButton) {
+    accordionButton.addEventListener('click', () => {
+      setTimeout(() => handleScroll(), 100); // Delay to ensure accordion animation completes
+    });
+  }
+  
+  handleScroll(); // Initial check
+});
+
 onUnmounted(() => {
-  window.removeEventListener('vocabularyImportComplete', () => {});
-  window.removeEventListener('vocabulary-notes-updated', () => {});
-  window.removeEventListener('grammar-rules-updated', () => {});
-  window.removeEventListener('scroll', handleScroll);
+  document.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('storage', handleStorageChange);
   // Clean up modal-open class
   document.body.classList.remove('modal-open');
 });
+
 </script>
 
 <style>
