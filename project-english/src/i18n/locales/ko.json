@@ -41,7 +41,25 @@
       "title": "어휘",
       "description": "영어 어휘를 관리하고 학습하세요",
       "header": {
-        "title": "어휘"
+        "title": "어휘",
+        "accordionTitle": "어휘 관리",
+        "accordionDescription": "어휘를 추가하고 관리하세요"
+      },
+      "filters": {
+        "accordionTitle": "검색 및 필터",
+        "accordionDescription": "어휘를 검색하고 필터링하세요"
+      },
+      "grouping": {
+        "accordionTitle": "날짜별 그룹 설정",
+        "accordionDescription": "어휘 표시 및 그룹화 방법을 설정하세요",
+        "title": "날짜별 그룹",
+        "description": "생성일 기준으로 어휘를 묶어 표시",
+        "hoverToExpand": "호버하여 펼치기",
+        "hoverDescription": "활성화 시 호버로 카테고리를 엽니다"
+      },
+      "tools": {
+        "accordionTitle": "도구 및 설정",
+        "accordionDescription": "음성 설정, 주제 관리자 및 저장 동기화 옵션"
       },
       "addNew": "새 단어 추가",
       "addWord": "단어 추가",
@@ -93,12 +111,6 @@
       "words": "단어",
       "createdAt": "생성일",
       "updatedAt": "수정일",
-      "grouping": {
-        "title": "날짜별 그룹",
-        "description": "생성일 기준으로 어휘를 묶어 표시",
-        "hoverToExpand": "호버하여 펼치기",
-        "hoverDescription": "활성화 시 호버로 카테고리를 엽니다"
-      },
       "notes": {
         "title": "어휘 메모",
         "description": "오늘 학습한 어휘에 대한 메모를 관리하세요",
@@ -200,9 +212,6 @@
         "category": "카테고리",
         "missingCount": "이미지 없음 {count}개",
         "aria": "누락된 이미지 정보 보기"
-      },
-      "filters": {
-        "title": "필터"
       },
       "save": {
         "title": "저장 및 동기화",

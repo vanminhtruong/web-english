@@ -47,7 +47,25 @@
     "title": "Từ vựng",
     "description": "Quản lý và học từ vựng tiếng Anh",
     "header": {
-      "title": "Từ vựng"
+      "title": "Từ vựng",
+      "accordionTitle": "Quản lý từ vựng",
+      "accordionDescription": "Thêm và quản lý từ vựng của bạn"
+    },
+    "filters": {
+      "accordionTitle": "Tìm kiếm & Lọc",
+      "accordionDescription": "Tìm kiếm và lọc từ vựng"
+    },
+    "grouping": {
+      "accordionTitle": "Cài đặt nhóm theo ngày",
+      "accordionDescription": "Thiết lập cách hiển thị và nhóm từ vựng",
+      "title": "Nhóm theo ngày",
+      "description": "Nhóm từ vựng theo ngày tạo",
+      "hoverToExpand": "Mở rộng khi hover",
+      "hoverDescription": "Mở rộng nhóm ngày khi di chuột qua thay vì nhấp chuột"
+    },
+    "tools": {
+      "accordionTitle": "Công cụ & Cài đặt",
+      "accordionDescription": "Cài đặt giọng đọc, quản lý chủ đề và đồng bộ dữ liệu"
     },
     "addNew": "Thêm từ mới",
     "addWord": "Thêm từ",
@@ -111,12 +129,6 @@
     "words": "từ",
     "createdAt": "Tạo lúc",
     "updatedAt": "Cập nhật",
-    "grouping": {
-      "title": "Nhóm theo ngày",
-      "description": "Hiển thị từ vựng được nhóm theo ngày tạo",
-      "hoverToExpand": "Di chuột để mở rộng",
-      "hoverDescription": "Mở danh mục khi di chuột qua (khi bật)"
-    },
     "notes": {
       "title": "Ghi chú từ vựng",
       "description": "Quản lý ghi chú cho các từ vựng đã học",
@@ -230,9 +242,6 @@
       "category": "Chủ đề",
       "missingCount": "{count} không có ảnh",
       "aria": "Hiển thị thông tin về các từ thiếu hình ảnh"
-    },
-    "filters": {
-      "title": "Bộ lọc"
     },
     "save": {
       "title": "Lưu & Đồng bộ",

@@ -41,7 +41,25 @@
     "title": "Vocabulary",
     "description": "Manage and learn English vocabulary",
     "header": {
-      "title": "Vocabulary"
+      "title": "Vocabulary",
+      "accordionTitle": "Vocabulary Manager",
+      "accordionDescription": "Add and manage your vocabulary words"
+    },
+    "filters": {
+      "accordionTitle": "Search & Filter",
+      "accordionDescription": "Search and filter vocabulary words"
+    },
+    "grouping": {
+      "accordionTitle": "Group by Date Settings",
+      "accordionDescription": "Configure how vocabulary is grouped and displayed",
+      "title": "Group by Date",
+      "description": "Group vocabulary words by creation date",
+      "hoverToExpand": "Hover to Expand",
+      "hoverDescription": "Open categories on hover when enabled"
+    },
+    "tools": {
+      "accordionTitle": "Tools & Settings",
+      "accordionDescription": "Voice settings, topic manager, and save & sync options"
     },
     "addNew": "Add New Word",
     "addWord": "Add Word",
@@ -93,12 +111,6 @@
     "words": "words",
     "createdAt": "Created at",
     "updatedAt": "Updated at",
-    "grouping": {
-      "title": "Group by Date",
-      "description": "Display vocabulary grouped by creation date",
-      "hoverToExpand": "Hover to Expand",
-      "hoverDescription": "Open categories on hover when enabled"
-    },
     "notes": {
       "title": "Vocabulary Notes",
       "description": "Manage notes for vocabulary words learned today",
@@ -111,9 +123,6 @@
       "autoSaveNotice": "Auto-save enabled. Your notes will be included in the next backup.",
       "today": "Today",
       "yesterday": "Yesterday"
-    },
-    "filters": {
-      "title": "Filters"
     },
     "lazyLoading": {
       "loading": "Loading...",

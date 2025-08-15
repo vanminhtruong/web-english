@@ -96,62 +96,70 @@
         </div>
       </LazyLoadComponent>
 
-      <!-- Voice Settings Panel (glassmorphism like Dashboard) -->
+      <!-- Tools & Settings Accordion -->
       <LazyLoadComponent animation-type="scale" :threshold="0.1" root-margin="-50px">
-        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.01] p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 mb-3 xs:mb-4 sm:mb-6 overflow-x-hidden">
-          <div class="flex items-center mb-4">
-            <div class="animate-pulse-slow">
-              <div class="w-2.5 h-2.5 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2.5"></div>
+        <BaseAccordion
+          :title="t('vocabulary.tools.accordionTitle', 'Tools & Settings')"
+          :description="t('vocabulary.tools.accordionDescription', 'Voice settings, topic manager, and save & sync options')"
+          icon="settings"
+          :default-open="true"
+          persist-key="vocabulary-tools"
+          class="mb-3 xs:mb-4 sm:mb-6"
+        >
+          <div class="space-y-4 sm:space-y-6">
+            <!-- Voice Settings Panel -->
+            <div class="bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-white/10 p-3 sm:p-4 md:p-5">
+              <div class="flex items-center mb-3 sm:mb-4">
+                <div class="animate-pulse-slow">
+                  <div class="w-2.5 h-2.5 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2.5"></div>
+                </div>
+                <h3 class="text-sm sm:text-base font-semibold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                  {{ t('voice.settings.title', 'Voice Settings') }}
+                </h3>
+              </div>
+              <VoiceSelector :show-voice-info="true" />
             </div>
-            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-              {{ t('voice.settings.title', 'Voice Settings') }}
-            </h3>
-          </div>
-          <VoiceSelector :show-voice-info="true" />
-        </div>
-      </LazyLoadComponent>
 
-      <!-- Topic Management Panel -->
-      <LazyLoadComponent animation-type="blur" :threshold="0.1" root-margin="-50px">
-        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] mb-3 xs:mb-4 sm:mb-6 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
-          <div class="flex items-center mb-4">
-            <div class="animate-pulse-slow">
-              <div class="w-2.5 h-2.5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mr-2.5"></div>
+            <!-- Topic Management Panel -->
+            <div class="bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-white/10 p-3 sm:p-4 md:p-5">
+              <div class="flex items-center mb-3 sm:mb-4">
+                <div class="animate-pulse-slow">
+                  <div class="w-2.5 h-2.5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mr-2.5"></div>
+                </div>
+                <h3 class="text-sm sm:text-base font-semibold bg-gradient-to-r from-yellow-600 to-orange-600 dark:from-yellow-400 dark:to-orange-400 bg-clip-text text-transparent">
+                  {{ t('vocabulary.topicManager.title', 'Topic Manager') }}
+                </h3>
+              </div>
+              <TopicManagerPanel @open="openTopicManager" />
             </div>
-            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-yellow-600 to-orange-600 dark:from-yellow-400 dark:to-orange-400 bg-clip-text text-transparent">
-              {{ t('vocabulary.topicManager.title', 'Topic Manager') }}
-            </h3>
-          </div>
-          <TopicManagerPanel @open="openTopicManager" />
-        </div>
-      </LazyLoadComponent>
 
-      <!-- Save Control Panel -->
-      <LazyLoadComponent animation-type="fade-up" :threshold="0.1" root-margin="-50px">
-        <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] mb-3 xs:mb-4 sm:mb-6 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
-          <div class="flex items-center mb-4">
-            <div class="animate-pulse-slow">
-              <div class="w-2.5 h-2.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-2.5"></div>
+            <!-- Save Control Panel -->
+            <div class="bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-white/10 p-3 sm:p-4 md:p-5">
+              <div class="flex items-center mb-3 sm:mb-4">
+                <div class="animate-pulse-slow">
+                  <div class="w-2.5 h-2.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-2.5"></div>
+                </div>
+                <h3 class="text-sm sm:text-base font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">
+                  {{ t('vocabulary.save.title', 'Save & Sync') }}
+                </h3>
+              </div>
+              <SaveControlPanel
+                :auto-save-enabled="autoSaveEnabled"
+                @update:auto-save-enabled="autoSaveEnabled = $event"
+                :is-saving="isSaving"
+                :has-auto-save-file="hasAutoSaveFile"
+                :auto-save-file-path="autoSaveFilePath"
+                :last-save-time="lastSaveTime"
+                :save-status-color="getSaveStatusColor"
+                :save-status-text="getSaveStatusText"
+                @manual-save="manualSave"
+                @setup-auto-save="setupAutoSaveFile"
+                @reset-auto-save="resetAutoSaveFile"
+                @import-file="handleFileImportWithReload"
+              />
             </div>
-            <h3 class="text-base sm:text-lg font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">
-              {{ t('vocabulary.save.title', 'Save & Sync') }}
-            </h3>
           </div>
-          <SaveControlPanel
-            :auto-save-enabled="autoSaveEnabled"
-            @update:auto-save-enabled="autoSaveEnabled = $event"
-            :is-saving="isSaving"
-            :has-auto-save-file="hasAutoSaveFile"
-            :auto-save-file-path="autoSaveFilePath"
-            :last-save-time="lastSaveTime"
-            :save-status-color="getSaveStatusColor"
-            :save-status-text="getSaveStatusText"
-            @manual-save="manualSave"
-            @setup-auto-save="setupAutoSaveFile"
-            @reset-auto-save="resetAutoSaveFile"
-            @import-file="handleFileImportWithReload"
-          />
-        </div>
+        </BaseAccordion>
       </LazyLoadComponent>
 
       <!-- Vocabulary List -->
@@ -290,6 +298,7 @@ import type { Vocabulary } from '../../composables/useVocabularyStore';
 
 // Local components
 const LazyLoadComponent = defineAsyncComponent(() => import('../../components/LazyLoadComponent.vue'));
+const BaseAccordion = defineAsyncComponent(() => import('../../components/BaseAccordion.vue'));
 const GroupingToggle = defineAsyncComponent(() => import('./components/GroupingToggle.vue'));
 const TopicManagerPanel = defineAsyncComponent(() => import('./components/TopicManagerPanel.vue'));
 const SaveControlPanel = defineAsyncComponent(() => import('./components/SaveControlPanel.vue'));

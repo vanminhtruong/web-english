@@ -1,5 +1,13 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow border border-gray-200 dark:border-gray-700 p-3 sm:p-4 md:p-5 lg:p-6 mb-4 sm:mb-6">
+  <BaseAccordion
+    :title="t('vocabulary.grouping.accordionTitle', 'Group by Date Settings')"
+    :description="t('vocabulary.grouping.accordionDescription', 'Configure how vocabulary is grouped and displayed')"
+    icon="vocabulary"
+    :default-open="true"
+    persist-key="vocabulary-grouping"
+    class="mb-4 sm:mb-6"
+  >
+    <div class="p-3 sm:p-4 md:p-5 lg:p-6">
     <!-- Group by Date Toggle -->
     <div class="flex items-center justify-between mb-3 sm:mb-4">
       <div class="flex items-center space-x-2 sm:space-x-3">
@@ -86,11 +94,15 @@
         />
       </button>
     </div>
-  </div>
+    </div>
+  </BaseAccordion>
 </template>
 
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+const BaseAccordion = defineAsyncComponent(() => import('../../../components/BaseAccordion.vue'))
 
 defineProps<{
   modelValue: boolean;

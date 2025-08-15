@@ -1,5 +1,12 @@
 <template>
-  <div class="bg-white dark:bg-[#0a0a0a] shadow rounded-lg p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 border border-gray-200 dark:border-blue-900/30">
+  <BaseAccordion
+    :title="t('vocabulary.filters.accordionTitle', 'Search & Filter')"
+    :description="t('vocabulary.filters.accordionDescription', 'Search and filter vocabulary words')"
+    icon="filter"
+    :default-open="true"
+    persist-key="vocabulary-filters"
+  >
+    <div class="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
     <div class="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 xs:gap-3 sm:gap-4 lg:gap-6">
       <!-- Search -->
       <div class="col-span-1 xs:col-span-1 sm:col-span-2 md:col-span-2">
@@ -192,13 +199,16 @@
         </button>
       </div>
     </div>
-  </div>
+    </div>
+  </BaseAccordion>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent } from 'vue'
 import { getTopicName } from '../../../utils/topicUtils'
+
+const BaseAccordion = defineAsyncComponent(() => import('../../../components/BaseAccordion.vue'))
 
 const { t } = useI18n()
 
