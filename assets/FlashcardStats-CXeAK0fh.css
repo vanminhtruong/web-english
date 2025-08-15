@@ -1,0 +1,49 @@
+
+.counter-animate[data-v-56f500fe] {
+  animation: counter-animate-56f500fe 0.6s ease-out;
+}
+.animate-progress-slide[data-v-56f500fe] {
+  animation: progress-slide-56f500fe 1.5s ease-out;
+}
+@keyframes counter-animate-56f500fe {
+from {
+    opacity: 0;
+    transform: translateY(10px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
+@keyframes progress-slide-56f500fe {
+from {
+    width: 0%;
+}
+to {
+    width: var(--target-width);
+}
+}
+.animate-pulse-slow[data-v-56f500fe] {
+  animation: pulse-slow-56f500fe 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse-slow-56f500fe {
+0%, 100% {
+    opacity: 1;
+}
+50% {
+    opacity: 0.5;
+}
+}
+.animate-fade-in-up[data-v-56f500fe] {
+  animation: fade-in-up-56f500fe 0.6s ease-out forwards;
+}
+@keyframes fade-in-up-56f500fe {
+from {
+    opacity: 0;
+    transform: translateY(30px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
