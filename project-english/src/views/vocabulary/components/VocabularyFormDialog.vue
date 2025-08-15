@@ -85,7 +85,7 @@
                         <button
                           type="button"
                           @click="openIpaPicker"
-                          class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 z-[5] shadow-lg"
+                          class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 z-[5] shadow-lg keep-center-hover"
                           :title="t('vocabulary.pronunciation.openIpaPicker', 'Open IPA Picker')"
                           :aria-label="t('vocabulary.pronunciation.openIpaPicker', 'Open IPA Picker')"
                         >
@@ -129,7 +129,7 @@
                         <button
                           type="button"
                           @click="showTopicManager = true"
-                          class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 hover:rotate-90 z-[10000] shadow-lg"
+                          class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 hover:rotate-90 z-[10000] shadow-lg keep-center-hover-rotate"
                           :title="t('vocabulary.addCategory', 'Add Category')"
                         >
                           +
@@ -1260,9 +1260,17 @@ input:focus, textarea:focus, select:focus {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Enhanced button hover effects */
-button:hover {
-  transform: translateY(-1px);
+/* Removed global button hover translateY to avoid overriding existing transforms
+   (this was causing '+' buttons to shift position on hover). */
+
+/* Ensure '+' buttons keep vertical centering on hover while scaling/rotating */
+.keep-center-hover:hover {
+  transform: translateY(-50%) scale(1.1) !important;
+  transform-origin: center !important;
+}
+.keep-center-hover-rotate:hover {
+  transform: translateY(-50%) scale(1.1) rotate(90deg) !important;
+  transform-origin: center !important;
 }
 
 /* Loading animation for submit button */
