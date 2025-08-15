@@ -21,8 +21,15 @@
         <DashboardStats :stats="stats" class="mb-8" />
       </LazyLoadComponent>
 
-      <!-- Quick Actions -->
-      <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <!-- Flashcard Practice Stats Section -->
+      <LazyLoadComponent animation-type="slide-up" :threshold="0.15">
+        <div class="mb-6 sm:mb-8">
+          <FlashcardStats />
+        </div>
+      </LazyLoadComponent>
+
+      <!-- Quick Actions & Recent Activity -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <LazyLoadComponent animation-type="slide-left" :threshold="0.15">
           <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-105 hover:-translate-y-2 h-full min-h-[360px] sm:min-h-[420px] flex flex-col">
             <div class="px-4 py-5 sm:p-8 flex-1 flex flex-col">
@@ -93,7 +100,7 @@
         </LazyLoadComponent>
 
         <!-- Recent Activity -->
-        <LazyLoadComponent animation-type="slide-right" :threshold="0.15">
+        <LazyLoadComponent animation-type="slide-up" :threshold="0.15">
           <div class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-105 hover:-translate-y-2 h-full min-h-[420px] flex flex-col">
             <div class="px-6 py-8 sm:p-8 flex-1 flex flex-col">
               <div class="flex items-center mb-6">
@@ -153,6 +160,9 @@ const DashboardHeader = defineAsyncComponent(
 )
 const DashboardStats = defineAsyncComponent(
   loadComponentSafely(() => import('./components/DashboardStats.vue'))
+)
+const FlashcardStats = defineAsyncComponent(
+  loadComponentSafely(() => import('./components/FlashcardStats.vue'))
 )
 
 const router = useRouter()

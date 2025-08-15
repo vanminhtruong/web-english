@@ -786,15 +786,13 @@
     "music": "Music",
     "literature": "Literature",
     "politics": "Politics",
-    "environment": "Environment",
-    "fashion": "Fashion",
-    "finance": "Finance"
+    "environment": "Environment"
   },
   "dashboard": {
     "title": "Dashboard",
-    "description": "Overview of your learning progress",
-    "quickActions": "Quick Actions",
-    "recentActivity": "Recent Activity",
+    "welcomeMessage": "Welcome to your English learning journey!",
+    "todaysProgress": "Today's Progress",
+    "currentLevel": "Current Level",
     "stats": {
       "vocabularyLearned": "Vocabulary Learned",
       "grammarLessons": "Grammar Lessons",
@@ -803,18 +801,34 @@
       "days": "days",
       "hours": "hours"
     },
+    "flashcardStats": {
+      "title": "Flashcard Practice",
+      "noData": "No practice sessions yet",
+      "startPracticing": "Start practicing to see your stats!",
+      "sessions": "Sessions",
+      "streak": "Streak",
+      "days": "days",
+      "accuracy": "Accuracy",
+      "bestScore": "Best Score",
+      "totalTime": "Total Practice Time",
+      "cardsStudied": "Cards Studied",
+      "favoriteMode": "Favorite Mode",
+      "weeklyProgress": "This Week"
+    },
+    "quickActions": "Quick Actions",
+    "recentActivity": "Recent Activity",
     "actions": {
       "addVocabulary": "Add Vocabulary",
       "practiceFlashcard": "Practice Flashcard",
-      "takeQuiz": "Take Quiz",
+      "takeQuiz": "Take a Quiz",
       "learnGrammar": "Learn Grammar"
     },
     "activity": {
-      "updated": "Updated vocabulary \"{word}\" - {category}",
-      "added": "Added vocabulary \"{word}\" - {category}",
+      "added": "Added '{word}' to {category}",
+      "updated": "Updated '{word}' in {category}",
       "justNow": "Just now",
-      "noActivity": "No vocabulary activity yet",
-      "addFirstVocab": "Add your first vocabulary!"
+      "noActivity": "No recent activity",
+      "addFirstVocab": "Add your first vocabulary to get started!"
     }
   },
   "app": {

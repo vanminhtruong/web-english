@@ -849,28 +849,45 @@
   "dashboard": {
     "title": "Trang chủ",
     "description": "Tổng quan về tiến độ học tập của bạn",
-    "quickActions": "Hành động nhanh",
+    "welcomeMessage": "Chào mừng bạn đến với hành trình học tiếng Anh!",
+    "todaysProgress": "Tiến độ hôm nay",
+    "currentLevel": "Cấp độ hiện tại",
+    "quickActions": "Thao tác nhanh",
     "recentActivity": "Hoạt động gần đây",
     "stats": {
       "vocabularyLearned": "Từ vựng đã học",
       "grammarLessons": "Bài ngữ pháp",
-      "currentStreak": "Streak hiện tại",
+      "currentStreak": "Chuỗi liên tiếp",
       "totalTime": "Tổng thời gian",
       "days": "ngày",
       "hours": "giờ"
     },
+    "flashcardStats": {
+      "title": "Luyện tập Flashcard",
+      "noData": "Chưa có phiên luyện tập nào",
+      "startPracticing": "Bắt đầu luyện tập để xem thống kê!",
+      "sessions": "Phiên",
+      "streak": "Chuỗi",
+      "days": "ngày",
+      "accuracy": "Độ chính xác",
+      "bestScore": "Điểm cao nhất",
+      "totalTime": "Tổng thời gian luyện tập",
+      "cardsStudied": "Thẻ đã học",
+      "favoriteMode": "Chế độ yêu thích",
+      "weeklyProgress": "Tuần này"
+    },
     "actions": {
       "addVocabulary": "Thêm từ vựng",
-      "practiceFlashcard": "Luyện Flashcard",
-      "takeQuiz": "Làm Quiz",
+      "practiceFlashcard": "Luyện tập Flashcard",
+      "takeQuiz": "Làm bài kiểm tra",
       "learnGrammar": "Học ngữ pháp"
     },
     "activity": {
-      "updated": "Cập nhật từ vựng \"{word}\" - {category}",
-      "added": "Thêm từ vựng \"{word}\" - {category}",
+      "added": "Đã thêm '{word}' vào {category}",
+      "updated": "Đã cập nhật '{word}' trong {category}",
       "justNow": "Vừa xong",
-      "noActivity": "Chưa có hoạt động từ vựng nào",
-      "addFirstVocab": "Hãy thêm từ vựng đầu tiên!"
+      "noActivity": "Không có hoạt động gần đây",
+      "addFirstVocab": "Thêm từ vựng đầu tiên để bắt đầu!"
     }
   },
   "app": {
