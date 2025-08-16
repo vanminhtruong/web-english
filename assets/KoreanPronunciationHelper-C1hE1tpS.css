@@ -1,0 +1,15 @@
+
+/* Animation keyframes */
+@keyframes fadeInUp-0bf8dc50 {
+from {
+    opacity: 0;
+    transform: translateY(30px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
+.animate-fade-in-up[data-v-0bf8dc50] {
+  animation: fadeInUp-0bf8dc50 0.6s ease-out both;
+}
