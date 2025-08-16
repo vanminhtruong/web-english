@@ -104,6 +104,9 @@
           icon="settings"
           :default-open="true"
           persist-key="vocabulary-tools"
+          :status-text="formattedSaveStatusForAccordion"
+          :status-color="getSaveStatusColor"
+          :show-status-when-closed="true"
           class="mb-3 xs:mb-4 sm:mb-6"
         >
           <div class="space-y-4 sm:space-y-6">
@@ -500,6 +503,29 @@ const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value);
 // Computed property to control sticky button visibility
 const showStickyButtonVisible = computed(() => {
   return showStickyButton.value && !showFormDialog.value && !modalStore.shouldHideAddNewWord;
+});
+
+// Computed property to format save status for accordion header
+const formattedSaveStatusForAccordion = computed(() => {
+  if (!lastSaveTime.value) {
+    return t('vocabulary.save.notSaved', 'Not saved');
+  }
+  
+  const statusText = getSaveStatusText.value;
+  const timeText = lastSaveTime.value;
+  
+  // Format: "Last saved: 16:22:38 16/8/2025 - Auto (file)"
+  const lastSaveLabel = t('vocabulary.save.lastSave', { time: timeText }, 'Last saved: {time}');
+  let finalText;
+  
+  if (lastSaveLabel && lastSaveLabel.includes('{time}')) {
+    finalText = lastSaveLabel.replace('{time}', timeText);
+  } else {
+    finalText = lastSaveLabel || `Last saved: ${timeText}`;
+  }
+  
+  // Add status info with separator for better spacing
+  return `${finalText} - ${statusText}`;
 });
 
 const deleteWord = (word: any) => {
