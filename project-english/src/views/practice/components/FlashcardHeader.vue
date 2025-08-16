@@ -67,6 +67,7 @@
                     practiceMode === 'listening' ? t('flashcard.modes.listening', 'Listening') :
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
                     practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
+                    practiceMode === 'flip-tile' ? t('flashcard.modes.flipTile', 'Flip Tile') :
                     practiceMode === 'bubble-shooter' ? t('flashcard.modes.bubbleShooter', 'Bubble Shooter') :
                     practiceMode === 'snake-game' ? t('flashcard.modes.snakeGame', 'Snake Hunt') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
@@ -155,6 +156,19 @@
                         :aria-label="t('flashcard.pictionary.definitionToggle', 'Definition Mode')"
                       >
                         <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', pictionaryDefinitionMode ? 'translate-x-4' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
+                    <!-- Flip Tile mode -->
+                    <li>
+                      <button 
+                        class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        @click="selectMode('flip-tile')"
+                        :disabled="!flipTileModeAvailable"
+                        :aria-disabled="!flipTileModeAvailable ? 'true' : 'false'"
+                        :title="!flipTileModeAvailable ? t('flashcard.flipTile.unavailable', 'Flip Tile mode is unavailable for the selected date') : t('flashcard.modes.flipTile', 'Flip Tile')"
+                        :class="!flipTileModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.flipTile', 'Flip Tile') }}
                       </button>
                     </li>
                     <!-- Bubble Shooter option with inline toggle -->
@@ -303,6 +317,7 @@
                     practiceMode === 'listening' ? t('flashcard.modes.listening', 'Listening') :
                     practiceMode === 'image' ? t('flashcard.modes.image', 'Image') :
                     practiceMode === 'pictionary' ? t('flashcard.modes.pictionary', 'Pictionary') :
+                    practiceMode === 'flip-tile' ? t('flashcard.modes.flipTile', 'Flip Tile') :
                     practiceMode === 'bubble-shooter' ? t('flashcard.modes.bubbleShooter', 'Bubble Shooter') :
                     practiceMode === 'snake-game' ? t('flashcard.modes.snakeGame', 'Snake Hunt') :
                     t('flashcard.modes.pronunciation', 'Pronunciation')
@@ -391,6 +406,19 @@
                         <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', pictionaryDefinitionMode ? 'translate-x-5' : 'translate-x-0.5']" />
                       </button>
                     </li>
+                    <!-- Flip Tile mode -->
+                    <li>
+                      <button 
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        @click="selectMode('flip-tile')"
+                        :disabled="!flipTileModeAvailable"
+                        :aria-disabled="!flipTileModeAvailable ? 'true' : 'false'"
+                        :title="!flipTileModeAvailable ? t('flashcard.flipTile.unavailable', 'Flip Tile mode is unavailable for the selected date') : t('flashcard.modes.flipTile', 'Flip Tile')"
+                        :class="!flipTileModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
+                      >
+                        {{ t('flashcard.modes.flipTile', 'Flip Tile') }}
+                      </button>
+                    </li>
                     <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
                       <button
                         class="text-left flex-1 truncate"
@@ -477,6 +505,7 @@ interface Props {
   typingQuizEnabled?: boolean
   imageModeAvailable?: boolean
   pictionaryModeAvailable?: boolean
+  flipTileModeAvailable?: boolean
   bubbleShooterModeAvailable?: boolean
   bubbleShooterVietnameseMode?: boolean
   // Snake game: double bait mode toggle state (prop down from FlashcardView)
@@ -491,6 +520,7 @@ const listeningQuizEnabled = computed(           () => props.listeningQuizEnable
 const typingQuizEnabled = computed(() => props.typingQuizEnabled ?? false)
 const imageModeAvailable = computed(() => props.imageModeAvailable ?? true)
 const pictionaryModeAvailable = computed(() => props.pictionaryModeAvailable ?? true)
+const flipTileModeAvailable = computed(() => props.flipTileModeAvailable ?? true)
 const bubbleShooterModeAvailable = computed(() => props.bubbleShooterModeAvailable ?? true)
 const bubbleShooterVietnameseMode = computed(() => props.bubbleShooterVietnameseMode ?? false)
 const snakeDoubleBaitEnabled = computed(() => props.snakeDoubleBaitEnabled ?? false)

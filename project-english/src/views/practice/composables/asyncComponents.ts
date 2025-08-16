@@ -26,6 +26,7 @@ export const ListeningMode = defineAsyncComponent(() => import('../components/Li
 export const PracticeStats = defineAsyncComponent(() => import('../components/PracticeStats.vue'))
 export const FlashcardEmptyState = defineAsyncComponent(() => import('../components/FlashcardEmptyState.vue'))
 export const PictionaryMode = defineAsyncComponent(() => import('../components/PictionaryMode.vue'))
+export const FlipTileMode = defineAsyncComponent(() => import('../components/FlipTileMode.vue'))
 export const BubbleShooterMode = defineAsyncComponent(() => import('../components/BubbleShooterMode.vue'))
 export const SnakeGameMode = defineAsyncComponent(() => import('../components/SnakeGameMode.vue'))
 
@@ -52,6 +53,8 @@ export default {
   PracticeStats,
   FlashcardEmptyState,
   PictionaryMode,
+  FlipTileMode,
   BubbleShooterMode,
   SnakeGameMode,
 }
+

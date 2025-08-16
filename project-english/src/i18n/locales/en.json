@@ -389,6 +389,7 @@
       "listening": "Listening",
       "image": "Image",
       "pictionary": "Pictionary",
+      "flipTile": "Flip Tile",
       "bubbleShooter": "Bubble Shooter",
       "snakeGame": "Snake Hunt",
       "pronunciation": "Pronunciation",
@@ -415,6 +416,16 @@
       "definitionHint": "Definition",
       "noDefinition": "No definition available",
       "unavailable": "Pictionary mode is unavailable for the selected date"
+    },
+    "flipTile": {
+      "tilesFlipped": "Tiles flipped",
+      "imageAlt": "Flip tile image",
+      "noDefinition": "No definition available",
+      "noContent": "No content available for this card.",
+      "answerPlaceholder": "Type your answer...",
+      "check": "Check",
+      "instruction": "Click on tiles to reveal letters (max 2), then type your answer and press Enter.",
+      "unavailable": "Flip Tile mode is unavailable for the selected date"
     },
     "bubbleShooter": {
       "title": "Bubble Shooter",

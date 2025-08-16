@@ -389,6 +389,7 @@
         "listening": "리스닝",
         "image": "이미지",
         "pictionary": "픽셔너리",
+        "flipTile": "플립 타일",
         "bubbleShooter": "버블 슈터",
         "snakeGame": "스네이크 헌트",
         "pronunciation": "발음",
@@ -410,6 +411,16 @@
         "imageAlt": "픽셔너리 이미지",
         "instruction": "칸을 클릭하고 입력하여 빠진 글자를 채우세요. Enter 키로 확인합니다.",
         "unavailable": "선택한 날짜에는 픽셔너리 모드를 사용할 수 없습니다"
+      },
+      "flipTile": {
+        "tilesFlipped": "뒤집힌 타일",
+        "imageAlt": "플립 타일 이미지",
+        "noDefinition": "정의가 없습니다",
+        "noContent": "이 카드에 대한 콘텐츠가 없습니다.",
+        "answerPlaceholder": "답을 입력하세요...",
+        "check": "확인",
+        "instruction": "타일을 클릭하여 글자를 공개하고(최대 2개), 답을 입력한 후 Enter를 누르세요.",
+        "unavailable": "선택한 날짜에는 플립 타일 모드를 사용할 수 없습니다"
       },
       "bubbleShooter": {
         "title": "버블 슈터",

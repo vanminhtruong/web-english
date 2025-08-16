@@ -215,6 +215,14 @@
         </nav>
       </div>
     </div>
+    
+    <!-- Scroll Progress Bar -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200/20 dark:bg-white/10">
+      <div 
+        class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 transition-all duration-150 ease-out"
+        :style="{ width: `${scrollProgressPercentage}%` }"
+      ></div>
+    </div>
   </header>
 </template>
 
@@ -255,7 +263,14 @@ const handleScroll = () => {
   const scrollY = window.scrollY
   isScrolled.value = scrollY > 10
   scrollProgress.value = Math.min(scrollY / 100, 1)
+  
+  // Calculate scroll progress percentage for progress bar
+  const documentHeight = document.documentElement.scrollHeight - window.innerHeight
+  scrollProgressPercentage.value = documentHeight > 0 ? Math.min((scrollY / documentHeight) * 100, 100) : 0
 }
+
+// Scroll progress percentage for progress bar
+const scrollProgressPercentage = ref(0)
 
 // Single-trigger animation: runs exactly once per scroll down
 let animationTimeout: number | null = null
@@ -267,6 +282,10 @@ const enhancedScroll = () => {
   const header = document.querySelector('header') as HTMLElement | null
   
   if (!header) return
+  
+  // Update scroll progress percentage for progress bar
+  const documentHeight = document.documentElement.scrollHeight - window.innerHeight
+  scrollProgressPercentage.value = documentHeight > 0 ? Math.min((scrollY / documentHeight) * 100, 100) : 0
   
   // Reset animation when back at top
   if (scrollY === 0) {

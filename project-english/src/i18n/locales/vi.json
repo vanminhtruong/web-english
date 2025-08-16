@@ -445,6 +445,7 @@
       "listening": "Nghe",
       "image": "Nhìn ảnh",
       "pictionary": "Đuổi hình bắt chữ",
+      "flipTile": "Lật ô",
       "bubbleShooter": "Bắn bóng từ vựng",
       "snakeGame": "Rắn săn từ",
       "pronunciation": "Phát âm",
@@ -471,6 +472,16 @@
       "definitionHint": "Định nghĩa",
       "noDefinition": "Không có định nghĩa",
       "unavailable": "Chế độ đuổi hình bắt chữ không khả dụng cho ngày đã chọn"
+    },
+    "flipTile": {
+      "tilesFlipped": "Ô đã lật",
+      "imageAlt": "Hình ảnh lật ô",
+      "noDefinition": "Không có định nghĩa",
+      "noContent": "Không có nội dung cho thẻ này.",
+      "answerPlaceholder": "Nhập câu trả lời của bạn...",
+      "check": "Kiểm tra",
+      "instruction": "Nhấp vào các ô để lộ các chữ cái (tối đa 2), sau đó nhập câu trả lời và nhấn Enter.",
+      "unavailable": "Chế độ lật ô không khả dụng cho ngày đã chọn"
     },
     "bubbleShooter": {
       "title": "Bắn Bóng Từ Vựng",

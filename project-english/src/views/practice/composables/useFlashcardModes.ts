@@ -70,6 +70,11 @@ export function useFlashcardModes(
   const pictionaryAnswered = ref(false)
   const pictionaryCorrect = ref(false)
 
+  // Flip tile mode states
+  const flipTileAnswer = ref('')
+  const flipTileAnswered = ref(false)
+  const flipTileCorrect = ref(false)
+
   // Bubble Shooter mode states
   const bubbleShooterVietnameseMode = ref(false)
 
@@ -445,6 +450,21 @@ export function useFlashcardModes(
     return pictionaryCorrect.value
   }
 
+  // Flip tile mode methods (answer by typing with limited letter reveal)
+  const checkFlipTileAnswer = () => {
+    if (!currentCard.value || flipTileAnswered.value) return
+    flipTileAnswered.value = true
+    const userAnswer = flipTileAnswer.value.toLowerCase().trim()
+    const correctAnswer = currentCard.value.word.toLowerCase().trim()
+    flipTileCorrect.value = userAnswer === correctAnswer
+    if (flipTileCorrect.value) {
+      onCorrectAnswer?.()
+    } else {
+      onIncorrectAnswer?.()
+    }
+    return flipTileCorrect.value
+  }
+
   const playAudio = async () => {
     if (!currentCard.value) return
     
@@ -505,6 +525,12 @@ export function useFlashcardModes(
     pictionaryCorrect.value = false
   }
 
+  const resetFlipTileMode = () => {
+    flipTileAnswer.value = ''
+    flipTileAnswered.value = false
+    flipTileCorrect.value = false
+  }
+
   const resetPronunciationMode = () => {
     if (recognition && isRecording.value) {
       recognition.stop()
@@ -522,6 +548,7 @@ export function useFlashcardModes(
     resetImageMode()
     resetPronunciationMode()
     resetPictionaryMode()
+    resetFlipTileMode()
   }
 
   // Helper to check if can proceed to next card
@@ -534,6 +561,7 @@ export function useFlashcardModes(
       image: imageAnswered.value,
       pronunciation: pronunciationAnswered.value,
       pictionary: pictionaryAnswered.value,
+      'flip-tile': flipTileAnswered.value,
       'snake-game': true,
       'bubble-shooter': true,
     }
@@ -603,6 +631,13 @@ export function useFlashcardModes(
     pictionaryCorrect,
     checkPictionaryAnswer,
     resetPictionaryMode,
+
+    // Flip tile mode
+    flipTileAnswer,
+    flipTileAnswered,
+    flipTileCorrect,
+    checkFlipTileAnswer,
+    resetFlipTileMode,
 
     // Bubble Shooter mode
     bubbleShooterVietnameseMode,

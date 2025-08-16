@@ -20,6 +20,7 @@
       :typing-quiz-enabled="typingQuizEnabled"
       :image-mode-available="imageModeAvailable"
       :pictionary-mode-available="pictionaryModeAvailable"
+      :flip-tile-mode-available="flipTileModeAvailable"
       :bubble-shooter-mode-available="bubbleShooterModeAvailable"
       :bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode"
       :snake-double-bait-enabled="snakeDoubleBaitMode"
@@ -206,6 +207,17 @@
                     @game-complete="handleSnakeGameComplete"
                     @correct-food-eaten="handleSnakeCorrectFoodEaten"
                     @wrong-food-eaten="handleSnakeWrongFoodEaten"
+                  />
+                </template>
+                <template v-else-if="practiceMode === 'flip-tile'">
+                  <FlipTileMode
+                    :card="currentShuffledCard"
+                    :flip-tile-answer="flipTileAnswer"
+                    :flip-tile-answered="flipTileAnswered"
+                    :flip-tile-correct="flipTileCorrect"
+                    :get-topic-name="getTopicName"
+                    @update:flip-tile-answer="flipTileAnswer = $event"
+                    @check-answer="handleFlipTileAnswer"
                   />
                 </template>
               </LazyLoadComponent>
@@ -547,6 +559,21 @@ const pictionaryModeAvailable = computed(() => {
   })
 })
 
+// Determine if Flip Tile mode is available for the CURRENT effective set (date + category + difficulty)
+// This ensures that when a date contains multiple topics, Flip Tile mode is only enabled if the selected
+// topic (and difficulty) actually has images.
+const flipTileModeAvailable = computed(() => {
+  const cards = baseFlashcards.value
+  if (cards.length === 0) return false
+  // Flip Tile mode is available only if ALL cards in the current effective set have a non-empty image
+  return cards.every((v: Vocabulary) => {
+    const img: any = (v as any).image
+    if (img == null) return false
+    const s = typeof img === 'string' ? img : String(img)
+    return s.trim().length > 0
+  })
+})
+
 // Determine if Bubble Shooter mode is available based on vocabulary count
 // Bubble Shooter mode is disabled when the selected date contains more than 8 vocabulary words
 // to avoid gameplay issues with too many balls
@@ -845,12 +872,18 @@ const {
   imageCorrect,
   checkImageAnswer,
   resetImageMode,
-  // Pictionary
+  // Pictionary mode
   pictionaryAnswer,
   pictionaryAnswered,
   pictionaryCorrect,
   checkPictionaryAnswer,
   resetPictionaryMode,
+  // Flip tile mode
+  flipTileAnswer,
+  flipTileAnswered,
+  flipTileCorrect,
+  checkFlipTileAnswer,
+  resetFlipTileMode,
   imageQuizEnabled,
   imageQuizOptions,
   imageQuizSelected,
@@ -919,6 +952,11 @@ interface CardState {
   pictionaryAnswer?: string
   pictionaryAnswered?: boolean
   pictionaryCorrect?: boolean
+  
+  // Flip tile mode
+  flipTileAnswer?: string
+  flipTileAnswered?: boolean
+  flipTileCorrect?: boolean
 }
 
 const cardStateStorage = ref<Record<number, CardState>>({})
@@ -969,6 +1007,11 @@ const saveCurrentCardState = () => {
     pictionaryAnswer: pictionaryAnswer.value || undefined,
     pictionaryAnswered: pictionaryAnswered.value || undefined,
     pictionaryCorrect: pictionaryCorrect.value || undefined,
+    
+    // Flip tile mode
+    flipTileAnswer: flipTileAnswer.value || undefined,
+    flipTileAnswered: flipTileAnswered.value || undefined,
+    flipTileCorrect: flipTileCorrect.value || undefined,
   }
 }
 
@@ -1073,6 +1116,17 @@ const restoreCardState = () => {
     }
     if (savedState.pictionaryCorrect !== undefined) {
       pictionaryCorrect.value = savedState.pictionaryCorrect
+    }
+    
+    // Restore flip tile mode
+    if (savedState.flipTileAnswer !== undefined) {
+      flipTileAnswer.value = savedState.flipTileAnswer
+    }
+    if (savedState.flipTileAnswered !== undefined) {
+      flipTileAnswered.value = savedState.flipTileAnswered
+    }
+    if (savedState.flipTileCorrect !== undefined) {
+      flipTileCorrect.value = savedState.flipTileCorrect
     }
   }
 }
@@ -1248,6 +1302,33 @@ const handleImageQuizAnswer = (answer: string) => {
   }
 
   // Auto-advance on xs/sm only (viewport < md) for Image-quiz
+  if (
+    practiceStarted.value &&
+    typeof window !== 'undefined' &&
+    window.innerWidth < 768
+  ) {
+    setTimeout(() => {
+      enhancedNextCard()
+    }, 2100)
+  }
+}
+
+const handleFlipTileAnswer = () => {
+  checkFlipTileAnswer()
+  recordAnswer(flipTileCorrect.value)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: flipTileAnswer.value || '',
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!flipTileCorrect.value,
+      mode: 'flip-tile',
+    })
+  }
+  
+  // Auto-advance on xs/sm only (viewport < md) for Flip Tile mode
   if (
     practiceStarted.value &&
     typeof window !== 'undefined' &&
