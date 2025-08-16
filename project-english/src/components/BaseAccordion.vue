@@ -4,9 +4,9 @@
     <button
       @click="toggle"
       :aria-expanded="isOpen ? 'true' : 'false'"
-      class="w-full flex items-center px-3 py-3 xs:px-4 xs:py-3 sm:px-5 sm:py-4 text-left bg-gray-50 dark:bg-[#0f0f0f] hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors border-b border-gray-200 dark:border-dark-bg-mute focus:outline-none focus:ring-2 focus:ring-blue-500"
+      class="w-full flex flex-col md:flex-row md:items-center px-3 py-3 xs:px-4 xs:py-3 sm:px-5 sm:py-4 text-left bg-gray-50 dark:bg-[#0f0f0f] hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors border-b border-gray-200 dark:border-dark-bg-mute focus:outline-none focus:ring-2 focus:ring-blue-500"
     >
-      <!-- Left side: Icon + Title -->
+      <!-- Top section on xs/sm/md, Left side on md+ : Icon + Title -->
       <div class="flex items-center space-x-3 flex-1 min-w-0">
         <!-- Icon -->
         <div v-if="icon && iconPaths" class="flex-shrink-0">
@@ -33,8 +33,8 @@
         </div>
       </div>
       
-      <!-- Right side: Status + Chevron -->
-      <div class="flex items-center space-x-3">
+      <!-- Bottom section on xs/sm/md, Right side on md+: Status + Chevron -->
+      <div class="flex items-center justify-between md:justify-end space-x-3 mt-4 md:mt-0 md:ml-3">
         <!-- Status Information (when closed) -->
         <div v-if="statusText && showStatusWhenClosed && !isOpen" class="flex items-center space-x-3">
           <div v-if="statusColor" :class="['h-2 w-2 rounded-full', statusColor]" />
