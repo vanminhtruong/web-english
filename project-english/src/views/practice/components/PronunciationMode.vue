@@ -15,7 +15,7 @@
       <p class="text-base sm:text-lg md:text-xl text-gray-500 dark:text-white/70 mb-6 md:mb-8 break-words">{{ card?.pronunciation }}</p>
 
       <div v-if="!isSpeechRecognitionSupported" class="text-red-500 dark:text-red-400">
-        Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói.
+        {{ t('flashcard.pronunciation.microphoneError', 'Microphone error! Please check microphone access permissions.') }}
       </div>
       <div v-else>
         <button
@@ -33,10 +33,10 @@
       </div>
 
       <div class="mt-5 sm:mt-6 md:mt-8">
-        <p v-if="pronunciationResult" class="text-gray-600 dark:text-white/80 text-sm sm:text-base break-words">Bạn đã nói: <span class="font-medium text-gray-800 dark:text-white">{{ pronunciationResult }}</span></p>
+        <p v-if="pronunciationResult" class="text-gray-600 dark:text-white/80 text-sm sm:text-base break-words">{{ t('flashcard.pronunciation.yourRecording', 'Your Recording') }}: <span class="font-medium text-gray-800 dark:text-white">{{ pronunciationResult }}</span></p>
         <div v-if="pronunciationAnswered" class="mt-4">
-          <p v-if="pronunciationCorrect" class="text-lg sm:text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">Chính xác!</p>
-          <p v-else class="text-lg sm:text-xl md:text-2xl font-bold text-red-600 dark:text-red-400">Hãy thử lại!</p>
+          <p v-if="pronunciationCorrect" class="text-lg sm:text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">{{ t('flashcard.listening.correct', '✓ Correct!') }}</p>
+          <p v-else class="text-lg sm:text-xl md:text-2xl font-bold text-red-600 dark:text-red-400">{{ t('flashcard.pronunciation.tryAgain', 'Try Again!') }}</p>
         </div>
       </div>
     </div>
@@ -54,7 +54,10 @@
 
 <script setup lang="ts">
 import { ref, watch, defineAsyncComponent } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Vocabulary } from '../../../composables/useVocabularyStore';
+
+const { t } = useI18n()
 
 // Import component using defineAsyncComponent to avoid "has no default export" error
 const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))

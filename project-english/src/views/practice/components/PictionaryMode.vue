@@ -117,7 +117,7 @@
                 inputmode="text"
                 autocomplete="off"
                 spellcheck="false"
-                placeholder="Find letter..."
+                :placeholder="t('common.search', 'Search')"
                 class="w-full px-3 pr-8 py-1.5 text-sm rounded-md border bg-white text-gray-900 border-gray-300 dark:bg-dark-bg-soft dark:text-white dark:border-dark-bg-mute focus:outline-none focus:ring-2 focus:ring-blue-500"
                 @click.stop
               />

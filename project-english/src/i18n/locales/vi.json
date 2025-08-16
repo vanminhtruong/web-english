@@ -504,6 +504,9 @@
       "playAgain": "Chơi Lại",
       "gameOver": "Game Over!"
     },
+    "snake": {
+      "doubleBaitToggle": "Chế độ mồi đôi"
+    },
     "listening": {
       "instruction": "Nghe và nhập từ bạn nghe được:",
       "placeholder": "Nhập từ bạn nghe được...",

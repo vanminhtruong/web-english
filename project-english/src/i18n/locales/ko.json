@@ -403,6 +403,7 @@
         "noImage": "사용 가능한 이미지가 없습니다",
         "placeholder": "단어를 입력하세요...",
         "instruction": "이미지를 보고 해당하는 단어를 입력하세요:",
+        "instructionQuiz": "이미지에 맞는 올바른 단어를 선택하세요:",
         "correctAnswer": "정답",
         "unavailable": "선택한 날짜에는 이미지 모드를 사용할 수 없습니다",
         "quizToggle": "객관식"
@@ -410,6 +411,11 @@
       "pictionary": {
         "imageAlt": "픽셔너리 이미지",
         "instruction": "칸을 클릭하고 입력하여 빠진 글자를 채우세요. Enter 키로 확인합니다.",
+        "instructionDefinition": "정의를 보고 단어를 입력하세요. Enter 키로 확인합니다.",
+        "dragInstructionDefinition": "정의를 보고 글자를 드래그하여 단어를 만드세요.",
+        "definitionToggle": "정의 모드",
+        "definitionHint": "정의",
+        "noDefinition": "정의가 없습니다",
         "unavailable": "선택한 날짜에는 픽셔너리 모드를 사용할 수 없습니다"
       },
       "flipTile": {
@@ -430,28 +436,64 @@
         "gameComplete": "게임 완료!",
         "finalScore": "최종 점수: {score}",
         "wordsMatched": "매칭된 단어: {count}",
-        "playAgain": "다시 하기"
+        "playAgain": "다시 하기",
+        "unavailable": "8개를 초과하는 어휘가 있는 날짜에는 버블 슈터 모드가 비활성화됩니다",
+        "vietnameseModeToggle": "베트남어 첫 글자 모드"
       },
       "snakeGame": {
         "title": "스네이크 헌트",
         "instruction": "뱀이 첫 글자가 같은 먹이를 먹도록 유도하세요!",
         "score": "점수",
         "currentWord": "현재 단어",
-        "gameComplete": "게임 완료!",
+        "target": "목표",
+        "controls": "조작법",
+        "arrowKeys": "화살표 키 / WASD",
+        "clickToStart": "시작하려면 START 클릭",
+        "completed": "완료",
+        "start": "사냥 시작",
+        "up": "위",
+        "down": "아래",
+        "left": "왼쪽",
+        "right": "오른쪽",
+        "gameComplete": "사냥 완료!",
         "finalScore": "최종 점수: {score}",
-        "wordsEaten": "먹은 단어: {count}",
-        "playAgain": "다시 하기",
+        "wordsHunted": "사냥한 단어: {count}",
+        "playAgain": "다시 사냥",
         "gameOver": "게임 오버!"
+      },
+      "snake": {
+        "doubleBaitToggle": "더블 미끼 모드"
       },
       "listening": {
         "instruction": "듣고 들은 단어를 입력하세요:",
+        "instructionQuiz": "들은 단어를 선택하세요:",
         "placeholder": "들은 단어를 입력하세요...",
         "correct": "✓ 정답!",
         "incorrect": "✗ 정답:",
         "quizToggle": "객관식"
       },
       "typing": {
+        "instruction": "해당하는 영어 단어를 입력하세요:",
+        "instructionQuiz": "올바른 영어 단어를 선택하세요:",
+        "placeholder": "단어를 입력하세요...",
+        "correctAnswer": "정답:",
+        "correct": "✓ 정답!",
+        "incorrect": "✗ 정답:",
         "quizToggle": "객관식"
+      },
+      "pronunciation": {
+        "instruction": "다음 문장을 듣고 따라 하세요:",
+        "listen": "듣기",
+        "ready": "준비",
+        "recording": "녹음 중...",
+        "recorded": "녹음 완료",
+        "processing": "처리 중...",
+        "analyze": "분석",
+        "feedback": "피드백",
+        "tips": "팁",
+        "tryAgain": "다시 시도",
+        "yourRecording": "당신의 녹음",
+        "microphoneError": "마이크 오류! 마이크 접근 권한을 확인하세요."
       },
       "dateFilter": {
         "enable": "생성 날짜로 필터",
