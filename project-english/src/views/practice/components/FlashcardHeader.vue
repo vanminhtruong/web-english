@@ -665,6 +665,7 @@ const toggleFlipTileHintsFromDropdown = () => {
 // Guarded settings emitter to prevent opening during active practice
 const onShowSettings = () => {
   if (props.practiceStarted) return
+  closeAll()
   emit('show-settings')
 }
 

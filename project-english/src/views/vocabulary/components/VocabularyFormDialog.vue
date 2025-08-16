@@ -144,7 +144,7 @@
                         <!-- Add Category Button -->
                         <button
                           type="button"
-                          @click="showTopicManager = true"
+                          @click="openTopicManager()"
                           class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 hover:rotate-90 z-[10000] shadow-lg keep-center-hover-rotate"
                           :title="t('vocabulary.addCategory', 'Add Category')"
                         >
@@ -912,6 +912,14 @@ const toggleCategoryDropdown = () => {
 const closeCategoryDropdown = () => {
   showCategoryDropdown.value = false
   categorySearchQuery.value = ''
+}
+
+// Open Topic Manager while ensuring the category dropdown is closed to avoid overlap
+const openTopicManager = () => {
+  if (showCategoryDropdown.value) {
+    closeCategoryDropdown()
+  }
+  showTopicManager.value = true
 }
 
 const selectCategory = (key: string) => {

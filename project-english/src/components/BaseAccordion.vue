@@ -34,16 +34,16 @@
       </div>
       
       <!-- Bottom section on xs/sm/md, Right side on md+: Status + Chevron -->
-      <div class="flex items-center justify-between md:justify-end space-x-3 mt-4 md:mt-0 md:ml-3">
+      <div class="flex items-center justify-end space-x-3 mt-4 md:mt-0 md:ml-3">
         <!-- Status Information (when closed) -->
-        <div v-if="statusText && showStatusWhenClosed && !isOpen" class="flex items-center space-x-3">
+        <div v-if="statusText && showStatusWhenClosed && !isOpen" class="flex items-center space-x-3 mr-auto">
           <div v-if="statusColor" :class="['h-2 w-2 rounded-full', statusColor]" />
           <span class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate max-w-48 sm:max-w-64">
             {{ statusText }}
           </span>
         </div>
         
-        <!-- Chevron Icon -->
+        <!-- Chevron Icon - Always stays on the right -->
         <svg
           class="w-5 h-5 text-gray-500 dark:text-white/60 transition-transform duration-200 flex-shrink-0"
           :class="{ 'rotate-180': isOpen }"
