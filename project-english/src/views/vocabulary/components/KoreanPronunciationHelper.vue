@@ -48,6 +48,21 @@
 
               <!-- Content -->
               <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
+                <!-- Search Input -->
+                <div class="relative mb-6">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </div>
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-[#0a0a0a] dark:text-white"
+                    :placeholder="t('common.search', 'Search Korean sounds...')"
+                  />
+                </div>
+
                 <!-- Preview Section -->
                 <div class="mb-6">
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
@@ -93,7 +108,7 @@
                     </h3>
                     <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
                       <button
-                        v-for="sound in koreanConsonantSounds"
+                        v-for="sound in filteredConsonantSounds"
                         :key="sound.korean"
                         @click="addSound(sound.romanization)"
                         class="p-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 flex flex-col items-center text-sm"
@@ -113,7 +128,7 @@
                     </h3>
                     <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
                       <button
-                        v-for="sound in koreanVowelSounds"
+                        v-for="sound in filteredVowelSounds"
                         :key="sound.korean"
                         @click="addSound(sound.romanization)"
                         class="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 flex flex-col items-center text-sm"
@@ -133,7 +148,7 @@
                     </h3>
                     <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                       <button
-                        v-for="pattern in commonKoreanPatterns"
+                        v-for="pattern in filteredCommonPatterns"
                         :key="pattern.korean"
                         @click="addSound(pattern.romanization)"
                         class="p-2 bg-purple-100 hover:bg-purple-200 dark:bg-purple-900 dark:hover:bg-purple-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 flex flex-col items-center text-sm"
@@ -203,7 +218,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -236,6 +251,7 @@ const { t } = useI18n()
 
 // State
 const currentPronunciation = ref('')
+const searchQuery = ref('')
 
 // Korean Consonant Sounds (Romanized)
 const koreanConsonantSounds: KoreanSound[] = [
@@ -313,6 +329,37 @@ const specialChars: SpecialChar[] = [
   { char: ']', description: 'Close bracket' }
 ]
 
+// Computed filtered arrays based on search
+const filteredConsonantSounds = computed(() => {
+  if (!searchQuery.value) return koreanConsonantSounds
+  const query = searchQuery.value.toLowerCase()
+  return koreanConsonantSounds.filter(sound => 
+    sound.korean.includes(query) || 
+    sound.romanization.toLowerCase().includes(query) || 
+    sound.description.toLowerCase().includes(query)
+  )
+})
+
+const filteredVowelSounds = computed(() => {
+  if (!searchQuery.value) return koreanVowelSounds
+  const query = searchQuery.value.toLowerCase()
+  return koreanVowelSounds.filter(sound => 
+    sound.korean.includes(query) || 
+    sound.romanization.toLowerCase().includes(query) || 
+    sound.description.toLowerCase().includes(query)
+  )
+})
+
+const filteredCommonPatterns = computed(() => {
+  if (!searchQuery.value) return commonKoreanPatterns
+  const query = searchQuery.value.toLowerCase()
+  return commonKoreanPatterns.filter(pattern => 
+    pattern.korean.includes(query) || 
+    pattern.romanization.toLowerCase().includes(query) || 
+    pattern.description.toLowerCase().includes(query)
+  )
+})
+
 // Methods
 const addSound = (sound: string) => {
   currentPronunciation.value += sound
@@ -346,6 +393,7 @@ watch(() => props.initialValue, (newValue) => {
 watch(() => props.modelValue, (isOpen) => {
   if (isOpen) {
     currentPronunciation.value = props.initialValue
+    searchQuery.value = ''
   }
 })
 </script>

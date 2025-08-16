@@ -48,6 +48,28 @@
 
               <!-- Content -->
               <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
+                <!-- Search Input -->
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </div>
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-bg-mute dark:text-white"
+                    :placeholder="t('common.search', 'Search Korean characters...')"
+                  />
+                </div>
+
+                <!-- Input Area -->
+                <div class="p-4 bg-white dark:bg-dark-bg-mute border border-gray-200 dark:border-dark-bg-mute rounded-lg">
+                  <div class="text-2xl md:text-3xl font-mono text-gray-900 dark:text-white break-words min-h-[2.5rem] bg-gray-50 dark:bg-dark-bg-soft p-3 rounded border">
+                    {{ currentInput || t('vocabulary.pronunciation.previewPlaceholder', 'Start typing Korean...') }}
+                  </div>
+                </div>
+
                 <!-- Preview Section -->
                 <div class="mb-6">
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
@@ -93,7 +115,7 @@
                     </h3>
                     <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
                       <button
-                        v-for="consonant in koreanConsonants"
+                        v-for="consonant in filteredConsonants"
                         :key="consonant.char"
                         @click="addCharacter(consonant.char)"
                         class="p-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 flex flex-col items-center text-sm"
@@ -113,7 +135,7 @@
                     </h3>
                     <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
                       <button
-                        v-for="vowel in koreanVowels"
+                        v-for="vowel in filteredVowels"
                         :key="vowel.char"
                         @click="addCharacter(vowel.char)"
                         class="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 flex flex-col items-center text-sm"
@@ -133,10 +155,10 @@
                     </h3>
                     <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2">
                       <button
-                        v-for="syllable in commonKoreanSyllables"
+                        v-for="syllable in filteredCommonSyllables"
                         :key="syllable"
                         @click="addCharacter(syllable)"
-                        class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 hover:bg-purple-200 dark:bg-purple-900 dark:hover:bg-purple-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-110 flex items-center justify-center font-bold text-base"
+                        class="px-3 py-2 bg-purple-100 hover:bg-purple-200 dark:bg-purple-900 dark:hover:bg-purple-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 font-medium"
                       >
                         {{ syllable }}
                       </button>
@@ -182,7 +204,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -204,6 +226,7 @@ const { t } = useI18n()
 
 // State
 const currentInput = ref('')
+const searchQuery = ref('')
 
 // Korean Characters with Romanization
 const koreanConsonants = [
@@ -409,33 +432,45 @@ const confirmInput = () => {
   emit('update:modelValue', false)
 }
 
+// Computed filtered arrays based on search
+const filteredConsonants = computed(() => {
+  if (!searchQuery.value) return koreanConsonants
+  const query = searchQuery.value.toLowerCase()
+  return koreanConsonants.filter(consonant => 
+    consonant.char.includes(query) || 
+    consonant.romanization.toLowerCase().includes(query) || 
+    consonant.description.toLowerCase().includes(query)
+  )
+})
+
+const filteredVowels = computed(() => {
+  if (!searchQuery.value) return koreanVowels
+  const query = searchQuery.value.toLowerCase()
+  return koreanVowels.filter(vowel => 
+    vowel.char.includes(query) || 
+    vowel.romanization.toLowerCase().includes(query) || 
+    vowel.description.toLowerCase().includes(query)
+  )
+})
+
+const filteredCommonSyllables = computed(() => {
+  if (!searchQuery.value) return commonKoreanSyllables
+  const query = searchQuery.value.toLowerCase()
+  return commonKoreanSyllables.filter(syllable => syllable.includes(query))
+})
+
 // Watch for initial value changes
 watch(() => props.initialValue, (newValue) => {
-  currentInput.value = newValue
-}, { immediate: true })
+  if (newValue !== undefined) {
+    currentInput.value = newValue
+  }
+})
 
-// Watch for modal opening
+// Watch for modal open to reset
 watch(() => props.modelValue, (isOpen) => {
   if (isOpen) {
-    currentInput.value = props.initialValue
+    currentInput.value = props.initialValue || ''
+    searchQuery.value = ''
   }
 })
 </script>
-
-<style scoped>
-/* Animation keyframes */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out both;
-}
-</style>
