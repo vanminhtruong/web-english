@@ -151,12 +151,25 @@
                 @update:auto-save-enabled="autoSaveEnabled = $event"
                 :is-saving="isSaving"
                 :has-auto-save-file="hasAutoSaveFile"
+                @update:has-auto-save-file="hasAutoSaveFile = $event"
+                :has-google-drive-file="hasGoogleDriveFile"
+                @update:has-google-drive-file="hasGoogleDriveFile = $event"
+                :storage-type="storageType"
+                @update:storage-type="storageType = $event"
+                :is-google-signed-in="isGoogleSignedIn"
+                @update:is-google-signed-in="isGoogleSignedIn = $event"
+                :google-auth-error="googleAuthError"
                 :auto-save-file-path="autoSaveFilePath"
+                @update:auto-save-file-path="autoSaveFilePath = $event"
                 :last-save-time="lastSaveTime"
                 :save-status-color="getSaveStatusColor"
                 :save-status-text="getSaveStatusText"
                 @manual-save="manualSave"
                 @setup-auto-save="setupAutoSaveFile"
+                @setup-google-drive="setupGoogleDrive"
+                @google-sign-in="handleGoogleSignIn"
+                @google-sign-out="handleGoogleSignOut"
+                @sync-from-google-drive="syncFromGoogleDrive"
                 @reset-auto-save="resetAutoSaveFile"
                 @import-file="handleFileImportWithReload"
               />
@@ -473,6 +486,8 @@ const {
   isSaving,
   lastSaveTime,
   hasAutoSaveFile,
+  hasGoogleDriveFile,
+  storageType,
   saveStatus,
   getSaveStatusColor,
   getSaveStatusText,
@@ -480,9 +495,15 @@ const {
   debounceAutoSave,
   scheduleAutoSave,
   setupAutoSaveFile,
+  setupGoogleDrive,
+  syncFromGoogleDrive,
+  handleGoogleSignIn,
+  handleGoogleSignOut,
   handleFileImport,
   resetAutoSaveFile,
   autoSaveFilePath,
+  isGoogleSignedIn,
+  googleAuthError,
 } = useVocabularySaving();
 
 const {

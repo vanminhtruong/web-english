@@ -229,6 +229,17 @@
       "notSaved": "Not saved",
       "autoSaveFileSetup": "Auto-save file setup successfully!",
       "autoSaveRetry": "Click here to select a new auto-save file",
+      "storageType": "Storage Type:",
+      "localFile": "Local File",
+      "googleDrive": "Google Drive",
+      "googleSignIn": "Sign In",
+      "googleSignOut": "Sign Out",
+      "googleSync": "Sync",
+      "googleDriveSetup": "Google Drive setup successful",
+      "googleSignInSuccess": "Successfully signed in to Google",
+      "googleSignOutSuccess": "Successfully signed out from Google",
+      "syncFromDriveSuccess": "Successfully synced from Google Drive",
+      "googleDriveRetry": "Google Drive save failed. Check connection.",
       "status": {
         "saving": "Saving...",
         "autoSaving": "Auto-saving...",
@@ -236,6 +247,9 @@
         "autoLocalStorage": "Auto (localStorage)",
         "autoFile": "Auto (file)",
         "autoNoFile": "Auto (no file selected)",
+        "autoGoogleDrive": "Auto saved to Google Drive",
+        "googleDriveReady": "Google Drive ready",
+        "googleDriveSignIn": "Sign in to Google Drive",
         "fileSaved": "File saved",
         "error": "Save error"
       },
@@ -245,7 +259,13 @@
         "invalidFile": "Please select a valid JSON file!",
         "invalidFormat": "Invalid file format",
         "autoSaveFileFailed": "Auto-save to file failed. Please select a new file.",
-        "permissionDenied": "Permission to write to file denied. Please select a new file."
+        "permissionDenied": "Permission to write to file denied. Please select a new file.",
+        "googleSignInFailed": "Google sign-in failed",
+        "googleSignOutFailed": "Google sign-out failed",
+        "googleDriveFailed": "Google Drive save failed",
+        "googleDriveSetupFailed": "Google Drive setup failed",
+        "notSignedIn": "Not signed in to Google",
+        "syncFailed": "Sync failed"
       },
       "import": {
         "confirmMessage": "Do you want to import {count} vocabulary from file \"{filename}\"?\n\nCurrent data will be replaced!",
