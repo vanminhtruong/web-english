@@ -243,6 +243,11 @@
       "changeAutoFile": "Thay Đổi Tệp Lưu Tự Động",
       "change": "Thay Đổi",
       "importFile": "Import Tệp",
+      "importFromComputer": "Import từ Máy tính",
+      "importFromDrive": "Import từ Google Drive",
+      "selectFromDrive": "Chọn từ Google Drive",
+      "signInRequiredForImport": "Đăng nhập Google Drive để import file",
+      "noFilesFound": "Không tìm thấy file JSON trong Google Drive",
       "importShort": "Import",
       "lastSave": "Lưu lần cuối: {time}",
       "notSaved": "Chưa lưu",
@@ -288,7 +293,9 @@
       },
       "import": {
         "confirmMessage": "Bạn có muốn import {count} từ vựng từ tệp \"{filename}\"?\n\nDữ liệu hiện tại sẽ bị thay thế!",
-        "successMessage": "Import thành công {count} từ vựng!"
+        "confirmGoogleDriveMessage": "Bạn có muốn import {count} từ vựng từ Google Drive file \"{filename}\"?\n\nDữ liệu hiện tại sẽ bị thay thế!",
+        "successMessage": "Import thành công {count} từ vựng!",
+        "googleDriveSuccessMessage": "Import thành công {count} từ vựng từ Google Drive!"
       }
     },
     "validation": {

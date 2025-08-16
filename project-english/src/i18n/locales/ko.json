@@ -228,7 +228,15 @@
         "setup": "설정",
         "changeAutoFile": "자동 저장 파일 변경",
         "change": "변경",
-        "importFile": "파일 가져오기",
+        "importFromComputer": "컴퓨터에서 가져오기",
+        "importFromGoogleDrive": "구글 드라이브에서 가져오기",
+        "selectFromGoogleDrive": "구글 드라이브에서 선택",
+        "signInRequired": "구글 드라이브에 로그인이 필요합니다",
+        "noJsonFiles": "JSON 파일을 찾을 수 없습니다",
+        "selectFile": "파일을 선택하세요",
+        "loadingFiles": "파일을 불러오는 중...",
+        "importConfirm": "가져오기 확인",
+        "importSuccess": "가져오기 성공",
         "importShort": "가져오기",
         "lastSave": "마지막 저장: {time}",
         "notSaved": "저장되지 않음",
@@ -270,11 +278,15 @@
           "googleDriveFailed": "구글 드라이브 저장 실패",
           "googleDriveSetupFailed": "구글 드라이브 설정 실패",
           "notSignedIn": "구글에 로그인하지 않음",
-          "syncFailed": "동기화 실패"
+          "syncFailed": "동기화 실패",
+          "googleDriveImportFailed": "구글 드라이브 가져오기 실패",
+          "fileReadError": "파일 읽기 오류: {error}"
         },
         "import": {
           "confirmMessage": "파일 \"{filename}\"에서 {count}개의 단어를 가져오시겠습니까?\n\n현재 데이터가 대체됩니다!",
-          "successMessage": "{count}개의 단어를 성공적으로 가져왔습니다!"
+          "successMessage": "{count}개의 단어를 성공적으로 가져왔습니다!",
+          "confirmGoogleDriveMessage": "구글 드라이브에서 \"{filename}\"을(를) 가져오시겠습니까? 현재 모든 어휘가 대체됩니다.",
+          "googleDriveSuccessMessage": "구글 드라이브에서 {count}개의 어휘를 성공적으로 가져왔습니다"
         }
       },
       "validation": {

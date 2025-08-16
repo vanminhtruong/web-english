@@ -1,64 +1,106 @@
 <template>
-  <!-- Save & Sync Control Panel -->
-  <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-[#0f0f0f] mb-6 overflow-hidden">
-    <!-- Header with gradient background -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0f0f0f] dark:to-[#0a0a0a] px-6 py-4 border-b border-gray-200 dark:border-[#0f0f0f]">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-            <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
+  <div>
+    <!-- Save & Sync Control Panel -->
+    <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-gray-200 dark:border-[#0f0f0f] mb-6 overflow-hidden">
+      <!-- Header with gradient background -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0f0f0f] dark:to-[#0a0a0a] px-3 xs:px-4 sm:px-6 py-3 xs:py-4 border-b border-gray-200 dark:border-[#0f0f0f]">
+        <!-- Mobile Layout (xs, sm) -->
+        <div class="block sm:hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-2">
+              <div class="p-1.5 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <svg class="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-base xs:text-lg font-semibold text-gray-900 dark:text-white">{{ t('vocabulary.save.title', 'Save & Sync') }}</h3>
+              </div>
+            </div>
+            <!-- Toggle Switch -->
+            <button
+              @click="emit('update:autoSaveEnabled', !autoSaveEnabled)"
+              :class="[
+                'relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 flex-shrink-0',
+                autoSaveEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+              ]"
+            >
+              <span
+                :class="[
+                  'inline-block h-3 w-3 transform rounded-full bg-white transition-transform duration-200',
+                  autoSaveEnabled ? 'translate-x-5' : 'translate-x-1'
+                ]"
+              />
+            </button>
           </div>
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('vocabulary.save.title', 'Save & Sync') }}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ t('vocabulary.save.subtitle', 'Manage your vocabulary data storage') }}</p>
+          <!-- Mobile Subtitle & Mode Label -->
+          <div class="flex items-center justify-between">
+            <p class="text-xs xs:text-sm text-gray-500 dark:text-gray-400 flex-1 pr-2">{{ t('vocabulary.save.subtitle', 'Manage your vocabulary data storage') }}</p>
+            <span class="text-xs font-medium text-gray-600 dark:text-gray-400 flex-shrink-0">
+              {{ autoSaveEnabled ? t('vocabulary.save.auto', 'Auto') : t('vocabulary.save.manual', 'Manual') }}
+            </span>
           </div>
         </div>
-        
-        <!-- Save Mode Toggle -->
-        <div class="flex items-center space-x-3">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('vocabulary.save.mode', 'Save Mode')}}</span>
-          <button
-            @click="emit('update:autoSaveEnabled', !autoSaveEnabled)"
-            :class="[
-              'relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200',
-              autoSaveEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
-            ]"
-          >
-            <span
-              :class="[
-                'inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200',
-                autoSaveEnabled ? 'translate-x-6' : 'translate-x-1'
-              ]"
-            />
-          </button>
-          <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-            {{ autoSaveEnabled ? t('vocabulary.save.auto', 'Auto') : t('vocabulary.save.manual', 'Manual') }}
-          </span>
+
+        <!-- Desktop Layout (sm+) -->
+        <div class="hidden sm:block">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('vocabulary.save.title', 'Save & Sync') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ t('vocabulary.save.subtitle', 'Manage your vocabulary data storage') }}</p>
+              </div>
+            </div>
+            
+            <!-- Save Mode Toggle -->
+            <div class="flex items-center space-x-3">
+              <button
+                @click="emit('update:autoSaveEnabled', !autoSaveEnabled)"
+                :class="[
+                  'relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 flex-shrink-0',
+                  autoSaveEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                ]"
+              >
+                <span
+                  :class="[
+                    'inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200',
+                    autoSaveEnabled ? 'translate-x-6' : 'translate-x-1'
+                  ]"
+                />
+              </button>
+              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {{ autoSaveEnabled ? t('vocabulary.save.auto', 'Auto') : t('vocabulary.save.manual', 'Manual') }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Main Content Area -->
-    <div class="p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="p-3 xs:p-4 sm:p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 xs:gap-8 sm:gap-10">
         
         <!-- Left Section: Save Actions -->
-        <div class="lg:col-span-2 space-y-4">
+        <div class="lg:col-span-2 space-y-4 xs:space-y-6">
           <!-- Manual Save Card -->
-          <div v-if="!autoSaveEnabled" class="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg p-4">
-            <h4 class="text-sm font-medium text-green-800 dark:text-green-400 mb-3">{{ t('vocabulary.save.manualMode', 'Manual Save Mode') }}</h4>
+          <div v-if="!autoSaveEnabled" class="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg p-3 xs:p-4">
+            <h4 class="text-xs xs:text-sm font-medium text-green-800 dark:text-green-400 mb-2 xs:mb-3">{{ t('vocabulary.save.manualMode', 'Manual Save Mode') }}</h4>
             <button
               @click="emit('manual-save')"
               :disabled="isSaving"
-              class="w-full px-4 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+              class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
             >
-              <svg v-if="isSaving" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <svg v-if="isSaving" class="animate-spin h-3 xs:h-4 w-3 xs:w-4" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-else class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
               </svg>
               <span>{{ isSaving ? t('common.saving', 'Saving...') : t('vocabulary.save.saveNow', 'Save Now') }}</span>
@@ -66,16 +108,16 @@
           </div>
 
           <!-- Auto Save Configuration -->
-          <div v-if="autoSaveEnabled" class="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h4 class="text-sm font-medium text-blue-800 dark:text-blue-400 mb-3">{{ t('vocabulary.save.autoMode', 'Auto Save Configuration') }}</h4>
+          <div v-if="autoSaveEnabled" class="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-3 xs:p-4">
+            <h4 class="text-xs xs:text-sm font-medium text-blue-800 dark:text-blue-400 mb-2 xs:mb-3">{{ t('vocabulary.save.autoMode', 'Auto Save Configuration') }}</h4>
             
             <!-- Storage Type Selector -->
-            <div class="mb-4">
-              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('vocabulary.save.storageType', 'Storage Type') }}</label>
+            <div class="mb-3 xs:mb-4">
+              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5 xs:mb-2">{{ t('vocabulary.save.storageType', 'Storage Type') }}</label>
               <select
                 :value="storageType"
                 @change="handleStorageTypeChange"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                class="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-xs xs:text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               >
                 <option value="local">{{ t('vocabulary.save.localStorage', 'Local File') }}</option>
                 <option value="google-drive">{{ t('vocabulary.save.googleDrive', 'Google Drive') }}</option>
@@ -83,14 +125,14 @@
             </div>
 
             <!-- Storage Actions -->
-            <div class="space-y-2">
+            <div class="space-y-1.5 xs:space-y-2">
               <!-- Local File Setup -->
               <button
                 v-if="storageType === 'local' && !hasAutoSaveFile"
                 @click="emit('setup-auto-save')"
-                class="w-full px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-1.5 xs:space-x-2 hover:shadow-md"
               >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
                 <span>{{ t('vocabulary.save.chooseAutoFile', 'Choose Auto File') }}</span>
@@ -100,9 +142,9 @@
               <button
                 v-if="storageType === 'google-drive' && !isGoogleSignedIn"
                 @click="emit('google-sign-in')"
-                class="w-full px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-1.5 xs:space-x-2 hover:shadow-md"
               >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1"></path>
                 </svg>
                 <span>{{ t('vocabulary.save.signInGoogle', 'Sign in Google') }}</span>
@@ -112,9 +154,9 @@
               <button
                 v-if="storageType === 'google-drive' && isGoogleSignedIn && !hasGoogleDriveFile"
                 @click="emit('setup-google-drive')"
-                class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-1.5 xs:space-x-2 hover:shadow-md"
               >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
                 <span>{{ t('vocabulary.save.setupDrive', 'Setup Google Drive') }}</span>
@@ -124,9 +166,9 @@
               <button
                 v-if="storageType === 'google-drive' && isGoogleSignedIn && hasGoogleDriveFile"
                 @click="emit('sync-from-google-drive')"
-                class="w-full px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-1.5 xs:space-x-2 hover:shadow-md"
               >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
                 <span>{{ t('vocabulary.save.syncFromDrive', 'Sync from Drive') }}</span>
@@ -136,9 +178,9 @@
               <button
                 v-if="(storageType === 'local' && hasAutoSaveFile) || (storageType === 'google-drive' && isGoogleSignedIn)"
                 @click="storageType === 'local' ? emit('reset-auto-save') : emit('google-sign-out')"
-                class="w-full px-4 py-2.5 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-gray-500 hover:bg-gray-600 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-1.5 xs:space-x-2 hover:shadow-md"
               >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
                 <span>{{ storageType === 'local' ? t('vocabulary.save.changeAutoFile', 'Change Auto File') : t('vocabulary.save.signOutGoogle', 'Sign Out Google') }}</span>
@@ -147,45 +189,70 @@
           </div>
 
           <!-- Import & Export Actions -->
-          <div class="bg-purple-50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-            <h4 class="text-sm font-medium text-purple-800 dark:text-purple-400 mb-3">{{ t('vocabulary.save.importExport', 'Import & Export') }}</h4>
-            <div class="relative">
-              <input
-                ref="fileInputRef"
-                type="file"
-                accept=".json"
-                @change="handleFileSelected"
-                class="hidden"
-              />
+          <div class="bg-purple-50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-lg p-3 xs:p-4">
+            <h4 class="text-xs xs:text-sm font-medium text-purple-800 dark:text-purple-400 mb-2 xs:mb-3">{{ t('vocabulary.save.importExport', 'Import & Export') }}</h4>
+            <div class="space-y-2 xs:space-y-2.5">
+              <!-- Import from Computer -->
+              <div class="relative">
+                <input
+                  ref="fileInputRef"
+                  type="file"
+                  accept=".json"
+                  @change="handleFileSelected"
+                  class="hidden"
+                />
+                <button
+                  @click="openFilePicker"
+                  class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-1.5 xs:space-x-2 hover:shadow-md"
+                >
+                  <svg class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                  </svg>
+                  <span>{{ t('vocabulary.save.importFromComputer', 'Import from Computer') }}</span>
+                </button>
+              </div>
+              
+              <!-- Import from Google Drive -->
               <button
-                @click="openFilePicker"
-                class="w-full px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                v-if="isGoogleSignedIn"
+                @click="openGoogleDrivePicker"
+                :disabled="isLoadingGoogleDriveFiles"
+                class="w-full px-3 xs:px-4 py-2 xs:py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white text-sm xs:text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-1.5 xs:space-x-2 hover:shadow-md"
               >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg v-if="isLoadingGoogleDriveFiles" class="animate-spin h-3 xs:h-4 w-3 xs:w-4" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <svg v-else class="h-3 xs:h-4 w-3 xs:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
                 </svg>
-                <span>{{ t('vocabulary.save.importFile', 'Import File') }}</span>
+                <span>{{ isLoadingGoogleDriveFiles ? t('common.loading', 'Loading...') : t('vocabulary.save.importFromDrive', 'Import from Google Drive') }}</span>
               </button>
+              
+              <!-- Google Drive Sign-in Required -->
+              <div v-if="!isGoogleSignedIn" class="text-xs xs:text-sm text-gray-500 dark:text-gray-400 text-center py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                {{ t('vocabulary.save.signInRequiredForImport', 'Sign in to Google Drive to import files') }}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Right Section: Status & Information -->
-        <div class="space-y-4">
+        <div class="space-y-3 xs:space-y-4">
           <!-- Save Status Card -->
-          <div class="bg-gray-50 dark:bg-[#0f0f0f] border border-gray-200 dark:border-[#0f0f0f] rounded-lg p-4">
-            <h4 class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3">{{ t('vocabulary.save.status', 'Save Status') }}</h4>
+          <div class="bg-gray-50 dark:bg-[#0f0f0f] border border-gray-200 dark:border-[#0f0f0f] rounded-lg p-3 xs:p-4">
+            <h4 class="text-xs xs:text-sm font-medium text-gray-800 dark:text-gray-200 mb-2 xs:mb-3">{{ t('vocabulary.save.status', 'Save Status') }}</h4>
             
-            <div class="space-y-3">
+            <div class="space-y-2 xs:space-y-3">
               <!-- Current Status -->
-              <div class="flex items-center space-x-2">
-                <div :class="['h-3 w-3 rounded-full', saveStatusColor]" />
-                <span class="text-sm text-gray-600 dark:text-gray-400">{{ saveStatusText }}</span>
+              <div class="flex items-center space-x-1.5 xs:space-x-2">
+                <div :class="['h-2.5 xs:h-3 w-2.5 xs:w-3 rounded-full', saveStatusColor]" />
+                <span class="text-xs xs:text-sm text-gray-600 dark:text-gray-400">{{ saveStatusText }}</span>
               </div>
               
               <!-- Last Save Time -->
-              <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="flex items-center space-x-1.5 xs:space-x-2 text-xs xs:text-sm text-gray-500 dark:text-gray-400">
+                <svg class="h-3 xs:h-4 w-3 xs:w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <span class="truncate">{{ formattedLastSave }}</span>
@@ -194,10 +261,10 @@
           </div>
 
           <!-- Storage Info Card -->
-          <div v-if="autoSaveEnabled" class="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4">
-            <h4 class="text-sm font-medium text-indigo-800 dark:text-indigo-400 mb-3">{{ t('vocabulary.save.storageInfo', 'Storage Information') }}</h4>
-            <div class="text-sm text-gray-600 dark:text-gray-400">
-              <p class="mb-2">
+          <div v-if="autoSaveEnabled" class="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-800 rounded-lg p-3 xs:p-4">
+            <h4 class="text-xs xs:text-sm font-medium text-indigo-800 dark:text-indigo-400 mb-2 xs:mb-3">{{ t('vocabulary.save.storageInfo', 'Storage Information') }}</h4>
+            <div class="text-xs xs:text-sm text-gray-600 dark:text-gray-400">
+              <p class="mb-1.5 xs:mb-2">
                 <span class="font-medium">{{ t('vocabulary.save.type', 'Type') }}:</span>
                 {{ storageType === 'local' ? t('vocabulary.save.localStorage', 'Local File') : t('vocabulary.save.googleDrive', 'Google Drive') }}
               </p>
@@ -212,12 +279,97 @@
         </div>
       </div>
     </div>
+
+    <!-- Google Drive File Picker Modal -->
+    <div v-if="showGoogleDrivePicker" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white dark:bg-[#0a0a0a] rounded-lg shadow-2xl border border-gray-200 dark:border-[#0f0f0f] max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0f0f0f] dark:to-[#0a0a0a] px-6 py-4 border-b border-gray-200 dark:border-[#0f0f0f] flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+              <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('vocabulary.save.selectFromDrive', 'Select from Google Drive') }}</h3>
+          </div>
+          <button
+            @click="closeGoogleDrivePicker"
+            class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="p-6">
+          <!-- Error Message -->
+          <div v-if="googleDriveError" class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4">
+            <div class="flex items-center space-x-2">
+              <svg class="h-4 w-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-sm text-red-800 dark:text-red-400">{{ googleDriveError }}</p>
+            </div>
+          </div>
+
+          <!-- Files List -->
+          <div class="space-y-2 max-h-60 overflow-y-auto">
+            <div v-if="googleDriveFiles.length === 0 && !isLoadingGoogleDriveFiles" class="text-center py-8 text-gray-500 dark:text-gray-400">
+              <svg class="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p class="text-sm">{{ t('vocabulary.save.noFilesFound', 'No JSON files found in Google Drive') }}</p>
+            </div>
+
+            <div
+              v-for="file in googleDriveFiles"
+              :key="file.id"
+              @click="selectGoogleDriveFile(file)"
+              class="flex items-center justify-between p-3 border border-gray-200 dark:border-[#0f0f0f] rounded-lg hover:bg-gray-50 dark:hover:bg-[#0f0f0f] cursor-pointer transition-colors"
+            >
+              <div class="flex items-center space-x-3 flex-1">
+                <div class="p-2 bg-green-100 dark:bg-green-900/20 rounded">
+                  <svg class="h-4 w-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ file.name }}</p>
+                  <div class="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+                    <span>{{ file.size }}</span>
+                    <span>{{ file.modifiedTime }}</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="h-4 w-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="bg-gray-50 dark:bg-[#0f0f0f] px-6 py-4 border-t border-gray-200 dark:border-[#0f0f0f] flex justify-end">
+          <button
+            @click="closeGoogleDrivePicker"
+            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-[#0f0f0f] rounded-md hover:bg-gray-50 dark:hover:bg-[#0f0f0f] transition-colors"
+          >
+            {{ t('common.cancel', 'Cancel') }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { googleDriveFileService, type DriveFile } from '../../../services/googleDriveFileService';
+import { useGoogleDriveAuth } from '../../../services/googleDriveAuth';
 
 interface Props {
   autoSaveEnabled: boolean;
@@ -248,7 +400,8 @@ const emit = defineEmits([
   'google-sign-in',
   'google-sign-out',
   'setup-google-drive',
-  'sync-from-google-drive'
+  'sync-from-google-drive',
+  'import-google-drive-file'
 ]);
 
 // LocalStorage keys for persisting save settings
@@ -261,6 +414,13 @@ const AUTO_SAVE_FILE_PATH_KEY = 'vocabulary-auto-save-file-path';
 
 const { t } = useI18n();
 const fileInputRef = ref<HTMLInputElement | null>(null);
+
+// Google Drive integration
+const { initialize: initGoogleDrive } = useGoogleDriveAuth();
+const showGoogleDrivePicker = ref(false);
+const googleDriveFiles = ref<DriveFile[]>([]);
+const isLoadingGoogleDriveFiles = ref(false);
+const googleDriveError = ref('');
 
 // LocalStorage utility functions
 const loadAutoSaveEnabled = (): boolean | null => {
@@ -488,5 +648,42 @@ const handleFileSelected = (event: Event) => {
     // Reset input value to allow re-selecting the same file
     target.value = '';
   }
+};
+
+// Google Drive file picker functions
+const openGoogleDrivePicker = async () => {
+  try {
+    googleDriveError.value = '';
+    isLoadingGoogleDriveFiles.value = true;
+    
+    // Initialize Google Drive if not already done
+    await initGoogleDrive();
+    
+    // Fetch JSON files from Google Drive
+    const files = await googleDriveFileService.listJSONFiles();
+    googleDriveFiles.value = files;
+    showGoogleDrivePicker.value = true;
+    
+  } catch (error) {
+    console.error('Error opening Google Drive picker:', error);
+    googleDriveError.value = error instanceof Error ? error.message : 'Failed to load Google Drive files';
+  } finally {
+    isLoadingGoogleDriveFiles.value = false;
+  }
+};
+
+const selectGoogleDriveFile = async (file: DriveFile) => {
+  try {
+    showGoogleDrivePicker.value = false;
+    emit('import-google-drive-file', file);
+  } catch (error) {
+    console.error('Error selecting Google Drive file:', error);
+    googleDriveError.value = error instanceof Error ? error.message : 'Failed to select file';
+  }
+};
+
+const closeGoogleDrivePicker = () => {
+  showGoogleDrivePicker.value = false;
+  googleDriveError.value = '';
 };
 </script> 

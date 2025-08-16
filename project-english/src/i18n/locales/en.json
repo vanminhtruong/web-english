@@ -224,6 +224,11 @@
       "changeAutoFile": "Change Auto-save File",
       "change": "Change",
       "importFile": "Import File",
+      "importFromComputer": "Import from Computer",
+      "importFromDrive": "Import from Google Drive",
+      "selectFromDrive": "Select from Google Drive",
+      "signInRequiredForImport": "Sign in to Google Drive to import files",
+      "noFilesFound": "No JSON files found in Google Drive",
       "importShort": "Import",
       "lastSave": "Last saved: {time}",
       "notSaved": "Not saved",
@@ -269,7 +274,9 @@
       },
       "import": {
         "confirmMessage": "Do you want to import {count} vocabulary from file \"{filename}\"?\n\nCurrent data will be replaced!",
-        "successMessage": "Successfully imported {count} vocabulary!"
+        "confirmGoogleDriveMessage": "Do you want to import {count} vocabulary from Google Drive file \"{filename}\"?\n\nCurrent data will be replaced!",
+        "successMessage": "Successfully imported {count} vocabulary!",
+        "googleDriveSuccessMessage": "Successfully imported {count} vocabulary from Google Drive!"
       }
     },
     "validation": {
