@@ -1,9 +1,9 @@
 <template>
   <div v-if="showMoveToggle" class="flex items-center justify-between group bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg border border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700 transition-all duration-200">
     <div>
-      <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">{{ t('vocabulary.moveMode', 'Move Mode') }}</h3>
+      <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">{{ t('vocabulary.moveMode.title', 'Move Mode') }}</h3>
       <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
-        {{ modelValue ? t('vocabulary.moveModeActive', 'Active - Click arrows to move words') : t('vocabulary.moveModeInactive', 'Inactive - Enable to show move arrows') }}
+        {{ modelValue ? t('vocabulary.moveMode.active', 'Active - Click arrows to move words') : t('vocabulary.moveMode.inactive', 'Inactive - Enable to show move arrows') }}
       </p>
     </div>
     <div class="flex items-center">
@@ -14,9 +14,9 @@
           modelValue ? 'bg-green-600' : 'bg-gray-200 dark:bg-gray-600'
         ]"
         :aria-pressed="modelValue"
-        :title="modelValue ? t('vocabulary.moveModeActive', 'Active - Click arrows to move words') : t('vocabulary.moveModeInactive', 'Inactive - Enable to show move arrows')"
+        :title="modelValue ? t('vocabulary.moveMode.active', 'Active - Click arrows to move words') : t('vocabulary.moveMode.inactive', 'Inactive - Enable to show move arrows')"
       >
-        <span class="sr-only">{{ t('vocabulary.moveMode', 'Move Mode') }}</span>
+        <span class="sr-only">{{ t('vocabulary.moveMode.title', 'Move Mode') }}</span>
         <span
           :class="[
             'inline-block h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-in-out',

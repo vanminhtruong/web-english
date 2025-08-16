@@ -56,15 +56,31 @@
                         <span class="w-1 h-4 bg-blue-500 rounded mr-2"></span>
                         {{ t('vocabulary.word', 'Word') }} <span class="text-red-500 ml-1">*</span>
                       </label>
-                      <input
-                        id="word"
-                        v-model="form.word"
-                        type="text"
-                        required
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500 transform hover:scale-[1.02]"
-                        :placeholder="t('vocabulary.wordPlaceholder', 'Enter English word')"
-                        @blur="validateWord"
-                      />
+                      <div class="relative">
+                        <input
+                          id="word"
+                          v-model="form.word"
+                          type="text"
+                          required
+                          :class="[
+                            'w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500 transform hover:scale-[1.02]',
+                            isKoreanLocale ? 'pr-12' : ''
+                          ]"
+                          :placeholder="isKoreanLocale ? t('korean.wordPlaceholder', 'Enter Korean word or click + for help') : t('vocabulary.wordPlaceholder', 'Enter English word')"
+                          @blur="validateWord"
+                        />
+                        <!-- Korean Input Helper Button -->
+                        <button
+                          v-if="isKoreanLocale"
+                          type="button"
+                          @click="openKoreanInputHelper"
+                          class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 z-[5] shadow-lg keep-center-hover"
+                          :title="t('korean.inputHelper.openHelper', 'Open Korean Input Helper')"
+                          :aria-label="t('korean.inputHelper.openHelper', 'Open Korean Input Helper')"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
 
                     <!-- Pronunciation -->
@@ -79,15 +95,15 @@
                           v-model="form.pronunciation"
                           type="text"
                           class="w-full pr-12 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 hover:border-green-400 dark:hover:border-green-500 transform hover:scale-[1.02]"
-                          placeholder="/ˈeksəmpl/"
+                          :placeholder="isKoreanLocale ? t('korean.pronunciationPlaceholder', 'an-nyeong-ha-se-yo') : '/ˈeksəmpl/'"
                           @blur="validatePronunciation"
                         />
                         <button
                           type="button"
-                          @click="openIpaPicker"
+                          @click="isKoreanLocale ? openKoreanPronunciationHelper() : openIpaPicker()"
                           class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110 z-[5] shadow-lg keep-center-hover"
-                          :title="t('vocabulary.pronunciation.openIpaPicker', 'Open IPA Picker')"
-                          :aria-label="t('vocabulary.pronunciation.openIpaPicker', 'Open IPA Picker')"
+                          :title="isKoreanLocale ? t('korean.pronunciationHelper.openHelper', 'Open Korean Pronunciation Helper') : t('vocabulary.pronunciation.openIpaPicker', 'Open IPA Picker')"
+                          :aria-label="isKoreanLocale ? t('korean.pronunciationHelper.openHelper', 'Open Korean Pronunciation Helper') : t('vocabulary.pronunciation.openIpaPicker', 'Open IPA Picker')"
                         >
                           +
                         </button>
@@ -383,6 +399,22 @@
     @topic-updated="onTopicUpdated"
     @topic-deleted="onTopicDeleted"
   />
+
+  <!-- Korean Input Helper Modal (no click-outside close) -->
+  <KoreanInputHelper
+    v-if="showKoreanInputHelper"
+    v-model="showKoreanInputHelper"
+    :initial-value="form.word"
+    @input-confirmed="onKoreanInputConfirmed"
+  />
+
+  <!-- Korean Pronunciation Helper Modal (no click-outside close) -->
+  <KoreanPronunciationHelper
+    v-if="showKoreanPronunciationHelper"
+    v-model="showKoreanPronunciationHelper"
+    :initial-value="form.pronunciation"
+    @pronunciation-confirmed="onKoreanPronunciationConfirmed"
+  />
 </div>
 </template>
 
@@ -398,6 +430,8 @@ import { getTopicName } from '../../../utils/topicUtils'
 const ImageUpload = defineAsyncComponent(() => import('./ImageUpload.vue'))
 const TopicManager = defineAsyncComponent(() => import('./TopicManager.vue'))
 const IpaPickerModal = defineAsyncComponent(() => import('./IpaPickerModal.vue'))
+const KoreanInputHelper = defineAsyncComponent(() => import('./KoreanInputHelper.vue'))
+const KoreanPronunciationHelper = defineAsyncComponent(() => import('./KoreanPronunciationHelper.vue'))
 
 interface Props {
   modelValue: boolean
@@ -416,7 +450,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 
 
@@ -427,6 +461,8 @@ const vocabularyStore = useVocabularyStore()
 const isSubmitting = ref(false)
 const refreshTrigger = ref(0) // Trigger to force re-computation
 const showTopicManager = ref(false) // State for TopicManager modal
+const showKoreanInputHelper = ref(false) // State for Korean Input Helper modal
+const showKoreanPronunciationHelper = ref(false) // State for Korean Pronunciation Helper modal
 
 // Category dropdown search functionality
 const categorySearchQuery = ref('')
@@ -508,9 +544,30 @@ const onIpaApply = (value: string) => {
   form.pronunciation = value
 }
 
+// Korean Input Helper handlers
+const openKoreanInputHelper = () => {
+  showKoreanInputHelper.value = true
+}
+
+const onKoreanInputConfirmed = (value: string) => {
+  form.word = value
+}
+
+// Korean Pronunciation Helper handlers
+const openKoreanPronunciationHelper = () => {
+  showKoreanPronunciationHelper.value = true
+}
+
+const onKoreanPronunciationConfirmed = (value: string) => {
+  form.pronunciation = value
+}
+
 // Computed
 const isEditing = computed(() => !!props.vocabulary)
 const categoryUsage = computed(() => vocabularyStore.getCategoryUsage.value)
+
+// Check if current locale is Korean to show Korean input helper
+const isKoreanLocale = computed(() => locale.value === 'ko')
 
 // Filtered categories based on search query with frequency-based sorting
 const filteredCategoryKeys = computed(() => {

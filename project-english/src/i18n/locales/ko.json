@@ -281,24 +281,27 @@
       "moveMode": {
         "title": "이동 모드",
         "active": "활성 - 화살표를 클릭해 단어 이동",
-        "inactive": "비활성",
-        "moveVocabulary": "어휘 이동",
-        "movingWord": "단어 이동 중",
-        "movingCategory": "카테고리의 모든 단어 이동 중",
-        "wordsWillBeMoved": "선택한 날짜로 이동될 예정입니다",
-        "selectTargetDate": "대상 날짜 선택",
-        "moveToDateGroup": "다른 날짜 그룹으로 이동",
-        "moveToDate": "날짜로 이동",
-        "moveWord": "단어 이동",
-        "moveAll": "모두 이동",
-        "moveSuccess": "{date}로 {count}개 단어를 성공적으로 이동했습니다",
-        "moveError": "어휘 이동 실패",
-        "moveAutoSaveNotice": "단어가 이동되었으며 자동 저장에 포함됩니다",
-        "batchMoveSuccess": "{date}로 {count}개 단어를 성공적으로 이동했습니다",
-        "batchMoveError": "카테고리 이동 실패",
-        "filterBySameTopic": "동일 주제로 필터",
-        "noMatchingDates": "동일 주제의 어휘가 있는 날짜가 없습니다"
+        "inactive": "비활성"
       },
+      "moveVocabulary": "어휘 이동",
+      "movingWord": "단어 이동 중",
+      "movingCategory": "카테고리의 모든 단어 이동 중",
+      "wordsWillBeMoved": "선택한 날짜로 이동될 예정입니다",
+      "selectTargetDate": "대상 날짜 선택",
+      "moveToDateGroup": "다른 날짜 그룹으로 이동",
+      "moveToDate": "날짜로 이동",
+      "moveWord": "단어 이동",
+      "moveAll": "모두 이동",
+      "moveSuccess": "{date}로 {count}개 단어를 성공적으로 이동했습니다",
+      "moveError": "어휘 이동 실패",
+      "moveAutoSaveNotice": "단어가 이동되었으며 자동 저장에 포함됩니다",
+      "batchMoveSuccess": "{date}로 {count}개 단어를 성공적으로 이동했습니다",
+      "batchMoveError": "카테고리 이동 실패",
+      "filterBySameTopic": "같은 주제별로 필터링",
+      "showingDatesWithSameTopic": "같은 주제를 가진 날짜만 표시 중",
+      "selectTargetDateGroup": "대상 날짜 그룹 선택",
+      "selectDate": "날짜 선택",
+      "noMatchingDates": "이 주제와 일치하는 날짜를 찾을 수 없습니다. 필터를 비활성화해 보세요.",
       "topicManager": {
         "title": "주제 관리자",
         "addNewTopic": "새 주제 추가",
@@ -971,6 +974,29 @@
         "explanation": "설명",
         "restartQuiz": "퀴즈 다시 시작"
       }
+    },
+    "korean": {
+      "inputHelper": {
+        "title": "한국어 입력 도우미",
+        "preview": "미리보기",
+        "placeholder": "아래에서 글자를 클릭하거나 입력하세요...",
+        "consonants": "자음",
+        "vowels": "모음",
+        "commonSyllables": "자주 쓰이는 글자",
+        "openHelper": "한국어 입력 도우미 열기"
+      },
+      "pronunciationHelper": {
+        "title": "한국어 발음 도우미",
+        "preview": "발음 미리보기",
+        "placeholder": "아래에서 한국어 발음을 클릭하세요...",
+        "consonantSounds": "자음 소리",
+        "vowelSounds": "모음 소리",
+        "commonPatterns": "자주 쓰이는 패턴",
+        "specialChars": "특수 문자",
+        "openHelper": "한국어 발음 도우미 열기"
+      },
+      "wordPlaceholder": "한국어 단어를 입력하거나 + 버튼을 클릭하세요",
+      "pronunciationPlaceholder": "안-녕-하-세-요"
     },
     "voice": {
       "selector": {

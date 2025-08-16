@@ -281,24 +281,27 @@
     "moveMode": {
       "title": "Move Mode",
       "active": "Active - Click arrows to move words",
-      "inactive": "Inactive",
-      "moveVocabulary": "Move Vocabulary",
-      "movingWord": "Moving word",
-      "movingCategory": "Moving all words in category",
-      "wordsWillBeMoved": "words will be moved to the selected date",
-      "selectTargetDate": "Select target date",
-      "moveToDateGroup": "Move to another date group",
-      "moveToDate": "Move to Date",
-      "moveWord": "Move Word",
-      "moveAll": "Move All",
-      "moveSuccess": "Successfully moved {count} word(s) to {date}",
-      "moveError": "Failed to move vocabulary",
-      "moveAutoSaveNotice": "Word moved and will be included in auto-save",
-      "batchMoveSuccess": "Successfully moved {count} words to {date}",
-      "batchMoveError": "Failed to move category",
-      "filterBySameTopic": "Filter by same topic",
-      "noMatchingDates": "No dates with vocabularies in the same topic"
+      "inactive": "Inactive"
     },
+    "moveVocabulary": "Move Vocabulary",
+    "movingWord": "Moving word",
+    "movingCategory": "Moving all words in category",
+    "wordsWillBeMoved": "words will be moved to the selected date",
+    "selectTargetDate": "Select target date",
+    "moveToDateGroup": "Move to another date group",
+    "moveToDate": "Move to Date",
+    "moveWord": "Move Word",
+    "moveAll": "Move All",
+    "moveSuccess": "Successfully moved {count} word(s) to {date}",
+    "moveError": "Failed to move vocabulary",
+    "moveAutoSaveNotice": "Word moved and will be included in auto-save",
+    "batchMoveSuccess": "Successfully moved {count} words to {date}",
+    "batchMoveError": "Failed to move category",
+    "filterBySameTopic": "Filter by same topic",
+    "showingDatesWithSameTopic": "Showing only dates with the same topic",
+    "selectTargetDateGroup": "Select target date group",
+    "selectDate": "Select Date",
+    "noMatchingDates": "No dates found matching this topic. Try disabling the filter.",
     "topicManager": {
       "title": "Topic Manager",
       "addNewTopic": "Add New Topic",
@@ -321,6 +324,29 @@
       "builtIn": "Built-in",
       "manageTopics": "Manage Topics"
     }
+  },
+  "korean": {
+    "inputHelper": {
+      "title": "Korean Input Helper",
+      "preview": "Preview",
+      "placeholder": "Type or click characters below...",
+      "consonants": "Consonants (자음)",
+      "vowels": "Vowels (모음)",
+      "commonSyllables": "Common Syllables",
+      "openHelper": "Open Korean Input Helper"
+    },
+    "pronunciationHelper": {
+      "title": "Korean Pronunciation Helper",
+      "preview": "Pronunciation Preview",
+      "placeholder": "Click Korean sounds below...",
+      "consonantSounds": "Consonant Sounds (자음 소리)",
+      "vowelSounds": "Vowel Sounds (모음 소리)",
+      "commonPatterns": "Common Patterns",
+      "specialChars": "Special Characters",
+      "openHelper": "Open Korean Pronunciation Helper"
+    },
+    "wordPlaceholder": "Enter Korean word or click + for help",
+    "pronunciationPlaceholder": "an-nyeong-ha-se-yo"
   },
   "flashcard": {
     "header": {

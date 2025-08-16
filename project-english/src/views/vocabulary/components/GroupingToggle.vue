@@ -73,8 +73,8 @@
           <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
         </svg>
         <div>
-          <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">{{ t('vocabulary.moveMode', 'Move Mode') }}</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">{{ moveMode ? t('vocabulary.moveModeActive', 'Active - Click arrows to move words') : t('vocabulary.moveModeInactive', 'Inactive - Enable to show move arrows') }}</p>
+          <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">{{ t('vocabulary.moveMode.title', 'Move Mode') }}</h3>
+          <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">{{ moveMode ? t('vocabulary.moveMode.active', 'Active - Click arrows to move words') : t('vocabulary.moveMode.inactive', 'Inactive - Enable to show move arrows') }}</p>
         </div>
       </div>
       <button
