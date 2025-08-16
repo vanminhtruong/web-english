@@ -1,0 +1,42 @@
+
+.preserve-3d[data-v-4458d9c8] {
+  transform-style: preserve-3d;
+}
+.rotate-y-180[data-v-4458d9c8] {
+  transform: rotateY(180deg);
+}
+.rotate-y-0[data-v-4458d9c8] {
+  transform: rotateY(0deg);
+}
+
+/* Flip tile container and faces */
+.tile-3d[data-v-4458d9c8] {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+.tile-3d.is-flipped[data-v-4458d9c8] {
+  transform: rotateY(180deg);
+}
+.tile-face[data-v-4458d9c8] {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden; /* Safari */
+}
+.tile-back[data-v-4458d9c8] {
+  transform: rotateY(180deg);
+}
+
+/* Add 3D flip animation support */
+@media (prefers-reduced-motion: no-preference) {
+.preserve-3d[data-v-4458d9c8] {
+    perspective: 1000px;
+}
+}
+@media (prefers-reduced-motion: reduce) {
+.preserve-3d[data-v-4458d9c8] {
+    perspective: none;
+}
+.rotate-y-180[data-v-4458d9c8],
+  .rotate-y-0[data-v-4458d9c8] {
+    transform: none;
+}
+}
