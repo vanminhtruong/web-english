@@ -1,8 +1,0 @@
-
-.accordion-enter-active[data-v-41accfac],
-.accordion-leave-active[data-v-41accfac] {
-  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.accordion-content[data-v-41accfac] {
-  overflow: hidden;
-}
