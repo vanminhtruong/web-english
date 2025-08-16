@@ -46,32 +46,27 @@
                 </div>
               </div>
 
-              <!-- Content -->
-              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
+              <!-- Sticky Preview Section -->
+              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] sticky top-0 z-10">
                 <!-- Search Input -->
-                <div class="relative">
+                <div class="relative mb-4">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                   </div>
                   <input
+                    ref="searchInputRef"
                     v-model="searchQuery"
                     type="text"
                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-bg-mute dark:text-white"
                     :placeholder="t('common.search', 'Search Korean characters...')"
+                    @blur="refocusSearchInput"
                   />
                 </div>
 
-                <!-- Input Area -->
-                <div class="p-4 bg-white dark:bg-dark-bg-mute border border-gray-200 dark:border-dark-bg-mute rounded-lg">
-                  <div class="text-2xl md:text-3xl font-mono text-gray-900 dark:text-white break-words min-h-[2.5rem] bg-gray-50 dark:bg-dark-bg-soft p-3 rounded border">
-                    {{ currentInput || t('vocabulary.pronunciation.previewPlaceholder', 'Start typing Korean...') }}
-                  </div>
-                </div>
-
                 <!-- Preview Section -->
-                <div class="mb-6">
+                <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                     <span class="w-1 h-4 bg-green-500 rounded mr-2"></span>
                     {{ t('korean.inputHelper.preview', 'Preview') }}
@@ -104,6 +99,10 @@
                     </button>
                   </div>
                 </div>
+              </div>
+
+              <!-- Scrollable Content -->
+              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
 
                 <!-- Character Categories -->
                 <div class="space-y-6">
@@ -227,6 +226,7 @@ const { t } = useI18n()
 // State
 const currentInput = ref('')
 const searchQuery = ref('')
+const searchInputRef = ref<HTMLInputElement | null>(null)
 
 // Korean Characters with Romanization
 const koreanConsonants = [
@@ -349,6 +349,19 @@ const composeSyllable = (chosung: string, jungsung: string, jongsung: string = '
 }
 
 // Methods
+const focusSearchInput = () => {
+  if (searchInputRef.value) {
+    searchInputRef.value.focus()
+  }
+}
+
+const refocusSearchInput = () => {
+  // Refocus after a short delay to ensure any click actions complete first
+  setTimeout(() => {
+    focusSearchInput()
+  }, 50)
+}
+
 const addCharacter = (character: string) => {
   const currentText = currentInput.value
   
@@ -388,10 +401,19 @@ const addCharacter = (character: string) => {
   
   // Default: just add the character
   currentInput.value += character
+  
+  // Maintain focus on search input after adding character
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const clearInput = () => {
   currentInput.value = ''
+  // Maintain focus on search input after clearing
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const backspaceInput = () => {
@@ -421,6 +443,11 @@ const backspaceInput = () => {
   
   // Default: remove last character (for consonants, vowels, or other characters)
   currentInput.value = currentText.slice(0, -1)
+  
+  // Maintain focus on search input after backspace
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const closeDialog = () => {
@@ -466,11 +493,16 @@ watch(() => props.initialValue, (newValue) => {
   }
 })
 
-// Watch for modal open to reset
-watch(() => props.modelValue, (isOpen) => {
+// Watch for modal open to reset and focus search
+watch(() => props.modelValue, async (isOpen) => {
   if (isOpen) {
     currentInput.value = props.initialValue || ''
     searchQuery.value = ''
+    // Focus search input after modal animation
+    await nextTick()
+    setTimeout(() => {
+      focusSearchInput()
+    }, 100)
   }
 })
 </script>

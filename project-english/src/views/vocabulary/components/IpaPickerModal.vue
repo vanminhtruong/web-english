@@ -18,8 +18,8 @@
           leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
           leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
         >
-          <div class="w-full max-w-2xl max-h-[85vh]">
-            <div class="bg-white dark:bg-dark-bg-soft shadow-2xl rounded-xl border border-gray-200 dark:border-dark-bg-mute overflow-hidden transform flex flex-col h-full" @click.stop>
+          <div class="w-full max-w-2xl max-h-[90vh]">
+            <div class="bg-white dark:bg-dark-bg-soft shadow-2xl rounded-xl border border-gray-200 dark:border-dark-bg-mute overflow-hidden transform flex flex-col max-h-[90vh]" @click.stop>
               <!-- Header -->
               <div class="px-5 py-4 border-b border-gray-200 dark:border-dark-bg-mute bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-bg-soft dark:to-dark-bg-soft flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
@@ -39,25 +39,27 @@
                 </button>
               </div>
 
-              <!-- Body -->
-              <div class="px-5 py-4 space-y-4 overflow-y-auto flex-1 min-h-0 max-h-[calc(85vh-120px)]">
+              <!-- Sticky Preview Section -->
+              <div class="px-5 py-4 border-b border-gray-200 dark:border-dark-bg-mute bg-white dark:bg-dark-bg-soft sticky top-0 z-10">
                 <!-- Search Input -->
-                <div class="relative">
+                <div class="relative mb-4">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                   </div>
                   <input
+                    ref="searchInputRef"
                     v-model="searchQuery"
                     type="text"
                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-dark-bg-mute rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-bg-mute dark:text-white"
                     :placeholder="t('common.search', 'Search IPA symbols...')"
+                    @blur="refocusSearchInput"
                   />
                 </div>
 
                 <!-- Preview -->
-                <div class="p-3 rounded-lg border border-gray-200 dark:border-dark-bg-mute bg-white dark:bg-dark-bg-mute">
+                <div class="p-3 rounded-lg border border-gray-200 dark:border-dark-bg-mute bg-white dark:bg-dark-bg-mute mb-4">
                   <div class="text-2xl md:text-3xl font-mono text-gray-900 dark:text-white break-words min-h-[2.5rem]">
                     {{ ipaDraft || t('vocabulary.pronunciation.previewPlaceholder', 'Start building IPA...') }}
                   </div>
@@ -102,6 +104,10 @@
                     {{ t('common.apply', 'Apply') }}
                   </button>
                 </div>
+              </div>
+
+              <!-- Scrollable Content -->
+              <div class="px-5 py-4 space-y-4 overflow-y-auto flex-1 min-h-0">
 
                 <!-- Symbols -->
                 <div class="space-y-4">
@@ -176,7 +182,7 @@
                   </div>
 
                   <!-- Consonants -->
-                  <div>
+                  <div class="pb-4">
                     <div class="text-sm font-medium text-gray-600 dark:text-white/70 mb-2 flex items-center">
                       <span class="w-1 h-4 bg-purple-500 rounded mr-2"></span>
                       {{ t('vocabulary.pronunciation.consonants', 'Consonants') }}
@@ -209,25 +215,25 @@
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  <!-- Marks -->
-                  <div>
-                    <div class="text-sm font-medium text-gray-600 dark:text-white/70 mb-2 flex items-center">
-                      <span class="w-1 h-4 bg-orange-500 rounded mr-2"></span>
-                      {{ t('vocabulary.pronunciation.marks', 'Marks') }}
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                      <button 
-                        v-for="mark in IPA_MARKS" 
-                        :key="'m-'+mark" 
-                        type="button" 
-                        @click="appendIpa(mark)" 
-                        class="px-3 py-2 bg-orange-100 hover:bg-orange-200 dark:bg-orange-900 dark:hover:bg-orange-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 border border-gray-300 dark:border-dark-bg-mute font-mono"
-                      >
-                        {{ mark === ' ' ? t('common.space', 'Space') : mark }}
-                      </button>
-                    </div>
-                  </div>
+              <!-- Sticky Footer - Marks Section -->
+              <div class="px-5 py-4 border-t border-gray-200 dark:border-dark-bg-mute bg-white dark:bg-[#0a0a0a] sticky bottom-0 z-10">
+                <div class="text-sm font-medium text-gray-600 dark:text-white/70 mb-2 flex items-center">
+                  <span class="w-1 h-4 bg-orange-500 rounded mr-2"></span>
+                  {{ t('vocabulary.pronunciation.marks', 'Marks') }}
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button 
+                    v-for="mark in IPA_MARKS" 
+                    :key="'m-'+mark" 
+                    type="button" 
+                    @click="appendIpa(mark)" 
+                    class="px-3 py-2 bg-orange-100 hover:bg-orange-200 dark:bg-orange-900 dark:hover:bg-orange-800 text-gray-800 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-105 border border-gray-300 dark:border-dark-bg-mute font-mono"
+                  >
+                    {{ mark === ' ' ? t('common.space', 'Space') : mark }}
+                  </button>
                 </div>
               </div>
             </div>
@@ -239,7 +245,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useVoiceStore } from '../../../stores/voiceStore'
 
@@ -264,6 +270,7 @@ const { playAudio } = useVoiceStore()
 // IPA Draft state
 const ipaDraft = ref('')
 const searchQuery = ref('')
+const searchInputRef = ref<HTMLInputElement | null>(null)
 
 // IPA symbol sets with corresponding letters
 const IPA_VOWELS = [
@@ -374,11 +381,16 @@ const filteredConsonants = computed(() => {
   )
 })
 
-// Watch for modal open to initialize draft
-watch(() => props.modelValue, (isOpen) => {
+// Watch for modal open to initialize draft and focus search
+watch(() => props.modelValue, async (isOpen) => {
   if (isOpen) {
     ipaDraft.value = props.initialValue || ''
     searchQuery.value = ''
+    // Focus search input after modal animation
+    await nextTick()
+    setTimeout(() => {
+      focusSearchInput()
+    }, 100)
   }
 })
 
@@ -387,28 +399,57 @@ const closeModal = () => {
   emit('update:modelValue', false)
 }
 
+const focusSearchInput = () => {
+  if (searchInputRef.value) {
+    searchInputRef.value.focus()
+  }
+}
+
+const refocusSearchInput = () => {
+  // Refocus after a short delay to ensure any click actions complete first
+  setTimeout(() => {
+    focusSearchInput()
+  }, 50)
+}
+
 const appendIpa = (symbol: string) => {
   ipaDraft.value += symbol
+  // Maintain focus on search input after adding symbol
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const clearIpa = () => {
   ipaDraft.value = ''
+  // Maintain focus on search input after clearing
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const backspaceIpa = () => {
   if (!ipaDraft.value) return
   // Remove last character (sufficient for our symbol sets)
   ipaDraft.value = ipaDraft.value.slice(0, -1)
+  // Maintain focus on search input after backspace
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const wrapWithSlashes = () => {
   const trimmed = ipaDraft.value.trim()
   if (!trimmed) {
     ipaDraft.value = '/ /'
-    return
+  } else {
+    const alreadyWrapped = trimmed.startsWith('/') && trimmed.endsWith('/')
+    ipaDraft.value = alreadyWrapped ? trimmed : `/${trimmed.replace(/^\/+|\/+$/g, '')}/`
   }
-  const alreadyWrapped = trimmed.startsWith('/') && trimmed.endsWith('/')
-  ipaDraft.value = alreadyWrapped ? trimmed : `/${trimmed.replace(/^\/+|\/+$/g, '')}/`
+  // Maintain focus on search input after wrapping
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const applyIpa = () => {

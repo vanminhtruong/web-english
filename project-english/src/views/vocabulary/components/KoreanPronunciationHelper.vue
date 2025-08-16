@@ -46,25 +46,27 @@
                 </div>
               </div>
 
-              <!-- Content -->
-              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
+              <!-- Sticky Preview Section -->
+              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] sticky top-0 z-10">
                 <!-- Search Input -->
-                <div class="relative mb-6">
+                <div class="relative mb-4">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                   </div>
                   <input
+                    ref="searchInputRef"
                     v-model="searchQuery"
                     type="text"
                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-[#0a0a0a] dark:text-white"
                     :placeholder="t('common.search', 'Search Korean sounds...')"
+                    @blur="refocusSearchInput"
                   />
                 </div>
 
                 <!-- Preview Section -->
-                <div class="mb-6">
+                <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                     <span class="w-1 h-4 bg-green-500 rounded mr-2"></span>
                     {{ t('korean.pronunciationHelper.preview', 'Pronunciation Preview') }}
@@ -97,6 +99,10 @@
                     </button>
                   </div>
                 </div>
+              </div>
+
+              <!-- Scrollable Content -->
+              <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0">
 
                 <!-- Korean Pronunciation Guide -->
                 <div class="space-y-6">
@@ -218,7 +224,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -252,6 +258,7 @@ const { t } = useI18n()
 // State
 const currentPronunciation = ref('')
 const searchQuery = ref('')
+const searchInputRef = ref<HTMLInputElement | null>(null)
 
 // Korean Consonant Sounds (Romanized)
 const koreanConsonantSounds: KoreanSound[] = [
@@ -361,18 +368,43 @@ const filteredCommonPatterns = computed(() => {
 })
 
 // Methods
+const focusSearchInput = () => {
+  if (searchInputRef.value) {
+    searchInputRef.value.focus()
+  }
+}
+
+const refocusSearchInput = () => {
+  // Refocus after a short delay to ensure any click actions complete first
+  setTimeout(() => {
+    focusSearchInput()
+  }, 50)
+}
+
 const addSound = (sound: string) => {
   currentPronunciation.value += sound
+  // Maintain focus on search input after adding sound
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const clearPronunciation = () => {
   currentPronunciation.value = ''
+  // Maintain focus on search input after clearing
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const backspacePronunciation = () => {
   if (currentPronunciation.value.length > 0) {
     currentPronunciation.value = currentPronunciation.value.slice(0, -1)
   }
+  // Maintain focus on search input after backspace
+  setTimeout(() => {
+    focusSearchInput()
+  }, 10)
 }
 
 const closeDialog = () => {
@@ -389,11 +421,16 @@ watch(() => props.initialValue, (newValue) => {
   currentPronunciation.value = newValue
 }, { immediate: true })
 
-// Watch for modal opening
-watch(() => props.modelValue, (isOpen) => {
+// Watch for modal opening and focus search
+watch(() => props.modelValue, async (isOpen) => {
   if (isOpen) {
     currentPronunciation.value = props.initialValue
     searchQuery.value = ''
+    // Focus search input after modal animation
+    await nextTick()
+    setTimeout(() => {
+      focusSearchInput()
+    }, 100)
   }
 })
 </script>
