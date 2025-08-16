@@ -22,8 +22,23 @@
 
       <!-- Hint Display: Image or Definition -->
       <div class="flex-1 flex items-center justify-center mb-4 min-h-0">
-        <!-- Show image if available -->
-        <div v-if="card?.image" class="relative">
+        <!-- Show definition if hints mode is enabled OR no image available -->
+        <div v-if="useHints || !card?.image" class="flex items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 rounded-xl p-6 w-full max-w-lg border border-teal-200 dark:border-teal-700/50 shadow-sm">
+          <div class="text-center space-y-3">
+            <div class="mx-auto w-12 h-12 bg-teal-100 dark:bg-teal-800/50 rounded-full flex items-center justify-center mb-4">
+              <svg class="w-6 h-6 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <div class="max-h-32 overflow-y-auto">
+              <p class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
+                {{ card?.meaning || t('flashcard.flipTile.noDefinition', 'No definition available') }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Show image only when hints mode is disabled AND image is available -->
+        <div v-else-if="!useHints && card?.image" class="relative">
           <img
             :src="card.image"
             :alt="t('flashcard.flipTile.imageAlt', 'Flip tile image')"
@@ -36,21 +51,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <p class="text-sm text-gray-500 dark:text-white/60 mt-2">{{ t('flashcard.image.imageError', 'Could not load image.') }}</p>
-            </div>
-          </div>
-        </div>
-        <!-- Fallback to definition if no image -->
-        <div v-else-if="card?.meaning" class="flex items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 rounded-xl p-6 w-full max-w-lg border border-teal-200 dark:border-teal-700/50 shadow-sm">
-          <div class="text-center space-y-3">
-            <div class="mx-auto w-12 h-12 bg-teal-100 dark:bg-teal-800/50 rounded-full flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <div class="max-h-32 overflow-y-auto">
-              <p class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
-                {{ card?.meaning || t('flashcard.flipTile.noDefinition', 'No definition available') }}
-              </p>
             </div>
           </div>
         </div>
@@ -188,6 +188,7 @@ interface Props {
   flipTileAnswered: boolean
   flipTileCorrect: boolean
   getTopicName: (id: string) => string
+  useHints: boolean
 }
 
 interface Emits {
@@ -199,6 +200,9 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
 const { playAudio } = useVoiceStore()
+
+// Computed property to determine whether to use hints (definition) or image
+const useHints = computed(() => props.useHints ?? true)
 
 const imageError = ref(false)
 const answerInput = ref<HTMLInputElement | null>(null)

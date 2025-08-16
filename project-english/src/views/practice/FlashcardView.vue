@@ -25,6 +25,7 @@
       :bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode"
       :snake-double-bait-enabled="snakeDoubleBaitMode"
       :pictionary-definition-mode="pictionaryDefinitionMode"
+      :use-flip-tile-hints="flashcardSettings.useFlipTileHints"
       @go-back="goBack"
       @show-history="showHistory = true"
       @change-practice-mode="changePracticeMode($event)"
@@ -36,6 +37,7 @@
       @update:bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode = $event"
       @update:snake-double-bait-enabled="snakeDoubleBaitMode = $event"
       @update:pictionary-definition-mode="pictionaryDefinitionMode = $event"
+      @update:use-flip-tile-hints="handleFlipTileHintsToggle"
     />
 
     <!-- Progress Bar -->
@@ -216,6 +218,7 @@
                     :flip-tile-answered="flipTileAnswered"
                     :flip-tile-correct="flipTileCorrect"
                     :get-topic-name="getTopicName"
+                    :use-hints="flashcardSettings.useFlipTileHints"
                     @update:flip-tile-answer="flipTileAnswer = $event"
                     @check-answer="handleFlipTileAnswer"
                   />
@@ -1761,6 +1764,9 @@ const onToggleBubbleShooterVietnameseMode = (enabled: boolean) => {
   bubbleShooterVietnameseMode.value = enabled
 }
 
+const handleFlipTileHintsToggle = (enabled: boolean) => {
+  flashcardSettings.value.useFlipTileHints = enabled
+}
 
 // Initialize on mount
 onMounted(() => {

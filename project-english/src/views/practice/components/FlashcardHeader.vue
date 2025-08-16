@@ -158,10 +158,10 @@
                         <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', pictionaryDefinitionMode ? 'translate-x-4' : 'translate-x-0.5']" />
                       </button>
                     </li>
-                    <!-- Flip Tile mode -->
-                    <li>
+                    <!-- Flip Tile mode with inline hints toggle -->
+                    <li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-2">
                       <button 
-                        class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        class="text-left flex-1 truncate" 
                         @click="selectMode('flip-tile')"
                         :disabled="!flipTileModeAvailable"
                         :aria-disabled="!flipTileModeAvailable ? 'true' : 'false'"
@@ -169,6 +169,17 @@
                         :class="!flipTileModeAvailable ? 'opacity-50 cursor-not-allowed' : ''"
                       >
                         {{ t('flashcard.modes.flipTile', 'Flip Tile') }}
+                      </button>
+                      <button
+                        class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="[
+                          flipTileModeAvailable ? (useFlipTileHints ? 'bg-teal-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="flipTileModeAvailable && toggleFlipTileHintsFromDropdown()"
+                        :title="t('flashcard.flipTile.hintsToggle', 'Use Definition Hints')"
+                        :aria-label="t('flashcard.flipTile.hintsToggle', 'Use Definition Hints')"
+                      >
+                        <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', useFlipTileHints ? 'translate-x-4' : 'translate-x-0.5']" />
                       </button>
                     </li>
                     <!-- Bubble Shooter option with inline toggle -->
@@ -406,10 +417,10 @@
                         <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', pictionaryDefinitionMode ? 'translate-x-5' : 'translate-x-0.5']" />
                       </button>
                     </li>
-                    <!-- Flip Tile mode -->
-                    <li>
+                    <!-- Flip Tile mode with inline hints toggle -->
+                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
                       <button 
-                        class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" 
+                        class="text-left flex-1 truncate" 
                         @click="selectMode('flip-tile')"
                         :disabled="!flipTileModeAvailable"
                         :aria-disabled="!flipTileModeAvailable ? 'true' : 'false'"
@@ -418,7 +429,19 @@
                       >
                         {{ t('flashcard.modes.flipTile', 'Flip Tile') }}
                       </button>
+                      <button
+                        class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="[
+                          flipTileModeAvailable ? (useFlipTileHints ? 'bg-teal-600' : 'bg-gray-200 dark:bg-[#0a0a0a]') : 'opacity-50 cursor-not-allowed pointer-events-none bg-gray-200 dark:bg-[#0a0a0a]'
+                        ]"
+                        @click.stop="flipTileModeAvailable && toggleFlipTileHintsFromDropdown()"
+                        :title="t('flashcard.flipTile.hintsToggle', 'Use Definition Hints')"
+                        :aria-label="t('flashcard.flipTile.hintsToggle', 'Use Definition Hints')"
+                      >
+                        <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', useFlipTileHints ? 'translate-x-5' : 'translate-x-0.5']" />
+                      </button>
                     </li>
+                    <!-- Bubble Shooter option with inline toggle -->
                     <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
                       <button
                         class="text-left flex-1 truncate"
@@ -512,6 +535,7 @@ interface Props {
   snakeDoubleBaitEnabled?: boolean
   // Pictionary: definition mode toggle state (prop down from FlashcardView)
   pictionaryDefinitionMode?: boolean
+  useFlipTileHints?: boolean
 }
 
 const props = defineProps<Props>()
@@ -525,6 +549,7 @@ const bubbleShooterModeAvailable = computed(() => props.bubbleShooterModeAvailab
 const bubbleShooterVietnameseMode = computed(() => props.bubbleShooterVietnameseMode ?? false)
 const snakeDoubleBaitEnabled = computed(() => props.snakeDoubleBaitEnabled ?? false)
 const pictionaryDefinitionMode = computed(() => props.pictionaryDefinitionMode ?? false)
+const useFlipTileHints = computed(() => props.useFlipTileHints ?? false)
 
 const { t } = useI18n()
 
@@ -540,6 +565,7 @@ const emit = defineEmits<{
   'update:bubble-shooter-vietnamese-mode': [enabled: boolean]
   'update:snake-double-bait-enabled': [enabled: boolean]
   'update:pictionary-definition-mode': [enabled: boolean]
+  'update:use-flip-tile-hints': [enabled: boolean]
 }>()
 
 const handlePracticeModeChange = (event: Event) => {
@@ -627,6 +653,13 @@ const togglePictionaryDefinitionModeFromDropdown = () => {
   if (props.practiceStarted) return
   if (!pictionaryModeAvailable.value) return
   emit('update:pictionary-definition-mode', !pictionaryDefinitionMode.value)
+}
+
+const toggleFlipTileHintsFromDropdown = () => {
+  // Prevent toggling during active practice or when flip tile mode is unavailable
+  if (props.practiceStarted) return
+  if (!flipTileModeAvailable.value) return
+  emit('update:use-flip-tile-hints', !useFlipTileHints.value)
 }
 
 // Guarded settings emitter to prevent opening during active practice

@@ -496,7 +496,8 @@
       "answerPlaceholder": "Nhập câu trả lời của bạn...",
       "check": "Kiểm tra",
       "instruction": "Nhấp vào các ô để lộ các chữ cái (tối đa 2), sau đó nhập câu trả lời và nhấn Enter.",
-      "unavailable": "Chế độ lật ô không khả dụng cho ngày đã chọn"
+      "unavailable": "Chế độ lật ô không khả dụng cho ngày đã chọn",
+      "hintsToggle": "Sử dụng gợi ý định nghĩa"
     },
     "bubbleShooter": {
       "title": "Bắn Bóng Từ Vựng",
@@ -955,7 +956,7 @@
       "startPractice": "Bắt đầu luyện tập",
       "timeLimit": "Thời gian cho mỗi câu: {seconds} giây",
       "timeUp": "Hết thời gian!",
-      "timeUpMessage": "Bạn đã hết thời gian cho câu này. Hãy thử lại hoặc bỏ qua.",
+      "timeUpMessage": "Bạn đã hết thởi gian cho câu này. Hãy thử lại hoặc bỏ qua.",
       "tryAgain": "Thử lại",
       "skip": "Bỏ qua"
     },
@@ -992,8 +993,7 @@
       "finish": "Hoàn thành"
     },
     "results": {
-      "completed": "Quiz hoàn thành!",
-      "yourResults": "Kết quả của bạn",
+      "title": "Kết quả quiz",
       "score": "Điểm số",
       "correct": "Đúng",
       "accuracy": "Độ chính xác",
@@ -1043,4 +1043,4 @@
       "volume": "Âm lượng"
     }
   }
-} 
+}

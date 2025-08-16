@@ -13,4 +13,5 @@ export interface GameSettings {
   practiceMode?: PracticeMode;
   category?: string;
   level?: string;
+  useFlipTileHints?: boolean;
 }

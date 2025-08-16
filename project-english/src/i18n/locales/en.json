@@ -450,8 +450,9 @@
       "noContent": "No content available for this card.",
       "answerPlaceholder": "Type your answer...",
       "check": "Check",
-      "instruction": "Click on tiles to reveal letters (max 2), then type your answer and press Enter.",
-      "unavailable": "Flip Tile mode is unavailable for the selected date"
+      "instruction": "Click on tiles to reveal letters (max {maxFlips}), then type your answer and press Enter.",
+      "unavailable": "Flip Tile mode is unavailable for the selected date",
+      "hintsToggle": "Use Definition Hints"
     },
     "bubbleShooter": {
       "title": "Bubble Shooter",
@@ -995,4 +996,4 @@
       "volume": "Volume"
     }
   }
-} 
+}

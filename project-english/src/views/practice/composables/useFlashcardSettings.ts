@@ -17,7 +17,8 @@ export function useFlashcardSettings() {
     voiceType: 'female',
     practiceMode: 'flashcard',
     category: '',
-    level: ''
+    level: '',
+    useFlipTileHints: true
   }
 
   // Current settings

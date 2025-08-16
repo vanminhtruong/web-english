@@ -428,13 +428,14 @@
       },
       "flipTile": {
         "tilesFlipped": "뒤집힌 타일",
-        "imageAlt": "플립 타일 이미지",
-        "noDefinition": "정의가 없습니다",
-        "noContent": "이 카드에 대한 콘텐츠가 없습니다.",
+        "imageAlt": "그림 맞추기 이미지", 
+        "noDefinition": "정의를 사용할 수 없음",
+        "noContent": "이 카드에 사용할 수 있는 내용이 없습니다.",
         "answerPlaceholder": "답을 입력하세요...",
         "check": "확인",
-        "instruction": "타일을 클릭하여 글자를 공개하고(최대 2개), 답을 입력한 후 Enter를 누르세요.",
-        "unavailable": "선택한 날짜에는 플립 타일 모드를 사용할 수 없습니다"
+        "instruction": "타일을 클릭하여 글자를 공개하고(최대 {maxFlips}개), 답을 입력한 후 Enter를 누르세요.",
+        "unavailable": "선택한 날짜에 대해 타일 뒤집기 모드를 사용할 수 없습니다",
+        "hintsToggle": "정의 힌트 사용"
       },
       "bubbleShooter": {
         "title": "버블 슈터",
