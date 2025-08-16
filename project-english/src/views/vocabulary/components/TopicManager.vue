@@ -22,21 +22,18 @@
           leave-from-class="opacity-100 scale-100 translate-y-0 rotate-0"
           leave-to-class="opacity-0 scale-90 translate-y-8 rotate-1"
         >
-          <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl w-full max-w-full sm:max-w-lg md:max-w-2xl lg:max-w-4xl max-h-[90vh] overflow-hidden">
+          <div class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl w-full max-w-full sm:max-w-lg md:max-w-2xl lg:max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
             <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between p-4 sm:p-6 md:p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 space-y-4 sm:space-y-0 sm:space-x-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+            <div class="flex-shrink-0 flex flex-row items-center justify-between p-4 sm:p-6 md:p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 space-x-4 sm:space-x-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
               <div class="flex-1 min-w-0">
-                <h2 class="text-base sm:text-lg md:text-2xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-2 flex items-center space-x-2">
+                <h2 class="text-base sm:text-lg md:text-2xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-0 flex items-center space-x-2">
                   <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                   <span>{{ t('vocabulary.topicManager.title', 'Topic Manager') }}</span>
                 </h2>
-                <p class="text-sm sm:text-base md:text-base lg:text-lg text-gray-600 dark:text-gray-400 leading-relaxed pr-0 sm:pr-4">
-                  The system has {{ builtInTopics.length }} built-in topics like Technology, Business, Travel... You can add custom topics here.
-                </p>
               </div>
               <button
                 @click="closeDialog"
-                class="self-end sm:self-start flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-90 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                class="flex-shrink-0 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-800 dark:bg-dark-bg-soft dark:text-white/70 dark:hover:text-white dark:hover:bg-dark-bg-mute transition-all duration-300 hover:scale-110 hover:rotate-90 hover:dark:bg-gray-800"
               >
                 <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -45,7 +42,7 @@
             </div>
 
             <!-- Content -->
-            <div class="p-4 sm:p-6 md:p-6 lg:p-8 max-h-[calc(90vh-140px)] overflow-y-auto">
+            <div class="flex-1 p-4 sm:p-6 md:p-6 lg:p-8 overflow-y-auto min-h-0">
               <!-- Add New Topic Form -->
               <div class="mb-4 sm:mb-6 md:mb-5 lg:mb-6 p-3 sm:p-4 md:p-4 lg:p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg animate-fade-in-up" style="animation-delay: 0.1s">
                 <h3 class="text-base sm:text-lg md:text-base lg:text-lg font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 md:mb-3 lg:mb-4 flex items-center">
@@ -54,26 +51,7 @@
                 </h3>
                 
                 <div class="space-y-4 sm:space-y-4 md:space-y-3 lg:space-y-4">
-                  <div class="animate-fade-in-up" style="animation-delay: 0.2s">
-                    <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                      <span class="w-1 h-3 bg-green-500 rounded mr-2"></span>
-                      {{ t('vocabulary.topicManager.topicKey', 'Topic Key') }}
-                    </label>
-                    <input
-                      v-model="newTopic.key"
-                      :disabled="editingTopic !== null"
-                      type="text"
-                      :placeholder="t('vocabulary.topicManager.topicKeyPlaceholder', 'e.g., technology, business, travel')"
-                      class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
-                             bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
-                             focus:ring-2 focus:ring-green-500 focus:border-transparent
-                             disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed
-                             transition-all duration-300 hover:border-green-400 dark:hover:border-green-500 transform hover:scale-[1.02]"
-                    />
-                    <p class="mt-1 text-xs md:text-xs lg:text-sm text-gray-500 dark:text-gray-400">
-                      {{ t('vocabulary.topicManager.keyDescription', 'Unique identifier for this topic (lowercase, no spaces)') }}
-                    </p>
-                  </div>
+                  <!-- Topic Key is now auto-generated, hidden from UI -->
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-4 md:gap-3 lg:gap-4">
                     <div class="animate-fade-in-up" style="animation-delay: 0.3s">
@@ -248,33 +226,16 @@
             </div>
 
             <!-- Footer -->
-            <div class="flex justify-end p-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
-                             <div class="flex gap-3">
-                 <button
-                   @click="reloadCustomTopics"
-                   class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-sm"
-                 >
-                   Reload
-                 </button>
-                 <button
-                   @click="testDeleteModal"
-                   class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-sm"
-                 >
-                   Test Modal
-                 </button>
-                 <button
-                   @click="clearAllCustomTopics"
-                   class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-sm"
-                 >
-                   Clear All
-                 </button>
-                 <button
-                   @click="closeDialog"
-                   class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
-                 >
-                   {{ t('common.finish', 'Finish') }}
-                 </button>
-               </div>
+            <div class="flex-shrink-0 flex justify-end p-4 sm:p-6 border-t border-gray-200 dark:border-dark-bg-mute bg-gradient-to-r from-gray-50 to-blue-50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
+              <button
+                @click="closeDialog"
+                class="px-6 py-2.5 sm:px-8 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
+                       text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-sm sm:text-base
+                       animate-fade-in-up focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                style="animation-delay: 0.1s"
+              >
+                {{ t('common.finish', 'Finish') }}
+              </button>
             </div>
           </div>
         </Transition>
@@ -377,8 +338,7 @@ const newTopic = ref<Topic>({
 
 // Computed
 const canSaveTopic = computed(() => {
-  return newTopic.value.key.trim() && 
-         newTopic.value.vi.trim() && 
+  return newTopic.value.vi.trim() && 
          newTopic.value.en.trim()
 })
 
@@ -408,6 +368,47 @@ const showDeleteModal = computed(() => {
   console.log('showDeleteModal computed - topicToDelete:', topicToDelete.value)
   return !!topicToDelete.value
 })
+
+// Auto-generate topic key from Vietnamese or English name
+const generateTopicKey = (vi: string, en: string): string => {
+  // Use Vietnamese name first, fall back to English if VI is empty
+  const sourceName = vi.trim() || en.trim()
+  
+  if (!sourceName) return ''
+  
+  // Convert to lowercase, remove accents, replace spaces/special chars with underscores
+  let key = sourceName.toLowerCase()
+    .normalize('NFD') // Decompose accented characters
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritical marks
+    .replace(/[^a-z0-9]/g, '_') // Replace non-alphanumeric with underscores
+    .replace(/_+/g, '_') // Replace multiple underscores with single
+    .replace(/^_|_$/g, '') // Remove leading/trailing underscores
+  
+  // Ensure uniqueness by checking against existing topics
+  let counter = 1
+  let originalKey = key
+  
+  while (isKeyTaken(key)) {
+    key = `${originalKey}_${counter}`
+    counter++
+  }
+  
+  return key
+}
+
+// Check if a topic key is already taken
+const isKeyTaken = (key: string): boolean => {
+  // Check against built-in topics
+  const builtInKeys = builtInTopics.value.map(topic => topic.key)
+  if (builtInKeys.includes(key)) return true
+  
+  // Check against existing custom topics (excluding current editing topic)
+  const existingKeys = customTopics.value
+    .filter(topic => editingTopic.value ? topic.key !== editingTopic.value.key : true)
+    .map(topic => topic.key)
+  
+  return existingKeys.includes(key)
+}
 
 // Methods
 const loadCustomTopics = () => {
@@ -453,8 +454,13 @@ const saveCustomTopics = () => {
 const saveTopic = () => {
   if (!canSaveTopic.value) return
 
+  // Auto-generate key based on Vietnamese/English names
+  const generatedKey = editingTopic.value 
+    ? editingTopic.value.key // Keep existing key when editing
+    : generateTopicKey(newTopic.value.vi, newTopic.value.en)
+
   const topic: Topic = {
-    key: newTopic.value.key.toLowerCase().replace(/\s+/g, '_'),
+    key: generatedKey,
     vi: newTopic.value.vi.trim(),
     en: newTopic.value.en.trim()
   }
@@ -471,12 +477,7 @@ const saveTopic = () => {
     }
     editingTopic.value = null
   } else {
-    // Add new topic
-    if (customTopics.value.find(t => t.key === topic.key)) {
-      alert(t('vocabulary.topicManager.duplicateKey'))
-      return
-    }
-    
+    // Add new topic - key is auto-generated and unique
     customTopics.value.push(topic)
     saveCustomTopics()
     emit('topic-added', topic)
