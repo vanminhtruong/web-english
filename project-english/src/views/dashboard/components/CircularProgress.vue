@@ -1,5 +1,6 @@
 <template>
   <div 
+    ref="circularProgressRef"
     class="relative group cursor-pointer rounded-full overflow-hidden"
     style="display: inline-block; background: transparent !important; box-shadow: none !important;"
     :style="{ width: size + 'px', height: size + 'px', clipPath: 'circle(50% at 50% 50%)' }"
@@ -236,11 +237,44 @@ const animateValue = (from: number, to: number, duration = 1500) => {
   requestAnimationFrame(update)
 }
 
-// Start animation on mount with delay
-onMounted(() => {
+// Intersection Observer for scroll-triggered animation
+const circularProgressRef = ref<HTMLElement>()
+const hasAnimatedOnScroll = ref(false)
+
+const startAnimation = () => {
   setTimeout(() => {
     animateValue(0, props.value)
   }, props.animationDelay)
+}
+
+// Start animation on mount with delay (F5/page load)
+onMounted(() => {
+  startAnimation()
+  
+  // Add Intersection Observer for scroll-triggered animation
+  if (!circularProgressRef.value) return
+  
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !isAnimating.value) {
+          // Reset to 0 first for scroll animation
+          animatedValue.value = 0
+          animatedProgress.value = 0
+          startAnimation()
+        }
+      })
+    },
+    {
+      threshold: 0.3, // Trigger when 30% visible
+      rootMargin: '0px 0px -20px 0px'
+    }
+  )
+  
+  observer.observe(circularProgressRef.value)
+  
+  // Cleanup observer on unmount
+  return () => observer.disconnect()
 })
 
 const iconSize = computed(() => {

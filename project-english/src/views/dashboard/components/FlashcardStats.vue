@@ -36,7 +36,7 @@
       <!-- Stats content -->
       <div v-else class="space-y-6 flex-1">
         <!-- Circular Progress Displays -->
-        <div class="grid grid-cols-4 place-items-center justify-center gap-8" style="background: transparent !important;">
+        <div class="grid grid-cols-2 lg:grid-cols-4 place-items-center justify-center gap-8 lg:gap-6" style="background: transparent !important;">
           <!-- Total Sessions -->
           <div class="flex flex-col items-center text-center" style="background: transparent !important;">
             <CircularProgress
