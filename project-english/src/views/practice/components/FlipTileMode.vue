@@ -67,23 +67,25 @@
 
       <!-- Letter tiles -->
       <div class="flex-shrink-0 mb-4">
-        <div class="flex flex-wrap gap-3 justify-center items-center">
-          <div v-for="(tile, idx) in tiles" :key="idx">
-            <div v-if="tile.separator" class="px-1 text-lg text-gray-700 dark:text-white/80 select-none">
-              {{ tile.char }}
-            </div>
-            <div
-              v-else
-              class="relative w-12 h-14 sm:w-14 sm:h-16 transition-all duration-500 tile-3d"
-              :class="[ { 'cursor-pointer': !tile.flipped && canFlipMore }, tile.flipped ? 'is-flipped' : 'hover:shadow-xl hover:scale-105' ]"
-              @click="onTileClick(idx)"
-            >
+        <!-- Responsive container with horizontal scroll for xs/sm -->
+        <div class="w-full max-w-full overflow-x-auto">
+          <div class="flex flex-wrap gap-2 xs:gap-1.5 sm:gap-2 md:gap-3 justify-center items-center min-w-fit px-1">
+            <div v-for="(tile, idx) in tiles" :key="idx">
+              <div v-if="tile.separator" class="px-1 text-sm xs:text-base sm:text-lg text-gray-700 dark:text-white/80 select-none">
+                {{ tile.char }}
+              </div>
+              <div
+                v-else
+                class="relative w-8 h-10 xs:w-10 xs:h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 transition-all duration-500 tile-3d flex-shrink-0"
+                :class="[ { 'cursor-pointer': !tile.flipped && canFlipMore }, tile.flipped ? 'is-flipped' : 'hover:shadow-xl hover:scale-105' ]"
+                @click="onTileClick(idx)"
+              >
               <!-- Front face (hidden) -->
               <div 
                 class="tile-face absolute inset-0 flex items-center justify-center rounded-lg border-2 bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 border-blue-400 dark:border-blue-500 shadow-lg"
               >
                 <div class="text-white">
-                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
                   </svg>
                 </div>
@@ -91,9 +93,10 @@
 
               <!-- Back face (revealed) -->
               <div 
-                class="tile-face tile-back absolute inset-0 flex items-center justify-center rounded-lg border-2 bg-white dark:bg-dark-bg-soft border-green-400 dark:border-green-500 shadow-lg text-2xl font-bold text-gray-900 dark:text-white"
+                class="tile-face tile-back absolute inset-0 flex items-center justify-center rounded-lg border-2 bg-white dark:bg-dark-bg-soft border-green-400 dark:border-green-500 shadow-lg text-sm xs:text-base sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white"
               >
                 {{ tile.char.toUpperCase() }}
+              </div>
               </div>
             </div>
           </div>
@@ -390,5 +393,49 @@ const enforceInputFocus = () => {
   .rotate-y-0 {
     transform: none;
   }
+}
+
+/* Custom scrollbar for tiles container on mobile */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background-color: #f1f5f9;
+  border-radius: 2px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: #94a3b8;
+  border-radius: 2px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b;
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  .overflow-x-auto::-webkit-scrollbar-track {
+    background-color: #0f0f0f; /* dark-bg-mute */
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background-color: #0a0a0a; /* dark-bg-soft */
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background-color: #000000; /* dark-bg */
+  }
+  
+  .overflow-x-auto {
+    scrollbar-color: #0a0a0a #0f0f0f;
+  }
+}
+
+/* Firefox scrollbar */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
 }
 </style>
