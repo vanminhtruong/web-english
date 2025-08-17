@@ -527,6 +527,19 @@
       "unavailable": "Chế độ lật ô không khả dụng cho ngày đã chọn",
       "hintsToggle": "Sử dụng gợi ý định nghĩa"
     },
+      "scrambleWords": {
+        "toggle": "Xếp từ",
+        "instruction": "Sắp xếp các chữ cái để tạo thành từ",
+        "correct": "Chính xác!",
+        "incorrect": "Thử lại!",
+        "backspace": "Xóa lùi",
+        "clear": "Xóa",
+        "check": "Kiểm tra"
+      },
+    "card": {
+      "flip_to_meaning": "Nhấp để xem nghĩa",
+      "flip_back": "Nhấp để lật lại"
+    },
     "bubbleShooter": {
       "title": "Bắn Bóng Từ Vựng",
       "instruction": "Bắn những quả bóng để ghép 4 từ giống nhau trở lên!",

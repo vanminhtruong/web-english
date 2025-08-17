@@ -83,7 +83,19 @@
                   class="absolute right-0 mt-1 w-44 z-[9999] rounded-md shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f0f0f] overflow-hidden"
                 >
                   <ul class="py-1 text-xs text-gray-900 dark:text-white">
-                    <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('flashcard')">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</button></li>
+                    <!-- Flashcard option with inline scramble toggle -->
+                    <li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-2">
+                      <button class="text-left flex-1 truncate" @click="selectMode('flashcard')">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</button>
+                      <button
+                        class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="scrambleWordsEnabled ? 'bg-green-600' : 'bg-gray-200 dark:bg-[#0a0a0a]'"
+                        @click.stop="toggleScrambleWordsFromDropdown()"
+                        :title="t('flashcard.scrambleWords.toggle', 'Scramble Words')"
+                        :aria-label="t('flashcard.scrambleWords.toggle', 'Scramble Words')"
+                      >
+                        <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', scrambleWordsEnabled ? 'translate-x-4' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
                     <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('quiz')">{{ t('flashcard.modes.quiz', 'Quiz') }}</button></li>
                     <li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-2">
                       <button class="text-left flex-1 truncate" @click="selectMode('typing')">{{ t('flashcard.modes.typing', 'Typing') }}</button>
@@ -344,7 +356,19 @@
                   class="absolute right-0 mt-1 w-52 z-[9999] rounded-md shadow-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f0f0f] overflow-hidden"
                 >
                   <ul class="py-1 text-sm text-gray-900 dark:text-white">
-                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('flashcard')">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</button></li>
+                    <!-- Flashcard option with inline scramble toggle -->
+                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
+                      <button class="text-left flex-1 truncate" @click="selectMode('flashcard')">{{ t('flashcard.modes.flashcard', 'Flashcard') }}</button>
+                      <button
+                        class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="scrambleWordsEnabled ? 'bg-green-600' : 'bg-gray-200 dark:bg-[#0a0a0a]'"
+                        @click.stop="toggleScrambleWordsFromDropdown()"
+                        :title="t('flashcard.scrambleWords.toggle', 'Scramble Words')"
+                        :aria-label="t('flashcard.scrambleWords.toggle', 'Scramble Words')"
+                      >
+                        <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', scrambleWordsEnabled ? 'translate-x-5' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
                     <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('quiz')">{{ t('flashcard.modes.quiz', 'Quiz') }}</button></li>
                     <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
                       <button class="text-left flex-1 truncate" @click="selectMode('typing')">{{ t('flashcard.modes.typing', 'Typing') }}</button>
@@ -535,6 +559,8 @@ interface Props {
   snakeDoubleBaitEnabled?: boolean
   // Pictionary: definition mode toggle state (prop down from FlashcardView)
   pictionaryDefinitionMode?: boolean
+  // Scramble Words: toggle state for flashcard mode (prop down from FlashcardView)
+  scrambleWordsEnabled?: boolean
   useFlipTileHints?: boolean
 }
 
@@ -549,6 +575,7 @@ const bubbleShooterModeAvailable = computed(() => props.bubbleShooterModeAvailab
 const bubbleShooterVietnameseMode = computed(() => props.bubbleShooterVietnameseMode ?? false)
 const snakeDoubleBaitEnabled = computed(() => props.snakeDoubleBaitEnabled ?? false)
 const pictionaryDefinitionMode = computed(() => props.pictionaryDefinitionMode ?? false)
+const scrambleWordsEnabled = computed(() => props.scrambleWordsEnabled ?? false)
 const useFlipTileHints = computed(() => props.useFlipTileHints ?? false)
 
 const { t } = useI18n()
@@ -565,6 +592,7 @@ const emit = defineEmits<{
   'update:bubble-shooter-vietnamese-mode': [enabled: boolean]
   'update:snake-double-bait-enabled': [enabled: boolean]
   'update:pictionary-definition-mode': [enabled: boolean]
+  'update:scramble-words-enabled': [enabled: boolean]
   'update:use-flip-tile-hints': [enabled: boolean]
 }>()
 
@@ -660,6 +688,12 @@ const toggleFlipTileHintsFromDropdown = () => {
   if (props.practiceStarted) return
   if (!flipTileModeAvailable.value) return
   emit('update:use-flip-tile-hints', !useFlipTileHints.value)
+}
+
+const toggleScrambleWordsFromDropdown = () => {
+  // Prevent toggling during active practice
+  if (props.practiceStarted) return
+  emit('update:scramble-words-enabled', !scrambleWordsEnabled.value)
 }
 
 // Guarded settings emitter to prevent opening during active practice

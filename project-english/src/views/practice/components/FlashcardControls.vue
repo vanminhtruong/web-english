@@ -25,6 +25,7 @@
       <button
         @click="$emit('next-card')"
         class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 rounded-full font-medium transition-colors text-xs sm:text-sm md:text-base"
+        :class="scrambleWordsEnabled ? 'hidden md:inline-flex' : ''"
       >
         {{ currentIndex === totalCards - 1 ? t('practice.controls.complete', 'Complete') : t('practice.controls.next', 'Next') }}
       </button>
@@ -97,6 +98,7 @@ interface Props {
   totalCards: number
   canProceed: boolean
   practiceStarted: boolean
+  scrambleWordsEnabled?: boolean
   typingAnswer?: string
   typingAnswered?: boolean
   listeningAnswer?: string

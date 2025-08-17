@@ -25,6 +25,7 @@
       :bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode"
       :snake-double-bait-enabled="snakeDoubleBaitMode"
       :pictionary-definition-mode="pictionaryDefinitionMode"
+      :scramble-words-enabled="scrambleWordsEnabled"
       :use-flip-tile-hints="flashcardSettings.useFlipTileHints"
       @go-back="goBack"
       @show-history="showHistory = true"
@@ -37,6 +38,7 @@
       @update:bubble-shooter-vietnamese-mode="bubbleShooterVietnameseMode = $event"
       @update:snake-double-bait-enabled="snakeDoubleBaitMode = $event"
       @update:pictionary-definition-mode="pictionaryDefinitionMode = $event"
+      @update:scramble-words-enabled="scrambleWordsEnabled = $event"
       @update:use-flip-tile-hints="handleFlipTileHintsToggle"
     />
 
@@ -108,7 +110,12 @@
                   <FlashcardCard
                     :current-card="currentShuffledCard"
                     :is-flipped="isFlipped"
+                    :scramble-words-enabled="scrambleWordsEnabled"
+                    :current-index="currentIndex"
+                    :total-cards="currentFlashcards.length"
                     @flip-card="flipCard"
+                    @next-card="enhancedNextCard"
+                    @show-results="completeSession"
                   />
                 </template>
                 <template v-else-if="practiceMode === 'pictionary'">
@@ -233,6 +240,7 @@
                   :total-cards="currentFlashcards.length"
                   :can-proceed="getCanProceed()[practiceMode]"
                   :practice-started="practiceStarted"
+                  :scramble-words-enabled="scrambleWordsEnabled"
                   :typing-answer="typingAnswer"
                   :typing-answered="typingAnswered"
                   :listening-answer="listeningAnswer"
@@ -423,6 +431,8 @@ const bubbleShooterVietnameseMode = ref(false)
 const snakeDoubleBaitMode = ref(false)
 // Pictionary Definition Mode Toggle State with localStorage support
 const pictionaryDefinitionMode = ref(false)
+// Scramble Words Mode Toggle State with localStorage support
+const scrambleWordsEnabled = ref(false)
 
 // Load from localStorage on init
 const loadBubbleShooterVietnameseModeFromStorage = () => {
@@ -473,10 +483,27 @@ const savePictionaryDefinitionModeToStorage = (enabled: boolean) => {
   } catch {}
 }
 
+// Load/Save helpers for Scramble Words mode
+const loadScrambleWordsModeFromStorage = () => {
+  try {
+    const saved = localStorage.getItem('pe_scrambleWordsEnabled')
+    return saved === null ? false : saved === 'true'
+  } catch {
+    return false
+  }
+}
+
+const saveScrambleWordsModeToStorage = (enabled: boolean) => {
+  try {
+    localStorage.setItem('pe_scrambleWordsEnabled', String(enabled))
+  } catch {}
+}
+
 // Initialize from localStorage
 bubbleShooterVietnameseMode.value = loadBubbleShooterVietnameseModeFromStorage()
 snakeDoubleBaitMode.value = loadSnakeDoubleBaitModeFromStorage()
 pictionaryDefinitionMode.value = loadPictionaryDefinitionModeFromStorage()
+scrambleWordsEnabled.value = loadScrambleWordsModeFromStorage()
 
 // Watch for changes and save to localStorage
 watch(bubbleShooterVietnameseMode, (newVal) => {
@@ -487,6 +514,9 @@ watch(snakeDoubleBaitMode, (newVal) => {
 })
 watch(pictionaryDefinitionMode, (newVal) => {
   savePictionaryDefinitionModeToStorage(newVal)
+})
+watch(scrambleWordsEnabled, (newVal) => {
+  saveScrambleWordsModeToStorage(newVal)
 })
 
 // Toggle function for FlashcardHeader

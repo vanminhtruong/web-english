@@ -482,6 +482,19 @@
       "unavailable": "Flip Tile mode is unavailable for the selected date",
       "hintsToggle": "Use Definition Hints"
     },
+    "scrambleWords": {
+      "toggle": "Scramble Words",
+      "instruction": "Arrange the letters to form the word",
+      "correct": "Correct!",
+      "incorrect": "Try again!",
+      "clear": "Clear",
+      "check": "Check",
+      "backspace": "Backspace"
+    },
+    "card": {
+      "flip_to_meaning": "Click to see meaning",
+      "flip_back": "Click to flip back"
+    },
     "bubbleShooter": {
       "title": "Bubble Shooter",
       "instruction": "Shoot bubbles to match 4 or more words!",

@@ -470,6 +470,19 @@
         "unavailable": "선택한 날짜에 대해 타일 뒤집기 모드를 사용할 수 없습니다",
         "hintsToggle": "정의 힌트 사용"
       },
+      "scrambleWords": {
+        "toggle": "단어 배열",
+        "instruction": "글자를 배열하여 단어를 만드세요",
+        "correct": "정답!",
+        "incorrect": "다시 시도하세요!",
+        "backspace": "백스페이스",
+        "clear": "지우기",
+        "check": "확인"
+      },
+      "card": {
+        "flip_to_meaning": "클릭하여 의미 보기",
+        "flip_back": "클릭하여 뒤집기"
+      },
       "bubbleShooter": {
         "title": "버블 슈터",
         "instruction": "버블을 쏴서 4개 이상의 단어를 매칭하세요!",
