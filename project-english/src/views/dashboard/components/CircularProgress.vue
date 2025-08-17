@@ -1,12 +1,12 @@
 <template>
   <div 
-    class="relative group cursor-pointer"
-    style="display: inline-block; background: transparent !important;"
-    :style="{ width: size + 'px', height: size + 'px' }"
+    class="relative group cursor-pointer rounded-full overflow-hidden"
+    style="display: inline-block; background: transparent !important; box-shadow: none !important;"
+    :style="{ width: size + 'px', height: size + 'px', clipPath: 'circle(50% at 50% 50%)' }"
   >
     <!-- Animated Background Glow -->
     <div 
-      class="absolute inset-0 rounded-full opacity-0 group-hover:opacity-30 transition-all duration-700 blur-xl animate-pulse"
+      class="absolute inset-0 rounded-full overflow-hidden pointer-events-none opacity-0 group-hover:opacity-30 transition-all duration-700 blur-xl animate-pulse"
       :style="{ 
         background: `radial-gradient(circle, ${progressColor}20, transparent 70%)`,
         transform: 'scale(1.2)'
@@ -18,7 +18,7 @@
       :width="size" 
       :height="size" 
       class="transform -rotate-90 transition-all duration-500 group-hover:scale-105 relative z-10"
-      style="display: block; background: transparent !important; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.15));"
+      style="display: block; background: transparent !important;"
     >
       <!-- Gradient Definitions -->
       <defs>
@@ -62,10 +62,10 @@
         fill="transparent"
         :stroke-dasharray="circumference"
         :stroke-dashoffset="strokeDashoffset"
-        :stroke-linecap="strokeLinecap"
+        stroke-linecap="round"
         class="transition-all duration-1500 ease-out transform-gpu"
         :style="{ 
-          filter: glowEffect ? `url(#glow-${gradientId}) drop-shadow(0 0 15px ${progressColor}40)` : 'none',
+          filter: glowEffect ? `url(#glow-${gradientId})` : 'none',
           animation: 'progressShine 3s infinite linear'
         }"
       />
@@ -159,7 +159,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 interface Props {
   value: number
@@ -168,47 +168,79 @@ interface Props {
   strokeWidth?: number
   progressColor?: string
   progressColorSecondary?: string
-  progressColorTertiary?: string
+  progressColorThertiary?: string
   backgroundColor?: string
   label?: string
   unit?: string
   showIcon?: boolean
-  iconClass?: string
   valueClass?: string
-  glowEffect?: boolean
   showShimmer?: boolean
-  strokeLinecap?: 'round' | 'square' | 'butt'
+  glowEffect?: boolean
   animationDelay?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   size: 120,
   strokeWidth: 8,
-  progressColor: '#8b5cf6',
-  progressColorSecondary: '#a855f7',
-  progressColorTertiary: '#c084fc',
+  progressColor: '#3b82f6',
+  progressColorSecondary: '#60a5fa',
+  progressColorThertiary: '#93c5fd',
   backgroundColor: '#e5e7eb',
+  unit: '',
   showIcon: false,
-  iconClass: '',
-  valueClass: 'text-2xl',
-  glowEffect: true,
-  showShimmer: true,
-  strokeLinecap: 'round',
+  valueClass: 'text-xl font-bold',
+  showShimmer: false,
+  glowEffect: false,
   animationDelay: 0
 })
+
+// Animation state
+const animatedValue = ref(0)
+const animatedProgress = ref(0)
+const isAnimating = ref(false)
 
 const radius = computed(() => (props.size - props.strokeWidth) / 2)
 const circumference = computed(() => 2 * Math.PI * radius.value)
 const percentage = computed(() => Math.min((props.value / props.max) * 100, 100))
+
+// Use animated progress for stroke calculation
 const strokeDashoffset = computed(() => 
-  circumference.value - (percentage.value / 100) * circumference.value
+  circumference.value - (animatedProgress.value / 100) * circumference.value
 )
 
 const displayValue = computed(() => {
   if (props.unit === '%') {
-    return Math.round(percentage.value)
+    return Math.round(animatedProgress.value)
   }
-  return props.value
+  return Math.round(animatedValue.value)
+})
+
+// Animation functions
+const animateValue = (from: number, to: number, duration = 1500) => {
+  const startTime = Date.now()
+  const update = () => {
+    const elapsed = Date.now() - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    const easeOutCubic = 1 - Math.pow(1 - progress, 3)
+    
+    animatedValue.value = from + (to - from) * easeOutCubic
+    animatedProgress.value = from + (percentage.value - from) * easeOutCubic
+    
+    if (progress < 1) {
+      requestAnimationFrame(update)
+    } else {
+      isAnimating.value = false
+    }
+  }
+  isAnimating.value = true
+  requestAnimationFrame(update)
+}
+
+// Start animation on mount with delay
+onMounted(() => {
+  setTimeout(() => {
+    animateValue(0, props.value)
+  }, props.animationDelay)
 })
 
 const iconSize = computed(() => {
@@ -222,6 +254,9 @@ const gradientId = computed(() => Math.random().toString(36).substr(2, 9))
 
 // Shimmer animation offset
 const shimmerOffset = computed(() => circumference.value)
+
+// Additional computed properties
+const progressColorTertiary = computed(() => props.progressColorThertiary)
 </script>
 
 <script lang="ts">
@@ -273,7 +308,6 @@ export default {
 
 .group:hover {
   transform: translateY(-2px);
-  filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.2));
 }
 
 /* Responsive glow intensity */
@@ -283,8 +317,5 @@ export default {
   }
 }
 
-/* Ensure no background styling */
-* {
-  background: transparent !important;
-}
+/* Remove any unintended background artifacts */
 </style>
