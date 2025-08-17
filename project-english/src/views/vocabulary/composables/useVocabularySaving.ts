@@ -260,6 +260,16 @@ export function useVocabularySaving() {
         }
     };
     
+    // Helper function to get practice history
+    const getPracticeHistory = (): any[] => {
+        try {
+            const stored = localStorage.getItem('flashcard-practice-history');
+            return stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            return [];
+        }
+    };
+    
     // Helper function to get category name without Vue composables
     const getCategoryName = (categoryKey: string): string => {
       // Check custom topics first
@@ -307,10 +317,11 @@ export function useVocabularySaving() {
         vocabularyNotes: getVocabularyNotes(),
         markedWords: getMarkedWords(),
         grammarRules: getGrammarRules(), // Include grammar rules in export
+        practiceHistory: getPracticeHistory(), // Include practice history in export
         accordionState: JSON.parse(localStorage.getItem('vocabulary-accordion-state') || '{}'),
         useGrouping: JSON.parse(localStorage.getItem('vocabulary-use-grouping') || 'false'), // Save grouping state
         exportDate: new Date().toISOString(),
-        version: '1.5', // Increment version to indicate grammar rules support
+        version: '1.6', // Increment version to indicate practice history support
         totalCount: vocabularyStore.totalCount.value
     };
   };
@@ -667,6 +678,12 @@ export function useVocabularySaving() {
                 console.log("Imported grammar rules:", data.grammarRules);
               }
               
+              // Import practice history
+              if (data.practiceHistory && Array.isArray(data.practiceHistory)) {
+                localStorage.setItem('flashcard-practice-history', JSON.stringify(data.practiceHistory));
+                console.log("Imported practice history:", data.practiceHistory);
+              }
+              
               isSaving.value = false;
               
               // Show detailed import success message
@@ -694,6 +711,9 @@ export function useVocabularySaving() {
               }
               if (data.grammarRules && data.grammarRules.length > 0) {
                 importMessage += ` + ${data.grammarRules.length} grammar rules`;
+              }
+              if (data.practiceHistory && data.practiceHistory.length > 0) {
+                importMessage += ` + ${data.practiceHistory.length} practice sessions`;
               }
               
               toast.success(importMessage);
@@ -824,6 +844,10 @@ export function useVocabularySaving() {
           
           if (result.data.grammarRules && Array.isArray(result.data.grammarRules)) {
             localStorage.setItem('grammar-rules', JSON.stringify(result.data.grammarRules));
+          }
+          
+          if (result.data.practiceHistory && Array.isArray(result.data.practiceHistory)) {
+            localStorage.setItem('flashcard-practice-history', JSON.stringify(result.data.practiceHistory));
           }
           
           toast.success(t('vocabulary.save.syncFromDriveSuccess', 'Successfully synced from Google Drive') || 'Successfully synced from Google Drive');

@@ -406,6 +406,7 @@
         "fail": "실패",
         "viewDetails": "자세히 보기",
         "noDetails": "세부 정보가 없습니다",
+        "deleteSession": "세션 삭제",
         "details": {
           "title": "세션 세부 정보",
           "noData": "이 세션에 대한 세부 정보가 없습니다",

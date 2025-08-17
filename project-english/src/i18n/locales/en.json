@@ -419,6 +419,7 @@
       "fail": "Fail",
       "viewDetails": "View details",
       "noDetails": "No details available",
+      "deleteSession": "Delete session",
       "details": {
         "title": "Session Details",
         "noData": "No details available for this session",

@@ -58,7 +58,7 @@
                 </div>
 
                 <div v-else class="space-y-4">
-                  <div v-for="session in history" :key="session.id" class="bg-gray-50 dark:bg-gray-custom rounded-lg p-4">
+                  <div v-for="session in history" :key="session.id" class="bg-gray-50 dark:bg-dark-bg-mute rounded-lg p-4">
                     <div class="flex justify-between items-start">
                       <div class="flex-1">
                         <div class="flex items-center space-x-2 mb-2">
@@ -75,8 +75,19 @@
                             :aria-label="t('flashcard.history.viewDetails', 'View details')"
                             @click="emit('open-details', session.id)"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M12 5c-7.633 0-10 7-10 7s2.367 7 10 7 10-7 10-7-2.367-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                            </svg>
+                          </button>
+                          <button
+                            class="inline-flex items-center ml-1 px-2 py-1 rounded-md border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-400/50 transition
+                                  dark:text-red-300 dark:bg-red-900/30 dark:border-red-800 dark:hover:bg-red-900/40 dark:hover:text-red-200"
+                            :title="t('flashcard.history.deleteSession', 'Delete session')"
+                            :aria-label="t('flashcard.history.deleteSession', 'Delete session')"
+                            @click="emit('delete-session', session.id)"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c0-1 1-2 2-2v2m-6 5v6m4-6v6"/>
                             </svg>
                           </button>
                         </div>
@@ -148,9 +159,10 @@ defineProps<{
   getModeText: (mode: string) => string;
   formatDate: (date: string) => string;
   formatDuration: (duration: number) => string;
+  deleteSession?: (sessionId: string) => void;
 }>();
 
-const emit = defineEmits(['close', 'open-details']);
+const emit = defineEmits(['close', 'open-details', 'delete-session']);
 
 const { t } = useI18n();
 

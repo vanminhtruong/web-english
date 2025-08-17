@@ -464,6 +464,7 @@
       "fail": "Chưa đạt",
       "viewDetails": "Xem chi tiết",
       "noDetails": "Không có chi tiết",
+      "deleteSession": "Xóa phiên luyện tập",
       "details": {
         "title": "Chi tiết phiên luyện tập",
         "noData": "Không có chi tiết cho phiên luyện tập này",

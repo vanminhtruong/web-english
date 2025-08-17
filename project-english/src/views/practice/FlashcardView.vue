@@ -287,6 +287,7 @@
       :format-duration="formatDuration"
       @close="showHistory = false"
       @open-details="openHistoryDetails"
+      @delete-session="handleDeleteSession"
     />
 
     <!-- Session Detail Modal -->
@@ -369,6 +370,11 @@ const openHistoryDetails = (sessionId: string) => {
   const details = loadDetails(sessionId)
   selectedSessionDetails.value = details
   showSessionDetail.value = true
+}
+
+// Handle delete session from history modal
+const handleDeleteSession = (sessionId: string) => {
+  deleteSession(sessionId)
 }
 
 // Date filter state with localStorage persistence
@@ -742,7 +748,8 @@ const {
   getModeColor,
   getModeText,
   formatDate,
-  formatDuration
+  formatDuration,
+  deleteSession
 } = useFlashcardHistory()
 
 // Main game composable - must be after baseFlashcards

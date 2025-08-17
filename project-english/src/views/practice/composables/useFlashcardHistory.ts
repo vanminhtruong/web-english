@@ -166,6 +166,20 @@ export function useFlashcardHistory() {
   const clearHistory = () => {
     practiceHistory.value = []
     savePracticeHistory()
+    // Also clear session details from localStorage
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('flashcard-session-details:')) {
+        localStorage.removeItem(key)
+      }
+    })
+  }
+
+  // Delete a specific session
+  const deleteSession = (sessionId: string) => {
+    practiceHistory.value = practiceHistory.value.filter(item => item.id !== sessionId)
+    savePracticeHistory()
+    // Also remove session details from localStorage
+    localStorage.removeItem(`flashcard-session-details:${sessionId}`)
   }
 
   // Get statistics from history
@@ -221,6 +235,7 @@ export function useFlashcardHistory() {
     formatDate,
     formatDuration,
     clearHistory,
+    deleteSession,
     getHistoryStats
   }
 }
