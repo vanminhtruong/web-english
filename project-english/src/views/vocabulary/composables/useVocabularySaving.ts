@@ -367,31 +367,31 @@ export function useVocabularySaving() {
       
       if (saveSuccess) {
         saveStatus.value = 'success';
-        console.log('✅ Auto-save completed successfully');
+        console.log('⚡ Ultra-fast auto-save completed successfully');
         setTimeout(() => { 
           if (saveStatus.value === 'success') {
             saveStatus.value = 'idle';
           }
-        }, 1000);
+        }, 500); // Faster status reset for better UX
       } else {
         saveStatus.value = 'error';
-        console.error('❌ Auto-save failed');
+        console.error('❌ Ultra-fast auto-save failed');
         setTimeout(() => { 
           if (saveStatus.value === 'error') {
             saveStatus.value = 'idle';
           }
-        }, 2000);
+        }, 1500); // Faster error reset
       }
       
       return saveSuccess;
     } catch (error) {
-      console.error("Auto-save error:", error);
+      console.error("Ultra-fast auto-save error:", error);
       saveStatus.value = 'error';
       setTimeout(() => { 
         if (saveStatus.value === 'error') {
           saveStatus.value = 'idle';
         }
-      }, 2000);
+      }, 1500); // Faster error recovery
       return false;
     }
   };
@@ -470,13 +470,14 @@ export function useVocabularySaving() {
     }
   };
 
-  const debounceAutoSave = () => {
+  // Ultra-fast auto save with different speeds based on storage type
+  const debounceAutoSave = (immediate = false) => {
     if (!autoSaveEnabled.value) {
       console.log("Auto-save is disabled, skipping debounce");
       return;
     }
     
-    console.log("Setting up debounce auto-save timer...");
+    console.log("Setting up ultra-fast debounce auto-save timer...");
     
     // Clear any existing debounce timer
     if (debounceTimer) {
@@ -485,54 +486,83 @@ export function useVocabularySaving() {
       debounceTimer = null;
     }
     
-    // Set a new debounce timer
-    console.log("Creating new debounce timer");
+    // For immediate save (no debounce)
+    if (immediate) {
+      console.log("Immediate auto-save triggered");
+      performAutoSaveWithFallback();
+      return;
+    }
+    
+    // Ultra-fast debounce times based on storage type
+    const debounceDelay = storageType.value === 'google-drive' ? 100 : 150; // Super fast for Google Drive
+    
+    console.log(`Creating ultra-fast debounce timer (${debounceDelay}ms)`);
     debounceTimer = setTimeout(async () => {
-      console.log("Debounce timer triggered, performing auto-save...");
+      console.log("Ultra-fast debounce timer triggered, performing auto-save...");
+      await performAutoSaveWithFallback();
+    }, debounceDelay) as unknown as number;
+  };
+  
+  // Optimized auto save with intelligent fallback
+  const performAutoSaveWithFallback = async () => {
+    // For localStorage only save
+    if (storageType.value === 'local' && !hasAutoSaveFile.value) {
+      console.log("No auto-save file selected, saving to localStorage only");
+      vocabularyStore.saveToLocalStorage();
+      updateTimestamp();
+      return;
+    }
+    
+    // For Google Drive, check authentication
+    if (storageType.value === 'google-drive' && !googleAuth.isSignedIn()) {
+      console.log("Google Drive selected but not signed in, saving to localStorage only");
+      vocabularyStore.saveToLocalStorage();
+      updateTimestamp();
+      return;
+    }
+    
+    const result = await performAutoSave();
+    console.log("Ultra-fast auto-save result:", result ? "Success" : "Failed");
+    
+    if (!result) {
+      // If auto-save failed, show appropriate retry message
+      const retryMessage = storageType.value === 'google-drive' 
+        ? t('vocabulary.save.googleDriveRetry', 'Google Drive save failed. Check connection.') || 'Google Drive save failed. Check connection.'
+        : t('vocabulary.save.autoSaveRetry', 'Auto save failed. Click to select a new file.') || 'Auto save failed. Click to select a new file.';
       
-      // For localStorage only save
-      if (storageType.value === 'local' && !hasAutoSaveFile.value) {
-        console.log("No auto-save file selected, saving to localStorage only");
-        vocabularyStore.saveToLocalStorage();
-        return;
-      }
-      
-      // For Google Drive, check authentication
-      if (storageType.value === 'google-drive' && !googleAuth.isSignedIn()) {
-        console.log("Google Drive selected but not signed in, saving to localStorage only");
-        vocabularyStore.saveToLocalStorage();
-        return;
-      }
-      
-      const result = await performAutoSave();
-      console.log("Auto-save result:", result ? "Success" : "Failed");
-      
-      if (!result) {
-        // If auto-save failed, show appropriate retry message
-        const retryMessage = storageType.value === 'google-drive' 
-          ? t('vocabulary.save.googleDriveRetry', 'Google Drive save failed. Check connection.') || 'Google Drive save failed. Check connection.'
-          : t('vocabulary.save.autoSaveRetry', 'Auto save failed. Click to select a new file.') || 'Auto save failed. Click to select a new file.';
-        
-        toast.info(retryMessage, {
-          timeout: 5000,
-          onClick: () => {
-            if (storageType.value === 'local') {
-              setupAutoSaveFile();
-            }
+      toast.info(retryMessage, {
+        timeout: 3000, // Shorter timeout for faster UX
+        onClick: () => {
+          if (storageType.value === 'local') {
+            setupAutoSaveFile();
           }
-        });
-      }
-    }, 500) as unknown as number;
+        }
+      });
+    }
+  };
+  
+  // Helper to update timestamp
+  const updateTimestamp = () => {
+    const now = new Date().toLocaleString('vi-VN');
+    lastSaveTime.value = now;
+    setStoredValue('vocabulary-last-save-time', now);
   };
 
+  // Ultra-fast scheduled auto save with adaptive intervals
   const scheduleAutoSave = () => {
     if (autoSaveTimer) clearTimeout(autoSaveTimer);
+    
+    // Super fast intervals based on storage type
+    const autoSaveInterval = storageType.value === 'google-drive' ? 2000 : 3000; // 2s for Google Drive, 3s for local
+    
+    console.log(`Scheduling ultra-fast auto-save every ${autoSaveInterval}ms`);
     autoSaveTimer = window.setTimeout(() => {
       if (autoSaveEnabled.value) {
+        console.log("Scheduled ultra-fast auto-save executing...");
         performAutoSave();
-        scheduleAutoSave();
+        scheduleAutoSave(); // Reschedule for continuous ultra-fast saving
       }
-    }, 10000);
+    }, autoSaveInterval);
   };
 
   const setupAutoSaveFile = async () => {
@@ -737,30 +767,41 @@ export function useVocabularySaving() {
   };
 
   // Google Drive auto-save functions
+  // Ultra-fast Google Drive save with optimized error handling
   const tryAutoSaveToGoogleDrive = async (data: any): Promise<boolean> => {
     try {
       if (!googleAuth.isSignedIn()) {
         console.log('❌ Not signed in to Google Drive');
-        toast.error(t('vocabulary.save.errors.notSignedIn', 'Not signed in to Google') || 'Not signed in to Google');
+        // Don't show toast for ultra-fast saves to avoid spam
         return false;
       }
 
-      console.log('⬆️ Attempting to auto-save to Google Drive...');
+      console.log('⚡ Ultra-fast auto-save to Google Drive...');
       const result = await googleDriveApi.uploadVocabularyData(data);
       
       if (result.success) {
-        console.log('✅ Auto-save to Google Drive completed successfully');
+        console.log('⚡ Ultra-fast Google Drive save completed!');
         hasGoogleDriveFile.value = true;
         setStoredValue('vocabulary-has-google-drive-file', true);
         return true;
       } else {
-        console.error('❌ Google Drive save failed:', result.error);
-        toast.error(t('vocabulary.save.errors.googleDriveFailed', 'Google Drive save failed') || `Google Drive save failed: ${result.error}`);
+        console.error('❌ Ultra-fast Google Drive save failed:', result.error);
+        // Only show error toast occasionally to avoid spam
+        if (Math.random() < 0.1) { // Show error 10% of the time
+          toast.error(t('vocabulary.save.errors.googleDriveFailed', 'Google Drive save failed') || 'Google Drive save failed', {
+            timeout: 2000
+          });
+        }
         return false;
       }
     } catch (error) {
-      console.error('❌ Error saving to Google Drive:', error);
-      toast.error(t('vocabulary.save.errors.googleDriveFailed', 'Google Drive save failed') || `Google Drive error: ${(error as Error).message}`);
+      console.error('❌ Ultra-fast Google Drive error:', error);
+      // Reduced error toast frequency for better UX
+      if (Math.random() < 0.1) {
+        toast.error(t('vocabulary.save.errors.googleDriveFailed', 'Google Drive save failed') || 'Google Drive error', {
+          timeout: 2000
+        });
+      }
       return false;
     }
   };
@@ -848,11 +889,25 @@ export function useVocabularySaving() {
       
       if (result) {
         toast.success(t('vocabulary.save.googleSignInSuccess', 'Successfully signed in to Google') || 'Successfully signed in to Google');
+        
         // Check if backup exists
         const backupInfo = await googleDriveApi.getVocabularyBackupInfo();
         if (backupInfo.exists) {
           hasGoogleDriveFile.value = true;
           setStoredValue('vocabulary-has-google-drive-file', true);
+        }
+        
+        // 🚀 IMMEDIATE AUTO SAVE after successful Google sign-in
+        console.log('⚡ Triggering immediate auto-save after Google sign-in...');
+        if (autoSaveEnabled.value && storageType.value === 'google-drive') {
+          // Use immediate save (no debounce) for instant response
+          debounceAutoSave(true);
+          
+          // Also schedule regular auto-save to start immediately
+          if (autoSaveTimer) clearTimeout(autoSaveTimer);
+          scheduleAutoSave();
+          
+          console.log('✅ Immediate auto-save triggered after Google sign-in');
         }
       } else {
         toast.error(t('vocabulary.save.errors.googleSignInFailed', 'Google sign-in failed') || 'Google sign-in failed');
