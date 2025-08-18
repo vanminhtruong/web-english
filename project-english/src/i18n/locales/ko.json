@@ -407,6 +407,13 @@
         "viewDetails": "자세히 보기",
         "noDetails": "세부 정보가 없습니다",
         "deleteSession": "세션 삭제",
+        "confirmDelete": {
+          "title": "세션 삭제",
+          "message": "이 연습 세션을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+          "confirm": "삭제",
+          "cancel": "취소",
+          "success": "세션이 성공적으로 삭제되었습니다"
+        },
         "details": {
           "title": "세션 세부 정보",
           "noData": "이 세션에 대한 세부 정보가 없습니다",

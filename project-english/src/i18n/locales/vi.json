@@ -465,6 +465,13 @@
       "viewDetails": "Xem chi tiết",
       "noDetails": "Không có chi tiết",
       "deleteSession": "Xóa phiên luyện tập",
+      "confirmDelete": {
+        "title": "Xóa Phiên Luyện Tập",
+        "message": "Bạn có chắc chắn muốn xóa phiên luyện tập này? Hành động này không thể hoàn tác.",
+        "confirm": "Xóa",
+        "cancel": "Hủy",
+        "success": "Đã xóa phiên luyện tập thành công"
+      },
       "details": {
         "title": "Chi tiết phiên luyện tập",
         "noData": "Không có chi tiết cho phiên luyện tập này",

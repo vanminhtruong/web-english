@@ -427,16 +427,24 @@ export class GoogleDriveAuth {
       
       console.log('🔄 Attempting silent token refresh...');
       
-      // Use prompt: '' for silent refresh (no user interaction)
+      // Use prompt: 'none' for true silent refresh (no user interaction at all)
       return new Promise((resolve) => {
         const originalCallback = this.tokenClient.callback;
+        let timeoutId: number | undefined;
         
         this.tokenClient.callback = (response: any) => {
           // Restore original callback
           this.tokenClient.callback = originalCallback;
+          if (timeoutId !== undefined) {
+            clearTimeout(timeoutId);
+          }
           
           if (response.error) {
             console.log('❌ Silent refresh failed:', response.error);
+            // If error indicates user interaction required, don't retry
+            if (response.error === 'interaction_required' || response.error === 'login_required') {
+              console.log('⚠️ Silent refresh requires user interaction, skipping');
+            }
             resolve(false);
           } else {
             console.log('✅ Silent refresh successful');
@@ -446,16 +454,20 @@ export class GoogleDriveAuth {
         };
         
         try {
-          this.tokenClient.requestAccessToken({ prompt: '' });
+          // Use prompt: 'none' for true silent refresh
+          this.tokenClient.requestAccessToken({ prompt: 'none' });
           
           // Set timeout for silent refresh
-          setTimeout(() => {
+          timeoutId = setTimeout(() => {
             this.tokenClient.callback = originalCallback;
             console.log('⏰ Silent refresh timeout');
             resolve(false);
-          }, 10000); // 10 second timeout
+          }, 5000); // Shorter 5 second timeout for silent operations
         } catch (error) {
           this.tokenClient.callback = originalCallback;
+          if (timeoutId !== undefined) {
+            clearTimeout(timeoutId);
+          }
           console.log('❌ Silent refresh request failed:', error);
           resolve(false);
         }
@@ -543,8 +555,15 @@ export class GoogleDriveAuth {
     // Refresh every 50 minutes
     this.autoRefreshTimer = window.setInterval(async () => {
       if (!isGoogleSignedIn.value) return;
-      console.log('⏱️ Auto-refresh timer triggered');
-      await this.attemptSilentRefresh();
+      
+      // Only refresh if token is actually near expiry
+      const needsRefresh = await this.shouldRefreshToken();
+      if (needsRefresh) {
+        console.log('⏱️ Auto-refresh timer triggered - token needs refresh');
+        await this.attemptSilentRefresh();
+      } else {
+        console.log('⏱️ Auto-refresh timer checked - token still valid');
+      }
     }, 50 * 60 * 1000);
     console.log('🕒 Auto-refresh timer started');
   }
@@ -559,15 +578,27 @@ export class GoogleDriveAuth {
 
   private visibilityHandler = async () => {
     if (document.visibilityState === 'visible' && isGoogleSignedIn.value) {
-      console.log('👀 Page visible, attempting silent refresh');
-      await this.attemptSilentRefresh();
+      // Only refresh if token is actually near expiry
+      const needsRefresh = await this.shouldRefreshToken();
+      if (needsRefresh) {
+        console.log('👀 Page visible, token needs refresh');
+        await this.attemptSilentRefresh();
+      } else {
+        console.log('👀 Page visible, token still valid');
+      }
     }
   };
 
   private onlineHandler = async () => {
     if (navigator.onLine && isGoogleSignedIn.value) {
-      console.log('🌐 Back online, attempting silent refresh');
-      await this.attemptSilentRefresh();
+      // Only refresh if token is actually near expiry
+      const needsRefresh = await this.shouldRefreshToken();
+      if (needsRefresh) {
+        console.log('🌐 Back online, token needs refresh');
+        await this.attemptSilentRefresh();
+      } else {
+        console.log('🌐 Back online, token still valid');
+      }
     }
   };
 
@@ -581,6 +612,42 @@ export class GoogleDriveAuth {
     document.removeEventListener('visibilitychange', this.visibilityHandler);
     window.removeEventListener('online', this.onlineHandler);
     console.log('🔌 Lifecycle listeners detached');
+  }
+
+  /**
+   * Check if token actually needs refreshing
+   */
+  private async shouldRefreshToken(): Promise<boolean> {
+    try {
+      // Check if we have a current token
+      const currentToken = this.gapi?.client?.getToken()?.access_token;
+      if (!currentToken) {
+        console.log('🔍 No current token, refresh needed');
+        return true;
+      }
+
+      // Check token age from localStorage
+      const savedToken = localStorage.getItem(GOOGLE_TOKEN_KEY);
+      if (!savedToken) {
+        console.log('🔍 No saved token data, refresh needed');
+        return true;
+      }
+
+      const tokenData = JSON.parse(savedToken);
+      const tokenAge = Date.now() - (tokenData.timestamp || 0);
+      const isNearExpiry = tokenAge > (45 * 60 * 1000); // 45 minutes - more conservative
+      
+      if (isNearExpiry) {
+        console.log('🔍 Token is near expiry, refresh needed');
+        return true;
+      }
+
+      console.log('🔍 Token is still valid, no refresh needed');
+      return false;
+    } catch (error) {
+      console.error('❌ Error checking token refresh need:', error);
+      return false; // Don't refresh if we can't determine
+    }
   }
 }
 

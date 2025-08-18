@@ -324,17 +324,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import { useVocabularyStore } from '../../composables/useVocabularyStore'
 import type { Vocabulary } from '../../composables/useVocabularyStore'
 import { getDateKey } from '../../utils/dateUtils'
 import { useModalStore } from '../../stores/modalStore'
 
-// Initialize i18n
+const ConfirmToast = defineAsyncComponent(() => import('../../components/common/ConfirmToast.vue'))
+
+// Initialize i18n and toast
 const { t } = useI18n()
 const router = useRouter()
+const toast = useToast()
 
 // Single-line import of all async components (local composable)
 import AsyncComponents from './composables/asyncComponents'
@@ -380,9 +384,32 @@ const openHistoryDetails = (sessionId: string) => {
   showSessionDetail.value = true
 }
 
-// Handle delete session from history modal
+// Handle delete session from history modal with confirmation
 const handleDeleteSession = (sessionId: string) => {
-  deleteSession(sessionId)
+  const toastId = toast(
+    {
+      component: ConfirmToast,
+      props: {
+        message: t('flashcard.history.confirmDelete.message', 'Are you sure you want to delete this practice session? This action cannot be undone.'),
+        confirmText: t('flashcard.history.confirmDelete.confirm', 'Delete'),
+        cancelText: t('flashcard.history.confirmDelete.cancel', 'Cancel'),
+        onConfirm: () => {
+          deleteSession(sessionId)
+          toast.success(t('flashcard.history.confirmDelete.success', 'Session deleted successfully'))
+          toast.dismiss(toastId)
+        },
+        onCancel: () => {
+          toast.dismiss(toastId)
+        }
+      }
+    },
+    {
+      timeout: 0,
+      closeOnClick: false,
+      showCloseButtonOnHover: false,
+      hideProgressBar: true
+    }
+  )
 }
 
 // Date filter state with localStorage persistence

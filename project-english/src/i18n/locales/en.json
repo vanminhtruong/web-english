@@ -420,6 +420,13 @@
       "viewDetails": "View details",
       "noDetails": "No details available",
       "deleteSession": "Delete session",
+      "confirmDelete": {
+        "title": "Delete Session",
+        "message": "Are you sure you want to delete this practice session? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "success": "Session deleted successfully"
+      },
       "details": {
         "title": "Session Details",
         "noData": "No details available for this session",
