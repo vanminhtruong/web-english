@@ -153,9 +153,17 @@
       "collapse": "Thu gọn nhóm",
       "addTopic": "Thêm chủ đề",
       "editTopic": "Sửa chủ đề",
-      "topicPlaceholder": "Nhập chủ đề cho nhóm này...",
       "saveTopic": "Lưu chủ đề",
-      "cancelTopic": "Hủy"
+      "cancelTopic": "Hủy",
+      "topicPlaceholder": "Nhập tên chủ đề..."
+    },
+    "progress": {
+      "dailyTarget": "Mục tiêu hàng ngày: {target} từ",
+      "wordsLearned": "Từ đã học: {count}",
+      "percentage": "Hoàn thành {percent}%",
+      "completed": "Đã hoàn thành!",
+      "noProgress": "Chưa luyện tập",
+      "tooltip": "Tiến trình học tập hàng ngày: {learned}/{target} từ ({percent}%)"
     },
     "sameTopicDatesTitle": "Các ngày có cùng chủ đề",
     "sameTopicDatesEmpty": "Không tìm thấy ngày nào khác cho chủ đề này",

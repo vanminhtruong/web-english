@@ -131,12 +131,18 @@
     },
     "accordion": {
       "expand": "Expand group",
-      "collapse": "Collapse group",
-      "addTopic": "Add Topic",
       "editTopic": "Edit Topic",
-      "topicPlaceholder": "Enter topic for this group...",
       "saveTopic": "Save Topic",
-      "cancelTopic": "Cancel"
+      "cancelTopic": "Cancel",
+      "topicPlaceholder": "Enter topic name..."
+    },
+    "progress": {
+      "dailyTarget": "Daily Target: {target} words",
+      "wordsLearned": "Words learned: {count}",
+      "percentage": "{percent}% complete",
+      "completed": "Completed!",
+      "noProgress": "No practice yet",
+      "tooltip": "Daily learning progress: {learned}/{target} words ({percent}%)"
     },
     "sameTopicDatesTitle": "Dates with same topic",
     "sameTopicDatesEmpty": "No other dates found for this topic",

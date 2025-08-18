@@ -136,9 +136,17 @@
         "collapse": "그룹 접기",
         "addTopic": "주제 추가",
         "editTopic": "주제 편집",
-        "topicPlaceholder": "이 그룹의 주제를 입력하세요...",
         "saveTopic": "주제 저장",
-        "cancelTopic": "취소"
+        "cancelTopic": "취소",
+        "topicPlaceholder": "주제 이름 입력..."
+      },
+      "progress": {
+        "dailyTarget": "일일 목표: {target}개 단어",
+        "wordsLearned": "학습한 단어: {count}개",
+        "percentage": "{percent}% 완료",
+        "completed": "완료!",
+        "noProgress": "아직 학습하지 않음",
+        "tooltip": "일일 학습 진행상황: {learned}/{target}개 단어 ({percent}%)"
       },
       "sameTopicDatesTitle": "같은 주제의 다른 날짜",
       "sameTopicDatesEmpty": "이 주제의 다른 날짜가 없습니다",

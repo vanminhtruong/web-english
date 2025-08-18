@@ -32,6 +32,16 @@
               <span class="text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
                 ({{ totalVocabularyCount }})
               </span>
+              <!-- Daily progress indicator (mobile header) moved to the right of count -->
+              <span class="inline-flex items-center ml-1.5 xs:ml-2">
+                <CircularProgress
+                  :percentage="headerProgress.percentage"
+                  :size="26"
+                  :stroke-width="1.5"
+                  :show-text="true"
+                  :title="headerProgressTooltip"
+                />
+              </span>
             </h4>
           </div>
 
@@ -225,6 +235,16 @@
             <span>{{ group.displayDate }}</span>
             <span class="text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
               ({{ totalVocabularyCount }} {{ t('vocabulary.words', 'words') }})
+            </span>
+            <!-- Daily progress indicator (desktop/tablet header) moved to the right of count -->
+            <span class="inline-flex items-center ml-1.5 xs:ml-2">
+              <CircularProgress
+                :percentage="headerProgress.percentage"
+                :size="28"
+                :stroke-width="1.5"
+                :show-text="true"
+                :title="headerProgressTooltip"
+              />
             </span>
           </h4>
         </div>
@@ -783,6 +803,7 @@ import { loadComponentSafely } from '../../../utils/import-helper'
 import type { GroupedVocabulary } from '../../../utils/dateUtils'
 import { getTopicName } from '../../../utils/topicUtils'
 import { getDateKey } from '../../../utils/dateUtils'
+import { useDailyProgress } from '../composables/useDailyProgress'
 
 const { t, locale } = useI18n()
 
@@ -798,6 +819,11 @@ const VocabularyNoteButton = defineAsyncComponent(
 
 // Async component imports
 const GrammarManagerButton = defineAsyncComponent(() => loadComponentSafely(() => import('./GrammarManagerButton.vue'))())
+
+// Circular progress indicator (async)
+const CircularProgress = defineAsyncComponent(
+  loadComponentSafely(() => import('../../../components/CircularProgress.vue'))
+)
 
 
 
@@ -841,6 +867,35 @@ const isTodayGroup = computed(() => {
   const todayKey = getDateKey(today.toISOString());
   return props.group.date === todayKey;
 });
+
+// Daily vocabulary learning progress for this date group
+const { getDailyProgress, DAILY_TARGET } = useDailyProgress()
+const dailyProgress = computed(() => getDailyProgress(props.group.date))
+
+// Header progress based on vocabulary count vs daily target
+const headerProgress = computed(() => {
+  const count = totalVocabularyCount.value
+  const percentage = Math.min((count / DAILY_TARGET) * 100, 100)
+  return {
+    percentage: Math.round(percentage),
+    wordsLearned: dailyProgress.value.wordsLearned,
+    totalWords: DAILY_TARGET
+  }
+})
+
+// Localized tooltip text for progress indicator
+const progressTooltip = computed(() => {
+  const pctLabel = t('progress.percentage', 'Percentage')
+  const learnedLabel = t('progress.wordsLearned', 'Words learned')
+  return `${pctLabel}: ${dailyProgress.value.percentage}% · ${learnedLabel}: ${dailyProgress.value.wordsLearned}/${dailyProgress.value.totalWords}`
+})
+
+// Tooltip for header progress (based on vocabulary count)
+const headerProgressTooltip = computed(() => {
+  const pctLabel = t('progress.percentage', 'Percentage')
+  const vocabLabel = t('vocabulary.words', 'Words')
+  return `${pctLabel}: ${headerProgress.value.percentage}% · ${totalVocabularyCount.value}/${DAILY_TARGET} ${vocabLabel}`
+})
 
 // Check if topic text is truncated
 const isTopicTruncated = computed(() => {
