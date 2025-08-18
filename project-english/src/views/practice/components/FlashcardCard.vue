@@ -3,7 +3,7 @@
     <div
       :class="['flashcard', { 'flipped': isFlipped }]"
       @click="!scrambleWordsEnabled && $emit('flip-card')"
-      class="relative w-full cursor-pointer h-80 sm:h-96 md:h-[28rem] select-none"
+      class="relative w-full cursor-pointer h-80 sm:h-96 md:h-[28rem] xl:h-[30rem] 2xl:h-[32rem] select-none"
       @copy.prevent
       @cut.prevent
       @contextmenu.prevent
@@ -13,7 +13,7 @@
       <div class="flashcard-face flashcard-front absolute inset-0 bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div class="text-center">
           <div class="mb-3 sm:mb-4 md:mb-5">
-            <span class="px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 bg-blue-100 dark:bg-gray-800 text-blue-800 dark:text-blue-300 text-xs sm:text-sm md:text-base font-medium rounded-full">
+            <span class="px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 xl:px-3 xl:py-1 2xl:px-3 2xl:py-1 bg-blue-100 dark:bg-gray-800 text-blue-800 dark:text-blue-300 text-xs sm:text-sm md:text-base xl:text-sm 2xl:text-sm font-medium rounded-full">
               {{ getTopicName(currentCard.category) }}
             </span>
           </div>
@@ -33,20 +33,20 @@
           
           <!-- Scramble Words Mode -->
           <template v-else>
-            <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4">
+            <h3 class="text-base sm:text-lg md:text-xl xl:text-lg 2xl:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4 xl:mb-3 2xl:mb-3">
               {{ t('flashcard.scrambleWords.instruction', 'Arrange the letters to form the word') }}
             </h3>
-            <p class="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 mb-4 sm:mb-5 md:mb-6">
+            <p class="text-sm sm:text-base md:text-lg xl:text-base 2xl:text-lg text-gray-600 dark:text-gray-300 mb-4 sm:mb-5 md:mb-6 xl:mb-4 2xl:mb-5">
               {{ currentCard.pronunciation }}
             </p>
             
             <!-- User's assembled word -->
-            <div class="mb-4 sm:mb-5 md:mb-6">
-              <div class="flex flex-wrap justify-center items-center gap-1 sm:gap-2 mb-2 sm:mb-3 md:mb-4 min-h-[3rem] max-w-full px-2 sm:px-0">
+            <div class="mb-4 sm:mb-5 md:mb-6 xl:mb-4 2xl:mb-5">
+              <div class="flex flex-wrap justify-center items-center gap-1 sm:gap-2 xl:gap-1.5 2xl:gap-2 mb-2 sm:mb-3 md:mb-4 xl:mb-3 2xl:mb-3 min-h-[3rem] xl:min-h-[2.5rem] 2xl:min-h-[3rem] max-w-full px-2 sm:px-0">
                 <div 
                   v-for="(letter, index) in assembledWord" 
                   :key="`assembled-${index}`"
-                  class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 border-2 border-gray-300 dark:border-dark-bg-mute rounded-lg flex items-center justify-center bg-blue-50 dark:bg-[#0f0f0f] text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white cursor-pointer hover:bg-blue-100 dark:hover:bg-[#1a1a1a] transition-colors"
+                  class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 border-2 border-gray-300 dark:border-dark-bg-mute rounded-lg flex items-center justify-center bg-blue-50 dark:bg-[#0f0f0f] text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-2xl font-bold text-gray-900 dark:text-white cursor-pointer hover:bg-blue-100 dark:hover:bg-[#1a1a1a] transition-colors"
                   @click="removeLetter(index)"
                 >
                   {{ letter }}
@@ -55,7 +55,7 @@
                 <div 
                   v-for="n in Math.max(0, currentCard.word.length - assembledWord.length)" 
                   :key="`empty-${n}`"
-                  class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 border-2 border-dashed border-gray-300 dark:border-dark-bg-mute rounded-lg bg-gray-50 dark:bg-[#0f0f0f]"
+                  class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 border-2 border-dashed border-gray-300 dark:border-dark-bg-mute rounded-lg bg-gray-50 dark:bg-[#0f0f0f]"
                 ></div>
               </div>
               
@@ -94,12 +94,12 @@
             </div>
             
             <!-- Scrambled letters to choose from -->
-            <div class="flex justify-center flex-wrap gap-2 sm:gap-3 md:gap-4 xl:gap-3 2xl:gap-3 mb-4 sm:mb-5 md:mb-6 px-2 sm:px-4 md:px-6 xl:px-8 2xl:px-12 max-w-full">
+            <div class="flex justify-center flex-wrap gap-2 sm:gap-3 md:gap-4 xl:gap-2 2xl:gap-2.5 mb-4 sm:mb-5 md:mb-6 xl:mb-4 2xl:mb-4 px-2 sm:px-4 md:px-6 xl:px-4 2xl:px-6 max-w-full">
               <button 
                 v-for="(letter, index) in availableLetters" 
                 :key="`scrambled-${index}`"
                 v-show="!letter.used"
-                class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 border-2 border-gray-400 dark:border-dark-bg-soft rounded-lg flex items-center justify-center bg-white dark:bg-[#0f0f0f] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
+                class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 border-2 border-gray-400 dark:border-dark-bg-soft rounded-lg flex items-center justify-center bg-white dark:bg-[#0f0f0f] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-2xl font-bold text-gray-900 dark:text-white cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
                 @click="selectLetter(index)"
                 :disabled="scrambleAnswered && scrambleCorrect"
               >
@@ -108,28 +108,28 @@
             </div>
             
             <!-- Control buttons -->
-            <div class="flex flex-wrap justify-center gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4 max-w-full">
+            <div class="flex flex-wrap justify-center gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 xl:gap-2 2xl:gap-3 px-2 sm:px-4 xl:px-2 2xl:px-4 max-w-full">
               <button 
                 @click="backspaceAssembledWord"
-                class="px-2 py-1 xs:px-2 xs:py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-md sm:rounded-lg transition-colors flex items-center gap-1 sm:gap-2 min-w-0 flex-shrink-0"
+                class="px-2 py-1 xs:px-2 xs:py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 xl:px-3 xl:py-2 2xl:px-4 2xl:py-2.5 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white text-xs sm:text-sm md:text-base xl:text-sm 2xl:text-base font-semibold rounded-md sm:rounded-lg transition-colors flex items-center gap-1 sm:gap-2 xl:gap-1 2xl:gap-2 min-w-0 flex-shrink-0"
                 :disabled="assembledWord.length === 0 || (scrambleAnswered && scrambleCorrect)"
                 :title="t('flashcard.scrambleWords.backspace', 'Backspace')"
               >
-                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-3 h-3 sm:w-4 sm:h-4 xl:w-3 xl:h-3 2xl:w-4 2xl:h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M6.707 4.879A3 3 0 018.828 4H15a3 3 0 013 3v6a3 3 0 01-3 3H8.828a3 3 0 01-2.12-.879l-4.415-4.414a1 1 0 010-1.414l4.414-4.414zm4 3.707a1 1 0 00-1.414-1.414L8 8.586 6.707 7.293a1 1 0 10-1.414 1.414L6.586 10l-1.293 1.293a1 1 0 101.414 1.414L8 11.414l1.293 1.293a1 1 0 001.414-1.414L9.414 10l1.293-1.293z" clip-rule="evenodd"/>
                 </svg>
                 <span class="hidden xs:hidden sm:inline">{{ t('flashcard.scrambleWords.backspace', 'Backspace') }}</span>
               </button>
               <button 
                 @click="clearAssembledWord"
-                class="px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-md sm:rounded-lg transition-colors min-w-0 flex-shrink-0"
+                class="px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 xl:px-4 xl:py-2 2xl:px-5 2xl:py-2.5 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white text-xs sm:text-sm md:text-base xl:text-sm 2xl:text-base font-semibold rounded-md sm:rounded-lg transition-colors min-w-0 flex-shrink-0"
                 :disabled="assembledWord.length === 0 || (scrambleAnswered && scrambleCorrect)"
               >
                 {{ t('flashcard.scrambleWords.clear', 'Clear') }}
               </button>
               <button 
                 @click="checkScrambleAnswer"
-                class="px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-md sm:rounded-lg transition-colors min-w-0 flex-shrink-0"
+                class="px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 xl:px-4 xl:py-2 2xl:px-5 2xl:py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base xl:text-sm 2xl:text-base font-semibold rounded-md sm:rounded-lg transition-colors min-w-0 flex-shrink-0"
                 :disabled="assembledWord.length !== currentCard.word.length || (scrambleAnswered && scrambleCorrect)"
               >
                 {{ t('flashcard.scrambleWords.check', 'Check') }}
@@ -200,6 +200,7 @@ const emit = defineEmits<{
   'flip-card': []
   'next-card': []
   'show-results': []
+  'scramble-answer': [isCorrect: boolean]
 }>()
 
 // Firework/Sound effect (reuse existing project component)
@@ -510,6 +511,9 @@ const checkScrambleAnswer = async () => {
     scrambleCorrect: scrambleCorrect.value
   })
 
+  // Emit scramble answer result to parent for stats tracking
+  emit('scramble-answer', scrambleCorrect.value)
+  
   if (scrambleCorrect.value) {
     // Correct answer: green fireworks + voice + auto-advance
     isCorrectAnswer.value = true
@@ -600,7 +604,6 @@ const checkScrambleAnswer = async () => {
 .flashcard-front [role="button"],
 .flashcard-front .cursor-pointer {
   -webkit-tap-highlight-color: transparent;
-  tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   touch-action: manipulation;
   outline: none;

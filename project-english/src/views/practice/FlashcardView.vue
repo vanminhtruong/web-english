@@ -116,6 +116,7 @@
                     @flip-card="flipCard"
                     @next-card="enhancedNextCard"
                     @show-results="completeSession"
+                    @scramble-answer="handleScrambleAnswer"
                   />
                 </template>
                 <template v-else-if="practiceMode === 'pictionary'">
@@ -1440,6 +1441,21 @@ const handlePictionaryAnswer = () => {
     setTimeout(() => {
       enhancedNextCard()
     }, 2100)
+  }
+}
+
+const handleScrambleAnswer = (isCorrect: boolean) => {
+  recordAnswer(isCorrect)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: 'scrambled', // User assembled the scrambled word
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: isCorrect,
+      mode: 'scramble-words',
+    })
   }
 }
 
