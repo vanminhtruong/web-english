@@ -29,7 +29,7 @@
                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
               </svg>
               <span>{{ group.displayDate }}</span>
-              <span class="text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
+              <span class="text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base font-semibold transition-colors duration-300" :class="vocabularyCountColor">
                 ({{ totalVocabularyCount }})
               </span>
               <!-- Daily progress indicator (mobile header) moved to the right of count -->
@@ -233,7 +233,7 @@
               <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
             </svg>
             <span>{{ group.displayDate }}</span>
-            <span class="text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
+            <span class="text-xs xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-sm 2xl:text-base font-semibold transition-colors duration-300" :class="vocabularyCountColor">
               ({{ totalVocabularyCount }} {{ t('vocabulary.words', 'words') }})
             </span>
             <!-- Daily progress indicator (desktop/tablet header) moved to the right of count -->
@@ -895,6 +895,34 @@ const headerProgressTooltip = computed(() => {
   const pctLabel = t('progress.percentage', 'Percentage')
   const vocabLabel = t('vocabulary.words', 'Words')
   return `${pctLabel}: ${headerProgress.value.percentage}% · ${totalVocabularyCount.value}/${DAILY_TARGET} ${vocabLabel}`
+})
+
+// Color coding for vocabulary count based on groups of 10
+const vocabularyCountColor = computed(() => {
+  const count = totalVocabularyCount.value
+  const group = Math.floor(count / 10)
+  
+  // Color progression: red → orange → yellow → green → blue → purple
+  const colors = [
+    // 0-9 words: Red
+    { light: 'text-red-600', dark: 'dark:text-red-400' },
+    // 10-19 words: Orange  
+    { light: 'text-orange-600', dark: 'dark:text-orange-400' },
+    // 20-29 words: Yellow
+    { light: 'text-yellow-600', dark: 'dark:text-yellow-400' },
+    // 30-39 words: Green
+    { light: 'text-green-600', dark: 'dark:text-green-400' },
+    // 40-49 words: Blue
+    { light: 'text-blue-600', dark: 'dark:text-blue-400' },
+    // 50+ words: Purple
+    { light: 'text-purple-600', dark: 'dark:text-purple-400' }
+  ]
+  
+  // Return color for the appropriate group (max index 5 for 50+)
+  const colorIndex = Math.min(group, colors.length - 1)
+  const color = colors[colorIndex]
+  
+  return `${color.light} ${color.dark}`
 })
 
 // Check if topic text is truncated

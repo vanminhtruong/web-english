@@ -181,10 +181,15 @@ export class GoogleDriveApi {
           form.append('file', blob);
 
           const controller = new AbortController();
+          // Dynamic timeout: 1min base + 1min per MB, max 10min
+          const timeoutMs = Math.max(60000, Math.min(600000, 60000 + (dataSizeKB * 60))); // 1-10min range
+          const timeoutMinutes = Math.round(timeoutMs / 60000);
+          
+          console.log(`⏱️ Setting ${timeoutMinutes} minute timeout for ${dataSizeKB}KB file`);
           const timeoutId = setTimeout(() => {
-            console.log('⏰ Upload timeout, aborting request...');
+            console.log(`⏰ Upload timeout after ${timeoutMinutes} minutes, aborting request...`);
             controller.abort();
-          }, dataSizeKB > 1000 ? 120000 : 60000); // 2min for large files, 1min for small
+          }, timeoutMs);
 
           try {
             const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFile.id}?uploadType=multipart&fields=id,name,modifiedTime,size`, {
@@ -202,7 +207,7 @@ export class GoogleDriveApi {
           } catch (error) {
             clearTimeout(timeoutId);
             if ((error as Error).name === 'AbortError') {
-              throw new Error(`Upload timeout after ${dataSizeKB > 1000 ? 2 : 1} minutes`);
+              throw new Error(`Upload timeout after ${timeoutMinutes} minutes for ${dataSizeKB}KB file`);
             }
             throw error;
           }
@@ -231,10 +236,15 @@ export class GoogleDriveApi {
           form.append('file', blob);
 
           const controller = new AbortController();
+          // Dynamic timeout: 1min base + 1min per MB, max 10min
+          const timeoutMs = Math.max(60000, Math.min(600000, 60000 + (dataSizeKB * 60))); // 1-10min range
+          const timeoutMinutes = Math.round(timeoutMs / 60000);
+          
+          console.log(`⏱️ Setting ${timeoutMinutes} minute timeout for ${dataSizeKB}KB file`);
           const timeoutId = setTimeout(() => {
-            console.log('⏰ Upload timeout, aborting request...');
+            console.log(`⏰ Upload timeout after ${timeoutMinutes} minutes, aborting request...`);
             controller.abort();
-          }, dataSizeKB > 1000 ? 120000 : 60000); // 2min for large files, 1min for small
+          }, timeoutMs);
 
           try {
             const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime,size', {
@@ -252,7 +262,7 @@ export class GoogleDriveApi {
           } catch (error) {
             clearTimeout(timeoutId);
             if ((error as Error).name === 'AbortError') {
-              throw new Error(`Upload timeout after ${dataSizeKB > 1000 ? 2 : 1} minutes`);
+              throw new Error(`Upload timeout after ${timeoutMinutes} minutes for ${dataSizeKB}KB file`);
             }
             throw error;
           }

@@ -774,8 +774,11 @@ export function useVocabularySaving() {
       
       // Retry logic for Google Drive operations
       let lastError: any = null;
-      for (let attempt = 1; attempt <= 3; attempt++) {
+      const maxAttempts = 2; // Reduce retries for large files to avoid excessive wait times
+      
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
+          console.log(`📤 Google Drive upload attempt ${attempt}/${maxAttempts}...`);
           const result = await googleDriveApi.uploadVocabularyData(data);
           
           if (result.success) {
@@ -787,6 +790,12 @@ export function useVocabularySaving() {
             lastError = result.error;
             console.error(`❌ Google Drive save failed (attempt ${attempt}):`, result.error);
             
+            // Don't retry on timeout errors - they indicate file is too large or connection too slow
+            if (result.error?.includes('timeout')) {
+              console.log('⏰ Upload timeout detected, stopping retries to avoid excessive wait');
+              break;
+            }
+            
             // If it's an auth error, try to refresh token and retry
             if (result.error?.includes('401') || result.error?.includes('unauthorized')) {
               console.log('🔄 Auth error detected, refreshing token...');
@@ -797,27 +806,42 @@ export function useVocabularySaving() {
               }
             }
             
-            // Wait before retry (exponential backoff)
-            if (attempt < 3) {
-              await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            // Wait before retry (shorter backoff for large files)
+            if (attempt < maxAttempts) {
+              console.log(`⏳ Waiting ${attempt * 2}s before retry...`);
+              await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
             }
           }
         } catch (apiError) {
           lastError = apiError;
-          console.error(`❌ Google Drive API error (attempt ${attempt}):`, apiError);
+          const errorMsg = (apiError as Error)?.message || String(apiError);
+          console.error(`❌ Google Drive API error (attempt ${attempt}):`, errorMsg);
           
-          // For network errors, retry. For auth errors, try token refresh
-          if (attempt < 3) {
-            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          // Don't retry on timeout errors
+          if (errorMsg.includes('timeout')) {
+            console.log('⏰ API timeout detected, stopping retries');
+            break;
+          }
+          
+          // For other errors, retry with backoff
+          if (attempt < maxAttempts) {
+            console.log(`⏳ Waiting ${attempt * 2}s before retry...`);
+            await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
           }
         }
       }
       
       // All retries failed
-      console.error('❌ All Google Drive save attempts failed:', lastError);
+      const errorMsg = lastError?.message || String(lastError);
+      console.error('❌ All Google Drive auto-save attempts failed:', errorMsg);
       
-      // Only show error toast if it's a manual save operation (not auto-save)
-      // Auto-save failures should be silent to avoid annoying the user
+      // Log specific timeout issues for debugging
+      if (errorMsg?.includes('timeout')) {
+        const dataSize = Math.round(JSON.stringify(data).length / 1024);
+        console.warn(`⚠️ Auto-save failed due to timeout for ${dataSize}KB file. Consider reducing vocabulary size or checking internet connection.`);
+      }
+      
+      // Auto-save failures are silent to avoid annoying the user
       return false;
       
     } catch (error) {
