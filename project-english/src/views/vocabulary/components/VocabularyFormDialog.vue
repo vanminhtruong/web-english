@@ -893,7 +893,7 @@ watch(() => props.modelValue, (newValue) => {
 
 // Function to get topic display name
 const getTopicDisplayName = (category: string): string => {
-  return getTopicName(category)
+  return getTopicName(category, t, locale)
 }
 
 // Category dropdown functions

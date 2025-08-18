@@ -8,11 +8,9 @@ export interface CustomTopic {
 
 /**
  * Get the translated name of a topic/category based on current locale
- * Also accepts a vocabulary object with categoryName for imported data
+ * This version accepts t and locale as parameters to avoid composable issues
  */
-export function getTopicName(categoryKey: string, vocabularyItem?: any): string {
-  const { t, locale } = useI18n()
-  
+export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabularyItem?: any): string {
   // If vocabulary item has categoryName from imported data, use it first
   if (vocabularyItem && vocabularyItem.categoryName) {
     return vocabularyItem.categoryName
@@ -24,20 +22,22 @@ export function getTopicName(categoryKey: string, vocabularyItem?: any): string 
   
   if (customTopic) {
     // Return the name based on current locale
-    return locale.value === 'vi' ? customTopic.vi : customTopic.en
+    const currentLocale = locale?.value || 'en'
+    return currentLocale === 'vi' ? customTopic.vi : customTopic.en
   }
   
-  // Check if it's a built-in category with translation
-  // Correct translation path for categories
-  const translationKey = `vocabulary.categories.${categoryKey}`
-  const translatedName = t(translationKey)
-  
-  // If translation exists and is not the same as the key, return it
-  if (translatedName && translatedName !== translationKey) {
-    return translatedName
+  // Check if it's a built-in category with translation (if t function provided)
+  if (t) {
+    const translationKey = `vocabulary.categories.${categoryKey}`
+    const translatedName = t(translationKey)
+    
+    // If translation exists and is not the same as the key, return it
+    if (translatedName && translatedName !== translationKey) {
+      return translatedName
+    }
   }
   
-  // For built-in categories, use hardcoded fallback if translation fails
+  // For built-in categories, use hardcoded fallback
   const builtInCategories: { [key: string]: { vi: string, en: string } } = {
     'technology': { vi: 'Công nghệ', en: 'Technology' },
     'business': { vi: 'Kinh doanh', en: 'Business' },
@@ -58,7 +58,8 @@ export function getTopicName(categoryKey: string, vocabularyItem?: any): string 
   }
   
   if (builtInCategories[categoryKey]) {
-    return locale.value === 'vi' ? builtInCategories[categoryKey].vi : builtInCategories[categoryKey].en
+    const currentLocale = locale?.value || 'en'
+    return currentLocale === 'vi' ? builtInCategories[categoryKey].vi : builtInCategories[categoryKey].en
   }
   
   // Fallback to the category key itself (capitalized)
@@ -68,9 +69,7 @@ export function getTopicName(categoryKey: string, vocabularyItem?: any): string 
 /**
  * Get all available topics (built-in + custom) with their translated names
  */
-export function getAllTopicsWithNames(): Array<{ key: string; name: string }> {
-  const { t } = useI18n()
-  
+export function getAllTopicsWithNames(t?: any, locale?: any): Array<{ key: string; name: string }> {
   // Built-in categories
   const builtInCategories = [
     'technology', 'business', 'travel', 'food', 'health', 'education', 
@@ -84,7 +83,7 @@ export function getAllTopicsWithNames(): Array<{ key: string; name: string }> {
   builtInCategories.forEach(key => {
     result.push({
       key,
-      name: getTopicName(key)
+      name: getTopicName(key, t, locale)
     })
   })
   
@@ -93,7 +92,7 @@ export function getAllTopicsWithNames(): Array<{ key: string; name: string }> {
   customTopics.forEach(topic => {
     result.push({
       key: topic.key,
-      name: getTopicName(topic.key)
+      name: getTopicName(topic.key, t, locale)
     })
   })
   
@@ -145,16 +144,16 @@ export function isBuiltInTopic(categoryKey: string): boolean {
  * This function is reactive to locale changes
  */
 export function useTopicName() {
-  const { locale } = useI18n()
+  const { t, locale } = useI18n()
   
   return {
     getTopicName: (categoryKey: string) => {
       // Re-compute when locale changes
-      return getTopicName(categoryKey)
+      return getTopicName(categoryKey, t, locale)
     },
     getAllTopicsWithNames: () => {
       // Re-compute when locale changes
-      return getAllTopicsWithNames()
+      return getAllTopicsWithNames(t, locale)
     },
     currentLocale: locale
   }
