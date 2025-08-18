@@ -25,6 +25,7 @@ export class GoogleDriveAuth {
   private static instance: GoogleDriveAuth;
   private gapi: any = null;
   private tokenClient: any = null;
+  private autoRefreshTimer: number | null = null;
 
   private constructor() {
     // Restore saved auth state on initialization
@@ -58,22 +59,20 @@ export class GoogleDriveAuth {
         const tokenAge = Date.now() - (tokenData.timestamp || 0);
         const isTokenExpired = tokenAge > (55 * 60 * 1000); // 55 minutes to be safe
         
-        if (isTokenExpired) {
-          console.log('⏰ Saved Google token expired, clearing...');
-          this.clearSavedAuthState();
-          return;
-        }
-        
-        // Restore state
+        // Persist login state even if token is expired; we'll refresh later
         googleUser.value = userData;
         isGoogleSignedIn.value = true;
-        console.log('✅ Google authentication state restored from localStorage');
+        if (isTokenExpired) {
+          console.log('⏰ Saved Google token expired, will attempt silent refresh later');
+        } else {
+          console.log('✅ Google authentication state restored from localStorage');
+        }
       } else {
         console.log('ℹ️ No saved Google authentication state found');
       }
     } catch (error) {
       console.error('❌ Error loading saved auth state:', error);
-      this.clearSavedAuthState();
+      // Do not clear saved state aggressively; keep as-is to allow later recovery
     }
   }
 
@@ -142,6 +141,12 @@ export class GoogleDriveAuth {
       
       // Restore saved token to gapi if available
       await this.restoreTokenToGapi();
+
+      // Start auto refresh if user is signed in
+      if (isGoogleSignedIn.value) {
+        this.startAutoRefresh();
+        this.attachLifecycleListeners();
+      }
     } catch (error) {
       console.error('❌ Failed to initialize Google APIs:', error);
       authError.value = 'Failed to initialize Google APIs';
@@ -174,10 +179,9 @@ export class GoogleDriveAuth {
           console.log('⏰ Token expired during restoration, attempting silent refresh...');
           const refreshSuccess = await this.attemptSilentRefresh();
           if (!refreshSuccess) {
-            this.clearSavedAuthState();
-            isGoogleSignedIn.value = false;
-            googleUser.value = null;
-            authError.value = 'Token expired and refresh failed';
+            // Keep login state; user may need to interact later, but do not clear saved state
+            console.log('⚠️ Silent refresh failed during restoration. Keeping saved login state.');
+            authError.value = 'Token expired; will require refresh on next action';
           }
         }
       }
@@ -324,6 +328,8 @@ export class GoogleDriveAuth {
         const checkAuth = () => {
           if (isGoogleSignedIn.value) {
             clearTimeout(timeoutId);
+            this.startAutoRefresh();
+            this.attachLifecycleListeners();
             resolve(true);
           } else if (authError.value) {
             clearTimeout(timeoutId);
@@ -355,6 +361,8 @@ export class GoogleDriveAuth {
       isGoogleSignedIn.value = false;
       googleUser.value = null;
       authError.value = '';
+      this.stopAutoRefresh();
+      this.detachLifecycleListeners();
       
       // Clear saved authentication state from localStorage
       this.clearSavedAuthState();
@@ -378,6 +386,8 @@ export class GoogleDriveAuth {
     this.saveAuthState({ access_token: response.access_token }, response);
     
     console.log('🔑 Authentication successful and persisted');
+    // Ensure auto refresh is running
+    this.startAutoRefresh();
   }
 
   /**
@@ -461,11 +471,15 @@ export class GoogleDriveAuth {
    */
   async getAccessToken(): Promise<string | null> {
     try {
-      const currentToken = this.gapi?.client?.getToken()?.access_token;
+      let currentToken = this.gapi?.client?.getToken()?.access_token;
       
       if (!currentToken) {
-        console.log('❌ No current token available');
-        return null;
+        console.log('❌ No current token available, trying silent refresh...');
+        const refreshed = await this.attemptSilentRefresh();
+        if (!refreshed) {
+          return null;
+        }
+        currentToken = this.gapi?.client?.getToken()?.access_token;
       }
       
       // Check if token is about to expire (refresh 5 minutes early)
@@ -481,10 +495,7 @@ export class GoogleDriveAuth {
           if (refreshSuccess) {
             return this.gapi?.client?.getToken()?.access_token || null;
           } else {
-            console.log('❌ Token refresh failed, clearing auth state');
-            this.clearSavedAuthState();
-            isGoogleSignedIn.value = false;
-            googleUser.value = null;
+            console.log('⚠️ Token refresh failed, keeping saved login state');
             return null;
           }
         }
@@ -507,14 +518,14 @@ export class GoogleDriveAuth {
     
     // Verify we actually have a valid token
     const token = await this.getAccessToken();
-    return token !== null;
+    return token !== null || isGoogleSignedIn.value;
   }
 
   /**
    * Synchronous check for signed in state (for compatibility)
    */
   isSignedInSync(): boolean {
-    return isGoogleSignedIn.value && !!this.gapi?.client?.getToken()?.access_token;
+    return isGoogleSignedIn.value; // Persist login state regardless of token presence
   }
 
   /**
@@ -522,6 +533,54 @@ export class GoogleDriveAuth {
    */
   getAuthError(): string {
     return authError.value;
+  }
+
+  /**
+   * Auto refresh helpers
+   */
+  private startAutoRefresh() {
+    this.stopAutoRefresh();
+    // Refresh every 50 minutes
+    this.autoRefreshTimer = window.setInterval(async () => {
+      if (!isGoogleSignedIn.value) return;
+      console.log('⏱️ Auto-refresh timer triggered');
+      await this.attemptSilentRefresh();
+    }, 50 * 60 * 1000);
+    console.log('🕒 Auto-refresh timer started');
+  }
+
+  private stopAutoRefresh() {
+    if (this.autoRefreshTimer) {
+      clearInterval(this.autoRefreshTimer);
+      this.autoRefreshTimer = null;
+      console.log('🛑 Auto-refresh timer stopped');
+    }
+  }
+
+  private visibilityHandler = async () => {
+    if (document.visibilityState === 'visible' && isGoogleSignedIn.value) {
+      console.log('👀 Page visible, attempting silent refresh');
+      await this.attemptSilentRefresh();
+    }
+  };
+
+  private onlineHandler = async () => {
+    if (navigator.onLine && isGoogleSignedIn.value) {
+      console.log('🌐 Back online, attempting silent refresh');
+      await this.attemptSilentRefresh();
+    }
+  };
+
+  private attachLifecycleListeners() {
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+    window.addEventListener('online', this.onlineHandler);
+    console.log('🔗 Lifecycle listeners attached');
+  }
+
+  private detachLifecycleListeners() {
+    document.removeEventListener('visibilitychange', this.visibilityHandler);
+    window.removeEventListener('online', this.onlineHandler);
+    console.log('🔌 Lifecycle listeners detached');
   }
 }
 

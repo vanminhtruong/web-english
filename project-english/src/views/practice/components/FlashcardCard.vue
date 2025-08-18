@@ -42,7 +42,7 @@
             
             <!-- User's assembled word -->
             <div class="mb-4 sm:mb-5 md:mb-6">
-              <div class="flex flex-wrap md:flex-nowrap justify-center items-center gap-1 sm:gap-2 mb-2 sm:mb-3 md:mb-4 min-h-[3rem] max-w-full px-2 sm:px-0">
+              <div class="flex flex-wrap justify-center items-center gap-1 sm:gap-2 mb-2 sm:mb-3 md:mb-4 min-h-[3rem] max-w-full px-2 sm:px-0">
                 <div 
                   v-for="(letter, index) in assembledWord" 
                   :key="`assembled-${index}`"
@@ -60,18 +60,41 @@
               </div>
               
               <!-- Feedback -->
-              <div v-if="scrambleAnswered" class="text-center">
-                <p v-if="scrambleCorrect" class="text-green-600 dark:text-green-400 font-semibold text-sm sm:text-base">
-                  ✅ {{ t('flashcard.scrambleWords.correct', 'Correct!') }}
-                </p>
-                <p v-else class="text-red-600 dark:text-red-400 font-semibold text-sm sm:text-base">
-                  ❌ {{ t('flashcard.scrambleWords.incorrect', 'Try again!') }}
-                </p>
+              <div v-if="scrambleAnswered" class="text-center max-w-full px-2">
+                <div v-if="scrambleCorrect" class="text-green-600 dark:text-green-400">
+                  <p class="font-semibold text-sm sm:text-base mb-2">
+                    ✅ {{ t('flashcard.scrambleWords.correct', 'Correct!') }}
+                  </p>
+                  <div class="bg-green-50 dark:bg-[#0f0f0f] border border-green-200 dark:border-dark-bg-mute rounded-lg p-3 sm:p-4">
+                    <p class="text-green-700 dark:text-green-400 font-medium text-sm sm:text-base">
+                      {{ currentCard.meaning }}
+                    </p>
+                    <p v-if="currentCard.partOfSpeech" class="text-green-600 dark:text-green-500 text-xs sm:text-sm mt-1 opacity-80">
+                      {{ t(`vocabulary.wordTypes.${currentCard.partOfSpeech}`, currentCard.partOfSpeech) }}
+                    </p>
+                  </div>
+                </div>
+                <div v-else class="text-red-600 dark:text-red-400">
+                  <p class="font-semibold text-sm sm:text-base mb-2">
+                    ❌ {{ t('flashcard.scrambleWords.incorrect', 'Try again!') }}
+                  </p>
+                  <div class="bg-red-50 dark:bg-[#0f0f0f] border border-red-200 dark:border-dark-bg-mute rounded-lg p-3 sm:p-4">
+                    <p class="text-red-700 dark:text-red-400 font-bold text-base sm:text-lg mb-1">
+                      {{ currentCard.word.toUpperCase() }}
+                    </p>
+                    <p class="text-red-600 dark:text-red-500 text-sm sm:text-base">
+                      {{ currentCard.meaning }}
+                    </p>
+                    <p v-if="currentCard.partOfSpeech" class="text-red-500 dark:text-red-600 text-xs sm:text-sm mt-1 opacity-80">
+                      {{ t(`vocabulary.wordTypes.${currentCard.partOfSpeech}`, currentCard.partOfSpeech) }}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             
             <!-- Scrambled letters to choose from -->
-            <div class="flex justify-center flex-wrap gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-5 md:mb-6 px-2 sm:px-0 max-w-full">
+            <div class="flex justify-center flex-wrap gap-2 sm:gap-3 md:gap-4 xl:gap-3 2xl:gap-3 mb-4 sm:mb-5 md:mb-6 px-2 sm:px-4 md:px-6 xl:px-8 2xl:px-12 max-w-full">
               <button 
                 v-for="(letter, index) in availableLetters" 
                 :key="`scrambled-${index}`"
@@ -85,28 +108,28 @@
             </div>
             
             <!-- Control buttons -->
-            <div class="flex justify-center gap-2 sm:gap-3 md:gap-4">
+            <div class="flex flex-wrap justify-center gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4 max-w-full">
               <button 
                 @click="backspaceAssembledWord"
-                class="px-2 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
+                class="px-2 py-1 xs:px-2 xs:py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-md sm:rounded-lg transition-colors flex items-center gap-1 sm:gap-2 min-w-0 flex-shrink-0"
                 :disabled="assembledWord.length === 0 || (scrambleAnswered && scrambleCorrect)"
                 :title="t('flashcard.scrambleWords.backspace', 'Backspace')"
               >
                 <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M6.707 4.879A3 3 0 018.828 4H15a3 3 0 013 3v6a3 3 0 01-3 3H8.828a3 3 0 01-2.12-.879l-4.415-4.414a1 1 0 010-1.414l4.414-4.414zm4 3.707a1 1 0 00-1.414-1.414L8 8.586 6.707 7.293a1 1 0 10-1.414 1.414L6.586 10l-1.293 1.293a1 1 0 101.414 1.414L8 11.414l1.293 1.293a1 1 0 001.414-1.414L9.414 10l1.293-1.293z" clip-rule="evenodd"/>
                 </svg>
-                <span class="hidden sm:inline">{{ t('flashcard.scrambleWords.backspace', 'Backspace') }}</span>
+                <span class="hidden xs:hidden sm:inline">{{ t('flashcard.scrambleWords.backspace', 'Backspace') }}</span>
               </button>
               <button 
                 @click="clearAssembledWord"
-                class="px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 bg-gray-500 hover:bg-gray-600 text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg transition-colors"
+                class="px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-md sm:rounded-lg transition-colors min-w-0 flex-shrink-0"
                 :disabled="assembledWord.length === 0 || (scrambleAnswered && scrambleCorrect)"
               >
                 {{ t('flashcard.scrambleWords.clear', 'Clear') }}
               </button>
               <button 
                 @click="checkScrambleAnswer"
-                class="px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg transition-colors"
+                class="px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-md sm:rounded-lg transition-colors min-w-0 flex-shrink-0"
                 :disabled="assembledWord.length !== currentCard.word.length || (scrambleAnswered && scrambleCorrect)"
               >
                 {{ t('flashcard.scrambleWords.check', 'Check') }}
@@ -230,6 +253,68 @@ const availableLetters = ref<ScrambledLetter[]>([])
 const scrambleAnswered = ref(false)
 const scrambleCorrect = ref(false)
 
+// Track previous shuffle results to avoid repetition
+const previousShuffles = ref<string[][]>([])
+const MAX_SHUFFLE_HISTORY = 3
+
+// Enhanced scramble algorithm with better randomization
+const createAdvancedShuffle = (letters: string[]): string[] => {
+  const shuffled = [...letters]
+  
+  // Multi-pass shuffle with different entropy sources
+  const passes = Math.max(3, Math.floor(letters.length / 2) + 1)
+  
+  for (let pass = 0; pass < passes; pass++) {
+    // Use different entropy sources for each pass
+    const timeSeed = Date.now() + pass * 1000
+    const randomSeed = Math.random() * 10000
+    const passEntropy = (timeSeed + randomSeed) % 1
+    
+    // Enhanced Fisher-Yates with entropy injection
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      // Add multiple randomness sources
+      const baseRandom = Math.random()
+      const timeRandom = (Date.now() % 997) / 997 // Use prime number for better distribution
+      const passRandom = (pass + 1) / passes
+      const combinedRandom = (baseRandom + timeRandom + passRandom + passEntropy) % 1
+      
+      const j = Math.floor(combinedRandom * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    
+    // Additional scrambling pass with reverse iteration
+    if (pass % 2 === 0) {
+      for (let i = 0; i < shuffled.length - 1; i++) {
+        const entropy = (Math.random() + (Date.now() % 101) / 100) % 1
+        if (entropy > 0.5) {
+          const j = Math.min(i + 1 + Math.floor(Math.random() * 2), shuffled.length - 1)
+          ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        }
+      }
+    }
+  }
+  
+  return shuffled
+}
+
+// Check if current shuffle is too similar to previous ones
+const isSimilarToPrevious = (current: string[], previous: string[][]): boolean => {
+  if (previous.length === 0) return false
+  
+  return previous.some(prev => {
+    if (prev.length !== current.length) return false
+    
+    // Count matching positions
+    let matches = 0
+    for (let i = 0; i < current.length; i++) {
+      if (current[i] === prev[i]) matches++
+    }
+    
+    // Consider similar if more than 60% positions match
+    return (matches / current.length) > 0.6
+  })
+}
+
 // Initialize scrambled letters when card changes
 const initializeScrambledLetters = () => {
   if (!props.currentCard || !props.scrambleWordsEnabled) return
@@ -244,16 +329,63 @@ const initializeScrambledLetters = () => {
     originalIndex: index
   }))
   
-  // Shuffle the letters using Fisher-Yates algorithm
-  for (let i = letterObjects.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[letterObjects[i], letterObjects[j]] = [letterObjects[j], letterObjects[i]]
+  // Try multiple shuffles until we get a sufficiently different result
+  let attempts = 0
+  let shuffledOrder: string[]
+  const maxAttempts = 10
+  
+  do {
+    shuffledOrder = createAdvancedShuffle(letters.map(char => char.toUpperCase()))
+    attempts++
+  } while (
+    attempts < maxAttempts && 
+    isSimilarToPrevious(shuffledOrder, previousShuffles.value)
+  )
+  
+  // Update shuffle history
+  previousShuffles.value.push(shuffledOrder)
+  if (previousShuffles.value.length > MAX_SHUFFLE_HISTORY) {
+    previousShuffles.value.shift()
   }
   
-  availableLetters.value = letterObjects
+  // Apply the shuffle order to letter objects
+  const shuffledLetterObjects: ScrambledLetter[] = []
+  const usedIndices = new Set<number>()
+  
+  shuffledOrder.forEach((char) => {
+    // Find the first unused letter object that matches this character
+    const originalLetterIndex = letterObjects.findIndex((obj, idx) => 
+      obj.char === char && !usedIndices.has(idx)
+    )
+    
+    if (originalLetterIndex !== -1) {
+      const originalLetterObj = letterObjects[originalLetterIndex]
+      usedIndices.add(originalLetterIndex)
+      
+      shuffledLetterObjects.push({
+        ...originalLetterObj,
+        used: false
+      })
+    }
+  })
+  
+  // Ensure we have all letters - if shuffle failed, use original order
+  availableLetters.value = shuffledLetterObjects.length === letterObjects.length 
+    ? shuffledLetterObjects 
+    : letterObjects
+    
   assembledWord.value = []
   scrambleAnswered.value = false
   scrambleCorrect.value = false
+  
+  // Debug logging
+  console.log('🎲 New shuffle created:', {
+    word: props.currentCard.word,
+    original: letters,
+    shuffled: shuffledOrder,
+    attempts: attempts,
+    historySize: previousShuffles.value.length
+  })
 }
 
 // Watch for card changes to reinitialize
@@ -275,6 +407,8 @@ watch(() => props.scrambleWordsEnabled, (enabled) => {
     availableLetters.value = []
     scrambleAnswered.value = false
     scrambleCorrect.value = false
+    // Clear shuffle history when mode is disabled
+    previousShuffles.value = []
   }
 })
 
@@ -448,5 +582,37 @@ const checkScrambleAnswer = async () => {
 
 .flashcard-back {
   transform: rotateY(180deg);
+}
+
+/* Remove tap highlight and touch effects on mobile for scramble mode elements */
+.flashcard-front * {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Specifically target clickable elements in scramble mode */
+.flashcard-front button,
+.flashcard-front [role="button"],
+.flashcard-front .cursor-pointer {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  outline: none;
+}
+
+/* Remove focus outline on mobile for cleaner look */
+@media (max-width: 767px) {
+  .flashcard-front button:focus,
+  .flashcard-front [role="button"]:focus,
+  .flashcard-front .cursor-pointer:focus {
+    outline: none;
+    box-shadow: none;
+  }
 }
 </style>

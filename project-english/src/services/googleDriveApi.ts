@@ -45,11 +45,46 @@ export class GoogleDriveApi {
    * Ensure user is authenticated before making API calls
    */
   private async ensureAuthenticated(): Promise<boolean> {
-    if (!googleDriveAuth.isSignedIn()) {
+    // Check if user is signed in with async validation
+    if (!(await googleDriveAuth.isSignedIn())) {
       console.log('⚠️ User not signed in, attempting to sign in...');
       return await googleDriveAuth.signIn();
     }
     return true;
+  }
+
+  /**
+   * Handle 401 errors by refreshing token and retrying
+   */
+  private async handleAuthError(operation: () => Promise<Response>): Promise<Response> {
+    try {
+      const response = await operation();
+      
+      if (response.status === 401) {
+        console.log('🔄 Received 401 error, attempting token refresh...');
+        
+        // Try to get a fresh token
+        const newToken = await googleDriveAuth.getAccessToken();
+        if (!newToken) {
+          throw new Error('Unable to refresh authentication token');
+        }
+        
+        // Retry the operation with fresh token
+        console.log('♻️ Retrying operation with refreshed token...');
+        const retryResponse = await operation();
+        
+        if (retryResponse.status === 401) {
+          throw new Error('Authentication failed even after token refresh');
+        }
+        
+        return retryResponse;
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('❌ Auth error handling failed:', error);
+      throw error;
+    }
   }
 
   /**
@@ -100,12 +135,14 @@ export class GoogleDriveApi {
    * Upload vocabulary data to Google Drive
    */
   async uploadVocabularyData(data: any): Promise<{ success: boolean; fileId?: string; error?: string }> {
+    let dataSizeKB = 0;
+    
     try {
       if (!await this.ensureAuthenticated()) {
         throw new Error('Authentication failed');
       }
 
-      console.log('⬆️ Starting vocabulary data upload to Google Drive...');
+      console.log('📤 Starting vocabulary data upload to Google Drive...');
 
       // Ensure vocabulary folder exists
       const folderId = await this.findOrCreateVocabularyFolder();
@@ -117,6 +154,9 @@ export class GoogleDriveApi {
       const existingFile = await this.findVocabularyBackupFile();
       
       const jsonData = JSON.stringify(data, null, 2);
+      dataSizeKB = Math.round(jsonData.length / 1024);
+      console.log(`📊 Preparing upload: ${dataSizeKB}KB of vocabulary data`);
+      
       const blob = new Blob([jsonData], { type: 'application/json' });
 
       let response;
@@ -125,48 +165,129 @@ export class GoogleDriveApi {
         // Update existing file
         console.log('🔄 Updating existing backup file:', existingFile.id);
         
-        const form = new FormData();
-        form.append('metadata', new Blob([JSON.stringify({
-          name: this.BACKUP_FILE_NAME,
-          description: `Vocabulary backup - Updated: ${new Date().toISOString()}`,
-        })], { type: 'application/json' }));
-        form.append('file', blob);
+        const createUpdateRequest = async (): Promise<Response> => {
+          const accessToken = await googleDriveAuth.getAccessToken();
+          if (!accessToken) {
+            throw new Error('No access token available');
+          }
+          
+          console.log(`🔄 Starting update request for ${dataSizeKB}KB data...`);
+          
+          const form = new FormData();
+          form.append('metadata', new Blob([JSON.stringify({
+            name: this.BACKUP_FILE_NAME,
+            description: `Vocabulary backup - Updated: ${new Date().toISOString()}`,
+          })], { type: 'application/json' }));
+          form.append('file', blob);
 
-        response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFile.id}?uploadType=multipart&fields=id,name,modifiedTime,size`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${googleDriveAuth.getAccessToken()}`,
-          },
-          body: form,
-        });
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => {
+            console.log('⏰ Upload timeout, aborting request...');
+            controller.abort();
+          }, dataSizeKB > 1000 ? 120000 : 60000); // 2min for large files, 1min for small
+
+          try {
+            const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFile.id}?uploadType=multipart&fields=id,name,modifiedTime,size`, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+              },
+              body: form,
+              signal: controller.signal,
+            });
+            
+            clearTimeout(timeoutId);
+            console.log(`✅ Update request completed with status: ${response.status}`);
+            return response;
+          } catch (error) {
+            clearTimeout(timeoutId);
+            if ((error as Error).name === 'AbortError') {
+              throw new Error(`Upload timeout after ${dataSizeKB > 1000 ? 2 : 1} minutes`);
+            }
+            throw error;
+          }
+        };
+        
+        response = await this.handleAuthError(createUpdateRequest);
 
       } else {
         // Create new file
         console.log('📄 Creating new backup file...');
         
-        const form = new FormData();
-        form.append('metadata', new Blob([JSON.stringify({
-          name: this.BACKUP_FILE_NAME,
-          parents: [folderId],
-          description: `Vocabulary backup - Created: ${new Date().toISOString()}`,
-        })], { type: 'application/json' }));
-        form.append('file', blob);
+        const createNewRequest = async (): Promise<Response> => {
+          const accessToken = await googleDriveAuth.getAccessToken();
+          if (!accessToken) {
+            throw new Error('No access token available');
+          }
+          
+          console.log(`📄 Starting new file creation for ${dataSizeKB}KB data...`);
+          
+          const form = new FormData();
+          form.append('metadata', new Blob([JSON.stringify({
+            name: this.BACKUP_FILE_NAME,
+            parents: [folderId],
+            description: `Vocabulary backup - Created: ${new Date().toISOString()}`,
+          })], { type: 'application/json' }));
+          form.append('file', blob);
 
-        response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime,size', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${googleDriveAuth.getAccessToken()}`,
-          },
-          body: form,
-        });
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => {
+            console.log('⏰ Upload timeout, aborting request...');
+            controller.abort();
+          }, dataSizeKB > 1000 ? 120000 : 60000); // 2min for large files, 1min for small
+
+          try {
+            const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime,size', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+              },
+              body: form,
+              signal: controller.signal,
+            });
+            
+            clearTimeout(timeoutId);
+            console.log(`✅ New file creation completed with status: ${response.status}`);
+            return response;
+          } catch (error) {
+            clearTimeout(timeoutId);
+            if ((error as Error).name === 'AbortError') {
+              throw new Error(`Upload timeout after ${dataSizeKB > 1000 ? 2 : 1} minutes`);
+            }
+            throw error;
+          }
+        };
+        
+        response = await this.handleAuthError(createNewRequest);
       }
 
+      console.log(`🔍 Checking response status: ${response.status}`);
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.error(`❌ HTTP error ${response.status} for ${dataSizeKB}KB upload:`, errorText);
+        
+        if (response.status === 401) {
+          throw new Error('Authentication failed - please sign in to Google Drive again');
+        } else if (response.status === 403) {
+          throw new Error('Permission denied - please check Google Drive permissions');
+        } else if (response.status === 413) {
+          throw new Error(`File too large (${dataSizeKB}KB) - Google Drive limit exceeded`);
+        } else if (response.status === 429) {
+          throw new Error('Rate limit exceeded - please try again later');
+        } else {
+          throw new Error(`Upload failed with status ${response.status}: ${errorText}`);
+        }
       }
 
+      console.log('📥 Parsing response JSON...');
       const result = await response.json();
-      console.log('✅ Vocabulary data uploaded successfully:', result);
+      console.log(`✅ Vocabulary data (${dataSizeKB}KB) uploaded successfully:`, {
+        fileId: result.id,
+        fileName: result.name,
+        size: result.size,
+        modifiedTime: result.modifiedTime
+      });
 
       return {
         success: true,
@@ -174,10 +295,16 @@ export class GoogleDriveApi {
       };
 
     } catch (error) {
-      console.error('❌ Failed to upload vocabulary data:', error);
+      const errorMessage = (error as Error).message;
+      const sizeInfo = typeof dataSizeKB !== 'undefined' ? `${dataSizeKB}KB` : 'unknown size';
+      console.error(`❌ Failed to upload vocabulary data (${sizeInfo}):`, {
+        error: errorMessage,
+        stack: (error as Error).stack
+      });
+      
       return {
         success: false,
-        error: (error as Error).message,
+        error: errorMessage,
       };
     }
   }
