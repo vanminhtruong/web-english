@@ -167,15 +167,23 @@ export class GoogleDriveAuth {
           console.log('🔑 Restoring token to GAPI client...');
           this.gapi.client.setToken({ access_token: tokenData.access_token });
           console.log('✅ Token restored to GAPI client');
+          
+          // Verify token works by making a test API call
+          await this.verifyTokenValidity();
         } else {
-          console.log('⏰ Token expired during restoration, clearing state');
-          this.clearSavedAuthState();
-          isGoogleSignedIn.value = false;
-          googleUser.value = null;
+          console.log('⏰ Token expired during restoration, attempting silent refresh...');
+          const refreshSuccess = await this.attemptSilentRefresh();
+          if (!refreshSuccess) {
+            this.clearSavedAuthState();
+            isGoogleSignedIn.value = false;
+            googleUser.value = null;
+            authError.value = 'Token expired and refresh failed';
+          }
         }
       }
     } catch (error) {
       console.error('❌ Error restoring token to GAPI:', error);
+      authError.value = 'Failed to restore authentication';
     }
   }
 
@@ -373,17 +381,140 @@ export class GoogleDriveAuth {
   }
 
   /**
-   * Get current access token
+   * Verify token validity with a test API call
    */
-  getAccessToken(): string | null {
-    return this.gapi?.client?.getToken()?.access_token || null;
+  private async verifyTokenValidity(): Promise<boolean> {
+    try {
+      if (!this.gapi?.client) return false;
+      
+      // Make a simple API call to verify token works
+      const response = await this.gapi.client.request({
+        path: 'https://www.googleapis.com/drive/v3/about?fields=user'
+      });
+      
+      if (response.status === 200) {
+        console.log('✅ Token verification successful');
+        return true;
+      } else {
+        console.log('❌ Token verification failed:', response.status);
+        return false;
+      }
+    } catch (error) {
+      console.log('❌ Token verification error:', error);
+      return false;
+    }
   }
 
   /**
-   * Check if user is signed in
+   * Attempt silent token refresh
    */
-  isSignedIn(): boolean {
-    return isGoogleSignedIn.value;
+  private async attemptSilentRefresh(): Promise<boolean> {
+    try {
+      if (!this.tokenClient) {
+        console.log('❌ No token client available for refresh');
+        return false;
+      }
+      
+      console.log('🔄 Attempting silent token refresh...');
+      
+      // Use prompt: '' for silent refresh (no user interaction)
+      return new Promise((resolve) => {
+        const originalCallback = this.tokenClient.callback;
+        
+        this.tokenClient.callback = (response: any) => {
+          // Restore original callback
+          this.tokenClient.callback = originalCallback;
+          
+          if (response.error) {
+            console.log('❌ Silent refresh failed:', response.error);
+            resolve(false);
+          } else {
+            console.log('✅ Silent refresh successful');
+            this.handleAuthSuccess(response);
+            resolve(true);
+          }
+        };
+        
+        try {
+          this.tokenClient.requestAccessToken({ prompt: '' });
+          
+          // Set timeout for silent refresh
+          setTimeout(() => {
+            this.tokenClient.callback = originalCallback;
+            console.log('⏰ Silent refresh timeout');
+            resolve(false);
+          }, 10000); // 10 second timeout
+        } catch (error) {
+          this.tokenClient.callback = originalCallback;
+          console.log('❌ Silent refresh request failed:', error);
+          resolve(false);
+        }
+      });
+    } catch (error) {
+      console.error('❌ Silent refresh error:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get current access token with automatic refresh if needed
+   */
+  async getAccessToken(): Promise<string | null> {
+    try {
+      const currentToken = this.gapi?.client?.getToken()?.access_token;
+      
+      if (!currentToken) {
+        console.log('❌ No current token available');
+        return null;
+      }
+      
+      // Check if token is about to expire (refresh 5 minutes early)
+      const savedToken = localStorage.getItem(GOOGLE_TOKEN_KEY);
+      if (savedToken) {
+        const tokenData = JSON.parse(savedToken);
+        const tokenAge = Date.now() - (tokenData.timestamp || 0);
+        const isNearExpiry = tokenAge > (50 * 60 * 1000); // 50 minutes
+        
+        if (isNearExpiry) {
+          console.log('🔄 Token near expiry, attempting refresh...');
+          const refreshSuccess = await this.attemptSilentRefresh();
+          if (refreshSuccess) {
+            return this.gapi?.client?.getToken()?.access_token || null;
+          } else {
+            console.log('❌ Token refresh failed, clearing auth state');
+            this.clearSavedAuthState();
+            isGoogleSignedIn.value = false;
+            googleUser.value = null;
+            return null;
+          }
+        }
+      }
+      
+      return currentToken;
+    } catch (error) {
+      console.error('❌ Error getting access token:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Check if user is signed in with token validation
+   */
+  async isSignedIn(): Promise<boolean> {
+    if (!isGoogleSignedIn.value) {
+      return false;
+    }
+    
+    // Verify we actually have a valid token
+    const token = await this.getAccessToken();
+    return token !== null;
+  }
+
+  /**
+   * Synchronous check for signed in state (for compatibility)
+   */
+  isSignedInSync(): boolean {
+    return isGoogleSignedIn.value && !!this.gapi?.client?.getToken()?.access_token;
   }
 
   /**
@@ -410,6 +541,7 @@ export const useGoogleDriveAuth = () => {
     signIn: () => authService.signIn(), 
     signOut: () => authService.signOut(),
     isSignedIn: () => authService.isSignedIn(),
+    isSignedInSync: () => authService.isSignedInSync(),
     getAccessToken: () => authService.getAccessToken(),
   };
 };

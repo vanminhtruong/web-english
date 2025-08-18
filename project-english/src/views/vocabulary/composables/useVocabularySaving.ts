@@ -508,11 +508,14 @@ export function useVocabularySaving() {
         return;
       }
       
-      // For Google Drive, check authentication
-      if (storageType.value === 'google-drive' && !googleAuth.isSignedIn()) {
-        console.log("Google Drive selected but not signed in, saving to localStorage only");
-        vocabularyStore.saveToLocalStorage();
-        return;
+      // For Google Drive, check authentication (async check for token validity)
+      if (storageType.value === 'google-drive') {
+        const isSignedIn = await googleAuth.isSignedIn();
+        if (!isSignedIn) {
+          console.log("Google Drive selected but not signed in or token invalid, saving to localStorage only");
+          vocabularyStore.saveToLocalStorage();
+          return;
+        }
       }
       
       const result = await performAutoSave();
@@ -759,28 +762,66 @@ export function useVocabularySaving() {
   // Google Drive auto-save functions
   const tryAutoSaveToGoogleDrive = async (data: any): Promise<boolean> => {
     try {
-      if (!googleAuth.isSignedIn()) {
-        console.log('❌ Not signed in to Google Drive');
-        toast.error(t('vocabulary.save.errors.notSignedIn', 'Not signed in to Google') || 'Not signed in to Google');
+      // Check if signed in (this now includes token validation)
+      const isSignedIn = await googleAuth.isSignedIn();
+      if (!isSignedIn) {
+        console.log('❌ Not signed in to Google Drive or token invalid');
+        // Don't show error toast for auto-save, just log and fail gracefully
         return false;
       }
 
       console.log('⬆️ Attempting to auto-save to Google Drive...');
-      const result = await googleDriveApi.uploadVocabularyData(data);
       
-      if (result.success) {
-        console.log('✅ Auto-save to Google Drive completed successfully');
-        hasGoogleDriveFile.value = true;
-        setStoredValue('vocabulary-has-google-drive-file', true);
-        return true;
-      } else {
-        console.error('❌ Google Drive save failed:', result.error);
-        toast.error(t('vocabulary.save.errors.googleDriveFailed', 'Google Drive save failed') || `Google Drive save failed: ${result.error}`);
-        return false;
+      // Retry logic for Google Drive operations
+      let lastError: any = null;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const result = await googleDriveApi.uploadVocabularyData(data);
+          
+          if (result.success) {
+            console.log(`✅ Auto-save to Google Drive completed successfully (attempt ${attempt})`);
+            hasGoogleDriveFile.value = true;
+            setStoredValue('vocabulary-has-google-drive-file', true);
+            return true;
+          } else {
+            lastError = result.error;
+            console.error(`❌ Google Drive save failed (attempt ${attempt}):`, result.error);
+            
+            // If it's an auth error, try to refresh token and retry
+            if (result.error?.includes('401') || result.error?.includes('unauthorized')) {
+              console.log('🔄 Auth error detected, refreshing token...');
+              const token = await googleAuth.getAccessToken(); // This will auto-refresh if needed
+              if (!token) {
+                console.log('❌ Token refresh failed, stopping retries');
+                break;
+              }
+            }
+            
+            // Wait before retry (exponential backoff)
+            if (attempt < 3) {
+              await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            }
+          }
+        } catch (apiError) {
+          lastError = apiError;
+          console.error(`❌ Google Drive API error (attempt ${attempt}):`, apiError);
+          
+          // For network errors, retry. For auth errors, try token refresh
+          if (attempt < 3) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          }
+        }
       }
+      
+      // All retries failed
+      console.error('❌ All Google Drive save attempts failed:', lastError);
+      
+      // Only show error toast if it's a manual save operation (not auto-save)
+      // Auto-save failures should be silent to avoid annoying the user
+      return false;
+      
     } catch (error) {
       console.error('❌ Error saving to Google Drive:', error);
-      toast.error(t('vocabulary.save.errors.googleDriveFailed', 'Google Drive save failed') || `Google Drive error: ${(error as Error).message}`);
       return false;
     }
   };
@@ -789,7 +830,9 @@ export function useVocabularySaving() {
     try {
       console.log('Setting up Google Drive auto-save...');
       
-      if (!googleAuth.isSignedIn()) {
+      // Check if already signed in with valid token
+      const isSignedIn = await googleAuth.isSignedIn();
+      if (!isSignedIn) {
         const signInResult = await googleAuth.signIn();
         if (!signInResult) {
           toast.error(t('vocabulary.save.errors.googleSignInFailed', 'Google sign-in failed') || 'Google sign-in failed');
@@ -797,19 +840,42 @@ export function useVocabularySaving() {
         }
       }
 
-      // Test upload with current data
+      // Test upload with current data to verify everything works
       const vocabularyData = getVocabularyData();
-      const result = await googleDriveApi.uploadVocabularyData(vocabularyData);
       
-      if (result.success) {
-        hasGoogleDriveFile.value = true;
-        setStoredValue('vocabulary-has-google-drive-file', true);
-        toast.success(t('vocabulary.save.googleDriveSetup', 'Google Drive setup successful') || 'Google Drive setup successful');
-        return true;
-      } else {
-        toast.error(t('vocabulary.save.errors.googleDriveSetupFailed', 'Google Drive setup failed') || 'Google Drive setup failed');
-        return false;
+      // Use the same retry logic as auto-save
+      let lastError: any = null;
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const result = await googleDriveApi.uploadVocabularyData(vocabularyData);
+          
+          if (result.success) {
+            hasGoogleDriveFile.value = true;
+            setStoredValue('vocabulary-has-google-drive-file', true);
+            toast.success(t('vocabulary.save.googleDriveSetup', 'Google Drive setup successful') || 'Google Drive setup successful');
+            return true;
+          } else {
+            lastError = result.error;
+            console.error(`❌ Google Drive setup test failed (attempt ${attempt}):`, result.error);
+            
+            if (attempt < 2) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          }
+        } catch (apiError) {
+          lastError = apiError;
+          console.error(`❌ Google Drive setup API error (attempt ${attempt}):`, apiError);
+          
+          if (attempt < 2) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
       }
+      
+      // Setup failed after retries
+      toast.error(t('vocabulary.save.errors.googleDriveSetupFailed', 'Google Drive setup failed') || `Google Drive setup failed: ${lastError}`);
+      return false;
+      
     } catch (error) {
       console.error('Error setting up Google Drive:', error);
       toast.error(t('vocabulary.save.errors.googleDriveSetupFailed', 'Google Drive setup failed') || 'Google Drive setup failed');
@@ -819,64 +885,98 @@ export function useVocabularySaving() {
 
   const syncFromGoogleDrive = async (): Promise<boolean> => {
     try {
-      if (!googleAuth.isSignedIn()) {
+      // Check if signed in with valid token
+      const isSignedIn = await googleAuth.isSignedIn();
+      if (!isSignedIn) {
         toast.error(t('vocabulary.save.errors.notSignedIn', 'Not signed in to Google') || 'Not signed in to Google');
         return false;
       }
 
       console.log('Syncing from Google Drive...');
-      const result = await googleDriveApi.downloadVocabularyData();
       
-      if (result.success && result.data) {
-        // Import the data
-        if (result.data.vocabularies && Array.isArray(result.data.vocabularies)) {
-          vocabularyStore.importVocabularies(result.data.vocabularies);
+      // Retry logic for download operation
+      let lastError: any = null;
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const result = await googleDriveApi.downloadVocabularyData();
           
-          // Import other data similar to handleFileImport
-          if (result.data.customTopics && Array.isArray(result.data.customTopics)) {
-            localStorage.setItem('customTopics', JSON.stringify(result.data.customTopics));
-            vocabularyStore.refreshCustomTopics();
+          if (result.success && result.data) {
+            // Import the data
+            if (result.data.vocabularies && Array.isArray(result.data.vocabularies)) {
+              vocabularyStore.importVocabularies(result.data.vocabularies);
+              
+              // Import other data similar to handleFileImport
+              if (result.data.customTopics && Array.isArray(result.data.customTopics)) {
+                localStorage.setItem('customTopics', JSON.stringify(result.data.customTopics));
+                vocabularyStore.refreshCustomTopics();
+              }
+              
+              if (result.data.groupTopics && typeof result.data.groupTopics === 'object') {
+                localStorage.setItem('vocabulary-group-topics', JSON.stringify(result.data.groupTopics));
+              }
+              
+              if (result.data.grammarRules && Array.isArray(result.data.grammarRules)) {
+                localStorage.setItem('grammar-rules', JSON.stringify(result.data.grammarRules));
+              }
+              
+              if (result.data.practiceHistory && Array.isArray(result.data.practiceHistory)) {
+                localStorage.setItem('flashcard-practice-history', JSON.stringify(result.data.practiceHistory));
+              }
+              
+              toast.success(t('vocabulary.save.syncFromDriveSuccess', 'Successfully synced from Google Drive') || 'Successfully synced from Google Drive');
+              return true;
+            }
+          } else {
+            lastError = result.error;
+            console.error(`❌ Google Drive sync failed (attempt ${attempt}):`, result.error);
+            
+            if (attempt < 2) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
           }
+        } catch (apiError) {
+          lastError = apiError;
+          console.error(`❌ Google Drive sync API error (attempt ${attempt}):`, apiError);
           
-          if (result.data.groupTopics && typeof result.data.groupTopics === 'object') {
-            localStorage.setItem('vocabulary-group-topics', JSON.stringify(result.data.groupTopics));
+          if (attempt < 2) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
           }
-          
-          if (result.data.grammarRules && Array.isArray(result.data.grammarRules)) {
-            localStorage.setItem('grammar-rules', JSON.stringify(result.data.grammarRules));
-          }
-          
-          if (result.data.practiceHistory && Array.isArray(result.data.practiceHistory)) {
-            localStorage.setItem('flashcard-practice-history', JSON.stringify(result.data.practiceHistory));
-          }
-          
-          toast.success(t('vocabulary.save.syncFromDriveSuccess', 'Successfully synced from Google Drive') || 'Successfully synced from Google Drive');
-          return true;
         }
-      } else {
-        toast.error(result.error || t('vocabulary.save.errors.syncFailed', 'Sync failed') || 'Sync failed');
-        return false;
       }
+      
+      // All sync attempts failed
+      toast.error(lastError || t('vocabulary.save.errors.syncFailed', 'Sync failed') || 'Sync failed');
+      return false;
+      
     } catch (error) {
       console.error('Error syncing from Google Drive:', error);
       toast.error(t('vocabulary.save.errors.syncFailed', 'Sync failed') || 'Sync failed');
       return false;
     }
-    return false;
   };
 
   const handleGoogleSignIn = async (): Promise<boolean> => {
     try {
       console.log('Initiating Google sign-in...');
+      
+      // First ensure Google APIs are initialized
+      await googleAuth.initialize();
+      
       const result = await googleAuth.signIn();
       
       if (result) {
         toast.success(t('vocabulary.save.googleSignInSuccess', 'Successfully signed in to Google') || 'Successfully signed in to Google');
-        // Check if backup exists
-        const backupInfo = await googleDriveApi.getVocabularyBackupInfo();
-        if (backupInfo.exists) {
-          hasGoogleDriveFile.value = true;
-          setStoredValue('vocabulary-has-google-drive-file', true);
+        
+        // Check if backup exists with retry logic
+        try {
+          const backupInfo = await googleDriveApi.getVocabularyBackupInfo();
+          if (backupInfo.exists) {
+            hasGoogleDriveFile.value = true;
+            setStoredValue('vocabulary-has-google-drive-file', true);
+          }
+        } catch (backupError) {
+          console.warn('⚠️ Could not check backup status after sign-in:', backupError);
+          // Don't fail the sign-in process just because backup check failed
         }
       } else {
         toast.error(t('vocabulary.save.errors.googleSignInFailed', 'Google sign-in failed') || 'Google sign-in failed');
@@ -941,7 +1041,7 @@ export function useVocabularySaving() {
       default:
         if (autoSaveEnabled.value) {
           if (storageType.value === 'google-drive') {
-            return googleAuth.isSignedIn() ? t('vocabulary.save.status.googleDriveReady', 'Google Drive ready') : t('vocabulary.save.status.googleDriveSignIn', 'Sign in to Google Drive');
+            return googleAuth.isSignedInSync() ? t('vocabulary.save.status.googleDriveReady', 'Google Drive ready') : t('vocabulary.save.status.googleDriveSignIn', 'Sign in to Google Drive');
           } else {
             return hasAutoSaveFile.value ? t('vocabulary.save.status.autoFile', 'Auto save ready') : t('vocabulary.save.status.autoNoFile', 'Auto save (no file)');
           }
@@ -962,20 +1062,24 @@ export function useVocabularySaving() {
       console.log('✅ Google APIs initialized');
       
       // Check if we have restored Google Drive authentication
-      if (googleAuth.isSignedIn()) {
-        console.log('✅ Google Drive authentication restored from localStorage');
-        // Check if backup exists to set hasGoogleDriveFile
-        try {
-          const backupInfo = await googleDriveApi.getVocabularyBackupInfo();
-          if (backupInfo.exists) {
-            hasGoogleDriveFile.value = true;
-            setStoredValue('vocabulary-has-google-drive-file', true);
-            console.log('✅ Google Drive backup file found');
+        // Check if authentication was restored (this now validates token)
+        const isSignedIn = await googleAuth.isSignedIn();
+        if (isSignedIn) {
+          console.log('✅ Google Drive authentication restored and validated');
+          // Check if backup exists to set hasGoogleDriveFile
+          try {
+            const backupInfo = await googleDriveApi.getVocabularyBackupInfo();
+            if (backupInfo.exists) {
+              hasGoogleDriveFile.value = true;
+              setStoredValue('vocabulary-has-google-drive-file', true);
+              console.log('✅ Google Drive backup file found');
+            }
+          } catch (error) {
+            console.warn('⚠️ Could not check Google Drive backup status:', error);
           }
-        } catch (error) {
-          console.warn('⚠️ Could not check Google Drive backup status:', error);
+        } else {
+          console.log('⚠️ Google Drive authentication could not be restored');
         }
-      }
     } catch (error) {
       console.error('❌ Failed to initialize Google APIs:', error);
     }
@@ -1008,7 +1112,7 @@ export function useVocabularySaving() {
     handleFileImport,
     resetAutoSaveFile,
     // Google auth states  
-    isGoogleSignedIn: computed(() => googleAuth.isSignedIn()),
+    isGoogleSignedIn: computed(() => googleAuth.isSignedInSync()),
     googleAuthError: googleAuth.authError,
   };
 } 
