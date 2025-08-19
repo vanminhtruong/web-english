@@ -55,9 +55,9 @@ export class GoogleDriveAuth {
         const tokenData = JSON.parse(savedToken);
         const userData = JSON.parse(savedUser);
         
-        // Check if token is expired (Google tokens typically expire in 1 hour)
+        // Check if token is expired (Custom: 3 months)
         const tokenAge = Date.now() - (tokenData.timestamp || 0);
-        const isTokenExpired = tokenAge > (55 * 60 * 1000); // 55 minutes to be safe
+        const isTokenExpired = tokenAge > (90 * 24 * 60 * 60 * 1000); // 90 days (3 months)
         
         // Persist login state even if token is expired; we'll refresh later
         googleUser.value = userData;
@@ -166,7 +166,7 @@ export class GoogleDriveAuth {
         
         // Check if token is still valid
         const tokenAge = Date.now() - (tokenData.timestamp || 0);
-        const isTokenExpired = tokenAge > (55 * 60 * 1000);
+        const isTokenExpired = tokenAge > (90 * 24 * 60 * 60 * 1000); // 90 days (3 months)
         
         if (!isTokenExpired) {
           console.log('🔑 Restoring token to GAPI client...');
@@ -494,12 +494,12 @@ export class GoogleDriveAuth {
         currentToken = this.gapi?.client?.getToken()?.access_token;
       }
       
-      // Check if token is about to expire (refresh 5 minutes early)
+      // Check if token is about to expire (refresh 3 months early)
       const savedToken = localStorage.getItem(GOOGLE_TOKEN_KEY);
       if (savedToken) {
         const tokenData = JSON.parse(savedToken);
         const tokenAge = Date.now() - (tokenData.timestamp || 0);
-        const isNearExpiry = tokenAge > (50 * 60 * 1000); // 50 minutes
+        const isNearExpiry = tokenAge > (90 * 24 * 60 * 60 * 1000); // 90 days (3 months)
         
         if (isNearExpiry) {
           console.log('🔄 Token near expiry, attempting refresh...');
@@ -552,7 +552,7 @@ export class GoogleDriveAuth {
    */
   private startAutoRefresh() {
     this.stopAutoRefresh();
-    // Refresh every 50 minutes
+    // Refresh every 3 months
     this.autoRefreshTimer = window.setInterval(async () => {
       if (!isGoogleSignedIn.value) return;
       
@@ -564,7 +564,7 @@ export class GoogleDriveAuth {
       } else {
         console.log('⏱️ Auto-refresh timer checked - token still valid');
       }
-    }, 50 * 60 * 1000);
+    }, 90 * 24 * 60 * 60 * 1000); // 90 days (3 months)
     console.log('🕒 Auto-refresh timer started');
   }
 
@@ -635,7 +635,7 @@ export class GoogleDriveAuth {
 
       const tokenData = JSON.parse(savedToken);
       const tokenAge = Date.now() - (tokenData.timestamp || 0);
-      const isNearExpiry = tokenAge > (45 * 60 * 1000); // 45 minutes - more conservative
+      const isNearExpiry = tokenAge > (90 * 24 * 60 * 60 * 1000); // 90 days (3 months) - conservative
       
       if (isNearExpiry) {
         console.log('🔍 Token is near expiry, refresh needed');
