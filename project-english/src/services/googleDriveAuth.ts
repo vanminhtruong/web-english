@@ -4,17 +4,19 @@ import { ref, computed } from 'vue';
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 
 // Global state
 const isGoogleApiLoaded = ref(false);
 const isGoogleSignedIn = ref(false);
 const googleUser = ref<any>(null);
+const googleUserEmail = ref<string>('');
 const authError = ref<string>('');
 
 // LocalStorage keys for persistence
 const GOOGLE_TOKEN_KEY = 'vocabulary-google-token';
 const GOOGLE_USER_KEY = 'vocabulary-google-user';
+const GOOGLE_USER_EMAIL_KEY = 'vocabulary-google-user-email';
 const GOOGLE_SIGNED_IN_KEY = 'vocabulary-is-google-signed-in';
 
 /**
@@ -46,6 +48,7 @@ export class GoogleDriveAuth {
     try {
       const savedToken = localStorage.getItem(GOOGLE_TOKEN_KEY);
       const savedUser = localStorage.getItem(GOOGLE_USER_KEY);
+      const savedEmail = localStorage.getItem(GOOGLE_USER_EMAIL_KEY);
       const savedSignedIn = localStorage.getItem(GOOGLE_SIGNED_IN_KEY);
 
       if (savedToken && savedUser && savedSignedIn === 'true') {
@@ -61,6 +64,7 @@ export class GoogleDriveAuth {
         
         // Persist login state even if token is expired; we'll refresh later
         googleUser.value = userData;
+        googleUserEmail.value = savedEmail || '';
         isGoogleSignedIn.value = true;
         if (isTokenExpired) {
           console.log('⏰ Saved Google token expired, will attempt silent refresh later');
@@ -79,7 +83,7 @@ export class GoogleDriveAuth {
   /**
    * Save authentication state to localStorage
    */
-  private saveAuthState(token: any, user: any): void {
+  private saveAuthState(token: any, user: any, email?: string): void {
     try {
       localStorage.setItem(GOOGLE_TOKEN_KEY, JSON.stringify({
         access_token: token.access_token,
@@ -87,6 +91,9 @@ export class GoogleDriveAuth {
       }));
       localStorage.setItem(GOOGLE_USER_KEY, JSON.stringify(user));
       localStorage.setItem(GOOGLE_SIGNED_IN_KEY, 'true');
+      if (email) {
+        localStorage.setItem(GOOGLE_USER_EMAIL_KEY, email);
+      }
       console.log('💾 Google auth state saved to localStorage');
     } catch (error) {
       console.error('❌ Error saving auth state:', error);
@@ -100,6 +107,7 @@ export class GoogleDriveAuth {
     try {
       localStorage.removeItem(GOOGLE_TOKEN_KEY);
       localStorage.removeItem(GOOGLE_USER_KEY);
+      localStorage.removeItem(GOOGLE_USER_EMAIL_KEY);
       localStorage.removeItem(GOOGLE_SIGNED_IN_KEY);
       console.log('🗑️ Google auth state cleared from localStorage');
     } catch (error) {
@@ -360,6 +368,7 @@ export class GoogleDriveAuth {
       // Clear local state
       isGoogleSignedIn.value = false;
       googleUser.value = null;
+      googleUserEmail.value = '';
       authError.value = '';
       this.stopAutoRefresh();
       this.detachLifecycleListeners();
@@ -377,13 +386,23 @@ export class GoogleDriveAuth {
   /**
    * Handle successful authentication
    */
-  private handleAuthSuccess(response: any): void {
+  private async handleAuthSuccess(response: any): Promise<void> {
     googleUser.value = response;
     isGoogleSignedIn.value = true;
     this.gapi.client.setToken({ access_token: response.access_token });
     
+    // Fetch user email from Google API
+    const userEmail = await this.fetchUserEmail();
+    console.log('🔍 Fetched user email:', userEmail);
+    if (userEmail) {
+      googleUserEmail.value = userEmail;
+      console.log('✅ Email set to reactive state:', googleUserEmail.value);
+    } else {
+      console.log('❌ No email received from API');
+    }
+    
     // Save authentication state to localStorage for persistence
-    this.saveAuthState({ access_token: response.access_token }, response);
+    this.saveAuthState({ access_token: response.access_token }, response, userEmail || undefined);
     
     console.log('🔑 Authentication successful and persisted');
     // Ensure auto refresh is running
@@ -615,6 +634,41 @@ export class GoogleDriveAuth {
   }
 
   /**
+   * Fetch user email from Google API
+   */
+  private async fetchUserEmail(): Promise<string | null> {
+    try {
+      if (!this.gapi?.client) {
+        console.log('❌ No GAPI client available for fetching user email');
+        return null;
+      }
+      
+      // Make API call to get user info
+      const response = await this.gapi.client.request({
+        path: 'https://www.googleapis.com/oauth2/v2/userinfo'
+      });
+      
+      if (response.status === 200 && response.result?.email) {
+        console.log('✅ User email fetched successfully');
+        return response.result.email;
+      } else {
+        console.log('❌ Failed to fetch user email from API response');
+        return null;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching user email:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get current user email
+   */
+  async getUserEmail(): Promise<string> {
+    return googleUserEmail.value;
+  }
+
+  /**
    * Check if token actually needs refreshing
    */
   private async shouldRefreshToken(): Promise<boolean> {
@@ -660,6 +714,7 @@ export const useGoogleDriveAuth = () => {
     isGoogleApiLoaded: computed(() => isGoogleApiLoaded.value),
     isGoogleSignedIn: computed(() => isGoogleSignedIn.value),
     googleUser: computed(() => googleUser.value),
+    googleUserEmail: computed(() => googleUserEmail.value),
     authError: computed(() => authError.value),
 
     // Methods
@@ -669,6 +724,7 @@ export const useGoogleDriveAuth = () => {
     isSignedIn: () => authService.isSignedIn(),
     isSignedInSync: () => authService.isSignedInSync(),
     getAccessToken: () => authService.getAccessToken(),
+    getUserEmail: () => authService.getUserEmail(),
   };
 };
 

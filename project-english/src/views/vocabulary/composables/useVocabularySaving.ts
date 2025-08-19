@@ -1137,6 +1137,7 @@ export function useVocabularySaving() {
     resetAutoSaveFile,
     // Google auth states  
     isGoogleSignedIn: computed(() => googleAuth.isSignedInSync()),
+    googleUserEmail: googleAuth.googleUserEmail,
     googleAuthError: googleAuth.authError,
   };
 } 

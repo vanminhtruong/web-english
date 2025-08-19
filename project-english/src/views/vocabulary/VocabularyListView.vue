@@ -158,6 +158,7 @@
                 @update:storage-type="storageType = $event"
                 :is-google-signed-in="isGoogleSignedIn"
                 @update:is-google-signed-in="isGoogleSignedIn = $event"
+                :google-user-email="googleUserEmail"
                 :google-auth-error="googleAuthError"
                 :auto-save-file-path="autoSaveFilePath"
                 @update:auto-save-file-path="autoSaveFilePath = $event"
@@ -503,6 +504,7 @@ const {
   resetAutoSaveFile,
   autoSaveFilePath,
   isGoogleSignedIn,
+  googleUserEmail,
   googleAuthError,
 } = useVocabularySaving();
 

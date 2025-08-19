@@ -250,9 +250,18 @@
               <p v-if="storageType === 'local' && hasAutoSaveFile" class="text-xs text-green-600 dark:text-green-400">
                 ✓ {{ t('vocabulary.save.fileConfigured', 'Auto-save file configured') }}
               </p>
-              <p v-if="storageType === 'google-drive' && isGoogleSignedIn" class="text-xs text-green-600 dark:text-green-400">
-                ✓ {{ t('vocabulary.save.googleConnected', 'Google Drive connected') }}
-              </p>
+              <div v-if="storageType === 'google-drive' && isGoogleSignedIn" class="space-y-1">
+                <p class="text-xs text-green-600 dark:text-green-400">
+                  ✓ {{ t('vocabulary.save.googleConnected', 'Google Drive connected') }}
+                </p>
+                <p v-if="googleUserEmail" class="text-xs text-gray-600 dark:text-gray-400">
+                  <span class="font-medium">{{ t('vocabulary.save.account', 'Account') }}:</span>
+                  {{ googleUserEmail }}
+                </p>
+                <p v-else class="text-xs text-yellow-600 dark:text-yellow-400">
+                  ⚠️ Email not loaded - Sign out and sign in again
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -272,6 +281,7 @@ interface Props {
   hasAutoSaveFile: boolean;
   hasGoogleDriveFile: boolean;
   isGoogleSignedIn: boolean;
+  googleUserEmail: string;
   lastSaveTime: string;
   saveStatusColor: string;
   saveStatusText: string;

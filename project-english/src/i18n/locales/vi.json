@@ -36,7 +36,72 @@
     "checking": "Đang kiểm tra...",
     "backspace": "Xóa lùi",
     "clear": "Xóa",
-    "space": "Dấu cách"
+    "space": "Dấu cách",
+    "select": "Chọn"
+  },
+  "autoGenerator": {
+    "title": "Tự Động Tạo",
+    "description": "Tự động tạo từ vựng từ văn bản, chủ đề hoặc gợi ý AI",
+    "methods": {
+      "textAnalysis": "Phân Tích Văn Bản",
+      "textAnalysisDesc": "Trích xuất từ vựng từ bài báo, sách hoặc bất kỳ nội dung văn bản nào",
+      "topicBased": "Theo Chủ Đề",
+      "topicBasedDesc": "Tạo từ vựng dựa trên các chủ đề hoặc danh mục cụ thể",
+      "aiSuggestions": "Gợi Ý AI",
+      "aiSuggestionsDesc": "Nhận gợi ý từ vựng thông minh dựa trên trình độ học tập của bạn"
+    },
+    "forms": {
+      "textAnalysis": {
+        "title": "Phân Tích Nội Dung Văn Bản",
+        "inputLabel": "Dán nội dung văn bản của bạn vào đây:",
+        "placeholder": "Dán bài báo, đoạn sách hoặc bất kỳ văn bản tiếng Anh nào..."
+      },
+      "topicBased": {
+        "title": "Tạo Theo Chủ Đề",
+        "selectTopic": "Chọn Chủ Đề:",
+        "chooseTopic": "Chọn một chủ đề..."
+      },
+      "aiSuggestions": {
+        "title": "Tạo Bằng AI",
+        "preferences": "Sở Thích Học Tập:",
+        "preferencesPlaceholder": "Mô tả loại từ bạn muốn học (ví dụ: từ học thuật, hội thoại hàng ngày, thuật ngữ kinh doanh)...",
+        "focusArea": "Lĩnh Vực Tập Trung"
+      },
+      "common": {
+        "difficultyLevel": "Mức Độ Khó",
+        "maxWords": "Số Từ Tối Đa"
+      }
+    },
+    "levels": {
+      "beginner": "Cơ Bản",
+      "intermediate": "Trung Cấp",
+      "advanced": "Nâng Cao",
+      "mixed": "Cấp Độ Hỗn Hợp"
+    },
+    "topics": {
+      "business": "Kinh Doanh & Tài Chính",
+      "technology": "Công Nghệ",
+      "travel": "Du Lịch & Du Lịch",
+      "health": "Sức Khỏe & Y Học",
+      "education": "Giáo Dục",
+      "environment": "Môi Trường",
+      "food": "Thức Ăn & Nấu Ăn",
+      "sports": "Thể Thao & Thể Hình"
+    },
+    "focusAreas": {
+      "vocabulary": "Từ Vựng Tổng Quát",
+      "academic": "Từ Học Thuật",
+      "conversation": "Hội Thoại",
+      "professional": "Chuyên Nghiệp"
+    },
+    "generate": "Tạo Từ Vựng",
+    "generating": "Đang tạo...",
+    "saveAll": "Lưu Tất Cả",
+    "saveSuccess": "Đã lưu thành công {count} từ vào danh sách từ vựng của bạn",
+    "saveError": "Không thể lưu từ vựng",
+    "preview": {
+      "title": "Từ Vựng Đã Tạo"
+    }
   },
   "levels": {
     "beginner": "Cơ bản",
@@ -377,6 +442,7 @@
       "googleSignOutSuccess": "Đăng xuất Google thành công",
       "syncFromDriveSuccess": "Đồng bộ từ Google Drive thành công",
       "googleDriveRetry": "Lưu Google Drive thất bại. Kiểm tra kết nối.",
+      "account": "Tài khoản",
       "status": {
         "saving": "Đang lưu...",
         "autoSaving": "Đang tự động lưu...",

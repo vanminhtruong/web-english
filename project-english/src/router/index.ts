@@ -5,6 +5,7 @@ import DashboardView from '../views/dashboard/DashboardView.vue'
 import VocabularyListView from '../views/vocabulary/VocabularyListView.vue'
 import VocabularyQuestionsView from '../views/vocabulary/VocabularyQuestionsView.vue'
 import VocabularyExamplesView from '../views/vocabulary/VocabularyExamplesView.vue'
+import AutoGeneratorView from '../views/vocabulary/AutoGeneratorView.vue'
 import GrammarListView from '../views/grammar/GrammarListView.vue'
 import GrammarDetailView from '../views/grammar/GrammarDetailView.vue'
 import GrammarPracticeView from '../views/grammar/GrammarPracticeView.vue'
@@ -39,6 +40,11 @@ const router = createRouter({
       path: '/vocabulary/examples',
       name: 'vocabulary-examples',
       component: VocabularyExamplesView,
+    },
+    {
+      path: '/vocabulary/generator',
+      name: 'vocabulary-generator',
+      component: AutoGeneratorView,
     },
     {
       path: '/grammar',

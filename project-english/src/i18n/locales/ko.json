@@ -35,7 +35,72 @@
       "backToTopTooltip": "맨 위로 ({percent}%)",
       "backspace": "백스페이스",
       "clear": "지우기",
-      "space": "공백"
+      "space": "공백",
+      "select": "선택"
+    },
+    "autoGenerator": {
+      "title": "자동 생성기",
+      "description": "텍스트, 주제 또는 AI 제안으로부터 자동으로 어휘를 생성합니다",
+      "methods": {
+        "textAnalysis": "텍스트 분석",
+        "textAnalysisDesc": "기사, 책 또는 모든 텍스트 콘텐츠에서 어휘를 추출합니다",
+        "topicBased": "주제 기반",
+        "topicBasedDesc": "특정 주제나 카테고리를 기반으로 단어를 생성합니다",
+        "aiSuggestions": "AI 제안",
+        "aiSuggestionsDesc": "학습 수준에 맞는 지능적인 단어 제안을 받습니다"
+      },
+      "forms": {
+        "textAnalysis": {
+          "title": "텍스트 콘텐츠 분석",
+          "inputLabel": "여기에 텍스트 콘텐츠를 붙여넣으세요:",
+          "placeholder": "기사, 책 발췌 또는 영어 텍스트를 붙여넣으세요..."
+        },
+        "topicBased": {
+          "title": "주제별 생성",
+          "selectTopic": "주제 선택:",
+          "chooseTopic": "주제를 선택하세요..."
+        },
+        "aiSuggestions": {
+          "title": "AI 기반 생성",
+          "preferences": "학습 선호도:",
+          "preferencesPlaceholder": "학습하고 싶은 단어 유형을 설명하세요 (예: 학술 단어, 일상 대화, 비즈니스 용어)...",
+          "focusArea": "집중 영역"
+        },
+        "common": {
+          "difficultyLevel": "난이도",
+          "maxWords": "최대 단어 수"
+        }
+      },
+      "levels": {
+        "beginner": "초급",
+        "intermediate": "중급",
+        "advanced": "고급",
+        "mixed": "혼합 레벨"
+      },
+      "topics": {
+        "business": "비즈니스 & 금융",
+        "technology": "기술",
+        "travel": "여행 & 관광",
+        "health": "건강 & 의학",
+        "education": "교육",
+        "environment": "환경",
+        "food": "음식 & 요리",
+        "sports": "스포츠 & 피트니스"
+      },
+      "focusAreas": {
+        "vocabulary": "일반 어휘",
+        "academic": "학술 단어",
+        "conversation": "대화",
+        "professional": "전문 용어"
+      },
+      "generate": "어휘 생성",
+      "generating": "생성 중...",
+      "saveAll": "모두 저장",
+      "saveSuccess": "{count}개 단어를 어휘 목록에 성공적으로 저장했습니다",
+      "saveError": "어휘 저장에 실패했습니다",
+      "preview": {
+        "title": "생성된 어휘"
+      }
     },
     "vocabulary": {
       "title": "어휘",
@@ -366,6 +431,7 @@
         "googleSignOutSuccess": "구글 로그아웃 성공",
         "syncFromDriveSuccess": "구글 드라이브에서 동기화 성공",
         "googleDriveRetry": "구글 드라이브 저장 실패. 연결을 확인하세요.",
+        "account": "계정",
         "status": {
           "saving": "저장 중...",
           "autoSaving": "자동 저장 중...",

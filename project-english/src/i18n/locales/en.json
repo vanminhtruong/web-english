@@ -35,7 +35,72 @@
     "backToTopTooltip": "Back to Top ({percent}%)",
     "backspace": "Backspace",
     "clear": "Clear",
-    "space": "Space"
+    "space": "Space",
+    "select": "Select"
+  },
+  "autoGenerator": {
+    "title": "Auto Generator",
+    "description": "Generate vocabulary words automatically from text, topics, or AI suggestions",
+    "methods": {
+      "textAnalysis": "Text Analysis",
+      "textAnalysisDesc": "Extract vocabulary from articles, books, or any text content",
+      "topicBased": "Topic-based",
+      "topicBasedDesc": "Generate words based on specific topics or categories",
+      "aiSuggestions": "AI Suggestions",
+      "aiSuggestionsDesc": "Get intelligent word suggestions based on your learning level"
+    },
+    "forms": {
+      "textAnalysis": {
+        "title": "Analyze Text Content",
+        "inputLabel": "Paste your text content here:",
+        "placeholder": "Paste article, book excerpt, or any English text..."
+      },
+      "topicBased": {
+        "title": "Generate by Topic",
+        "selectTopic": "Select Topic:",
+        "chooseTopic": "Choose a topic..."
+      },
+      "aiSuggestions": {
+        "title": "AI-Powered Generation",
+        "preferences": "Learning Preferences:",
+        "preferencesPlaceholder": "Describe what type of words you want to learn (e.g., academic words, daily conversation, business terms)...",
+        "focusArea": "Focus Area"
+      },
+      "common": {
+        "difficultyLevel": "Difficulty Level",
+        "maxWords": "Maximum Words"
+      }
+    },
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "mixed": "Mixed Levels"
+    },
+    "topics": {
+      "business": "Business & Finance",
+      "technology": "Technology",
+      "travel": "Travel & Tourism",
+      "health": "Health & Medicine",
+      "education": "Education",
+      "environment": "Environment",
+      "food": "Food & Cooking",
+      "sports": "Sports & Fitness"
+    },
+    "focusAreas": {
+      "vocabulary": "General Vocabulary",
+      "academic": "Academic Words",
+      "conversation": "Conversational",
+      "professional": "Professional"
+    },
+    "generate": "Generate Vocabulary",
+    "generating": "Generating...",
+    "saveAll": "Save All",
+    "saveSuccess": "Successfully saved {count} words to your vocabulary list",
+    "saveError": "Failed to save vocabulary words",
+    "preview": {
+      "title": "Generated Vocabulary"
+    }
   },
   "vocabulary": {
     "title": "Vocabulary",
@@ -356,6 +421,7 @@
       "googleSignOutSuccess": "Successfully signed out from Google",
       "syncFromDriveSuccess": "Successfully synced from Google Drive",
       "googleDriveRetry": "Google Drive save failed. Check connection.",
+      "account": "Account",
       "status": {
         "saving": "Saving...",
         "autoSaving": "Auto-saving...",
