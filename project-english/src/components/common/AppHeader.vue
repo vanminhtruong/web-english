@@ -93,25 +93,29 @@
             
             <!-- Vocabulary Tab with Submenu -->
             <div class="relative group overflow-visible">
-              <RouterLink
-                to="/vocabulary"
+              <div
                 :class="[
-                  'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-dark-bg-mute focus:outline-none flex items-center space-x-1',
+                  'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-dark-bg-mute focus:outline-none flex items-center space-x-1 select-none cursor-default',
                   route.path.startsWith('/vocabulary') ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
                 ]"
+                aria-haspopup="true"
+                aria-expanded="false"
               >
                 <span>{{ t('common.vocabulary', 'Vocabulary') }}</span>
                 <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                 </svg>
-              </RouterLink>
+              </div>
               
               <!-- Submenu -->
               <div class="absolute top-full left-0 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out transform translate-y-2 group-hover:translate-y-0 z-[9999] pointer-events-none group-hover:pointer-events-auto pt-1">
                 <div class="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-dark-bg-mute rounded-lg shadow-lg dark:shadow-black/20 py-2">
                   <RouterLink
                     to="/vocabulary"
-                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                    :class="[
+                      'block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150',
+                      route.path === '/vocabulary' ? 'bg-gray-100 dark:bg-gray-custom text-black dark:text-white font-medium' : ''
+                    ]"
                   >
                     <div class="flex items-center space-x-2">
                       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -123,7 +127,10 @@
                   
                   <RouterLink
                     to="/vocabulary/questions"
-                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                    :class="[
+                      'block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150',
+                      route.path === '/vocabulary/questions' ? 'bg-gray-100 dark:bg-gray-custom text-black dark:text-white font-medium' : ''
+                    ]"
                   >
                     <div class="flex items-center space-x-2">
                       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -135,7 +142,10 @@
                   
                   <RouterLink
                     to="/vocabulary/examples"
-                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                    :class="[
+                      'block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150',
+                      route.path === '/vocabulary/examples' ? 'bg-gray-100 dark:bg-gray-custom text-black dark:text-white font-medium' : ''
+                    ]"
                   >
                     <div class="flex items-center space-x-2">
                       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -149,7 +159,10 @@
                   
                   <RouterLink
                     to="/vocabulary/generator"
-                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                    :class="[
+                      'block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150',
+                      route.path === '/vocabulary/generator' ? 'bg-gray-100 dark:bg-gray-custom text-black dark:text-white font-medium' : ''
+                    ]"
                   >
                     <div class="flex items-center space-x-2">
                       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -246,19 +259,27 @@
           </RouterLink>
           <!-- Vocabulary Section in Mobile -->
           <div class="space-y-1">
-            <RouterLink
-              to="/vocabulary"
-              @click="closeMobileMenu"
+            <div
               :class="[
-                'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none',
-                route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
+                'px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none select-none flex items-center justify-between',
+                route.path.startsWith('/vocabulary') ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
               ]"
+              aria-haspopup="true"
+              :aria-expanded="isMobileVocabOpen"
+              role="button"
+              tabindex="0"
+              @click="toggleMobileVocabSubmenu"
+              @keydown.enter.prevent="toggleMobileVocabSubmenu"
+              @keydown.space.prevent="toggleMobileVocabSubmenu"
             >
-              {{ t('common.vocabulary', 'Vocabulary') }}
-            </RouterLink>
+              <span>{{ t('common.vocabulary', 'Vocabulary') }}</span>
+              <svg class="w-4 h-4 ml-2 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" :class="isMobileVocabOpen ? 'rotate-180' : 'rotate-0'">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </div>
             
             <!-- Mobile Vocabulary Submenu -->
-            <div class="ml-4 space-y-1">
+            <div class="ml-4 space-y-1" v-show="isMobileVocabOpen">
               <RouterLink
                 to="/vocabulary/questions"
                 @click="closeMobileMenu"
@@ -332,7 +353,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, onMounted, onUnmounted, computed } from 'vue'
+import { defineAsyncComponent, ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { loadComponentSafely } from '../../utils/import-helper'
@@ -499,6 +520,19 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
 }
+
+// Mobile Vocabulary submenu state
+const isMobileVocabOpen = ref(false)
+const toggleMobileVocabSubmenu = () => {
+  isMobileVocabOpen.value = !isMobileVocabOpen.value
+}
+
+// When mobile menu opens, default Vocabulary submenu open state by current route
+watch(isMobileMenuOpen, (open) => {
+  if (open) {
+    isMobileVocabOpen.value = route.path.startsWith('/vocabulary')
+  }
+})
 
 // Logo click: go to dashboard from anywhere; if already there, scroll to top
 const handleLogoClick = async () => {

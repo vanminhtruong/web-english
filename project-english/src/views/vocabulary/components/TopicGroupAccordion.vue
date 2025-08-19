@@ -54,7 +54,7 @@
         <div v-if="expandedGroups[topicKey]" class="accordion-content border-t border-gray-200/50 dark:border-gray-700/50">
           <div class="p-4 space-y-4">
             <div
-              v-for="vocab in group"
+              v-for="vocab in getPaginatedTopicVocabs(topicKey)"
               :key="vocab.id"
               class="bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-white/10 p-4 hover:shadow-lg transition-all duration-300"
             >
@@ -76,9 +76,8 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.464-9.536a9 9 0 010 12.728M9 9l3-3v6l-3-3H4a1 1 0 01-1-1V10a1 1 0 011-1h5z" />
                         </svg>
                       </button>
-                      <!-- Examples Toggle Button -->
+                      <!-- Examples Toggle Button (always visible, even if 0 examples) -->
                       <button
-                        v-if="getVocabExampleCount(vocab.id) > 0"
                         @click="toggleVocabExamples(vocab.id)"
                         class="p-1 text-gray-600 hover:text-gray-700 hover:bg-gray-50/50 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-[#0a0a0a]/20 rounded transition-all duration-300 group"
                         :title="expandedVocabExamples[vocab.id] ? t('vocabulary.examples.hideExamples', 'Hide examples') : t('vocabulary.examples.showExamples', 'Show examples')"
@@ -187,7 +186,7 @@
                           {{ t('common.edit', 'Edit') }}
                         </button>
                         <button
-                          @click="deleteExample(example)"
+                          @click="deleteExample(example, emit)"
                           class="px-2 py-1.5 text-red-600 hover:text-red-700 hover:bg-red-50/50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20 rounded-md transition-all duration-300 text-sm"
                         >
                           {{ t('common.delete', 'Delete') }}
@@ -263,6 +262,72 @@
                   </div>
                 </div>
               </transition>
+            </div>
+
+            <!-- Topic-level Vocabulary Pagination -->
+            <div v-if="getTopicVocabPagesCount(topicKey) > 1" class="border-t border-white/20 dark:border-white/10 px-3 py-2">
+              <div class="flex items-center justify-between">
+                <!-- Mobile Pagination (Simple) -->
+                <div class="flex sm:hidden items-center gap-2">
+                  <button
+                    @click="previousTopicVocabPage(topicKey)"
+                    :disabled="!getTopicVocabPaginationInfo(topicKey).hasPrevious"
+                    class="px-2 py-1 text-xs bg-slate-200 dark:bg-dark-bg-mute text-slate-700 dark:text-slate-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                  >
+                    {{ t('common.previous', 'Previous') }}
+                  </button>
+                  <span class="text-xs text-slate-600 dark:text-slate-400">
+                    {{ getTopicVocabPaginationInfo(topicKey).currentPage }} / {{ getTopicVocabPaginationInfo(topicKey).totalPages }}
+                  </span>
+                  <button
+                    @click="nextTopicVocabPage(topicKey)"
+                    :disabled="!getTopicVocabPaginationInfo(topicKey).hasNext"
+                    class="px-2 py-1 text-xs bg-slate-200 dark:bg-dark-bg-mute text-slate-700 dark:text-slate-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                  >
+                    {{ t('common.next', 'Next') }}
+                  </button>
+                </div>
+
+                <!-- Desktop Pagination (Full) -->
+                <div class="hidden sm:flex items-center gap-2">
+                  <button
+                    @click="previousTopicVocabPage(topicKey)"
+                    :disabled="!getTopicVocabPaginationInfo(topicKey).hasPrevious"
+                    class="px-3 py-1.5 text-sm bg-slate-200 dark:bg-dark-bg-mute text-slate-700 dark:text-slate-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                  >
+                    {{ t('common.previous', 'Previous') }}
+                  </button>
+
+                  <div class="flex gap-1">
+                    <button
+                      v-for="page in getTopicVisiblePages(topicKey)"
+                      :key="page"
+                      @click="goToTopicVocabPage(topicKey, page)"
+                      :class="[
+                        'px-3 py-1.5 text-sm rounded transition-colors',
+                        getTopicVocabPaginationInfo(topicKey).currentPage === page
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-200 dark:bg-dark-bg-mute text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                      ]"
+                    >
+                      {{ page }}
+                    </button>
+                  </div>
+
+                  <button
+                    @click="nextTopicVocabPage(topicKey)"
+                    :disabled="!getTopicVocabPaginationInfo(topicKey).hasNext"
+                    class="px-3 py-1.5 text-sm bg-slate-200 dark:bg-dark-bg-mute text-slate-700 dark:text-slate-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                  >
+                    {{ t('common.next', 'Next') }}
+                  </button>
+                </div>
+
+                <!-- Vocabulary count info -->
+                <div class="text-xs text-slate-500 dark:text-slate-400">
+                  {{ t('vocabulary.examples.showingVocabulary', { start: getTopicVocabPaginationInfo(topicKey).start, end: getTopicVocabPaginationInfo(topicKey).end, total: getTopicVocabPaginationInfo(topicKey).totalVocab }, 'Showing {start} to {end} of {total} words') }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -348,41 +413,7 @@
 </template>
 
 <script setup lang="ts" name="TopicGroupAccordion">
-import { ref, computed, watch, onMounted, defineAsyncComponent } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useToast, POSITION } from 'vue-toastification'
-import { useVocabularyStore } from '../../../composables/useVocabularyStore'
-import { useAudioSystem } from '../../practice/composables/bubble-shooter/useAudioSystem'
-import { useTopicName } from '../../../utils/topicUtils'
-const ExampleFormDialog = defineAsyncComponent(() => import('./ExampleFormDialog.vue'))
-const ConfirmToast = defineAsyncComponent(() => import('../../../components/common/ConfirmToast.vue'))
-
-interface Example {
-  id: string
-  vocabularyId: string
-  vocabulary?: {
-    id: string
-    word: string
-  }
-  title: string
-  content: string
-  translation?: string
-  context?: string
-  type: 'sentence' | 'dialogue' | 'phrase' | 'context'
-  difficulty?: 'easy' | 'medium' | 'hard'
-  tags?: string[]
-  createdAt: string
-  updatedAt: string
-}
-
-interface Vocabulary {
-  id: string
-  word: string
-  meaning: string
-  partOfSpeech: string
-  category: string
-  level: string
-}
+import { useTopicGroupAccordion, type Example, type Vocabulary } from './composables/useTopicGroupAccordion'
 
 interface Props {
   vocabularyList: Vocabulary[]
@@ -397,448 +428,59 @@ const emit = defineEmits<{
   'delete-example': [example: Example]
 }>()
 
-const { t } = useI18n()
-const toast = useToast()
-const vocabularyStore = useVocabularyStore()
-const audioSystem = useAudioSystem()
-const { getTopicName } = useTopicName()
-
-// State for expanded groups - each topic can be expanded/collapsed independently
-const expandedGroups = ref<Record<string, boolean>>({})
-
-// State for expanded vocabularies examples - each vocabulary can expand/collapse its examples independently
-const expandedVocabExamples = ref<Record<string, boolean>>({})
-
-// Pagination state for examples within each vocabulary
-const examplePages = ref<Record<string, number>>({})
-const examplesPerPage = ref(5) // 5 examples per page
-
-// Pagination state for grouped view
-const currentPage = ref(1)
-const topicsPerPage = ref(3) // 3 topics per page in grouped view
-
-// Audio functions
-const playVocabularyAudio = (word: string) => {
-  audioSystem.playVocabularySound(word, 'en')
-}
-
-const playExampleAudio = (text: string) => {
-  audioSystem.playVocabularySound(text, 'en')
-}
-
-
-
-// Load expanded state from localStorage
-const loadExpandedState = () => {
-  try {
-    const saved = localStorage.getItem('vocabulary-examples-expanded-topics')
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      expandedGroups.value = { ...parsed }
-    }
-  } catch (error) {
-    console.error('Error loading expanded state:', error)
-  }
-}
-
-// Save expanded state to localStorage
-const saveExpandedState = () => {
-  try {
-    localStorage.setItem('vocabulary-examples-expanded-topics', JSON.stringify(expandedGroups.value))
-  } catch (error) {
-    console.error('Error saving expanded state:', error)
-  }
-}
-
-// Load expanded vocabulary examples state from localStorage
-const loadExpandedVocabExamplesState = () => {
-  try {
-    const saved = localStorage.getItem('vocabulary-examples-expanded-vocab-grouped')
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      expandedVocabExamples.value = { ...parsed }
-    }
-  } catch (error) {
-    console.error('Error loading expanded vocabulary examples state:', error)
-  }
-}
-
-// Save expanded vocabulary examples state to localStorage
-const saveExpandedVocabExamplesState = () => {
-  try {
-    localStorage.setItem('vocabulary-examples-expanded-vocab-grouped', JSON.stringify(expandedVocabExamples.value))
-  } catch (error) {
-    console.error('Error saving expanded vocab examples state:', error)
-  }
-}
-
-// Load example pages state from localStorage
-const loadExamplePagesState = () => {
-  try {
-    const saved = localStorage.getItem('vocabulary-examples-pages-grouped')
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      examplePages.value = { ...parsed }
-    }
-  } catch (error) {
-    console.error('Error loading example pages state:', error)
-  }
-}
-
-// Save example pages state to localStorage
-const saveExamplePagesState = () => {
-  try {
-    localStorage.setItem('vocabulary-examples-pages-grouped', JSON.stringify(examplePages.value))
-  } catch (error) {
-    console.error('Error saving example pages state:', error)
-  }
-}
-
-// Group vocabulary by topic/category with pagination
-const allGroupedVocabulary = computed(() => {
-  const groups: Record<string, Vocabulary[]> = {}
-  
-  props.vocabularyList.forEach(vocab => {
-    const topicKey = vocab.category || 'uncategorized'
-    if (!groups[topicKey]) {
-      groups[topicKey] = []
-    }
-    groups[topicKey].push(vocab)
-  })
-
-  // Sort each group by word alphabetically
-  Object.keys(groups).forEach(key => {
-    groups[key].sort((a, b) => a.word.localeCompare(b.word))
-  })
-
-  return groups
-})
-
-// Paginated grouped vocabulary
-const groupedVocabulary = computed(() => {
-  const allGroups = allGroupedVocabulary.value
-  const topicKeys = Object.keys(allGroups)
-  
-  const start = (currentPage.value - 1) * topicsPerPage.value
-  const end = start + topicsPerPage.value
-  const paginatedTopics = topicKeys.slice(start, end)
-  
-  const paginatedGroups: Record<string, Vocabulary[]> = {}
-  paginatedTopics.forEach(topicKey => {
-    paginatedGroups[topicKey] = allGroups[topicKey]
-  })
-  
-  return paginatedGroups
-})
-
-// Pagination info for grouped view
-const paginationInfo = computed(() => {
-  const totalTopics = Object.keys(allGroupedVocabulary.value).length
-  const totalPages = Math.ceil(totalTopics / topicsPerPage.value)
-  const startIndex = (currentPage.value - 1) * topicsPerPage.value + 1
-  const endIndex = Math.min(currentPage.value * topicsPerPage.value, totalTopics)
-  
-  return {
-    totalTopics,
-    totalPages,
-    currentPage: currentPage.value,
-    startIndex,
-    endIndex,
-    hasNext: currentPage.value < totalPages,
-    hasPrevious: currentPage.value > 1
-  }
-})
-
-// Visible pages for pagination
-const visiblePages = computed(() => {
-  const pages: number[] = []
-  const maxVisible = 5
-  const totalP = paginationInfo.value.totalPages
-  
-  if (totalP <= maxVisible) {
-    for (let i = 1; i <= totalP; i++) {
-      pages.push(i)
-    }
-  } else {
-    const start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
-    const end = Math.min(totalP, start + maxVisible - 1)
-    
-    for (let i = start; i <= end; i++) {
-      pages.push(i)
-    }
-  }
-  
-  return pages
-})
-
-// Initialize expanded state for vocabularies in current page topics
-const initializeExpandedVocabExamplesState = () => {
-  Object.values(groupedVocabulary.value).forEach(group => {
-    group.forEach(vocab => {
-      if (expandedVocabExamples.value[vocab.id] === undefined) {
-        expandedVocabExamples.value[vocab.id] = true // Default to expanded
-      }
-      if (examplePages.value[vocab.id] === undefined) {
-        examplePages.value[vocab.id] = 1 // Default to page 1
-      }
-    })
-  })
-  saveExpandedVocabExamplesState()
-  saveExamplePagesState()
-}
-
-// Vocabulary examples accordion animation functions
-const vocabExamplesEnter = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = '0'
-  element.style.overflow = 'hidden'
-}
-
-const vocabExamplesAfterEnter = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = 'auto'
-  element.style.overflow = 'visible'
-}
-
-const vocabExamplesLeave = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = element.scrollHeight + 'px'
-  element.style.overflow = 'hidden'
-  // Force reflow
-  element.offsetHeight
-  element.style.height = '0'
-}
-
-const vocabExamplesAfterLeave = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = 'auto'
-  element.style.overflow = 'visible'
-}
-
-// Get examples for a vocabulary
-const getVocabExamples = (vocabId: string) => {
-  return props.examples.filter(e => e.vocabularyId === vocabId)
-}
-
-// Get paginated examples for a vocabulary
-const getPaginatedVocabExamples = (vocabId: string) => {
-  const allExamples = getVocabExamples(vocabId)
-  const currentPage = examplePages.value[vocabId] || 1
-  const start = (currentPage - 1) * examplesPerPage.value
-  const end = start + examplesPerPage.value
-  return allExamples.slice(start, end)
-}
-
-// Get total pages for vocabulary examples
-const getVocabExamplePages = (vocabId: string) => {
-  const totalExamples = getVocabExamples(vocabId).length
-  return Math.ceil(totalExamples / examplesPerPage.value)
-}
-
-// Navigate example pages
-const goToExamplePage = (vocabId: string, page: number) => {
-  const totalPages = getVocabExamplePages(vocabId)
-  if (page >= 1 && page <= totalPages) {
-    examplePages.value[vocabId] = page
-    saveExamplePagesState()
-  }
-}
-
-// Previous/next example page
-const previousExamplePage = (vocabId: string) => {
-  const currentPage = examplePages.value[vocabId] || 1
-  if (currentPage > 1) {
-    goToExamplePage(vocabId, currentPage - 1)
-  }
-}
-
-const nextExamplePage = (vocabId: string) => {
-  const currentPage = examplePages.value[vocabId] || 1
-  const totalPages = getVocabExamplePages(vocabId)
-  if (currentPage < totalPages) {
-    goToExamplePage(vocabId, currentPage + 1)
-  }
-}
-
-// Get example pagination info
-const getExamplePaginationInfo = (vocabId: string) => {
-  const totalExamples = getVocabExamples(vocabId).length
-  const currentPage = examplePages.value[vocabId] || 1
-  const totalPages = getVocabExamplePages(vocabId)
-  const start = (currentPage - 1) * examplesPerPage.value + 1
-  const end = Math.min(currentPage * examplesPerPage.value, totalExamples)
-  
-  return {
-    totalExamples,
-    totalPages,
-    currentPage,
-    start,
-    end,
-    hasNext: currentPage < totalPages,
-    hasPrevious: currentPage > 1
-  }
-}
-
-// Get example count for a vocabulary
-const getVocabExampleCount = (vocabId: string) => {
-  return props.examples.filter(e => e.vocabularyId === vocabId).length
-}
-
-// Get total examples for a topic group
-const getTotalExamplesForTopic = (group: Vocabulary[]) => {
-  return group.reduce((total, vocab) => total + getVocabExampleCount(vocab.id), 0)
-}
-
-// Example type and difficulty helpers
-const getTypeLabel = (type: string) => {
-  const labels = {
-    'sentence': t('vocabulary.examples.types.sentence', 'Sentence'),
-    'dialogue': t('vocabulary.examples.types.dialogue', 'Dialogue'),
-    'phrase': t('vocabulary.examples.types.phrase', 'Phrase'),
-    'context': t('vocabulary.examples.types.context', 'Context')
-  }
-  return labels[type as keyof typeof labels] || type
-}
-
-const getTypeColorClass = (type: string) => {
-  const classes = {
-    'sentence': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-    'dialogue': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-    'phrase': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-    'context': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
-  }
-  return classes[type as keyof typeof classes] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-}
-
-const getDifficultyLabel = (difficulty: string) => {
-  const labels = {
-    'easy': t('common.easy', 'Easy'),
-    'medium': t('vocabulary.examples.difficulty.medium', 'Medium'),
-    'hard': t('common.difficult', 'Difficult')
-  }
-  return labels[difficulty as keyof typeof labels] || difficulty
-}
-
-const getDifficultyColorClass = (difficulty: string) => {
-  const classes = {
-    'easy': 'text-green-600 dark:text-green-400',
-    'medium': 'text-yellow-600 dark:text-yellow-400',
-    'hard': 'text-red-600 dark:text-red-400'
-  }
-  return classes[difficulty as keyof typeof classes] || 'text-gray-600 dark:text-gray-400'
-}
-
-// Accordion animation functions
-const enter = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = '0'
-  element.style.overflow = 'hidden'
-}
-
-const afterEnter = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = 'auto'
-  element.style.overflow = 'visible'
-}
-
-const leave = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = element.scrollHeight + 'px'
-  element.style.overflow = 'hidden'
-  // Force reflow
-  element.offsetHeight
-  element.style.height = '0'
-}
-
-const afterLeave = (el: Element) => {
-  const element = el as HTMLElement
-  element.style.height = 'auto'
-  element.style.overflow = 'visible'
-}
-
-// Initialize with all groups expanded by default
-const initializeExpandedState = () => {
-  const topicKeys = Object.keys(groupedVocabulary.value)
-  topicKeys.forEach(key => {
-    if (expandedGroups.value[key] === undefined) {
-      expandedGroups.value[key] = true // Default to expanded
-    }
-  })
-  saveExpandedState()
-}
-
-// Watch for changes in grouped vocabulary to initialize new topics and vocab examples
-watch(() => groupedVocabulary.value, () => {
-  initializeExpandedState()
-  initializeExpandedVocabExamplesState()
-}, { immediate: true })
-
-// Load expanded state on mount
-onMounted(() => {
-  loadExpandedState()
-  loadExpandedVocabExamplesState()
-  loadExamplePagesState()
-})
-
-const deleteExample = (example: any) => {
-  const toastId = toast(
-    {
-      component: ConfirmToast,
-      props: {
-        message: t('vocabulary.examples.confirmDelete', 'Are you sure you want to delete this example?'),
-        confirmText: t('common.confirm', 'Confirm'),
-        cancelText: t('common.cancel', 'Cancel'),
-        onConfirm: () => {
-          emit('delete-example', example)
-          toast.dismiss(toastId)
-          toast.success(t('vocabulary.examples.deleteSuccess', 'Example deleted successfully'))
-        },
-        onCancel: () => {
-          toast.dismiss(toastId)
-        },
-      },
-    },
-    {
-      position: POSITION.TOP_CENTER,
-      timeout: false,
-      closeButton: false,
-      draggable: false,
-      icon: false,
-    }
-  )
-}
-
-
-// Navigation functions
-const goToPage = (page: number) => {
-  if (page >= 1 && page <= paginationInfo.value.totalPages) {
-    currentPage.value = page
-  }
-}
-
-const previousPage = () => {
-  if (paginationInfo.value.hasPrevious) {
-    currentPage.value--
-  }
-}
-
-const nextPage = () => {
-  if (paginationInfo.value.hasNext) {
-    currentPage.value++
-  }
-}
-
-// Toggle group expanded state
-const toggleGroup = (topicKey: string) => {
-  expandedGroups.value[topicKey] = !expandedGroups.value[topicKey]
-  saveExpandedState()
-}
-
-// Toggle vocabulary examples visibility
-const toggleVocabExamples = (vocabId: string) => {
-  expandedVocabExamples.value[vocabId] = !expandedVocabExamples.value[vocabId]
-  saveExpandedVocabExamplesState()
-}
+const {
+  ExampleFormDialog,
+  getTopicName,
+  t,
+  expandedGroups,
+  expandedVocabExamples,
+  examplePages,
+  examplesPerPage,
+  currentPage,
+  topicsPerPage,
+  topicVocabPages,
+  topicVocabPerPage,
+  allGroupedVocabulary,
+  groupedVocabulary,
+  paginationInfo,
+  visiblePages,
+  playVocabularyAudio,
+  playExampleAudio,
+  getVocabExamples,
+  getPaginatedVocabExamples,
+  getPaginatedTopicVocabs,
+  getTopicVocabPagesCount,
+  getTopicVocabPaginationInfo,
+  getVocabExamplePages,
+  getExamplePaginationInfo,
+  getVocabExampleCount,
+  getTotalExamplesForTopic,
+  getTopicVisiblePages,
+  goToTopicVocabPage,
+  previousTopicVocabPage,
+  nextTopicVocabPage,
+  goToExamplePage,
+  previousExamplePage,
+  nextExamplePage,
+  goToPage,
+  previousPage,
+  nextPage,
+  toggleGroup,
+  toggleVocabExamples,
+  getTypeLabel,
+  getTypeColorClass,
+  getDifficultyLabel,
+  getDifficultyColorClass,
+  enter,
+  afterEnter,
+  leave,
+  afterLeave,
+  vocabExamplesEnter,
+  vocabExamplesAfterEnter,
+  vocabExamplesLeave,
+  vocabExamplesAfterLeave,
+  deleteExample
+} = useTopicGroupAccordion(props)
 </script>
 
 <script lang="ts">
