@@ -20,11 +20,11 @@
       margin: 0,
       padding: 0,
       boxSizing: 'border-box',
-      overflowX: 'hidden'
+      overflow: 'visible'
     }"
   >
-    <div class="w-full px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+    <div class="w-full px-4 sm:px-6 lg:px-8 overflow-visible">
+      <div class="flex items-center justify-between h-16 overflow-visible">
         <!-- Logo and Title -->
         <div class="flex items-center space-x-2 sm:space-x-4">
           <img
@@ -79,31 +79,93 @@
         </div>
 
         <!-- Desktop Navigation (hidden on mobile/tablet/lg) -->
-        <div class="hidden xl:flex items-center space-x-4">
-          <nav class="flex space-x-1">
+        <div class="hidden xl:flex items-center space-x-4 overflow-visible">
+          <nav class="flex space-x-1 relative overflow-visible">
             <RouterLink
               to="/dashboard"
               :class="[
-                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
-                route.path === '/dashboard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-dark-bg-mute focus:outline-none',
+                route.path === '/dashboard' ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
               ]"
             >
               {{ t('common.dashboard', 'Dashboard') }}
             </RouterLink>
-            <RouterLink
-              to="/vocabulary"
-              :class="[
-                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
-                route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
-              ]"
-            >
-              {{ t('common.vocabulary', 'Vocabulary') }}
-            </RouterLink>
+            
+            <!-- Vocabulary Tab with Submenu -->
+            <div class="relative group overflow-visible">
+              <RouterLink
+                to="/vocabulary"
+                :class="[
+                  'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-dark-bg-mute focus:outline-none flex items-center space-x-1',
+                  route.path.startsWith('/vocabulary') ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
+                ]"
+              >
+                <span>{{ t('common.vocabulary', 'Vocabulary') }}</span>
+                <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </RouterLink>
+              
+              <!-- Submenu -->
+              <div class="absolute top-full left-0 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out transform translate-y-2 group-hover:translate-y-0 z-[9999] pointer-events-none group-hover:pointer-events-auto pt-1">
+                <div class="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-dark-bg-mute rounded-lg shadow-lg dark:shadow-black/20 py-2">
+                  <RouterLink
+                    to="/vocabulary"
+                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                  >
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{{ t('vocabulary.submenu.manageWords', 'Manage Words') }}</span>
+                    </div>
+                  </RouterLink>
+                  
+                  <RouterLink
+                    to="/vocabulary/questions"
+                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                  >
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                      </svg>
+                      <span>{{ t('vocabulary.submenu.manageQuestions', 'Manage Questions') }}</span>
+                    </div>
+                  </RouterLink>
+                  
+                  <RouterLink
+                    to="/vocabulary/examples"
+                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                  >
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                      </svg>
+                      <span>{{ t('vocabulary.submenu.manageExamples', 'Manage Examples') }}</span>
+                    </div>
+                  </RouterLink>
+                  
+                  <div class="border-t border-gray-200 dark:border-dark-bg-mute my-1"></div>
+                  
+                  <RouterLink
+                    to="/vocabulary/generator"
+                    class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-dark-bg-mute transition-colors duration-150"
+                  >
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                      </svg>
+                      <span>{{ t('vocabulary.submenu.autoGenerator', 'Auto Generator') }}</span>
+                    </div>
+                  </RouterLink>
+                </div>
+              </div>
+            </div>
             <RouterLink
               to="/grammar"
               :class="[
-                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-gray-800/50 focus:outline-none',
-                route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+                'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out hover:bg-gray-50 dark:hover:bg-dark-bg-mute focus:outline-none',
+                route.path === '/grammar' ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
               ]"
             >
               {{ t('common.grammar', 'Grammar') }}
@@ -112,7 +174,7 @@
               to="/practice/flashcard"
               :class="[
                 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none',
-                route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+                route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
               ]"
             >
               {{ t('common.practice', 'Practice') }}
@@ -182,22 +244,65 @@
           >
             {{ t('common.dashboard', 'Dashboard') }}
           </RouterLink>
-          <RouterLink
-            to="/vocabulary"
-            @click="closeMobileMenu"
-            :class="[
-              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
-              route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
-            ]"
-          >
-            {{ t('common.vocabulary', 'Vocabulary') }}
-          </RouterLink>
+          <!-- Vocabulary Section in Mobile -->
+          <div class="space-y-1">
+            <RouterLink
+              to="/vocabulary"
+              @click="closeMobileMenu"
+              :class="[
+                'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none',
+                route.path === '/vocabulary' ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
+              ]"
+            >
+              {{ t('common.vocabulary', 'Vocabulary') }}
+            </RouterLink>
+            
+            <!-- Mobile Vocabulary Submenu -->
+            <div class="ml-4 space-y-1">
+              <RouterLink
+                to="/vocabulary/questions"
+                @click="closeMobileMenu"
+                class="block px-3 py-2 rounded-md text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none"
+              >
+                <div class="flex items-center space-x-2">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                  </svg>
+                  <span>{{ t('vocabulary.submenu.manageQuestions', 'Manage Questions') }}</span>
+                </div>
+              </RouterLink>
+              <RouterLink
+                to="/vocabulary/examples"
+                @click="closeMobileMenu"
+                class="block px-3 py-2 rounded-md text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none"
+              >
+                <div class="flex items-center space-x-2">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                  </svg>
+                  <span>{{ t('vocabulary.submenu.manageExamples', 'Manage Examples') }}</span>
+                </div>
+              </RouterLink>
+              <RouterLink
+                to="/vocabulary/generator"
+                @click="closeMobileMenu"
+                class="block px-3 py-2 rounded-md text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none"
+              >
+                <div class="flex items-center space-x-2">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                  </svg>
+                  <span>{{ t('vocabulary.submenu.autoGenerator', 'Auto Generator') }}</span>
+                </div>
+              </RouterLink>
+            </div>
+          </div>
           <RouterLink
             to="/grammar"
             @click="closeMobileMenu"
             :class="[
-              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
-              route.path === '/grammar' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none',
+              route.path === '/grammar' ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
             ]"
           >
             {{ t('common.grammar', 'Grammar') }}
@@ -206,8 +311,8 @@
             to="/practice/flashcard"
             @click="closeMobileMenu"
             :class="[
-              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none',
-              route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold' : ''
+              'block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none',
+              route.path === '/practice/flashcard' ? 'bg-gray-300 dark:bg-dark-bg-mute text-black dark:text-white font-bold' : ''
             ]"
           >
             {{ t('common.practice', 'Practice') }}
@@ -556,5 +661,28 @@ header {
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
+}
+
+/* Ensure submenu visibility */
+.group:hover .absolute {
+  display: block !important;
+}
+
+/* Fix container overflow for dropdown visibility */
+header,
+header > *,
+nav,
+.group {
+  overflow: visible !important;
+}
+
+/* Submenu positioning and visibility */
+.group {
+  position: relative !important;
+}
+
+.group .absolute {
+  position: absolute !important;
+  z-index: 9999 !important;
 }
 </style>
