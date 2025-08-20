@@ -281,6 +281,18 @@
             <!-- Mobile Vocabulary Submenu -->
             <div class="ml-4 space-y-1" v-show="isMobileVocabOpen">
               <RouterLink
+                to="/vocabulary"
+                @click="closeMobileMenu"
+                class="block px-3 py-2 rounded-md text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none"
+              >
+                <div class="flex items-center space-x-2">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{{ t('vocabulary.submenu.manageWords', 'Manage Words') }}</span>
+                </div>
+              </RouterLink>
+              <RouterLink
                 to="/vocabulary/questions"
                 @click="closeMobileMenu"
                 class="block px-3 py-2 rounded-md text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-bg-mute transition-colors focus:outline-none"
@@ -529,8 +541,9 @@ const toggleMobileVocabSubmenu = () => {
 
 // When mobile menu opens, default Vocabulary submenu open state by current route
 watch(isMobileMenuOpen, (open) => {
+  // Always start collapsed by default when menu opens
   if (open) {
-    isMobileVocabOpen.value = route.path.startsWith('/vocabulary')
+    isMobileVocabOpen.value = false
   }
 })
 
