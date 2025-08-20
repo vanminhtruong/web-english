@@ -106,7 +106,7 @@
             class="group bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-xl hover:shadow-2xl rounded-2xl border border-white/20 dark:border-white/10 transition-all duration-500 hover:scale-[1.005] p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6"
           >
             <!-- Vocabulary Header -->
-            <div class="flex flex-col xs:flex-col sm:flex-row items-start justify-between mb-3 xs:mb-3 sm:mb-4 pb-2 xs:pb-2 sm:pb-3 border-b border-gray-200/50 dark:border-gray-700/50 gap-3 xs:gap-3 sm:gap-0">
+            <div @click="toggleVocabExamples(vocab.id)" class="flex flex-col xs:flex-col sm:flex-row items-start justify-between mb-3 xs:mb-3 sm:mb-4 pb-2 xs:pb-2 sm:pb-3 border-b border-gray-200/50 dark:border-gray-700/50 gap-3 xs:gap-3 sm:gap-0">
               <div class="flex items-start space-x-2 xs:space-x-2 sm:space-x-3 flex-1">
                 <div class="animate-pulse-slow mt-1">
                   <div class="w-2 xs:w-2.5 sm:w-2.5 h-2 xs:h-2.5 sm:h-2.5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full"></div>
@@ -115,7 +115,7 @@
                   <div class="flex items-center space-x-1 xs:space-x-1 sm:space-x-2 mb-1">
                     <h3 class="text-base xs:text-lg sm:text-lg md:text-lg font-bold text-gray-900 dark:text-white truncate">{{ vocab.word }}</h3>
                     <button
-                      @click="playVocabularyAudio(vocab.word)"
+                      @click.stop="playVocabularyAudio(vocab.word)"
                       class="p-1 xs:p-1.5 sm:p-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50/50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 group flex-shrink-0"
                       :title="t('vocabulary.examples.playPronunciation', 'Play pronunciation')"
                     >
@@ -126,7 +126,7 @@
                     <!-- Examples Toggle Button -->
                     <button
                       v-if="getVocabExampleCount(vocab.id) > 0"
-                      @click="toggleVocabExamples(vocab.id)"
+                      @click.stop="toggleVocabExamples(vocab.id)"
                       class="p-1 xs:p-1.5 sm:p-1.5 text-gray-600 hover:text-gray-700 hover:bg-gray-50/50 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-[#0a0a0a]/20 rounded-lg transition-all duration-300 group flex-shrink-0"
                       :title="expandedExamples[vocab.id] ? t('vocabulary.examples.hideExamples', 'Hide examples') : t('vocabulary.examples.showExamples', 'Show examples')"
                     >
@@ -153,7 +153,7 @@
                 </div>
               </div>
               <button
-                @click="openCreateDialogForVocab(vocab)"
+                @click.stop="openCreateDialogForVocab(vocab)"
                 class="px-2 xs:px-2.5 sm:px-3 py-1.5 xs:py-1.5 sm:py-2 text-xs xs:text-xs sm:text-sm bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-1 xs:space-x-1 sm:space-x-2 flex-shrink-0"
               >
                 <svg class="w-3 xs:w-3 sm:w-4 h-3 xs:h-3 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

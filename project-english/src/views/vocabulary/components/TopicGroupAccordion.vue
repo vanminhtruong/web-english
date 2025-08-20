@@ -59,7 +59,7 @@
               class="bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-white/10 p-4 hover:shadow-lg transition-all duration-300"
             >
               <!-- Vocabulary Header -->
-              <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-200/30 dark:border-gray-700/30">
+              <div @click="toggleVocabExamples(vocab.id)" class="flex items-center justify-between mb-3 pb-2 border-b border-gray-200/30 dark:border-gray-700/30 cursor-pointer">
                 <div class="flex items-center space-x-3">
                   <div class="animate-pulse-slow">
                     <div class="w-2 h-2 bg-gradient-to-r from-green-400 to-blue-500 rounded-full"></div>
@@ -68,7 +68,7 @@
                     <div class="flex items-center space-x-2">
                       <h4 class="text-base font-bold text-gray-900 dark:text-white">{{ vocab.word }}</h4>
                       <button
-                        @click="playVocabularyAudio(vocab.word)"
+                        @click.stop="playVocabularyAudio(vocab.word)"
                         class="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50/50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20 rounded transition-all duration-300 group"
                         :title="t('vocabulary.examples.playPronunciation', 'Play pronunciation')"
                       >
@@ -78,7 +78,7 @@
                       </button>
                       <!-- Examples Toggle Button (always visible, even if 0 examples) -->
                       <button
-                        @click="toggleVocabExamples(vocab.id)"
+                        @click.stop="toggleVocabExamples(vocab.id)"
                         class="p-1 text-gray-600 hover:text-gray-700 hover:bg-gray-50/50 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-[#0a0a0a]/20 rounded transition-all duration-300 group"
                         :title="expandedVocabExamples[vocab.id] ? t('vocabulary.examples.hideExamples', 'Hide examples') : t('vocabulary.examples.showExamples', 'Show examples')"
                       >
@@ -105,7 +105,7 @@
                   </div>
                 </div>
                 <button
-                  @click="$emit('add-example', vocab)"
+                  @click.stop="$emit('add-example', vocab)"
                   class="px-3 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-1.5"
                 >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
