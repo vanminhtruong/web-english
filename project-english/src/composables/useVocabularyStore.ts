@@ -312,6 +312,20 @@ export function useVocabularyStore() {
     return vocabularies.value.filter(vocab => vocab.favorite)
   })
   
+  // Clear all vocabularies
+  const clearAllVocabularies = (): boolean => {
+    try {
+      vocabularies.value = []
+      nextId = 1
+      saveToLocalStorage()
+      console.log('All vocabularies cleared successfully')
+      return true
+    } catch (error) {
+      console.error('Error clearing all vocabularies:', error)
+      return false
+    }
+  }
+  
   // Initialize store - ensure data is loaded
   const initializeStore = () => {
     if (!isInitialized) {
@@ -367,6 +381,7 @@ export function useVocabularyStore() {
     addVocabulary,
     updateVocabulary,
     deleteVocabulary,
+    clearAllVocabularies,
     importVocabularies,
     toggleFavorite,
     filterVocabularies,

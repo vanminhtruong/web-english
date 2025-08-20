@@ -204,6 +204,17 @@
     "updateSuccess": "Từ vựng đã được cập nhật thành công.",
     "addSuccess": "Thêm từ vựng thành công!",
     "deleteSuccess": "Đã xóa \"{word}\" thành công.",
+    "deleteAll": {
+      "title": "Xóa tất cả từ vựng",
+      "description": "Thao tác này sẽ xóa vĩnh viễn tất cả từ vựng trong bộ sưu tập của bạn. Hành động này không thể hoàn tác.",
+      "button": "Xóa tất cả từ vựng",
+      "confirmTitle": "Xóa tất cả từ vựng",
+      "confirmMessage": "Bạn có chắc chắn muốn xóa tất cả từ vựng? Hành động này không thể hoàn tác và sẽ xóa vĩnh viễn tất cả từ vựng đã lưu.",
+      "warningCount": "Bạn sắp xóa {count} từ vựng.",
+      "confirm": "Xóa tất cả",
+      "success": "Đã xóa tất cả từ vựng thành công",
+      "error": "Không thể xóa tất cả từ vựng. Vui lòng thử lại."
+    },
     "topic": "Chủ đề",
     "words": "từ",
     "createdAt": "Tạo lúc",

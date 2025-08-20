@@ -198,6 +198,17 @@
     "updateSuccess": "Vocabulary has been updated successfully.",
     "addSuccess": "Vocabulary added successfully!",
     "deleteSuccess": "Deleted \"{word}\" successfully.",
+    "deleteAll": {
+      "title": "Delete All Vocabularies",
+      "description": "This will permanently delete all vocabulary words from your collection. This action cannot be undone.",
+      "button": "Delete All Vocabularies",
+      "confirmTitle": "Delete All Vocabularies",
+      "confirmMessage": "Are you sure you want to delete all vocabulary words? This action cannot be undone and will permanently remove all your saved words.",
+      "warningCount": "You are about to delete {count} vocabulary words.",
+      "confirm": "Delete All",
+      "success": "All vocabulary words have been deleted successfully",
+      "error": "Failed to delete all vocabularies. Please try again."
+    },
     "words": "words",
     "createdAt": "Created at",
     "updatedAt": "Updated at",

@@ -175,6 +175,14 @@
                 @import-file="handleFileImportWithReload"
               />
             </div>
+
+            <!-- Delete All Vocabularies Panel -->
+            <DeleteAllVocabulariesPanel
+              :total-count="filteredVocabulary.length"
+              :auto-save-enabled="autoSaveEnabled"
+              :use-grouping="useGrouping"
+              @vocabularies-deleted="handleVocabulariesDeleted"
+            />
           </div>
         </BaseAccordion>
       </LazyLoadComponent>
@@ -299,6 +307,7 @@
       @close="closeMoveModal"
       @confirm-move="confirmMove"
     />
+
   </div>
 </template>
 
@@ -329,9 +338,9 @@ const VocabularyNoteDialog = defineAsyncComponent(() => import('./components/Voc
 const GrammarManagerModal = defineAsyncComponent(() => import('./components/GrammarManagerModal.vue'));
 // Temporarily use sync import for debugging
 // const MoveModal = defineAsyncComponent(() => import('./components/move').then(m => ({ default: m.MoveModal })));
-import { MoveModal } from './components/move';
 const VoiceSelector = defineAsyncComponent(() => import('../../components/VoiceSelector.vue'));
 const TopicManager = defineAsyncComponent(() => import('./components/TopicManager.vue'));
+const DeleteAllVocabulariesPanel = defineAsyncComponent(() => import('./components/DeleteAllVocabulariesPanel.vue'));
 
 // Composables
 import { useVocabularyFilters } from './composables/useVocabularyFilters';
@@ -659,7 +668,7 @@ watch(showNoteDialog, (newValue) => {
   if (newValue) {
     document.body.classList.add('modal-open');
   } else {
-    // Only remove if form dialog is also closed
+    // Only remove if other dialogs are also closed
     if (!showFormDialog.value) {
       document.body.classList.remove('modal-open');
     }
@@ -675,7 +684,7 @@ watch(showFormDialog, (newValue) => {
     // Hide sticky tooltip when dialog opens
     showStickyTooltip.value = false;
   } else {
-    // Only remove if note dialog is also closed
+    // Only remove if other dialogs are also closed
     if (!showNoteDialog.value) {
       document.body.classList.remove('modal-open');
     }
@@ -854,6 +863,28 @@ const handleNoteSaved = (note: string, markedWords: string[]) => {
   }
   
   console.log(`Note saved for ${noteDialogDate.value} with ${markedWords.length} marked words`);
+};
+
+// Handle vocabularies deleted event from DeleteAllVocabulariesPanel
+const handleVocabulariesDeleted = () => {
+  // Reset pagination to first page
+  currentPage.value = 1;
+  
+  // Reset recently added category
+  recentlyAddedCategory.value = null;
+  
+  // Reset grouping state
+  if (useGrouping.value) {
+    nextTick(() => {
+      reloadGroupingState();
+      console.log('Grouping state reloaded after delete all');
+    });
+  }
+  
+  // Trigger auto-save if enabled to save the empty state
+  if (autoSaveEnabled.value) {
+    debounceAutoSave();
+  }
 };
 
 // Perform move vocabulary between date groups  
