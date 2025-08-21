@@ -209,7 +209,16 @@
         "warningCount": "{count}개의 어휘를 삭제하려고 합니다.",
         "confirm": "모두 삭제",
         "success": "모든 어휘가 성공적으로 삭제되었습니다",
-        "error": "모든 어휘를 삭제하지 못했습니다. 다시 시도해주세요."
+        "error": "모든 어휘를 삭제하지 못했습니다. 다시 시도해주세요.",
+        "clearLocalStore": "로컬 스토어 데이터 삭제",
+        "clearLocalStoreTitle": "로컬 스토어 데이터 삭제",
+        "clearLocalStoreMessage": "이 작업은 브라우저의 로컬 스토리지에 저장된 모든 데이터를 삭제합니다. 어휘, 연습 세션 및 사용자 설정이 포함됩니다. 이 작업은 되돌릴 수 없습니다.",
+        "clearLocalStoreWarning": "경고: 이 작업은 로컬에 저장된 모든 데이터를 제거하고 애플리케이션을 초기 상태로 재설정합니다.",
+        "clearLocalStoreConfirm": "모든 데이터 삭제",
+        "clearLocalStoreSuccess": "로컬 스토어 데이터가 성공적으로 삭제되었습니다",
+        "clearLocalStoreError": "로컬 스토어 데이터를 삭제하지 못했습니다. 다시 시도해주세요.",
+        "localStoreClearedInfo": "애플리케이션이 초기 상태로 재설정되었습니다. 모든 로컬 설정이 삭제되었습니다.",
+        "pageReloadNotice": "참고: 완전한 재설정을 위해 삭제 후 페이지가 자동으로 다시 로드됩니다."
       },
       "words": "단어",
       "createdAt": "생성일",

@@ -207,7 +207,16 @@
       "warningCount": "You are about to delete {count} vocabulary words.",
       "confirm": "Delete All",
       "success": "All vocabulary words have been deleted successfully",
-      "error": "Failed to delete all vocabularies. Please try again."
+      "error": "Failed to delete all vocabularies. Please try again.",
+      "clearLocalStore": "Clear Local Store",
+      "clearLocalStoreTitle": "Clear Local Store Data",
+      "clearLocalStoreMessage": "This will clear all data stored in your browser's local storage, including vocabulary words, practice sessions, and user preferences. This action cannot be undone.",
+      "clearLocalStoreWarning": "Warning: This will remove all locally stored data and reset the application to its initial state.",
+      "clearLocalStoreConfirm": "Clear All Data",
+      "clearLocalStoreSuccess": "All local store data has been cleared successfully",
+      "clearLocalStoreError": "Failed to clear local store data. Please try again.",
+      "localStoreClearedInfo": "Application has been reset to initial state. All local preferences have been cleared.",
+      "pageReloadNotice": "Note: Page will automatically reload after clearing to ensure complete reset."
     },
     "words": "words",
     "createdAt": "Created at",

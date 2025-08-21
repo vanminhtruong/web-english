@@ -213,7 +213,16 @@
       "warningCount": "Bạn sắp xóa {count} từ vựng.",
       "confirm": "Xóa tất cả",
       "success": "Đã xóa tất cả từ vựng thành công",
-      "error": "Không thể xóa tất cả từ vựng. Vui lòng thử lại."
+      "error": "Không thể xóa tất cả từ vựng. Vui lòng thử lại.",
+      "clearLocalStore": "Xóa dữ liệu local store",
+      "clearLocalStoreTitle": "Xóa dữ liệu local store",
+      "clearLocalStoreMessage": "Thao tác này sẽ xóa tất cả dữ liệu được lưu trong local storage của trình duyệt, bao gồm từ vựng, phiên luyện tập và tùy chọn người dùng. Hành động này không thể hoàn tác.",
+      "clearLocalStoreWarning": "Cảnh báo: Thao tác này sẽ xóa tất cả dữ liệu được lưu cục bộ và đặt lại ứng dụng về trạng thái ban đầu.",
+      "clearLocalStoreConfirm": "Xóa tất cả dữ liệu",
+      "clearLocalStoreSuccess": "Đã xóa tất cả dữ liệu local store thành công",
+      "clearLocalStoreError": "Không thể xóa dữ liệu local store. Vui lòng thử lại.",
+      "localStoreClearedInfo": "Ứng dụng đã được đặt lại về trạng thái ban đầu. Tất cả tùy chọn cục bộ đã được xóa.",
+      "pageReloadNotice": "Lưu ý: Trang sẽ tự động tải lại sau khi xóa để đảm bảo reset hoàn toàn."
     },
     "topic": "Chủ đề",
     "words": "từ",

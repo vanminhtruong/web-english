@@ -182,6 +182,7 @@
               :auto-save-enabled="autoSaveEnabled"
               :use-grouping="useGrouping"
               @vocabularies-deleted="handleVocabulariesDeleted"
+              @local-store-cleared="handleLocalStoreCleared"
             />
           </div>
         </BaseAccordion>
@@ -885,6 +886,35 @@ const handleVocabulariesDeleted = () => {
   if (autoSaveEnabled.value) {
     debounceAutoSave();
   }
+};
+
+// Handle local store cleared event from DeleteAllVocabulariesPanel
+const handleLocalStoreCleared = () => {
+  // Reset pagination to first page
+  currentPage.value = 1;
+  
+  // Reset recently added category
+  recentlyAddedCategory.value = null;
+  
+  // Reset all local state
+  useGrouping.value = false;
+  autoSaveEnabled.value = false;
+  hoverToExpandEnabled.value = false;
+  globalMoveMode.value = false;
+  
+  // Reset grouping state
+  nextTick(() => {
+    reloadGroupingState();
+    console.log('Grouping state reloaded after local store clear');
+  });
+  
+  // Show info message about the reset
+  toast.info(
+    t('vocabulary.deleteAll.localStoreClearedInfo', 'Application has been reset to initial state. All local preferences have been cleared.'),
+    { timeout: 5000 }
+  );
+  
+  console.log('Local store cleared, application reset to initial state');
 };
 
 // Perform move vocabulary between date groups  
