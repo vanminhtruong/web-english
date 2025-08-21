@@ -9,7 +9,7 @@ import type { DefineComponent } from 'vue'
  */
 export async function safeImportComponent(path: string): Promise<DefineComponent> {
   try {
-    const module = await import(path)
+    const module = await import(/* @vite-ignore */ path)
     return module.default || module
   } catch (error) {
     console.error(`Failed to import component from ${path}:`, error)
@@ -22,7 +22,7 @@ export async function safeImportComponent(path: string): Promise<DefineComponent
  */
 export async function safeImportModule(path: string, fallbackKey?: string): Promise<any> {
   try {
-    const module = await import(path)
+    const module = await import(/* @vite-ignore */ path)
     if (module.default) {
       return module.default
     }
@@ -104,7 +104,7 @@ export const ImportDebug = {
   
   inspectModule: async (path: string) => {
     try {
-      const module = await import(path)
+      const module = await import(/* @vite-ignore */ path)
       console.log(`📦 Module structure for ${path}:`, {
         hasDefault: !!module.default,
         keys: Object.keys(module),
@@ -113,6 +113,7 @@ export const ImportDebug = {
       return module
     } catch (error) {
       console.error(`❌ Failed to inspect module ${path}:`, error)
+      return null
     }
   }
 }
