@@ -6,6 +6,15 @@ export interface CustomTopic {
   en: string
 }
 
+// Normalize locale to base language code used by the app
+// Examples: 'vi-VN' -> 'vi', 'en-US' -> 'en', 'ko-KR' -> 'ko'
+function normalizeLocale(input?: string): 'en' | 'vi' | 'ko' {
+  const s = (input || '').toLowerCase()
+  if (s.startsWith('vi')) return 'vi'
+  if (s.startsWith('ko')) return 'ko'
+  return 'en'
+}
+
 /**
  * Get the translated name of a topic/category based on current locale
  * This version accepts t and locale as parameters to avoid composable issues
@@ -21,9 +30,14 @@ export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabul
   const customTopic = customTopics.find(topic => topic.key === categoryKey)
   
   if (customTopic) {
-    // Return the name based on current locale
-    const currentLocale = locale?.value || 'en'
-    return currentLocale === 'vi' ? customTopic.vi : customTopic.en
+    // Return the name based on current locale (normalize vi-VN, en-US, ko-KR, ...)
+    const rawLocale = typeof locale === 'string' ? locale : locale?.value
+    const currentLocale = normalizeLocale(rawLocale)
+    if (currentLocale === 'vi') {
+      return customTopic.vi || customTopic.en
+    }
+    // For 'ko' or other locales where custom topic doesn't have a dedicated field, fallback to English
+    return customTopic.en || customTopic.vi
   }
   
   // Check if it's a built-in category with translation (if t function provided)
@@ -58,7 +72,8 @@ export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabul
   }
   
   if (builtInCategories[categoryKey]) {
-    const currentLocale = locale?.value || 'en'
+    const rawLocale = typeof locale === 'string' ? locale : locale?.value
+    const currentLocale = normalizeLocale(rawLocale)
     return currentLocale === 'vi' ? builtInCategories[categoryKey].vi : builtInCategories[categoryKey].en
   }
   

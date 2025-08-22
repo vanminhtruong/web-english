@@ -210,7 +210,7 @@ import { getTopicName } from '../../../utils/topicUtils'
 
 const BaseAccordion = defineAsyncComponent(() => import('../../../components/BaseAccordion.vue'))
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 interface Props {
   searchQuery: string
@@ -231,7 +231,7 @@ const emit = defineEmits<{
 
 // Function to get topic display name
 const getTopicDisplayName = (category: string): string => {
-  return getTopicName(category)
+  return getTopicName(category, t, { value: locale.value })
 }
 
 // Custom dropdown state for Category

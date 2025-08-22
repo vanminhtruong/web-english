@@ -337,8 +337,7 @@ const VocabularyFormDialog = defineAsyncComponent(() => import('./components/Voc
 const VocabularyDetailDialog = defineAsyncComponent(() => import('./components/VocabularyDetailDialog.vue'));
 const VocabularyNoteDialog = defineAsyncComponent(() => import('./components/VocabularyNoteDialog.vue'));
 const GrammarManagerModal = defineAsyncComponent(() => import('./components/GrammarManagerModal.vue'));
-// Temporarily use sync import for debugging
-// const MoveModal = defineAsyncComponent(() => import('./components/move').then(m => ({ default: m.MoveModal })));
+const MoveModal = defineAsyncComponent(() => import('./components/move/MoveModal.vue'));
 const VoiceSelector = defineAsyncComponent(() => import('../../components/VoiceSelector.vue'));
 const TopicManager = defineAsyncComponent(() => import('./components/TopicManager.vue'));
 const DeleteAllVocabulariesPanel = defineAsyncComponent(() => import('./components/DeleteAllVocabulariesPanel.vue'));

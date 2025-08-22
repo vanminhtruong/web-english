@@ -592,7 +592,7 @@
                   </svg>
                   <div class="flex items-center space-x-1">
                     <h5 class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      {{ getTopicName(topicGroup.topic) }}
+                      {{ getTopicName(topicGroup.topic, t, locale) }}
                       <span class="text-xs text-gray-500">({{ topicGroup.vocabularies.length }})</span>
                     </h5>
                     <!-- Info icon moved next to the topic name with tighter spacing -->
