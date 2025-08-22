@@ -790,6 +790,24 @@
       "enable": "Lọc theo ngày tạo",
       "allDates": "Tất cả ngày",
       "info": "Hiển thị {count} từ vựng từ {date}"
+    },
+    "pronunciation": {
+      "microphoneError": "Lỗi microphone! Vui lòng kiểm tra quyền truy cập microphone.",
+      "yourRecording": "Bản Ghi Âm Của Bạn",
+      "tryAgain": "Thử Lại!",
+      "wordsCrushToggle": "Chế Độ Từ Ẩn",
+      "wordsCrush": {
+        "title": "Words Crush: Từ Ẩn",
+        "instruction": "Điền các chữ cái còn thiếu để hoàn thành từ",
+        "playAudio": "Phát Âm Thanh",
+        "checkAnswer": "Kiểm Tra Đáp Án",
+        "hint": "Gợi Ý",
+        "reset": "Đặt Lại",
+        "correct": "🎉 Chính xác!",
+        "tryAgain": "Thử Lại!",
+        "correctWord": "Từ đúng",
+        "meaning": "Nghĩa"
+      }
     }
   },
   "grammar": {

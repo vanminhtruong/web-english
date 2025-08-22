@@ -1,11 +1,21 @@
 <template>
   <div
-    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-dark-bg-mute p-4 sm:p-6 md:p-8 h-auto md:h-96 select-none overflow-hidden"
+    class="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-2xl border border-gray-200 dark:border-dark-bg-mute p-4 sm:p-6 md:p-8 min-h-96 h-auto select-none overflow-hidden"
     @copy.prevent
     @cut.prevent
     @contextmenu.prevent
   >
-    <div class="text-center h-full flex flex-col justify-start md:justify-center items-center gap-3 md:gap-4">
+    <!-- Words Crush Mode -->
+    <WordsCrushMode 
+      v-if="wordsCrushEnabled && card"
+      :card="card"
+      :get-topic-name="getTopicName"
+      @game-completed="handleGameCompleted"
+      @play-audio="handlePlayAudio"
+    />
+    
+    <!-- Traditional Pronunciation Mode -->
+    <div v-else class="text-center h-full flex flex-col justify-start md:justify-center items-center gap-3 md:gap-4">
       <div class="mb-6">
         <span class="px-2.5 py-0.5 bg-blue-100 dark:bg-dark-bg-mute text-blue-800 dark:text-blue-300 text-xs sm:text-sm font-medium rounded-full">
           {{ card?.category ? getTopicName(card.category) : '' }}
@@ -59,8 +69,9 @@ import type { Vocabulary } from '../../../composables/useVocabularyStore';
 
 const { t } = useI18n()
 
-// Import component using defineAsyncComponent to avoid "has no default export" error
+// Import components using defineAsyncComponent to avoid "has no default export" error
 const FireworkSoundEffect = defineAsyncComponent(() => import('./FireworkSoundEffect.vue'))
+const WordsCrushMode = defineAsyncComponent(() => import('./WordsCrushMode.vue'))
 
 // Effect triggers
 const triggerFirework = ref(false)
@@ -76,13 +87,32 @@ const props = defineProps<{
   pronunciationCorrect: boolean;
   isSpeechRecognitionSupported: boolean;
   getTopicName: (topic: string) => string;
+  wordsCrushEnabled: boolean;
 }>();
 
-const emit = defineEmits(['start-recording']);
+const emit = defineEmits(['start-recording', 'game-completed', 'play-audio']);
 
 // Handle start recording with potential effects triggering
 const handleStartRecording = () => {
   emit('start-recording')
+}
+
+// Handle Words Crush game completion
+const handleGameCompleted = (isCorrect: boolean) => {
+  // Trigger effects for Words Crush mode
+  isCorrectAnswer.value = isCorrect
+  setTimeout(() => {
+    triggerFirework.value = true
+    triggerSound.value = true
+  }, 50)
+  
+  // Emit to parent for session tracking
+  emit('game-completed', isCorrect)
+}
+
+// Handle audio playback request from Words Crush mode
+const handlePlayAudio = () => {
+  emit('play-audio')
 }
 
 // Reset effect triggers
@@ -92,8 +122,9 @@ const resetTriggers = () => {
 }
 
 // Watch for pronunciationAnswered changes to trigger effects after parent updates
+// Only for traditional pronunciation mode, not Words Crush mode
 watch(() => props.pronunciationAnswered, (newValue) => {
-  if (newValue && !triggerFirework.value) {
+  if (newValue && !triggerFirework.value && !props.wordsCrushEnabled) {
     // Answer was just processed, trigger effects
     isCorrectAnswer.value = props.pronunciationCorrect
     

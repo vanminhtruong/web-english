@@ -758,9 +758,22 @@
         "analyze": "분석",
         "feedback": "피드백",
         "tips": "팁",
-        "tryAgain": "다시 시도",
+        "tryAgain": "다시 시도!",
         "yourRecording": "당신의 녹음",
-        "microphoneError": "마이크 오류! 마이크 접근 권한을 확인하세요."
+        "microphoneError": "마이크 오류! 마이크 접근 권한을 확인하세요.",
+        "wordsCrushToggle": "숨겨진 단어 모드",
+        "wordsCrush": {
+          "title": "Words Crush: 숨겨진 단어",
+          "instruction": "누락된 글자를 채워서 단어를 완성하세요",
+          "playAudio": "오디오 재생",
+          "checkAnswer": "답안 확인",
+          "hint": "힌트",
+          "reset": "재설정",
+          "correct": "🎉 정답!",
+          "tryAgain": "다시 시도!",
+          "correctWord": "정답 단어",
+          "meaning": "의미"
+        }
       },
       "dateFilter": {
         "enable": "생성 날짜로 필터",

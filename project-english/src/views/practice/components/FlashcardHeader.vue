@@ -241,7 +241,19 @@
                         <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', snakeDoubleBaitEnabled ? 'translate-x-4' : 'translate-x-0.5']" />
                       </button>
                     </li>
-                    <li><button class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
+                    <!-- Pronunciation option with inline Words Crush toggle -->
+                    <li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-2">
+                      <button class="text-left flex-1 truncate" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button>
+                      <button
+                        class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="wordsCrushEnabled ? 'bg-amber-600' : 'bg-gray-200 dark:bg-[#0a0a0a]'"
+                        @click.stop="toggleWordsCrushFromDropdown()"
+                        :title="t('flashcard.pronunciation.wordsCrushToggle', 'Hidden Words Mode')"
+                        :aria-label="t('flashcard.pronunciation.wordsCrushToggle', 'Hidden Words Mode')"
+                      >
+                        <span :class="['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', wordsCrushEnabled ? 'translate-x-4' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
                   </ul>
                 </div>
               </transition>
@@ -512,7 +524,19 @@
                         <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', snakeDoubleBaitEnabled ? 'translate-x-5' : 'translate-x-0.5']" />
                       </button>
                     </li>
-                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button></li>
+                    <!-- Pronunciation option with inline Words Crush toggle -->
+                    <li class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-between gap-3">
+                      <button class="text-left flex-1 truncate" @click="selectMode('pronunciation')">{{ t('flashcard.modes.pronunciation', 'Pronunciation') }}</button>
+                      <button
+                        class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors border border-gray-300 dark:border-gray-600"
+                        :class="wordsCrushEnabled ? 'bg-amber-600' : 'bg-gray-200 dark:bg-[#0a0a0a]'"
+                        @click.stop="toggleWordsCrushFromDropdown()"
+                        :title="t('flashcard.pronunciation.wordsCrushToggle', 'Hidden Words Mode')"
+                        :aria-label="t('flashcard.pronunciation.wordsCrushToggle', 'Hidden Words Mode')"
+                      >
+                        <span :class="['inline-block h-4 w-4 transform rounded-full bg-white transition-transform', wordsCrushEnabled ? 'translate-x-5' : 'translate-x-0.5']" />
+                      </button>
+                    </li>
                   </ul>
                 </div>
               </transition>
@@ -561,6 +585,8 @@ interface Props {
   pictionaryDefinitionMode?: boolean
   // Scramble Words: toggle state for flashcard mode (prop down from FlashcardView)
   scrambleWordsEnabled?: boolean
+  // Words Crush: toggle state for pronunciation mode (prop down from FlashcardView)
+  wordsCrushEnabled?: boolean
   useFlipTileHints?: boolean
 }
 
@@ -576,6 +602,7 @@ const bubbleShooterVietnameseMode = computed(() => props.bubbleShooterVietnamese
 const snakeDoubleBaitEnabled = computed(() => props.snakeDoubleBaitEnabled ?? false)
 const pictionaryDefinitionMode = computed(() => props.pictionaryDefinitionMode ?? false)
 const scrambleWordsEnabled = computed(() => props.scrambleWordsEnabled ?? false)
+const wordsCrushEnabled = computed(() => props.wordsCrushEnabled ?? false)
 const useFlipTileHints = computed(() => props.useFlipTileHints ?? false)
 
 const { t } = useI18n()
@@ -593,6 +620,7 @@ const emit = defineEmits<{
   'update:snake-double-bait-enabled': [enabled: boolean]
   'update:pictionary-definition-mode': [enabled: boolean]
   'update:scramble-words-enabled': [enabled: boolean]
+  'update:words-crush-enabled': [enabled: boolean]
   'update:use-flip-tile-hints': [enabled: boolean]
 }>()
 
@@ -694,6 +722,12 @@ const toggleScrambleWordsFromDropdown = () => {
   // Prevent toggling during active practice
   if (props.practiceStarted) return
   emit('update:scramble-words-enabled', !scrambleWordsEnabled.value)
+}
+
+const toggleWordsCrushFromDropdown = () => {
+  // Prevent toggling during active practice
+  if (props.practiceStarted) return
+  emit('update:words-crush-enabled', !wordsCrushEnabled.value)
 }
 
 // Guarded settings emitter to prevent opening during active practice

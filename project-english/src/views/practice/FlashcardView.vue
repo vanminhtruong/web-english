@@ -26,6 +26,7 @@
       :snake-double-bait-enabled="snakeDoubleBaitMode"
       :pictionary-definition-mode="pictionaryDefinitionMode"
       :scramble-words-enabled="scrambleWordsEnabled"
+      :words-crush-enabled="wordsCrushEnabled"
       :use-flip-tile-hints="flashcardSettings.useFlipTileHints"
       @go-back="goBack"
       @show-history="showHistory = true"
@@ -39,6 +40,7 @@
       @update:snake-double-bait-enabled="snakeDoubleBaitMode = $event"
       @update:pictionary-definition-mode="pictionaryDefinitionMode = $event"
       @update:scramble-words-enabled="scrambleWordsEnabled = $event"
+      @update:words-crush-enabled="wordsCrushEnabled = $event"
       @update:use-flip-tile-hints="handleFlipTileHintsToggle"
     />
 
@@ -198,7 +200,10 @@
                     :pronunciation-correct="pronunciationCorrect"
                     :is-speech-recognition-supported="isSpeechRecognitionSupported"
                     :get-topic-name="getTopicName"
+                    :words-crush-enabled="wordsCrushEnabled"
                     @start-recording="startRecording"
+                    @game-completed="handleWordsCrushCompleted"
+                    @play-audio="playAudio"
                   />
                 </template>
                 <template v-else-if="practiceMode === 'bubble-shooter'">
@@ -461,6 +466,8 @@ const snakeDoubleBaitMode = ref(false)
 const pictionaryDefinitionMode = ref(false)
 // Scramble Words Mode Toggle State with localStorage support
 const scrambleWordsEnabled = ref(false)
+// Words Crush Mode Toggle State with localStorage support
+const wordsCrushEnabled = ref(false)
 
 // Load from localStorage on init
 const loadBubbleShooterVietnameseModeFromStorage = () => {
@@ -527,11 +534,28 @@ const saveScrambleWordsModeToStorage = (enabled: boolean) => {
   } catch {}
 }
 
+// Load/Save helpers for Words Crush mode
+const loadWordsCrushModeFromStorage = () => {
+  try {
+    const saved = localStorage.getItem('pe_wordsCrushEnabled')
+    return saved === null ? false : saved === 'true'
+  } catch {
+    return false
+  }
+}
+
+const saveWordsCrushModeToStorage = (enabled: boolean) => {
+  try {
+    localStorage.setItem('pe_wordsCrushEnabled', String(enabled))
+  } catch {}
+}
+
 // Initialize from localStorage
 bubbleShooterVietnameseMode.value = loadBubbleShooterVietnameseModeFromStorage()
 snakeDoubleBaitMode.value = loadSnakeDoubleBaitModeFromStorage()
 pictionaryDefinitionMode.value = loadPictionaryDefinitionModeFromStorage()
 scrambleWordsEnabled.value = loadScrambleWordsModeFromStorage()
+wordsCrushEnabled.value = loadWordsCrushModeFromStorage()
 
 // Watch for changes and save to localStorage
 watch(bubbleShooterVietnameseMode, (newVal) => {
@@ -545,6 +569,9 @@ watch(pictionaryDefinitionMode, (newVal) => {
 })
 watch(scrambleWordsEnabled, (newVal) => {
   saveScrambleWordsModeToStorage(newVal)
+})
+watch(wordsCrushEnabled, (newVal) => {
+  saveWordsCrushModeToStorage(newVal)
 })
 
 // Toggle function for FlashcardHeader
@@ -1477,6 +1504,37 @@ const handleBubbleShooterComplete = () => {
   // Complete the session since Bubble Shooter is a complete game mode
   handleSessionComplete()
 }
+
+// Words Crush mode handler
+const handleWordsCrushCompleted = (isCorrect: boolean) => {
+  // Record the answer result
+  recordAnswer(isCorrect)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: isCorrect ? currentShuffledCard.value.word : 'incomplete',
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: isCorrect,
+      mode: 'words-crush',
+    })
+  }
+  
+  // Set pronunciation answered state to enable Next button for large screens
+  pronunciationAnswered.value = true
+  pronunciationCorrect.value = isCorrect
+  
+  // Auto-advance only for small screens (xs, sm)
+  // For large screens (md+), user needs to manually click next
+  const isSmallScreen = window.innerWidth < 768 // md breakpoint
+  if (isSmallScreen) {
+    setTimeout(() => {
+      nextCard()
+    }, 2000)
+  }
+}
+
 const resetAndRestoreCard = () => {
   // First, reset all modes to ensure a clean slate from the previous card.
   resetAllModes();

@@ -743,6 +743,24 @@
       "enable": "Filter by creation date",
       "allDates": "All dates",
       "info": "Showing {count} vocabulary from {date}"
+    },
+    "pronunciation": {
+      "microphoneError": "Microphone error! Please check microphone access permissions.",
+      "yourRecording": "Your Recording",
+      "tryAgain": "Try Again!",
+      "wordsCrushToggle": "Hidden Words Mode",
+      "wordsCrush": {
+        "title": "Words Crush: Hidden Words",
+        "instruction": "Fill in the missing letters to complete the word",
+        "playAudio": "Play Audio",
+        "checkAnswer": "Check Answer",
+        "hint": "Hint",
+        "reset": "Reset",
+        "correct": "🎉 Correct!",
+        "tryAgain": "Try Again!",
+        "correctWord": "Correct word",
+        "meaning": "Meaning"
+      }
     }
   },
   "grammar": {
