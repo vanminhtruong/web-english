@@ -1,5 +1,5 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/ThemeToggle-CeIt1PIm.js","assets/index-Cd9pmwL1.js","assets/vendor-CppF0Ubz.js","assets/vendor-toast-BGonNr2Z.js","assets/vendor-toast-jG2HNJHr.css","assets/index-WcyDenP8.css","assets/_plugin-vue_export-helper-1tPrXgE0.js","assets/ThemeToggle-DSsMUYxu.css","assets/LanguageSwitcher-BLayUvnz.js"])))=>i.map(i=>d[i]);
-import { _ as __vitePreload } from "./index-Cd9pmwL1.js";
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/ThemeToggle-9iCQ5kLs.js","assets/index-CBu9xTA4.js","assets/vendor-CppF0Ubz.js","assets/vendor-toast-BGonNr2Z.js","assets/vendor-toast-jG2HNJHr.css","assets/index-WcyDenP8.css","assets/_plugin-vue_export-helper-1tPrXgE0.js","assets/ThemeToggle-DSsMUYxu.css","assets/LanguageSwitcher-DCiXFWy-.js"])))=>i.map(i=>d[i]);
+import { _ as __vitePreload } from "./index-CBu9xTA4.js";
 import { d as defineComponent, I as useI18n, J as useRoute, K as useRouter, y as ref, L as onMounted, M as onUnmounted, N as watch, z as computed, c as createElementBlock, q as openBlock, f as createBaseVNode, A as withDirectives, u as unref, O as withKeys, i as withModifiers, F as Fragment, j as renderList, a as normalizeStyle, n as normalizeClass, t as toDisplayString, v as createVNode, w as withCtx, g as createTextVNode, P as RouterLink, B as defineAsyncComponent, C as vShow } from "./vendor-CppF0Ubz.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 import "./vendor-toast-BGonNr2Z.js";
@@ -65,10 +65,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "AppHeader",
   setup(__props) {
     const ThemeToggle = defineAsyncComponent(
-      loadComponentSafely(() => __vitePreload(() => import("./ThemeToggle-CeIt1PIm.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7]) : void 0))
+      loadComponentSafely(() => __vitePreload(() => import("./ThemeToggle-9iCQ5kLs.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7]) : void 0))
     );
     const LanguageSwitcher = defineAsyncComponent(
-      loadComponentSafely(() => __vitePreload(() => import("./LanguageSwitcher-BLayUvnz.js"), true ? __vite__mapDeps([8,1,2,3,4,5]) : void 0))
+      loadComponentSafely(() => __vitePreload(() => import("./LanguageSwitcher-DCiXFWy-.js"), true ? __vite__mapDeps([8,1,2,3,4,5]) : void 0))
     );
     const { t } = useI18n();
     const route = useRoute();
@@ -655,4 +655,4 @@ const AppHeader = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-
 export {
   AppHeader as default
 };
-//# sourceMappingURL=AppHeader-BkRQLtD6.js.map
+//# sourceMappingURL=AppHeader-BUgoqboK.js.map
