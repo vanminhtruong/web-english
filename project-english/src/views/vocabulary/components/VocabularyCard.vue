@@ -57,7 +57,7 @@
               <span :class="getLevelColor(word.level)" class="px-2 py-1 text-xs font-medium rounded-full">
                 {{ t(`vocabulary.levels.${word.level}`, word.level) }}
               </span>
-              <p class="text-xs text-gray-500 mt-1">{{ getTopicName(word.category) }}</p>
+              <p class="text-xs text-gray-500 mt-1">{{ getTopicName(word.category, t, locale, word) }}</p>
             </div>
           </div>
         </div>

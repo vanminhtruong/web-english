@@ -386,7 +386,7 @@ const missingImagesByDate = computed(() => {
     // Prefer human-readable categoryName if available (imported data), otherwise translate built-in key
     const catKey = w.category || 'uncategorized'
     // Resolve display name via categoryName -> built-in translation
-    const displayName = (w as any).categoryName || getTopicName(catKey, w)
+    const displayName = (w as any).categoryName || getTopicName(catKey, t, locale, w)
 
     if (!map.has(dateKey)) map.set(dateKey, new Map<string, { name: string; count: number }>())
     const catMap = map.get(dateKey)!

@@ -7,6 +7,13 @@ export interface CustomTopic {
   ko?: string
 }
 
+// Centralized list of built-in categories to avoid duplication
+export const BUILT_IN_CATEGORIES: string[] = [
+  'technology', 'business', 'travel', 'food', 'health', 'education',
+  'sports', 'entertainment', 'science', 'art', 'music', 'literature',
+  'politics', 'environment', 'fashion', 'finance'
+]
+
 // Normalize locale to base language code used by the app
 // Examples: 'vi-VN' -> 'vi', 'en-US' -> 'en', 'ko-KR' -> 'ko'
 function normalizeLocale(input?: string): 'en' | 'vi' | 'ko' {
@@ -23,36 +30,37 @@ function normalizeLocale(input?: string): 'en' | 'vi' | 'ko' {
 export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabularyItem?: any): string {
   // Prepare helpers and sources
   const customTopics = getCustomTopics()
-  const builtInKeys = [
-    'technology', 'business', 'travel', 'food', 'health', 'education',
-    'sports', 'entertainment', 'science', 'art', 'music', 'literature',
-    'politics', 'environment', 'fashion', 'finance'
-  ]
+  const builtInKeys = BUILT_IN_CATEGORIES
+  
+  // Resolve current locale once
+  const rawLocale = typeof locale === 'string' ? locale : locale?.value
+  const currentLocale = normalizeLocale(rawLocale)
 
-  // If vocabulary item has categoryName from imported data, prefer it ONLY when it looks like a human-readable name,
-  // not when it is actually a topic key. This prevents showing raw keys like "technology" or custom keys.
+  // Normalize numeric-like keys by falling back to the vocabulary item's real category if available
+  let key = String(categoryKey || '').trim()
+  const isNumericLike = /^\d+$/.test(key)
+  if (isNumericLike && vocabularyItem && vocabularyItem.category && !/^\d+$/.test(String(vocabularyItem.category))) {
+    key = String(vocabularyItem.category)
+  }
+  const keyLower = key.toLowerCase()
+
+  // If vocabulary item has categoryName from imported data, only prefer it for English locale
+  // AND only when it is not actually a topic key (case-insensitive check).
   if (vocabularyItem && vocabularyItem.categoryName) {
-    const cn = String(vocabularyItem.categoryName)
-    const isKnownKey = builtInKeys.includes(cn) || customTopics.some(ct => ct.key === cn)
-    if (!isKnownKey) {
+    const cn = String(vocabularyItem.categoryName).trim()
+    const cnLower = cn.toLowerCase()
+    const isKnownKey = builtInKeys.includes(cnLower) || customTopics.some(ct => (ct.key || '').toLowerCase() === cnLower)
+    if (!isKnownKey && currentLocale === 'en') {
       return cn
     }
   }
 
-  // Normalize numeric-like keys by falling back to the vocabulary item's real category if available
-  let key = String(categoryKey || '')
-  const isNumericLike = /^\d+$/.test(key.trim())
-  if (isNumericLike && vocabularyItem && vocabularyItem.category && !/^\d+$/.test(String(vocabularyItem.category))) {
-    key = String(vocabularyItem.category)
-  }
-
   // First check if it's a custom topic by key
   const customTopic = customTopics.find(topic => topic.key === key)
+    || customTopics.find(topic => (topic.key || '').toLowerCase() === keyLower)
   
   if (customTopic) {
     // Return the name based on current locale (normalize vi-VN, en-US, ko-KR, ...)
-    const rawLocale = typeof locale === 'string' ? locale : locale?.value
-    const currentLocale = normalizeLocale(rawLocale)
     if (currentLocale === 'vi') {
       return customTopic.vi || customTopic.en || customTopic.ko || key
     }
@@ -64,7 +72,7 @@ export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabul
   
   // Check if it's a built-in category with translation (if t function provided)
   if (t) {
-    const translationKey = `vocabulary.categories.${key}`
+    const translationKey = `vocabulary.categories.${keyLower}`
     const translatedName = t(translationKey)
     
     // If translation exists and is not the same as the key, return it
@@ -93,15 +101,17 @@ export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabul
     'finance': { vi: 'Tài chính', en: 'Finance', ko: '금융' }
   }
   
-  if (builtInCategories[key]) {
-    const rawLocale = typeof locale === 'string' ? locale : locale?.value
-    const currentLocale = normalizeLocale(rawLocale)
-    if (currentLocale === 'vi') return builtInCategories[key].vi
-    if (currentLocale === 'ko') return builtInCategories[key].ko
-    return builtInCategories[key].en
+  if (builtInCategories[keyLower]) {
+    if (currentLocale === 'vi') return builtInCategories[keyLower].vi
+    if (currentLocale === 'ko') return builtInCategories[keyLower].ko
+    return builtInCategories[keyLower].en
   }
   
   // Fallback to the category key itself (capitalized)
+  if (vocabularyItem && vocabularyItem.categoryName) {
+    // Prefer provided display name as last resort
+    return String(vocabularyItem.categoryName)
+  }
   return key.charAt(0).toUpperCase() + key.slice(1)
 }
 
@@ -110,11 +120,7 @@ export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabul
  */
 export function getAllTopicsWithNames(t?: any, locale?: any): Array<{ key: string; name: string }> {
   // Built-in categories
-  const builtInCategories = [
-    'technology', 'business', 'travel', 'food', 'health', 'education', 
-    'sports', 'entertainment', 'science', 'art', 'music', 'literature', 
-    'politics', 'environment', 'fashion', 'finance'
-  ]
+  const builtInCategories = BUILT_IN_CATEGORIES
   
   const result: Array<{ key: string; name: string }> = []
   
@@ -169,13 +175,7 @@ export function saveCustomTopics(topics: CustomTopic[]): void {
  * Check if a topic key is built-in or custom
  */
 export function isBuiltInTopic(categoryKey: string): boolean {
-  const builtInCategories = [
-    'technology', 'business', 'travel', 'food', 'health', 'education', 
-    'sports', 'entertainment', 'science', 'art', 'music', 'literature', 
-    'politics', 'environment', 'fashion', 'finance'
-  ]
-  
-  return builtInCategories.includes(categoryKey)
+  return BUILT_IN_CATEGORIES.includes(categoryKey)
 }
 
 /**
