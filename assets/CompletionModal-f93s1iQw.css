@@ -1,0 +1,52 @@
+
+/* Fade in up animation */
+@keyframes fadeInUp-8ac791bd {
+from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+}
+to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+}
+.animate-fade-in-up[data-v-8ac791bd] {
+  animation: fadeInUp-8ac791bd 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+/* Pulse animation */
+@keyframes pulse-8ac791bd {
+0%, 100% {
+    opacity: 1;
+}
+50% {
+    opacity: 0.5;
+}
+}
+.animate-pulse[data-v-8ac791bd] {
+  animation: pulse-8ac791bd 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Button hover effects removed to let Tailwind hover utilities control transforms */
+
+/* Custom scrollbar for dark mode */
+[data-v-8ac791bd]::-webkit-scrollbar {
+  width: 6px;
+}
+[data-v-8ac791bd]::-webkit-scrollbar-track {
+  background-color: #0f0f0f;
+}
+[data-v-8ac791bd]::-webkit-scrollbar-thumb {
+  background-color: #0a0a0a;
+  border-radius: 3px;
+}
+[data-v-8ac791bd]::-webkit-scrollbar-thumb:hover {
+  background-color: #000000;
+}
+
+/* Enhanced focus states */
+button[data-v-8ac791bd]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}

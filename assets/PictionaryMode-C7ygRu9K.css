@@ -1,0 +1,15 @@
+
+@keyframes caret-blink-66235204 {
+0%, 50% { opacity: 1;
+}
+50.01%, 100% { opacity: 0;
+}
+}
+.caret-block[data-v-66235204] {
+  display: block;
+  width: 2px;
+  height: 1.3em; /* match text height */
+  background-color: currentColor; /* inherits from parent text color */
+  border-radius: 1px;
+  animation: caret-blink-66235204 1s step-end infinite;
+}

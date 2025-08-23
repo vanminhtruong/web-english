@@ -1,0 +1,35 @@
+
+/* Global styles for modal */
+body.modal-open {
+  overflow: hidden !important;
+}
+
+/* Sticky button fade-scale transition */
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+}
+.fade-scale-enter-to,
+.fade-scale-leave-from {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* XS: Override animation to include Add New Word positioning */
+@media (max-width: 639px) {
+.fade-scale-enter-from,
+  .fade-scale-leave-to {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px) translateX(1rem);
+}
+.fade-scale-enter-to,
+  .fade-scale-leave-from {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateX(1rem);
+}
+}

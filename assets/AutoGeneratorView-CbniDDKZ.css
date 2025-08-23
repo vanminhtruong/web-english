@@ -1,0 +1,29 @@
+
+@keyframes blob-c4401a47 {
+0% { transform: translate(0px, 0px) scale(1);
+}
+33% { transform: translate(30px, -50px) scale(1.1);
+}
+66% { transform: translate(-20px, 20px) scale(0.9);
+}
+100% { transform: translate(0px, 0px) scale(1);
+}
+}
+.animate-blob[data-v-c4401a47] {
+  animation: blob-c4401a47 7s infinite;
+}
+.animation-delay-2000[data-v-c4401a47] {
+  animation-delay: 2s;
+}
+.animation-delay-4000[data-v-c4401a47] {
+  animation-delay: 4s;
+}
+@keyframes pulse-slow-c4401a47 {
+0%, 100% { opacity: 1;
+}
+50% { opacity: 0.5;
+}
+}
+.animate-pulse-slow[data-v-c4401a47] {
+  animation: pulse-slow-c4401a47 3s ease-in-out infinite;
+}
