@@ -12,27 +12,25 @@ export default defineConfig({
     }
   },
   build: {
-    assetsInlineLimit: 0,
-    minify: false, // Tắt minify để debug dễ hơn
-    sourcemap: false,
-    target: 'esnext',
+    assetsInlineLimit: 0, // Don't inline any assets
+    minify: false, // Không sử dụng minify để tránh lỗi JavaScript
+    sourcemap: true, // Thêm sourcemap để dễ debug
     rollupOptions: {
       output: {
-        // Single file output với inline dynamic imports
-        entryFileNames: 'assets/index.js',
-        chunkFileNames: 'assets/index.js',
-        assetFileNames: 'assets/[name].[ext]',
-        // Tắt hết dynamic imports - gộp tất cả vào 1 file
-        inlineDynamicImports: true
+        manualChunks: (id) => {
+          // Split the code into chunks to avoid large files
+          if (id.includes('node_modules')) {
+            if (id.includes('vue-toastification')) {
+              return 'vendor-toast';
+            }
+            return 'vendor';
+          }
+        }
       }
     }
   },
   server: {
     port: 5173,
     host: true
-  },
-  // Cấu hình đặc biệt cho GitHub Pages
-  define: {
-    __APP_BASE_URL__: process.env.NODE_ENV === 'production' ? '"/web-english/"' : '"/"'
   }
 })
