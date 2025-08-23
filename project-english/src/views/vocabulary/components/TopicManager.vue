@@ -41,19 +41,19 @@
               </button>
             </div>
 
-            <!-- Content -->
-            <div class="flex-1 p-4 sm:p-6 md:p-6 lg:p-8 overflow-y-auto min-h-0">
+            <!-- Sticky Search Section -->
+            <div class="sticky top-0 z-10 bg-white dark:bg-[#0a0a0a] border-b border-gray-200 dark:border-dark-bg-mute p-4 sm:p-6 md:p-6 lg:p-8">
               <!-- Search Input -->
-              <div class="mb-4 sm:mb-6 md:mb-5 lg:mb-6 animate-fade-in-up">
+              <div class="animate-fade-in-up">
                 <div class="relative">
                   <input
                     v-model="searchQuery"
                     type="text"
                     :placeholder="t('vocabulary.topicManager.searchPlaceholder', 'Search topics by name...')"
-                    class="w-full px-4 py-3 pl-10 border border-gray-300 dark:border-dark-bg-mute rounded-lg 
+                    class="w-full px-4 py-3 pl-10 border-2 animated-search-border rounded-lg 
                            bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm
-                           focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                           transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500"
+                           focus:ring-2 focus:ring-blue-500/50
+                           transition-all duration-300 shadow-sm"
                   />
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,6 +62,10 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 p-4 sm:p-6 md:p-6 lg:p-8 overflow-y-auto min-h-0">
 
               <!-- Add New Topic Form -->
               <div class="mb-4 sm:mb-6 md:mb-5 lg:mb-6 p-3 sm:p-4 md:p-4 lg:p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg animate-fade-in-up" style="animation-delay: 0.1s">
@@ -416,15 +420,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-interface Topic {
-  key: string
-  vi: string
-  en: string
-  ko: string
-}
+import { useTopicCRUD, type Topic } from './composables/useTopicCRUD'
+import { useTopicSearch } from './composables/useTopicSearch'
+import { useTopicPagination } from './composables/useTopicPagination'
+import { useTopicModal } from './composables/useTopicModal'
+import { useBuiltInTopics } from './composables/useBuiltInTopics'
 
 interface Props {
   modelValue: boolean
@@ -446,400 +448,65 @@ const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
 
-// Pagination constants
-const ITEMS_PER_PAGE = 3
+// Convert modelValue to reactive ref for composables
+const modelValueRef = toRef(props, 'modelValue')
 
-// State
-const customTopics = ref<Topic[]>([])
-const editingTopic = ref<Topic | null>(null)
-const topicToDelete = ref<Topic | null>(null)
-const searchQuery = ref('')
-const currentCustomPage = ref(1)
-const currentBuiltInPage = ref(1)
+// Initialize composables
+const topicCRUD = useTopicCRUD(emit)
+const { builtInTopics } = useBuiltInTopics()
+const topicSearch = useTopicSearch(topicCRUD.customTopics, builtInTopics)
+const topicPagination = useTopicPagination(
+  topicSearch.filteredCustomTopics,
+  topicSearch.filteredBuiltInTopics,
+  topicSearch.searchQuery
+)
+const topicModal = useTopicModal(
+  modelValueRef,
+  emit,
+  topicCRUD.resetForm,
+  topicSearch.resetSearch,
+  topicPagination.resetPagination,
+  topicCRUD.loadCustomTopics
+)
 
-const newTopic = ref<Topic>({
-  key: '',
-  vi: '',
-  en: '',
-  ko: ''
-})
+// Extract commonly used properties for template
+const {
+  customTopics,
+  editingTopic,
+  topicToDelete,
+  newTopic,
+  canSaveTopic,
+  showDeleteModal,
+  saveTopic,
+  editTopic,
+  cancelEdit,
+  confirmDeleteTopic,
+  deleteTopic,
+  reloadCustomTopics,
+  clearAllCustomTopics,
+  testDeleteModal
+} = topicCRUD
 
-// Computed
-const canSaveTopic = computed(() => {
-  return newTopic.value.vi?.trim() && 
-         newTopic.value.en?.trim() &&
-         newTopic.value.ko?.trim()
-})
+const { searchQuery, filteredCustomTopics, filteredBuiltInTopics } = topicSearch
 
-const builtInTopics = computed(() => {
-  return [
-    { key: 'technology', vi: 'Công nghệ', en: 'Technology', ko: '기술' },
-    { key: 'business', vi: 'Kinh doanh', en: 'Business', ko: '비즈니스' },
-    { key: 'travel', vi: 'Du lịch', en: 'Travel', ko: '여행' },
-    { key: 'food', vi: 'Ẩm thực', en: 'Food', ko: '음식' },
-    { key: 'health', vi: 'Sức khỏe', en: 'Health', ko: '건강' },
-    { key: 'education', vi: 'Giáo dục', en: 'Education', ko: '교육' },
-    { key: 'sports', vi: 'Thể thao', en: 'Sports', ko: '스포츠' },
-    { key: 'entertainment', vi: 'Giải trí', en: 'Entertainment', ko: '엔터테인먼트' },
-    { key: 'science', vi: 'Khoa học', en: 'Science', ko: '과학' },
-    { key: 'art', vi: 'Nghệ thuật', en: 'Art', ko: '예술' },
-    { key: 'music', vi: 'Âm nhạc', en: 'Music', ko: '음악' },
-    { key: 'literature', vi: 'Văn học', en: 'Literature', ko: '문학' },
-    { key: 'politics', vi: 'Chính trị', en: 'Politics', ko: '정치' },
-    { key: 'environment', vi: 'Môi trường', en: 'Environment', ko: '환경' },
-    { key: 'fashion', vi: 'Thời trang', en: 'Fashion', ko: '패션' },
-    { key: 'finance', vi: 'Tài chính', en: 'Finance', ko: '금융' }
-  ]
-})
+const {
+  ITEMS_PER_PAGE,
+  currentCustomPage,
+  currentBuiltInPage,
+  totalCustomPages,
+  totalBuiltInPages,
+  paginatedCustomTopics,
+  paginatedBuiltInTopics,
+  visibleCustomPages,
+  visibleBuiltInPages
+} = topicPagination
 
-// Search and filter functionality
-const filteredCustomTopics = computed(() => {
-  if (!searchQuery.value.trim()) {
-    return customTopics.value
-  }
-  
-  const query = searchQuery.value.toLowerCase().trim()
-  return customTopics.value.filter(topic => 
-    (topic.key || '').toLowerCase().includes(query) ||
-    (topic.vi || '').toLowerCase().includes(query) ||
-    (topic.en || '').toLowerCase().includes(query) ||
-    (topic.ko || '').toLowerCase().includes(query)
-  )
-})
+const { closeDialog } = topicModal
 
-const filteredBuiltInTopics = computed(() => {
-  if (!searchQuery.value.trim()) {
-    return builtInTopics.value
-  }
-  
-  const query = searchQuery.value.toLowerCase().trim()
-  return builtInTopics.value.filter(topic => 
-    (topic.key || '').toLowerCase().includes(query) ||
-    (topic.vi || '').toLowerCase().includes(query) ||
-    (topic.en || '').toLowerCase().includes(query) ||
-    (topic.ko || '').toLowerCase().includes(query)
-  )
-})
-
-// Pagination for custom topics
-const totalCustomPages = computed(() => {
-  return Math.ceil(filteredCustomTopics.value.length / ITEMS_PER_PAGE)
-})
-
-const paginatedCustomTopics = computed(() => {
-  const start = (currentCustomPage.value - 1) * ITEMS_PER_PAGE
-  const end = start + ITEMS_PER_PAGE
-  return filteredCustomTopics.value.slice(start, end)
-})
-
-// Pagination for built-in topics
-const totalBuiltInPages = computed(() => {
-  return Math.ceil(filteredBuiltInTopics.value.length / ITEMS_PER_PAGE)
-})
-
-const paginatedBuiltInTopics = computed(() => {
-  const start = (currentBuiltInPage.value - 1) * ITEMS_PER_PAGE
-  const end = start + ITEMS_PER_PAGE
-  return filteredBuiltInTopics.value.slice(start, end)
-})
-
-// Windowed pagination - show max 3 page numbers
-const visibleCustomPages = computed(() => {
-  const total = totalCustomPages.value
-  const current = currentCustomPage.value
-  const maxVisible = 3
-  
-  if (total <= maxVisible) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
-  
-  let start = Math.max(1, current - Math.floor(maxVisible / 2))
-  let end = Math.min(total, start + maxVisible - 1)
-  
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-  
-  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
-})
-
-const visibleBuiltInPages = computed(() => {
-  const total = totalBuiltInPages.value
-  const current = currentBuiltInPage.value
-  const maxVisible = 3
-  
-  if (total <= maxVisible) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
-  
-  let start = Math.max(1, current - Math.floor(maxVisible / 2))
-  let end = Math.min(total, start + maxVisible - 1)
-  
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-  
-  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
-})
-
-// Debug computed property
-const showDeleteModal = computed(() => {
-  console.log('showDeleteModal computed - topicToDelete:', topicToDelete.value)
-  return !!topicToDelete.value
-})
-
-// Auto-generate topic key from Vietnamese or English name
-const generateTopicKey = (vi: string, en: string): string => {
-  // Use Vietnamese name first, fall back to English if VI is empty
-  const sourceName = vi.trim() || en.trim()
-  
-  if (!sourceName) return ''
-  
-  // Convert to lowercase, remove accents, replace spaces/special chars with underscores
-  let key = sourceName.toLowerCase()
-    .normalize('NFD') // Decompose accented characters
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritical marks
-    .replace(/[^a-z0-9]/g, '_') // Replace non-alphanumeric with underscores
-    .replace(/_+/g, '_') // Replace multiple underscores with single
-    .replace(/^_|_$/g, '') // Remove leading/trailing underscores
-  
-  // Ensure uniqueness by checking against existing topics
-  let counter = 1
-  let originalKey = key
-  
-  while (isKeyTaken(key)) {
-    key = `${originalKey}_${counter}`
-    counter++
-  }
-  
-  return key
-}
-
-// Check if a topic key is already taken
-const isKeyTaken = (key: string): boolean => {
-  // Check against built-in topics
-  const builtInKeys = builtInTopics.value.map(topic => topic.key)
-  if (builtInKeys.includes(key)) return true
-  
-  // Check against existing custom topics (excluding current editing topic)
-  const existingKeys = customTopics.value
-    .filter(topic => editingTopic.value ? topic.key !== editingTopic.value.key : true)
-    .map(topic => topic.key)
-  
-  return existingKeys.includes(key)
-}
-
-// Methods
-const loadCustomTopics = () => {
-  try {
-    const saved = localStorage.getItem('customTopics')
-    console.log('Loading custom topics from localStorage:', saved)
-    
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      console.log('Parsed custom topics:', parsed)
-      
-      if (Array.isArray(parsed)) {
-        customTopics.value = parsed
-        console.log('Custom topics loaded successfully:', customTopics.value)
-      } else {
-        console.log('Invalid data format, resetting to empty array')
-        customTopics.value = []
-        localStorage.removeItem('customTopics')
-      }
-    } else {
-      console.log('No custom topics found in localStorage')
-      customTopics.value = []
-    }
-    
-    console.log('Final custom topics loaded:', customTopics.value)
-  } catch (error) {
-    console.error('Error loading custom topics:', error)
-    customTopics.value = []
-    localStorage.removeItem('customTopics')
-  }
-}
-
-const saveCustomTopics = () => {
-  try {
-    console.log('Saving custom topics to localStorage:', customTopics.value)
-    localStorage.setItem('customTopics', JSON.stringify(customTopics.value))
-    console.log('Custom topics saved successfully')
-  } catch (error) {
-    console.error('Error saving custom topics:', error)
-  }
-}
-
-const saveTopic = () => {
-  if (!canSaveTopic.value) return
-
-  // Auto-generate key based on Vietnamese/English names
-  const generatedKey = editingTopic.value 
-    ? editingTopic.value.key // Keep existing key when editing
-    : generateTopicKey(newTopic.value.vi, newTopic.value.en)
-
-  const topic: Topic = {
-    key: generatedKey,
-    vi: newTopic.value.vi.trim(),
-    en: newTopic.value.en.trim(),
-    ko: newTopic.value.ko.trim()
-  }
-
-  if (editingTopic.value) {
-    // Update existing topic
-    const index = customTopics.value.findIndex(t => t.key === editingTopic.value!.key)
-    if (index !== -1) {
-      const oldKey = customTopics.value[index].key
-      customTopics.value[index] = topic
-      saveCustomTopics()
-      emit('topic-updated', oldKey, topic)
-      notifyTopicsUpdated() // Notify about topic update
-    }
-    editingTopic.value = null
-  } else {
-    // Add new topic - key is auto-generated and unique
-    customTopics.value.push(topic)
-    saveCustomTopics()
-    emit('topic-added', topic)
-    notifyTopicsUpdated() // Notify about topic addition
-  }
-
-  // Reset form
-  newTopic.value = { key: '', vi: '', en: '', ko: '' }
-}
-
-const editTopic = (topic: Topic) => {
-  editingTopic.value = { ...topic }
-  newTopic.value = { ...topic }
-}
-
-const cancelEdit = () => {
-  editingTopic.value = null
-  newTopic.value = { key: '', vi: '', en: '', ko: '' }
-}
-
-const confirmDeleteTopic = (topic: Topic) => {
-  console.log('Confirming delete for topic:', topic)
-  topicToDelete.value = topic
-  console.log('topicToDelete set to:', topicToDelete.value)
-}
-
-const deleteTopic = () => {
-  if (!topicToDelete.value) {
-    console.log('No topic to delete')
-    return
-  }
-
-  console.log('Attempting to delete topic:', topicToDelete.value)
-  console.log('Current custom topics:', customTopics.value)
-
-  const index = customTopics.value.findIndex(t => t.key === topicToDelete.value!.key)
-  console.log('Found index:', index)
-
-  if (index !== -1) {
-    const key = customTopics.value[index].key
-    console.log('Deleting topic with key:', key)
-    
-    // Force reactive update by creating a new array
-    const updatedTopics = [...customTopics.value]
-    updatedTopics.splice(index, 1)
-    customTopics.value = updatedTopics
-    
-    console.log('Topics after deletion:', customTopics.value)
-    
-    saveCustomTopics()
-    emit('topic-deleted', key)
-    notifyTopicsUpdated() // Notify about topic deletion
-    
-    console.log('Topic deleted successfully')
-  } else {
-    console.log('Topic not found in custom topics')
-  }
-
-  topicToDelete.value = null
-}
-
-// Helper to notify about topic changes
-const notifyTopicsUpdated = () => {
-  // Dispatch a custom event to notify all components about topic changes
-  window.dispatchEvent(new CustomEvent('topics-updated'))
-  console.log('Topics updated, dispatching topics-updated event')
-}
-
+// Helper function for getting topic usage count
 const getTopicUsageCount = (key: string): number => {
   return props.vocabularyUsage[key] || 0
 }
-
-const closeDialog = () => {
-  emit('update:modelValue', false)
-}
-
-// Force reload custom topics
-const reloadCustomTopics = () => {
-  console.log('Force reloading custom topics')
-  loadCustomTopics()
-  // Force a reactive update
-  customTopics.value = [...customTopics.value]
-}
-
-// Clear all custom topics (for testing)
-const clearAllCustomTopics = () => {
-  console.log('Clearing all custom topics')
-  customTopics.value = []
-  localStorage.removeItem('customTopics')
-  console.log('All custom topics cleared')
-}
-
-// Test delete modal
-const testDeleteModal = () => {
-  console.log('Testing delete modal')
-  topicToDelete.value = {
-    key: 'test',
-    vi: 'Test Topic',
-    en: 'Test Topic',
-    ko: '테스트 토픽'
-  }
-  console.log('Test topic set:', topicToDelete.value)
-}
-
-// Lifecycle
-onMounted(() => {
-  if (props.modelValue) {
-    loadCustomTopics()
-    // Only disable body scroll if dialog is actually open
-    document.body.style.overflow = 'hidden'
-  }
-})
-
-onUnmounted(() => {
-  // Always restore body scroll on unmount
-  document.body.style.overflow = ''
-})
-
-// Watch for search query changes - reset pagination
-watch(searchQuery, () => {
-  currentCustomPage.value = 1
-  currentBuiltInPage.value = 1
-})
-
-// Watch for dialog open/close
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    document.body.style.overflow = 'hidden'
-    loadCustomTopics()
-  } else {
-    // Always restore body scroll when closing
-    document.body.style.overflow = ''
-    // Reset form when closing
-    editingTopic.value = null
-    newTopic.value = { key: '', vi: '', en: '', ko: '' }
-    topicToDelete.value = null
-    // Reset search and pagination
-    searchQuery.value = ''
-    currentCustomPage.value = 1
-    currentBuiltInPage.value = 1
-  }
-}, { immediate: true })
 </script>
 
 <style scoped>
@@ -1090,4 +757,50 @@ button:active {
   background: linear-gradient(135deg, #14532d 0%, #166534 100%);
   border: 1px solid #22c55e;
 }
+
+/* Animated Search Border */
+@keyframes borderColorCycle {
+  0% {
+    border-color: #d1d5db; /* gray-300 */
+  }
+  25% {
+    border-color: #3b82f6; /* blue-500 */
+  }
+  50% {
+    border-color: #8b5cf6; /* purple-500 */
+  }
+  75% {
+    border-color: #10b981; /* emerald-500 */
+  }
+  100% {
+    border-color: #d1d5db; /* gray-300 */
+  }
+}
+
+@keyframes borderColorCycleDark {
+  0% {
+    border-color: #0f0f0f; /* dark-bg-mute */
+  }
+  25% {
+    border-color: #3b82f6; /* blue-500 */
+  }
+  50% {
+    border-color: #8b5cf6; /* purple-500 */
+  }
+  75% {
+    border-color: #10b981; /* emerald-500 */
+  }
+  100% {
+    border-color: #0f0f0f; /* dark-bg-mute */
+  }
+}
+
+.animated-search-border {
+  animation: borderColorCycle 4s ease-in-out infinite;
+}
+
+.dark .animated-search-border {
+  animation: borderColorCycleDark 4s ease-in-out infinite;
+}
+
 </style>
