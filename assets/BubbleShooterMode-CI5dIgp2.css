@@ -1,0 +1,13 @@
+
+.modal-enter-active[data-v-98a69fca], .modal-leave-active[data-v-98a69fca] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.modal-enter-from[data-v-98a69fca], .modal-leave-to[data-v-98a69fca] {
+  opacity: 0;
+  transform: scale(0.9) translateY(20px);
+}
+.bubble-shooter-game[data-v-98a69fca] {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}

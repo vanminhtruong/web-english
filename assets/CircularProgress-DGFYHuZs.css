@@ -1,0 +1,5 @@
+
+/* Additional animations for smooth progress changes */
+circle[data-v-938779d2] {
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
