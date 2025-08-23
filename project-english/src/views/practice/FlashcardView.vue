@@ -338,6 +338,7 @@ import { useVocabularyStore } from '../../composables/useVocabularyStore'
 import type { Vocabulary } from '../../composables/useVocabularyStore'
 import { getDateKey } from '../../utils/dateUtils'
 import { useModalStore } from '../../stores/modalStore'
+import { ROUTE_PATHS } from '../../constants/routes'
 
 const ConfirmToast = defineAsyncComponent(() => import('../../components/common/ConfirmToast.vue'))
 
@@ -709,7 +710,7 @@ const handleExitPractice = () => {
   if (practiceStarted.value && !allowExit.value) {
     showExitWarning.value = true
   } else {
-    router.push('/')
+    router.push(ROUTE_PATHS.PRACTICE_FLASHCARD)
   }
 }
 
@@ -771,8 +772,8 @@ const confirmExit = () => {
   }
   // Remove navigation guard to allow exit
   removeNavigationGuard()
-  // Navigate back to home page
-  router.push('/')
+  // Navigate back to Flashcard main page
+  router.push(ROUTE_PATHS.PRACTICE_FLASHCARD)
 }
 
 // Navigation guard to prevent leaving page during practice
