@@ -1,4 +1,4 @@
-import { g as getLocale, t as toggleLocale } from "./index-C57KucOP.js";
+import { g as getLocale, t as toggleLocale } from "./index-Bs3LIHIS.js";
 import { d as defineComponent, z as computed, c as createElementBlock, q as openBlock, f as createBaseVNode, g as createTextVNode } from "./vendor-CppF0Ubz.js";
 import "./vendor-toast-BGonNr2Z.js";
 const _hoisted_1 = {
@@ -60,4 +60,4 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
 export {
   _sfc_main as default
 };
-//# sourceMappingURL=LanguageSwitcher-Bi9dwomo.js.map
+//# sourceMappingURL=LanguageSwitcher-CM_AuDlR.js.map
