@@ -10,6 +10,9 @@ export const ROUTE_NAMES = {
 
   // Vocabulary
   VOCABULARY_LIST: 'vocabulary-list',
+  VOCABULARY_QUESTIONS: 'vocabulary-questions',
+  VOCABULARY_EXAMPLES: 'vocabulary-examples',
+  VOCABULARY_GENERATOR: 'vocabulary-generator',
   VOCABULARY_ADD: 'vocabulary-add',
   VOCABULARY_EDIT: 'vocabulary-edit',
 
@@ -26,6 +29,9 @@ export const ROUTE_NAMES = {
 
   // Test
   TAILWIND_TEST: 'tailwind-test',
+  
+  // Not Found
+  NOT_FOUND: 'NotFound',
 } as const
 
 // Route paths constants
@@ -37,6 +43,9 @@ export const ROUTE_PATHS = {
 
   // Vocabulary
   VOCABULARY: '/vocabulary',
+  VOCABULARY_QUESTIONS: '/vocabulary/questions',
+  VOCABULARY_EXAMPLES: '/vocabulary/examples',
+  VOCABULARY_GENERATOR: '/vocabulary/generator',
   VOCABULARY_ADD: '/vocabulary/add',
   VOCABULARY_EDIT: '/vocabulary/edit/:id',
 
@@ -53,6 +62,9 @@ export const ROUTE_PATHS = {
 
   // Test
   TEST: '/test',
+  
+  // Not Found
+  NOT_FOUND: '/:pathMatch(.*)*',
 } as const
 
 // Component paths constants (để sử dụng với dynamic import)
@@ -62,6 +74,9 @@ export const COMPONENT_PATHS = {
 
   // Vocabulary
   VOCABULARY_LIST: '../views/vocabulary/VocabularyListView.vue',
+  VOCABULARY_QUESTIONS: '../views/vocabulary/VocabularyQuestionsView.vue',
+  VOCABULARY_EXAMPLES: '../views/vocabulary/VocabularyExamplesView.vue',
+  VOCABULARY_GENERATOR: '../views/vocabulary/AutoGeneratorView.vue',
   VOCABULARY_ADD: '../views/vocabulary/AddVocabularyView.vue',
   VOCABULARY_EDIT: '../views/vocabulary/EditVocabularyView.vue',
 
@@ -78,6 +93,9 @@ export const COMPONENT_PATHS = {
 
   // Test
   TAILWIND_TEST: '../components/TailwindTest.vue',
+  
+  // Not Found
+  NOT_FOUND: '../views/NotFoundView.vue',
 } as const
 
 // Type definitions
@@ -110,6 +128,21 @@ export const ROUTE_CONFIG = {
     path: ROUTE_PATHS.VOCABULARY,
     name: ROUTE_NAMES.VOCABULARY_LIST,
     componentPath: COMPONENT_PATHS.VOCABULARY_LIST,
+  },
+  VOCABULARY_QUESTIONS: {
+    path: ROUTE_PATHS.VOCABULARY_QUESTIONS,
+    name: ROUTE_NAMES.VOCABULARY_QUESTIONS,
+    componentPath: COMPONENT_PATHS.VOCABULARY_QUESTIONS,
+  },
+  VOCABULARY_EXAMPLES: {
+    path: ROUTE_PATHS.VOCABULARY_EXAMPLES,
+    name: ROUTE_NAMES.VOCABULARY_EXAMPLES,
+    componentPath: COMPONENT_PATHS.VOCABULARY_EXAMPLES,
+  },
+  VOCABULARY_GENERATOR: {
+    path: ROUTE_PATHS.VOCABULARY_GENERATOR,
+    name: ROUTE_NAMES.VOCABULARY_GENERATOR,
+    componentPath: COMPONENT_PATHS.VOCABULARY_GENERATOR,
   },
   VOCABULARY_ADD: {
     path: ROUTE_PATHS.VOCABULARY_ADD,
@@ -166,5 +199,12 @@ export const ROUTE_CONFIG = {
     path: ROUTE_PATHS.TEST,
     name: ROUTE_NAMES.TAILWIND_TEST,
     componentPath: COMPONENT_PATHS.TAILWIND_TEST,
+  },
+  
+  // Not Found
+  NOT_FOUND: {
+    path: ROUTE_PATHS.NOT_FOUND,
+    name: ROUTE_NAMES.NOT_FOUND,
+    componentPath: COMPONENT_PATHS.NOT_FOUND,
   },
 } as const
