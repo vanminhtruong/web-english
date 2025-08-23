@@ -1,4 +1,16 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import DashboardView from '../views/dashboard/DashboardView.vue'
+import VocabularyListView from '../views/vocabulary/VocabularyListView.vue'
+import VocabularyQuestionsView from '../views/vocabulary/VocabularyQuestionsView.vue'
+import VocabularyExamplesView from '../views/vocabulary/VocabularyExamplesView.vue'
+import AutoGeneratorView from '../views/vocabulary/AutoGeneratorView.vue'
+import GrammarListView from '../views/grammar/GrammarListView.vue'
+import GrammarDetailView from '../views/grammar/GrammarDetailView.vue'
+import GrammarPracticeView from '../views/grammar/GrammarPracticeView.vue'
+import FlashcardView from '../views/practice/FlashcardView.vue'
+import QuizView from '../views/practice/QuizView.vue'
+import TailwindTest from '../components/TailwindTest.vue'
+import NotFoundView from '../views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -10,62 +22,62 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('../views/dashboard/DashboardView.vue'),
+      component: DashboardView,
     },
     {
       path: '/vocabulary',
       name: 'vocabulary-list',
-      component: () => import('../views/vocabulary/VocabularyListView.vue'),
+      component: VocabularyListView,
     },
     {
       path: '/vocabulary/questions',
       name: 'vocabulary-questions',
-      component: () => import('../views/vocabulary/VocabularyQuestionsView.vue'),
+      component: VocabularyQuestionsView,
     },
     {
       path: '/vocabulary/examples',
       name: 'vocabulary-examples',
-      component: () => import('../views/vocabulary/VocabularyExamplesView.vue'),
+      component: VocabularyExamplesView,
     },
     {
       path: '/vocabulary/generator',
       name: 'vocabulary-generator',
-      component: () => import('../views/vocabulary/AutoGeneratorView.vue'),
+      component: AutoGeneratorView,
     },
     {
       path: '/grammar',
       name: 'grammar-list',
-      component: () => import('../views/grammar/GrammarListView.vue'),
+      component: GrammarListView,
     },
     {
       path: '/grammar/:id',
       name: 'grammar-detail',
-      component: () => import('../views/grammar/GrammarDetailView.vue'),
+      component: GrammarDetailView,
     },
     {
       path: '/grammar/:id/practice',
       name: 'grammar-practice',
-      component: () => import('../views/grammar/GrammarPracticeView.vue'),
+      component: GrammarPracticeView,
     },
     {
       path: '/practice/flashcard',
       name: 'practice-flashcard',
-      component: () => import('../views/practice/FlashcardView.vue'),
+      component: FlashcardView,
     },
     {
       path: '/practice/quiz',
       name: 'practice-quiz',
-      component: () => import('../views/practice/QuizView.vue'),
+      component: QuizView,
     },
     {
       path: '/test',
       name: 'tailwind-test',
-      component: () => import('../components/TailwindTest.vue'),
+      component: TailwindTest,
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: () => import('../views/NotFoundView.vue'),
+      component: NotFoundView,
     },
   ],
 })

@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
-import { loadComponentSafely } from './utils/import-helper'
 import { useModalStore } from './stores/modalStore'
 
-// Import components - use direct import for header to ensure proper positioning
+// Import components using defineAsyncComponent for proper loading
 const AppHeader = defineAsyncComponent(
   () => import('./components/common/AppHeader.vue')
 )
-
-// Import
 const BackToTop = defineAsyncComponent(
   () => import('./components/common/BackToTop.vue')
 )
-const LazyLoadComponent = defineAsyncComponent(() => import('./components/LazyLoadComponent.vue'))
 
 // Modal store for managing button visibility
 const modalStore = useModalStore()

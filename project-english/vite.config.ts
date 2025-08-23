@@ -13,21 +13,17 @@ export default defineConfig({
   },
   build: {
     assetsInlineLimit: 0,
-    minify: 'terser', // Sử dụng terser cho minify tốt hơn
-    sourcemap: false, // Tắt sourcemap cho production để giảm size
+    minify: false, // Tắt minify để debug dễ hơn
+    sourcemap: false,
     target: 'esnext',
     rollupOptions: {
       output: {
-        // Cấu hình naming patterns cho GitHub Pages
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]',
-        manualChunks: {
-          // Tách thành chunks nhỏ hơn
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'ui-vendor': ['vue-toastification', 'vue-i18n'],
-          'utils-vendor': ['canvas-confetti', 'vue-draggable-next']
-        }
+        // Single file output với inline dynamic imports
+        entryFileNames: 'assets/index.js',
+        chunkFileNames: 'assets/index.js',
+        assetFileNames: 'assets/[name].[ext]',
+        // Tắt hết dynamic imports - gộp tất cả vào 1 file
+        inlineDynamicImports: true
       }
     }
   },
@@ -35,13 +31,8 @@ export default defineConfig({
     port: 5173,
     host: true
   },
-  // Cấu hình thêm cho GitHub Pages
-  experimental: {
-    renderBuiltUrl(filename, { hostType }) {
-      if (hostType === 'js') {
-        return { js: `${process.env.NODE_ENV === 'production' ? '/web-english/' : '/'}${filename}` }
-      }
-      return { relative: true }
-    }
+  // Cấu hình đặc biệt cho GitHub Pages
+  define: {
+    __APP_BASE_URL__: process.env.NODE_ENV === 'production' ? '"/web-english/"' : '"/"'
   }
 })
