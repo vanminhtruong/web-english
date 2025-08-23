@@ -70,6 +70,7 @@ const router = createRouter({
   ],
 })
 
+// test
 // Navigation Guards (removed authentication checks)
 // router.beforeEach((to, _from, next) => {
 //   next()
