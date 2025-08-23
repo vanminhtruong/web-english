@@ -568,7 +568,7 @@
         "searchPlaceholder": "이름으로 주제 검색...",
         "pageOf": "{total} 중 {current} 페이지",
         "koreanName": "한국어 이름",
-        "koreanNamePlaceholder": "한국어 이름"
+        "koreanNamePlaceholder": "예: 요리, 프로그래밍..."
       }
     },
     "flashcard": {

@@ -577,7 +577,7 @@
       "searchPlaceholder": "Tìm kiếm chủ đề theo tên...",
       "pageOf": "Trang {current} trong {total}",
       "koreanName": "Tên tiếng Hàn",
-      "koreanNamePlaceholder": "Tên tiếng Hàn"
+      "koreanNamePlaceholder": "Ví dụ: 요리, 프로그래밍..."
     },
     "flashcard": {
       "header": {

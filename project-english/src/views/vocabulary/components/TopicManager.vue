@@ -41,98 +41,85 @@
               </button>
             </div>
 
-            <!-- Sticky Search Section -->
-            <div class="sticky top-0 z-10 bg-white dark:bg-[#0a0a0a] border-b border-gray-200 dark:border-dark-bg-mute p-4 sm:p-6 md:p-6 lg:p-8">
-              <!-- Search Input -->
-              <div class="animate-fade-in-up">
+            <!-- Compact Sticky Header -->
+            <div class="sticky top-0 z-10 bg-white dark:bg-[#0a0a0a] border-b border-gray-200 dark:border-dark-bg-mute">
+              <!-- Search Section -->
+              <div class="px-4 py-3 border-b border-gray-100 dark:border-dark-bg-mute">
                 <div class="relative">
                   <input
                     v-model="searchQuery"
                     type="text"
                     :placeholder="t('vocabulary.topicManager.searchPlaceholder', 'Search topics by name...')"
-                    class="w-full px-4 py-3 pl-10 border-2 animated-search-border rounded-lg 
+                    class="w-full px-4 py-2.5 pl-10 border-2 animated-search-border rounded-lg 
                            bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm
                            focus:ring-2 focus:ring-blue-500/50
                            transition-all duration-300 shadow-sm"
                   />
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Scrollable Content -->
-            <div class="flex-1 p-4 sm:p-6 md:p-6 lg:p-8 overflow-y-auto min-h-0">
-
-              <!-- Add New Topic Form -->
-              <div class="mb-4 sm:mb-6 md:mb-5 lg:mb-6 p-3 sm:p-4 md:p-4 lg:p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg animate-fade-in-up" style="animation-delay: 0.1s">
-                <h3 class="text-base sm:text-lg md:text-base lg:text-lg font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 md:mb-3 lg:mb-4 flex items-center">
-                  <span class="w-1 h-4 bg-blue-500 rounded mr-2"></span>
-                  {{ editingTopic ? t('vocabulary.topicManager.editTopic', 'Edit Topic') : t('vocabulary.topicManager.addNewTopic', 'Add New Topic') }}
-                </h3>
+              
+              <!-- Compact Add Topic Form -->
+              <div class="px-4 py-3 bg-gray-50 dark:bg-[#0a0a0a]">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-1 h-3 bg-blue-500 rounded"></span>
+                  <h3 class="text-sm font-medium text-gray-900 dark:text-white">
+                    {{ editingTopic ? t('vocabulary.topicManager.editTopic', 'Edit Topic') : t('vocabulary.topicManager.addNewTopic', 'Add New Topic') }}
+                  </h3>
+                </div>
                 
-                <div class="space-y-4 sm:space-y-4 md:space-y-3 lg:space-y-4">
-                  <!-- Topic Key is now auto-generated, hidden from UI -->
-
-                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4 md:gap-3 lg:gap-4">
-                    <div class="animate-fade-in-up" style="animation-delay: 0.3s">
-                      <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                        <span class="w-1 h-3 bg-purple-500 rounded mr-2"></span>
-                        {{ t('vocabulary.topicManager.vietnameseName', 'Vietnamese Name') }}
-                      </label>
-                      <input
-                        v-model="newTopic.vi"
-                        type="text"
-                        :placeholder="t('vocabulary.topicManager.vietnameseNamePlaceholder', 'Tên tiếng Việt')"
-                        class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
-                               bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
-                               focus:ring-2 focus:ring-purple-500 focus:border-transparent
-                               transition-all duration-300 hover:border-purple-400 dark:hover:border-purple-500 transform hover:scale-[1.02]"
-                      />
-                    </div>
-
-                    <div class="animate-fade-in-up" style="animation-delay: 0.4s">
-                      <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                        <span class="w-1 h-3 bg-orange-500 rounded mr-2"></span>
-                        {{ t('vocabulary.topicManager.englishName', 'English Name') }}
-                      </label>
-                      <input
-                        v-model="newTopic.en"
-                        type="text"
-                        :placeholder="t('vocabulary.topicManager.englishNamePlaceholder', 'English name')"
-                        class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
-                               bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
-                               focus:ring-2 focus:ring-orange-500 focus:border-transparent
-                               transition-all duration-300 hover:border-orange-400 dark:hover:border-orange-500 transform hover:scale-[1.02]"
-                      />
-                    </div>
-
-                    <div class="animate-fade-in-up" style="animation-delay: 0.5s">
-                      <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                        <span class="w-1 h-3 bg-green-500 rounded mr-2"></span>
-                        {{ t('vocabulary.topicManager.koreanName', 'Korean Name') }}
-                      </label>
-                      <input
-                        v-model="newTopic.ko"
-                        type="text"
-                        :placeholder="t('vocabulary.topicManager.koreanNamePlaceholder', '한국어 이름')"
-                        class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
-                               bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
-                               focus:ring-2 focus:ring-green-500 focus:border-transparent
-                               transition-all duration-300 hover:border-green-400 dark:hover:border-green-500 transform hover:scale-[1.02]"
-                      />
-                    </div>
+                <div class="flex flex-wrap gap-2">
+                  <!-- Vietnamese Input -->
+                  <div class="flex-1 min-w-[200px]">
+                    <input
+                      v-model="newTopic.vi"
+                      type="text"
+                      :placeholder="t('vocabulary.topicManager.vietnameseNamePlaceholder', 'Tên tiếng Việt')"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                             bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm
+                             focus:ring-1 focus:ring-purple-500 focus:border-transparent
+                             transition-all duration-300"
+                    />
                   </div>
 
-                  <div class="flex gap-3 sm:gap-4 md:gap-3 lg:gap-4 animate-fade-in-up" style="animation-delay: 0.6s">
+                  <!-- English Input -->
+                  <div class="flex-1 min-w-[200px]">
+                    <input
+                      v-model="newTopic.en"
+                      type="text"
+                      :placeholder="t('vocabulary.topicManager.englishNamePlaceholder', 'English name')"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                             bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm
+                             focus:ring-1 focus:ring-orange-500 focus:border-transparent
+                             transition-all duration-300"
+                    />
+                  </div>
+
+                  <!-- Korean Input -->
+                  <div class="flex-1 min-w-[200px]">
+                    <input
+                      v-model="newTopic.ko"
+                      type="text"
+                      :placeholder="t('vocabulary.topicManager.koreanNamePlaceholder', '한국어 이름')"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                             bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm
+                             focus:ring-1 focus:ring-green-500 focus:border-transparent
+                             transition-all duration-300"
+                    />
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="flex gap-2">
                     <button
                       @click="saveTopic"
                       :disabled="!canSaveTopic"
-                      class="px-3 py-1.5 sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-4 lg:py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 
-                             text-white text-sm md:text-sm lg:text-base rounded-lg transition-all duration-300 disabled:cursor-not-allowed hover:scale-105 hover:shadow-lg font-medium"
+                      class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
+                             disabled:from-gray-400 disabled:to-gray-500 text-white text-sm rounded-md 
+                             transition-all duration-300 disabled:cursor-not-allowed font-medium"
                     >
                       {{ editingTopic ? t('common.update', 'Update') : t('common.add', 'Add') }}
                     </button>
@@ -140,13 +127,18 @@
                     <button
                       v-if="editingTopic"
                       @click="cancelEdit"
-                      class="px-3 py-1.5 sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-4 lg:py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm md:text-sm lg:text-base rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+                      class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded-md 
+                             transition-all duration-300 font-medium"
                     >
                       {{ t('common.cancel', 'Cancel') }}
                     </button>
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 p-4 sm:p-6 md:p-6 lg:p-8 overflow-y-auto min-h-0">
 
               <!-- Topics List -->
               <div class="animate-fade-in-up" style="animation-delay: 0.6s">

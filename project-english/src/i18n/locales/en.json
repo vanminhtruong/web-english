@@ -556,7 +556,7 @@
       "searchPlaceholder": "Search topics by name...",
       "pageOf": "Page {current} of {total}",
       "koreanName": "Korean Name",
-      "koreanNamePlaceholder": "Korean name"
+      "koreanNamePlaceholder": "Example: 요리, 프로그래밍..."
     }
   },
   "korean": {
