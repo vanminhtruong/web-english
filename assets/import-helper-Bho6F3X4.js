@@ -1,0 +1,1 @@
+function o(o){return async()=>{try{const t=await o();return t.default||t}catch(t){return console.error("Component loading failed:",t),{template:'<div class="error-component">Component failed to load</div>'}}}}export{o as l};
