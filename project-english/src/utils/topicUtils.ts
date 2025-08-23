@@ -4,6 +4,7 @@ export interface CustomTopic {
   key: string
   vi: string
   en: string
+  ko?: string
 }
 
 // Normalize locale to base language code used by the app
@@ -53,10 +54,12 @@ export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabul
     const rawLocale = typeof locale === 'string' ? locale : locale?.value
     const currentLocale = normalizeLocale(rawLocale)
     if (currentLocale === 'vi') {
-      return customTopic.vi || customTopic.en
+      return customTopic.vi || customTopic.en || customTopic.ko || key
     }
-    // For 'ko' or other locales where custom topic doesn't have a dedicated field, fallback to English
-    return customTopic.en || customTopic.vi
+    if (currentLocale === 'ko') {
+      return customTopic.ko || customTopic.en || customTopic.vi || key
+    }
+    return customTopic.en || customTopic.vi || customTopic.ko || key
   }
   
   // Check if it's a built-in category with translation (if t function provided)
@@ -71,29 +74,31 @@ export function getTopicName(categoryKey: string, t?: any, locale?: any, vocabul
   }
   
   // For built-in categories, use hardcoded fallback
-  const builtInCategories: { [key: string]: { vi: string, en: string } } = {
-    'technology': { vi: 'Công nghệ', en: 'Technology' },
-    'business': { vi: 'Kinh doanh', en: 'Business' },
-    'travel': { vi: 'Du lịch', en: 'Travel' },
-    'food': { vi: 'Ẩm thực', en: 'Food' },
-    'health': { vi: 'Sức khỏe', en: 'Health' },
-    'education': { vi: 'Giáo dục', en: 'Education' },
-    'sports': { vi: 'Thể thao', en: 'Sports' },
-    'entertainment': { vi: 'Giải trí', en: 'Entertainment' },
-    'science': { vi: 'Khoa học', en: 'Science' },
-    'art': { vi: 'Nghệ thuật', en: 'Art' },
-    'music': { vi: 'Âm nhạc', en: 'Music' },
-    'literature': { vi: 'Văn học', en: 'Literature' },
-    'politics': { vi: 'Chính trị', en: 'Politics' },
-    'environment': { vi: 'Môi trường', en: 'Environment' },
-    'fashion': { vi: 'Thời trang', en: 'Fashion' },
-    'finance': { vi: 'Tài chính', en: 'Finance' }
+  const builtInCategories: { [key: string]: { vi: string, en: string, ko: string } } = {
+    'technology': { vi: 'Công nghệ', en: 'Technology', ko: '기술' },
+    'business': { vi: 'Kinh doanh', en: 'Business', ko: '비즈니스' },
+    'travel': { vi: 'Du lịch', en: 'Travel', ko: '여행' },
+    'food': { vi: 'Ẩm thực', en: 'Food', ko: '음식' },
+    'health': { vi: 'Sức khỏe', en: 'Health', ko: '건강' },
+    'education': { vi: 'Giáo dục', en: 'Education', ko: '교육' },
+    'sports': { vi: 'Thể thao', en: 'Sports', ko: '스포츠' },
+    'entertainment': { vi: 'Giải trí', en: 'Entertainment', ko: '엔터테인먼트' },
+    'science': { vi: 'Khoa học', en: 'Science', ko: '과학' },
+    'art': { vi: 'Nghệ thuật', en: 'Art', ko: '예술' },
+    'music': { vi: 'Âm nhạc', en: 'Music', ko: '음악' },
+    'literature': { vi: 'Văn học', en: 'Literature', ko: '문학' },
+    'politics': { vi: 'Chính trị', en: 'Politics', ko: '정치' },
+    'environment': { vi: 'Môi trường', en: 'Environment', ko: '환경' },
+    'fashion': { vi: 'Thời trang', en: 'Fashion', ko: '패션' },
+    'finance': { vi: 'Tài chính', en: 'Finance', ko: '금융' }
   }
   
   if (builtInCategories[key]) {
     const rawLocale = typeof locale === 'string' ? locale : locale?.value
     const currentLocale = normalizeLocale(rawLocale)
-    return currentLocale === 'vi' ? builtInCategories[key].vi : builtInCategories[key].en
+    if (currentLocale === 'vi') return builtInCategories[key].vi
+    if (currentLocale === 'ko') return builtInCategories[key].ko
+    return builtInCategories[key].en
   }
   
   // Fallback to the category key itself (capitalized)

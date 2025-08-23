@@ -53,7 +53,7 @@
                 <div class="space-y-4 sm:space-y-4 md:space-y-3 lg:space-y-4">
                   <!-- Topic Key is now auto-generated, hidden from UI -->
 
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-4 md:gap-3 lg:gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4 md:gap-3 lg:gap-4">
                     <div class="animate-fade-in-up" style="animation-delay: 0.3s">
                       <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                         <span class="w-1 h-3 bg-purple-500 rounded mr-2"></span>
@@ -85,9 +85,25 @@
                                transition-all duration-300 hover:border-orange-400 dark:hover:border-orange-500 transform hover:scale-[1.02]"
                       />
                     </div>
+
+                    <div class="animate-fade-in-up" style="animation-delay: 0.5s">
+                      <label class="block text-sm md:text-sm lg:text-base font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                        <span class="w-1 h-3 bg-green-500 rounded mr-2"></span>
+                        {{ t('vocabulary.topicManager.koreanName', 'Korean Name') }}
+                      </label>
+                      <input
+                        v-model="newTopic.ko"
+                        type="text"
+                        :placeholder="t('vocabulary.topicManager.koreanNamePlaceholder', '한국어 이름')"
+                        class="w-full px-3 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg 
+                               bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm md:text-sm lg:text-base
+                               focus:ring-2 focus:ring-green-500 focus:border-transparent
+                               transition-all duration-300 hover:border-green-400 dark:hover:border-green-500 transform hover:scale-[1.02]"
+                      />
+                    </div>
                   </div>
 
-                  <div class="flex gap-3 sm:gap-4 md:gap-3 lg:gap-4 animate-fade-in-up" style="animation-delay: 0.5s">
+                  <div class="flex gap-3 sm:gap-4 md:gap-3 lg:gap-4 animate-fade-in-up" style="animation-delay: 0.6s">
                     <button
                       @click="saveTopic"
                       :disabled="!canSaveTopic"
@@ -136,12 +152,15 @@
                           ({{ getTopicUsageCount(topic.key) }} {{ t('vocabulary.words', 'words') }})
                         </span>
                       </div>
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-sm">
+                      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 text-sm">
                         <div>
                           <span class="font-medium">VI:</span> {{ topic.vi }}
                         </div>
                         <div>
                           <span class="font-medium">EN:</span> {{ topic.en }}
+                        </div>
+                        <div>
+                          <span class="font-medium">KO:</span> {{ topic.ko }}
                         </div>
                       </div>
                     </div>
@@ -210,6 +229,9 @@
                         </div>
                         <div>
                           <span class="font-medium">EN:</span> {{ topic.en }}
+                        </div>
+                        <div>
+                          <span class="font-medium">KO:</span> {{ topic.ko }}
                         </div>
                       </div>
                     </div>
@@ -303,6 +325,7 @@ interface Topic {
   key: string
   vi: string
   en: string
+  ko: string
 }
 
 interface Props {
@@ -333,33 +356,35 @@ const topicToDelete = ref<Topic | null>(null)
 const newTopic = ref<Topic>({
   key: '',
   vi: '',
-  en: ''
+  en: '',
+  ko: ''
 })
 
 // Computed
 const canSaveTopic = computed(() => {
-  return newTopic.value.vi.trim() && 
-         newTopic.value.en.trim()
+  return newTopic.value.vi?.trim() && 
+         newTopic.value.en?.trim() &&
+         newTopic.value.ko?.trim()
 })
 
 const builtInTopics = computed(() => {
   return [
-    { key: 'technology', vi: 'Công nghệ', en: 'Technology' },
-    { key: 'business', vi: 'Kinh doanh', en: 'Business' },
-    { key: 'travel', vi: 'Du lịch', en: 'Travel' },
-    { key: 'food', vi: 'Ẩm thực', en: 'Food' },
-    { key: 'health', vi: 'Sức khỏe', en: 'Health' },
-    { key: 'education', vi: 'Giáo dục', en: 'Education' },
-    { key: 'sports', vi: 'Thể thao', en: 'Sports' },
-    { key: 'entertainment', vi: 'Giải trí', en: 'Entertainment' },
-    { key: 'science', vi: 'Khoa học', en: 'Science' },
-    { key: 'art', vi: 'Nghệ thuật', en: 'Art' },
-    { key: 'music', vi: 'Âm nhạc', en: 'Music' },
-    { key: 'literature', vi: 'Văn học', en: 'Literature' },
-    { key: 'politics', vi: 'Chính trị', en: 'Politics' },
-    { key: 'environment', vi: 'Môi trường', en: 'Environment' },
-    { key: 'fashion', vi: 'Thời trang', en: 'Fashion' },
-    { key: 'finance', vi: 'Tài chính', en: 'Finance' }
+    { key: 'technology', vi: 'Công nghệ', en: 'Technology', ko: '기술' },
+    { key: 'business', vi: 'Kinh doanh', en: 'Business', ko: '비즈니스' },
+    { key: 'travel', vi: 'Du lịch', en: 'Travel', ko: '여행' },
+    { key: 'food', vi: 'Ẩm thực', en: 'Food', ko: '음식' },
+    { key: 'health', vi: 'Sức khỏe', en: 'Health', ko: '건강' },
+    { key: 'education', vi: 'Giáo dục', en: 'Education', ko: '교육' },
+    { key: 'sports', vi: 'Thể thao', en: 'Sports', ko: '스포츠' },
+    { key: 'entertainment', vi: 'Giải trí', en: 'Entertainment', ko: '엔터테인먼트' },
+    { key: 'science', vi: 'Khoa học', en: 'Science', ko: '과학' },
+    { key: 'art', vi: 'Nghệ thuật', en: 'Art', ko: '예술' },
+    { key: 'music', vi: 'Âm nhạc', en: 'Music', ko: '음악' },
+    { key: 'literature', vi: 'Văn học', en: 'Literature', ko: '문학' },
+    { key: 'politics', vi: 'Chính trị', en: 'Politics', ko: '정치' },
+    { key: 'environment', vi: 'Môi trường', en: 'Environment', ko: '환경' },
+    { key: 'fashion', vi: 'Thời trang', en: 'Fashion', ko: '패션' },
+    { key: 'finance', vi: 'Tài chính', en: 'Finance', ko: '금융' }
   ]
 })
 
@@ -462,7 +487,8 @@ const saveTopic = () => {
   const topic: Topic = {
     key: generatedKey,
     vi: newTopic.value.vi.trim(),
-    en: newTopic.value.en.trim()
+    en: newTopic.value.en.trim(),
+    ko: newTopic.value.ko.trim()
   }
 
   if (editingTopic.value) {
@@ -485,7 +511,7 @@ const saveTopic = () => {
   }
 
   // Reset form
-  newTopic.value = { key: '', vi: '', en: '' }
+  newTopic.value = { key: '', vi: '', en: '', ko: '' }
 }
 
 const editTopic = (topic: Topic) => {
@@ -495,7 +521,7 @@ const editTopic = (topic: Topic) => {
 
 const cancelEdit = () => {
   editingTopic.value = null
-  newTopic.value = { key: '', vi: '', en: '' }
+  newTopic.value = { key: '', vi: '', en: '', ko: '' }
 }
 
 const confirmDeleteTopic = (topic: Topic) => {
@@ -576,7 +602,8 @@ const testDeleteModal = () => {
   topicToDelete.value = {
     key: 'test',
     vi: 'Test Topic',
-    en: 'Test Topic'
+    en: 'Test Topic',
+    ko: '테스트 토픽'
   }
   console.log('Test topic set:', topicToDelete.value)
 }
@@ -605,7 +632,7 @@ watch(() => props.modelValue, (newValue) => {
     document.body.style.overflow = ''
     // Reset form when closing
     editingTopic.value = null
-    newTopic.value = { key: '', vi: '', en: '' }
+    newTopic.value = { key: '', vi: '', en: '', ko: '' }
     topicToDelete.value = null
   }
 }, { immediate: true })
