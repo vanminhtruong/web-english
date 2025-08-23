@@ -12,19 +12,21 @@ export default defineConfig({
     }
   },
   build: {
-    assetsInlineLimit: 0, // Don't inline any assets
-    minify: false, // Không sử dụng minify để tránh lỗi JavaScript
-    sourcemap: true, // Thêm sourcemap để dễ debug
+    assetsInlineLimit: 0,
+    minify: 'terser', // Sử dụng terser cho minify tốt hơn
+    sourcemap: false, // Tắt sourcemap cho production để giảm size
+    target: 'esnext',
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // Split the code into chunks to avoid large files
-          if (id.includes('node_modules')) {
-            if (id.includes('vue-toastification')) {
-              return 'vendor-toast';
-            }
-            return 'vendor';
-          }
+        // Cấu hình naming patterns cho GitHub Pages
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+        manualChunks: {
+          // Tách thành chunks nhỏ hơn
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          'ui-vendor': ['vue-toastification', 'vue-i18n'],
+          'utils-vendor': ['canvas-confetti', 'vue-draggable-next']
         }
       }
     }
@@ -32,5 +34,14 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true
+  },
+  // Cấu hình thêm cho GitHub Pages
+  experimental: {
+    renderBuiltUrl(filename, { hostType }) {
+      if (hostType === 'js') {
+        return { js: `${process.env.NODE_ENV === 'production' ? '/web-english/' : '/'}${filename}` }
+      }
+      return { relative: true }
+    }
   }
 })
