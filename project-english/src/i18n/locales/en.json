@@ -552,7 +552,11 @@
       "builtInTopics": "Built-in Topics",
       "builtInTopicsDescription": "The system has 16 built-in topics like Technology, Business, Travel... You can add custom topics here.",
       "builtIn": "Built-in",
-      "manageTopics": "Manage Topics"
+      "manageTopics": "Manage Topics",
+      "searchPlaceholder": "Search topics by name...",
+      "pageOf": "Page {current} of {total}",
+      "koreanName": "Korean Name",
+      "koreanNamePlaceholder": "Korean name"
     }
   },
   "korean": {

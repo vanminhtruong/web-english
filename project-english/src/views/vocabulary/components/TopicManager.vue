@@ -43,6 +43,26 @@
 
             <!-- Content -->
             <div class="flex-1 p-4 sm:p-6 md:p-6 lg:p-8 overflow-y-auto min-h-0">
+              <!-- Search Input -->
+              <div class="mb-4 sm:mb-6 md:mb-5 lg:mb-6 animate-fade-in-up">
+                <div class="relative">
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    :placeholder="t('vocabulary.topicManager.searchPlaceholder', 'Search topics by name...')"
+                    class="w-full px-4 py-3 pl-10 border border-gray-300 dark:border-dark-bg-mute rounded-lg 
+                           bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-white text-sm
+                           focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                           transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500"
+                  />
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
               <!-- Add New Topic Form -->
               <div class="mb-4 sm:mb-6 md:mb-5 lg:mb-6 p-3 sm:p-4 md:p-4 lg:p-5 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg animate-fade-in-up" style="animation-delay: 0.1s">
                 <h3 class="text-base sm:text-lg md:text-base lg:text-lg font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 md:mb-3 lg:mb-4 flex items-center">
@@ -135,9 +155,9 @@
                   {{ t('vocabulary.topicManager.noCustomTopics', 'No custom topics created yet') }}
                 </div>
 
-                <div v-else class="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+                <div v-else class="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
                   <div
-                    v-for="(topic, index) in customTopics"
+                    v-for="(topic, index) in paginatedCustomTopics"
                     :key="topic.key"
                     class="flex items-center justify-between p-3 sm:p-4 md:p-3 lg:p-4 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 hover:scale-[1.02] animate-fade-in-up"
                     :style="{ animationDelay: `${0.7 + index * 0.1}s` }"
@@ -193,6 +213,45 @@
                       </button>
                     </div>
                   </div>
+                  
+                  <!-- Custom Topics Pagination -->
+                  <div v-if="filteredCustomTopics.length > ITEMS_PER_PAGE" class="flex justify-center mt-6">
+                    <div class="flex items-center space-x-1">
+                      <button
+                        @click="currentCustomPage--"
+                        :disabled="currentCustomPage === 1"
+                        class="px-3 py-2 rounded-lg bg-gray-100 dark:bg-dark-bg-mute text-gray-600 dark:text-gray-400 
+                               hover:bg-gray-200 dark:hover:bg-dark-bg-soft disabled:opacity-50 disabled:cursor-not-allowed
+                               transition-all duration-300"
+                      >
+                        ‹
+                      </button>
+                      
+                      <button
+                        v-for="page in visibleCustomPages"
+                        :key="page"
+                        @click="currentCustomPage = page"
+                        :class="[
+                          'px-3 py-2 rounded-lg text-sm transition-all duration-300',
+                          currentCustomPage === page
+                            ? 'bg-blue-500 text-white shadow-md'
+                            : 'bg-gray-100 dark:bg-dark-bg-mute text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-dark-bg-soft'
+                        ]"
+                      >
+                        {{ page }}
+                      </button>
+                      
+                      <button
+                        @click="currentCustomPage++"
+                        :disabled="currentCustomPage === totalCustomPages"
+                        class="px-3 py-2 rounded-lg bg-gray-100 dark:bg-dark-bg-mute text-gray-600 dark:text-gray-400 
+                               hover:bg-gray-200 dark:hover:bg-dark-bg-soft disabled:opacity-50 disabled:cursor-not-allowed
+                               transition-all duration-300"
+                      >
+                        ›
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -206,9 +265,9 @@
                   {{ t('vocabulary.topicManager.builtInTopicsDescription', 'These are system-provided topics that cannot be modified') }}
                 </p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   <div
-                    v-for="(topic, index) in builtInTopics"
+                    v-for="(topic, index) in paginatedBuiltInTopics"
                     :key="topic.key"
                     class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 dark:bg-[#0a0a0a] rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 hover:scale-[1.02] animate-fade-in-up"
                     :style="{ animationDelay: `${0.9 + index * 0.05}s` }"
@@ -242,6 +301,45 @@
                         {{ t('vocabulary.topicManager.builtIn', 'Built-in') }}
                       </span>
                     </div>
+                  </div>
+                </div>
+                
+                <!-- Built-in Topics Pagination -->
+                <div v-if="filteredBuiltInTopics.length > ITEMS_PER_PAGE" class="flex justify-center mt-6">
+                  <div class="flex items-center space-x-1">
+                    <button
+                      @click="currentBuiltInPage--"
+                      :disabled="currentBuiltInPage === 1"
+                      class="px-3 py-2 rounded-lg bg-gray-100 dark:bg-dark-bg-mute text-gray-600 dark:text-gray-400 
+                             hover:bg-gray-200 dark:hover:bg-dark-bg-soft disabled:opacity-50 disabled:cursor-not-allowed
+                             transition-all duration-300"
+                    >
+                      ‹
+                    </button>
+                    
+                    <button
+                      v-for="page in visibleBuiltInPages"
+                      :key="page"
+                      @click="currentBuiltInPage = page"
+                      :class="[
+                        'px-3 py-2 rounded-lg text-sm transition-all duration-300',
+                        currentBuiltInPage === page
+                          ? 'bg-blue-500 text-white shadow-md'
+                          : 'bg-gray-100 dark:bg-dark-bg-mute text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-dark-bg-soft'
+                      ]"
+                    >
+                      {{ page }}
+                    </button>
+                    
+                    <button
+                      @click="currentBuiltInPage++"
+                      :disabled="currentBuiltInPage === totalBuiltInPages"
+                      class="px-3 py-2 rounded-lg bg-gray-100 dark:bg-dark-bg-mute text-gray-600 dark:text-gray-400 
+                             hover:bg-gray-200 dark:hover:bg-dark-bg-soft disabled:opacity-50 disabled:cursor-not-allowed
+                             transition-all duration-300"
+                    >
+                      ›
+                    </button>
                   </div>
                 </div>
               </div>
@@ -348,10 +446,16 @@ const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
 
+// Pagination constants
+const ITEMS_PER_PAGE = 3
+
 // State
 const customTopics = ref<Topic[]>([])
 const editingTopic = ref<Topic | null>(null)
 const topicToDelete = ref<Topic | null>(null)
+const searchQuery = ref('')
+const currentCustomPage = ref(1)
+const currentBuiltInPage = ref(1)
 
 const newTopic = ref<Topic>({
   key: '',
@@ -386,6 +490,96 @@ const builtInTopics = computed(() => {
     { key: 'fashion', vi: 'Thời trang', en: 'Fashion', ko: '패션' },
     { key: 'finance', vi: 'Tài chính', en: 'Finance', ko: '금융' }
   ]
+})
+
+// Search and filter functionality
+const filteredCustomTopics = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return customTopics.value
+  }
+  
+  const query = searchQuery.value.toLowerCase().trim()
+  return customTopics.value.filter(topic => 
+    (topic.key || '').toLowerCase().includes(query) ||
+    (topic.vi || '').toLowerCase().includes(query) ||
+    (topic.en || '').toLowerCase().includes(query) ||
+    (topic.ko || '').toLowerCase().includes(query)
+  )
+})
+
+const filteredBuiltInTopics = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return builtInTopics.value
+  }
+  
+  const query = searchQuery.value.toLowerCase().trim()
+  return builtInTopics.value.filter(topic => 
+    (topic.key || '').toLowerCase().includes(query) ||
+    (topic.vi || '').toLowerCase().includes(query) ||
+    (topic.en || '').toLowerCase().includes(query) ||
+    (topic.ko || '').toLowerCase().includes(query)
+  )
+})
+
+// Pagination for custom topics
+const totalCustomPages = computed(() => {
+  return Math.ceil(filteredCustomTopics.value.length / ITEMS_PER_PAGE)
+})
+
+const paginatedCustomTopics = computed(() => {
+  const start = (currentCustomPage.value - 1) * ITEMS_PER_PAGE
+  const end = start + ITEMS_PER_PAGE
+  return filteredCustomTopics.value.slice(start, end)
+})
+
+// Pagination for built-in topics
+const totalBuiltInPages = computed(() => {
+  return Math.ceil(filteredBuiltInTopics.value.length / ITEMS_PER_PAGE)
+})
+
+const paginatedBuiltInTopics = computed(() => {
+  const start = (currentBuiltInPage.value - 1) * ITEMS_PER_PAGE
+  const end = start + ITEMS_PER_PAGE
+  return filteredBuiltInTopics.value.slice(start, end)
+})
+
+// Windowed pagination - show max 3 page numbers
+const visibleCustomPages = computed(() => {
+  const total = totalCustomPages.value
+  const current = currentCustomPage.value
+  const maxVisible = 3
+  
+  if (total <= maxVisible) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+  
+  let start = Math.max(1, current - Math.floor(maxVisible / 2))
+  let end = Math.min(total, start + maxVisible - 1)
+  
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1)
+  }
+  
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+})
+
+const visibleBuiltInPages = computed(() => {
+  const total = totalBuiltInPages.value
+  const current = currentBuiltInPage.value
+  const maxVisible = 3
+  
+  if (total <= maxVisible) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+  
+  let start = Math.max(1, current - Math.floor(maxVisible / 2))
+  let end = Math.min(total, start + maxVisible - 1)
+  
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1)
+  }
+  
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
 })
 
 // Debug computed property
@@ -622,6 +816,12 @@ onUnmounted(() => {
   document.body.style.overflow = ''
 })
 
+// Watch for search query changes - reset pagination
+watch(searchQuery, () => {
+  currentCustomPage.value = 1
+  currentBuiltInPage.value = 1
+})
+
 // Watch for dialog open/close
 watch(() => props.modelValue, (newValue) => {
   if (newValue) {
@@ -634,6 +834,10 @@ watch(() => props.modelValue, (newValue) => {
     editingTopic.value = null
     newTopic.value = { key: '', vi: '', en: '', ko: '' }
     topicToDelete.value = null
+    // Reset search and pagination
+    searchQuery.value = ''
+    currentCustomPage.value = 1
+    currentBuiltInPage.value = 1
   }
 }, { immediate: true })
 </script>

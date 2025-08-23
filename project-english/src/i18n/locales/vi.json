@@ -573,7 +573,11 @@
       "builtInTopics": "Chủ đề có sẵn",
       "builtInTopicsDescription": "Hệ thống có 16 chủ đề có sẵn như Công nghệ, Kinh doanh, Du lịch... Bạn có thể thêm chủ đề tùy chỉnh tại đây.",
       "builtIn": "Có sẵn",
-      "manageTopics": "Quản lý chủ đề"
+      "manageTopics": "Quản lý chủ đề",
+      "searchPlaceholder": "Tìm kiếm chủ đề theo tên...",
+      "pageOf": "Trang {current} trong {total}",
+      "koreanName": "Tên tiếng Hàn",
+      "koreanNamePlaceholder": "Tên tiếng Hàn"
     },
     "flashcard": {
       "header": {

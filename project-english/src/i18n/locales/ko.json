@@ -564,7 +564,11 @@
         "builtInTopics": "기본 제공 주제",
         "builtInTopicsDescription": "시스템에는 기술, 비즈니스, 여행 등 16개의 기본 제공 주제가 있습니다. 여기에서 사용자 지정 주제를 추가할 수 있습니다.",
         "builtIn": "기본 제공",
-        "manageTopics": "주제 관리"
+        "manageTopics": "주제 관리",
+        "searchPlaceholder": "이름으로 주제 검색...",
+        "pageOf": "{total} 중 {current} 페이지",
+        "koreanName": "한국어 이름",
+        "koreanNamePlaceholder": "한국어 이름"
       }
     },
     "flashcard": {
