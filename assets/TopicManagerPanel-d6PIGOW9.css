@@ -1,0 +1,19 @@
+
+/* Sticky button transition */
+.sticky-fade-enter-active[data-v-bddec3c6],
+.sticky-fade-leave-active[data-v-bddec3c6] {
+  transition: all 0.3s ease;
+}
+.sticky-fade-enter-from[data-v-bddec3c6] {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+}
+.sticky-fade-leave-to[data-v-bddec3c6] {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+}
+.sticky-fade-enter-to[data-v-bddec3c6],
+.sticky-fade-leave-from[data-v-bddec3c6] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
