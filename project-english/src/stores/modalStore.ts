@@ -9,6 +9,10 @@ export const useModalStore = defineStore('modal', () => {
   const showVocabularyDetail = ref(false)
   const showGrammarManager = ref(false)
   const showCompletionModal = ref(false)
+  const showSettingsModal = ref(false)
+  const showHistoryModal = ref(false)
+  const showSessionDetailModal = ref(false)
+  const showExitWarningModal = ref(false)
 
   // Computed properties to determine what should be hidden
   const shouldHideBackToTop = computed(() => {
@@ -17,6 +21,10 @@ export const useModalStore = defineStore('modal', () => {
 
   const shouldHideAddNewWord = computed(() => {
     return showTopicManager.value || showNoteDialog.value || showGrammarManager.value || showVocabularyDetail.value
+  })
+
+  const shouldHideDropdowns = computed(() => {
+    return showVocabularyForm.value || showTopicManager.value || showNoteDialog.value || showGrammarManager.value || showVocabularyDetail.value || showCompletionModal.value || showSettingsModal.value || showHistoryModal.value || showSessionDetailModal.value || showExitWarningModal.value
   })
 
   // Actions to update modal states
@@ -50,6 +58,22 @@ export const useModalStore = defineStore('modal', () => {
     }
   }
 
+  const setSettingsModal = (show: boolean) => {
+    showSettingsModal.value = show
+  }
+
+  const setHistoryModal = (show: boolean) => {
+    showHistoryModal.value = show
+  }
+
+  const setSessionDetailModal = (show: boolean) => {
+    showSessionDetailModal.value = show
+  }
+
+  const setExitWarningModal = (show: boolean) => {
+    showExitWarningModal.value = show
+  }
+
   return {
     // States
     showVocabularyForm,
@@ -58,10 +82,15 @@ export const useModalStore = defineStore('modal', () => {
     showVocabularyDetail,
     showGrammarManager,
     showCompletionModal,
+    showSettingsModal,
+    showHistoryModal,
+    showSessionDetailModal,
+    showExitWarningModal,
     
     // Computed
     shouldHideBackToTop,
     shouldHideAddNewWord,
+    shouldHideDropdowns,
     
     // Actions
     setVocabularyForm,
@@ -69,6 +98,10 @@ export const useModalStore = defineStore('modal', () => {
     setNoteDialog,
     setVocabularyDetail,
     setGrammarManager,
-    setCompletionModal
+    setCompletionModal,
+    setSettingsModal,
+    setHistoryModal,
+    setSessionDetailModal,
+    setExitWarningModal
   }
 })

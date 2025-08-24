@@ -29,6 +29,60 @@ export interface SessionDetailEntryExtra {
     image?: string
     slots: { char: string; fixed: boolean; separator?: boolean }[]
   }
+  flipTile?: {
+    image?: string
+    useHints: boolean
+    tiles: { char: string; flipped: boolean; separator?: boolean }[]
+    maxFlips: number
+    flippedCount: number
+    finalUserAnswer: string
+    targetWord: string
+    meaning?: string
+    category?: string
+  }
+  quiz?: {
+    question: string
+    pronunciation?: string
+    options: string[]
+    selectedAnswer: string
+    correctAnswer: string
+    category?: string
+  }
+  typing?: {
+    question: string
+    isQuizMode: boolean
+    userAnswer: string
+    correctAnswer: string
+    options?: string[]
+    selectedOption?: string
+    category?: string
+  }
+  listening?: {
+    isQuizMode: boolean
+    userAnswer: string
+    correctAnswer: string
+    options?: string[]
+    selectedOption?: string
+    category?: string
+  }
+  image?: {
+    image?: string
+    isQuizMode: boolean
+    userAnswer: string
+    correctAnswer: string
+    options?: string[]
+    selectedOption?: string
+    category?: string
+  }
+  pronunciation?: {
+    targetWord: string
+    pronunciation?: string
+    userPronunciation: string
+    isCorrect: boolean
+    category?: string
+    meaning?: string
+    isWordscrushMode?: boolean
+  }
   snakeGame?: {
     position: { x: number; y: number }
     wasCorrect: boolean
@@ -44,6 +98,28 @@ export interface SessionDetailEntryExtra {
       body: { x: number; y: number }[]
       direction: { x: number; y: number }
     }>
+  }
+  flashcard?: {
+    word: string
+    meaning: string
+    pronunciation?: string
+    category?: string
+    partOfSpeech?: string
+    example?: string
+    markedAs: 'easy' | 'difficult'
+    isFlipped?: boolean
+  }
+  scrambleWords?: {
+    targetWord: string
+    scrambledLetters: string[]
+    assembledWord: string[]
+    userAnswer: string
+    isCorrect: boolean
+    category?: string
+    meaning?: string
+    pronunciation?: string
+    partOfSpeech?: string
+    example?: string
   }
 }
 

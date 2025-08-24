@@ -200,7 +200,7 @@ const emit = defineEmits<{
   'flip-card': []
   'next-card': []
   'show-results': []
-  'scramble-answer': [isCorrect: boolean]
+  'scramble-answer': [data: { isCorrect: boolean; assembledWord: string[]; availableLetters: string[]; userAnswer: string }]
 }>()
 
 // Firework/Sound effect (reuse existing project component)
@@ -511,8 +511,14 @@ const checkScrambleAnswer = async () => {
     scrambleCorrect: scrambleCorrect.value
   })
 
-  // Emit scramble answer result to parent for stats tracking
-  emit('scramble-answer', scrambleCorrect.value)
+  // Emit scramble answer result to parent for stats tracking with detailed data
+  const scrambleData = {
+    isCorrect: scrambleCorrect.value,
+    assembledWord: [...assembledWord.value],
+    availableLetters: availableLetters.value.map(l => l.char),
+    userAnswer: userAnswer
+  }
+  emit('scramble-answer', scrambleData)
   
   if (scrambleCorrect.value) {
     // Correct answer: green fireworks + voice + auto-advance

@@ -804,6 +804,26 @@ const removeNavigationGuard = () => {
 const handleImageAnswer = () => {
   checkImageAnswer()
   recordAnswer(imageCorrect.value)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: imageAnswer.value || '',
+      correctAnswer: currentShuffledCard.value.word,
+      isCorrect: !!imageCorrect.value,
+      mode: 'image',
+      extra: {
+        image: {
+          image: currentShuffledCard.value.image,
+          isQuizMode: false,
+          userAnswer: imageAnswer.value || '',
+          correctAnswer: currentShuffledCard.value.word,
+          category: currentShuffledCard.value.category
+        }
+      }
+    })
+  }
   
   // Auto-advance on xs/sm only (viewport < md) for Image mode
   if (
@@ -1235,10 +1255,20 @@ const handleQuizAnswer = (answer: string) => {
       cardId: currentShuffledCard.value.id,
       word: currentShuffledCard.value.word,
       meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
-      userAnswer: answer,
-      correctAnswer: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: answer || '',
+      correctAnswer: currentShuffledCard.value.meaning,
       isCorrect: !!isCorrect,
       mode: 'quiz',
+      extra: {
+        quiz: {
+          question: currentShuffledCard.value.word,
+          pronunciation: currentShuffledCard.value.pronunciation,
+          options: quizOptions.value || [],
+          selectedAnswer: answer || '',
+          correctAnswer: currentShuffledCard.value.meaning,
+          category: currentShuffledCard.value.category
+        }
+      }
     })
   }
   
@@ -1262,10 +1292,19 @@ const handleTypingAnswer = () => {
       cardId: currentShuffledCard.value.id,
       word: currentShuffledCard.value.word,
       meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
-      userAnswer: typingAnswer.value,
+      userAnswer: typingAnswer.value || '',
       correctAnswer: currentShuffledCard.value.word,
       isCorrect: !!typingCorrect.value,
       mode: 'typing',
+      extra: {
+        typing: {
+          question: getShortMeaning(currentShuffledCard.value.meaning),
+          isQuizMode: false,
+          userAnswer: typingAnswer.value || '',
+          correctAnswer: currentShuffledCard.value.word,
+          category: currentShuffledCard.value.category
+        }
+      }
     })
   }
   
@@ -1293,7 +1332,18 @@ const handleTypingQuizAnswer = (answer: string) => {
       userAnswer: answer,
       correctAnswer: currentShuffledCard.value.word,
       isCorrect: !!isCorrect,
-      mode: 'typing-quiz',
+      mode: 'typing',
+      extra: {
+        typing: {
+          question: getShortMeaning(currentShuffledCard.value.meaning),
+          isQuizMode: true,
+          userAnswer: '',
+          correctAnswer: currentShuffledCard.value.word,
+          options: typingQuizOptions.value || [],
+          selectedOption: answer,
+          category: currentShuffledCard.value.category
+        }
+      }
     })
   }
   
@@ -1317,10 +1367,18 @@ const handleListeningAnswer = () => {
       cardId: currentShuffledCard.value.id,
       word: currentShuffledCard.value.word,
       meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
-      userAnswer: listeningAnswer.value,
+      userAnswer: listeningAnswer.value || '',
       correctAnswer: currentShuffledCard.value.word,
       isCorrect: !!listeningCorrect.value,
       mode: 'listening',
+      extra: {
+        listening: {
+          isQuizMode: false,
+          userAnswer: listeningAnswer.value || '',
+          correctAnswer: currentShuffledCard.value.word,
+          category: currentShuffledCard.value.category
+        }
+      }
     })
   }
   
@@ -1355,7 +1413,17 @@ const handleListeningQuizAnswer = (answer: string) => {
       userAnswer: answer,
       correctAnswer: currentShuffledCard.value.word,
       isCorrect: !!isCorrect,
-      mode: 'listening-quiz',
+      mode: 'listening',
+      extra: {
+        listening: {
+          isQuizMode: true,
+          userAnswer: '',
+          correctAnswer: currentShuffledCard.value.word,
+          options: listeningQuizOptions.value || [],
+          selectedOption: answer,
+          category: currentShuffledCard.value.category
+        }
+      }
     })
   }
   
@@ -1392,7 +1460,18 @@ const handleImageQuizAnswer = (answer: string) => {
       userAnswer: answer,
       correctAnswer: currentShuffledCard.value.word,
       isCorrect: !!isCorrect,
-      mode: 'image-quiz',
+      mode: 'image',
+      extra: {
+        image: {
+          image: currentShuffledCard.value.image,
+          isQuizMode: true,
+          userAnswer: '',
+          correctAnswer: currentShuffledCard.value.word,
+          options: imageQuizOptions.value || [],
+          selectedOption: answer,
+          category: currentShuffledCard.value.category
+        }
+      }
     })
   }
 
@@ -1412,6 +1491,26 @@ const handleFlipTileAnswer = () => {
   checkFlipTileAnswer()
   recordAnswer(flipTileCorrect.value)
   if (currentShuffledCard.value && activeSessionId.value) {
+    // Calculate flip tile game state
+    const word = currentShuffledCard.value.word
+    const tiles = []
+    const normalizeWord = (w: string) => w.normalize('NFKC')
+    const letters = normalizeWord(word)
+    const isAlpha = (c: string) => /^[a-z]$/i.test(c)
+    
+    // Build tiles array to match FlipTileMode logic
+    for (let i = 0; i < letters.length; i++) {
+      const c = letters[i]
+      if (!isAlpha(c)) {
+        tiles.push({ char: c, flipped: true, separator: true })
+      } else {
+        tiles.push({ char: c, flipped: true }) // All revealed after answer
+      }
+    }
+    
+    const totalLetterTiles = tiles.filter(tile => !tile.separator).length
+    const maxFlips = totalLetterTiles <= 4 ? 1 : 2
+    
     appendAnswer({
       cardId: currentShuffledCard.value.id,
       word: currentShuffledCard.value.word,
@@ -1420,6 +1519,19 @@ const handleFlipTileAnswer = () => {
       correctAnswer: currentShuffledCard.value.word,
       isCorrect: !!flipTileCorrect.value,
       mode: 'flip-tile',
+      extra: {
+        flipTile: {
+          image: currentShuffledCard.value.image,
+          useHints: flashcardSettings.value.useFlipTileHints ?? false,
+          tiles: tiles,
+          maxFlips: maxFlips,
+          flippedCount: totalLetterTiles, // All revealed after answer check
+          finalUserAnswer: flipTileAnswer.value || '',
+          targetWord: currentShuffledCard.value.word,
+          meaning: currentShuffledCard.value.meaning,
+          category: currentShuffledCard.value.category
+        }
+      }
     })
   }
   
@@ -1471,17 +1583,31 @@ const handlePictionaryAnswer = () => {
   }
 }
 
-const handleScrambleAnswer = (isCorrect: boolean) => {
-  recordAnswer(isCorrect)
+const handleScrambleAnswer = (data: { isCorrect: boolean; assembledWord: string[]; availableLetters: string[]; userAnswer: string }) => {
+  recordAnswer(data.isCorrect)
   if (currentShuffledCard.value && activeSessionId.value) {
     appendAnswer({
       cardId: currentShuffledCard.value.id,
       word: currentShuffledCard.value.word,
       meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
-      userAnswer: 'scrambled', // User assembled the scrambled word
+      userAnswer: data.userAnswer,
       correctAnswer: currentShuffledCard.value.word,
-      isCorrect: isCorrect,
+      isCorrect: data.isCorrect,
       mode: 'scramble-words',
+      extra: {
+        scrambleWords: {
+          targetWord: currentShuffledCard.value.word,
+          scrambledLetters: data.availableLetters,
+          assembledWord: data.assembledWord,
+          userAnswer: data.userAnswer,
+          isCorrect: data.isCorrect,
+          category: currentShuffledCard.value.category,
+          meaning: currentShuffledCard.value.meaning,
+          pronunciation: currentShuffledCard.value.pronunciation,
+          partOfSpeech: currentShuffledCard.value.partOfSpeech,
+          example: currentShuffledCard.value.example
+        }
+      }
     })
   }
 }
@@ -1606,6 +1732,16 @@ const enhancedNextCard = () => {
         correctAnswer: currentShuffledCard.value.word,
         isCorrect: !!pronunciationCorrect.value,
         mode: 'pronunciation',
+        extra: {
+          pronunciation: {
+            targetWord: currentShuffledCard.value.word,
+            pronunciation: currentShuffledCard.value.pronunciation,
+            userPronunciation: pronunciationResult.value || '',
+            isCorrect: !!pronunciationCorrect.value,
+            category: currentShuffledCard.value.category,
+            meaning: currentShuffledCard.value.meaning
+          }
+        }
       })
     }
   }
@@ -1638,11 +1774,57 @@ const enhancedPreviousCard = () => {
 
 const enhancedMarkEasy = () => {
   recordAnswer(true)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: 'marked as easy',
+      correctAnswer: currentShuffledCard.value.meaning,
+      isCorrect: true,
+      mode: 'flashcard',
+      extra: {
+        flashcard: {
+          word: currentShuffledCard.value.word,
+          meaning: currentShuffledCard.value.meaning,
+          pronunciation: currentShuffledCard.value.pronunciation,
+          category: currentShuffledCard.value.category,
+          partOfSpeech: currentShuffledCard.value.partOfSpeech,
+          example: currentShuffledCard.value.example,
+          markedAs: 'easy',
+          isFlipped: isFlipped.value
+        }
+      }
+    })
+  }
   enhancedNextCard()
 }
 
 const enhancedMarkDifficult = () => {
   recordAnswer(false)
+  if (currentShuffledCard.value && activeSessionId.value) {
+    appendAnswer({
+      cardId: currentShuffledCard.value.id,
+      word: currentShuffledCard.value.word,
+      meaningShort: getShortMeaning(currentShuffledCard.value.meaning),
+      userAnswer: 'marked as difficult',
+      correctAnswer: currentShuffledCard.value.meaning,
+      isCorrect: false,
+      mode: 'flashcard',
+      extra: {
+        flashcard: {
+          word: currentShuffledCard.value.word,
+          meaning: currentShuffledCard.value.meaning,
+          pronunciation: currentShuffledCard.value.pronunciation,
+          category: currentShuffledCard.value.category,
+          partOfSpeech: currentShuffledCard.value.partOfSpeech,
+          example: currentShuffledCard.value.example,
+          markedAs: 'difficult',
+          isFlipped: isFlipped.value
+        }
+      }
+    })
+  }
   enhancedNextCard()
 }
 
@@ -1870,6 +2052,23 @@ watch(showSettingsDialog, (newValue) => {
   } else {
     document.body.classList.remove('modal-open')
   }
+  // Sync with modal store for dropdown auto-hide
+  modalStore.setSettingsModal(newValue)
+})
+
+// Sync exit warning modal with modal store for dropdown auto-hide
+watch(showExitWarning, (newValue) => {
+  modalStore.setExitWarningModal(newValue)
+})
+
+// Sync history modal with modal store
+watch(showHistory, (newValue) => {
+  modalStore.setHistoryModal(newValue)
+})
+
+// Sync session detail modal with modal store
+watch(showSessionDetail, (newValue) => {
+  modalStore.setSessionDetailModal(newValue)
 })
 
 // Watch date filter state changes and save to localStorage

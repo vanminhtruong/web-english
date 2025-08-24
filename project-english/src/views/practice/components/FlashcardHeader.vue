@@ -563,7 +563,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import type { PracticeMode } from '../types'
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useModalStore } from '../../../stores/modalStore'
 
 interface Props {
   currentIndex: number
@@ -606,6 +607,9 @@ const wordsCrushEnabled = computed(() => props.wordsCrushEnabled ?? false)
 const useFlipTileHints = computed(() => props.useFlipTileHints ?? false)
 
 const { t } = useI18n()
+
+// Modal store for dropdown auto-hide functionality
+const modalStore = useModalStore()
 
 const emit = defineEmits<{
   'go-back': []
@@ -744,6 +748,13 @@ const onClickOutside = (e: MouseEvent) => {
     closeAll()
   }
 }
+
+// Auto-hide dropdowns when any modal is displayed
+watch(() => modalStore.shouldHideDropdowns, (shouldHide) => {
+  if (shouldHide) {
+    closeAll()
+  }
+})
 
 onMounted(() => {
   window.addEventListener('click', onClickOutside, { capture: true })

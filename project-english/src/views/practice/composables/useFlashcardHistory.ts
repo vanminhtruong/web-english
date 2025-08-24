@@ -103,6 +103,8 @@ export function useFlashcardHistory() {
         return 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200'
       case 'snake-game':
         return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+      case 'flip-tile':
+        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200'
       default:
         // Avoid gray in dark mode per UI rules
         return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
@@ -129,6 +131,8 @@ export function useFlashcardHistory() {
         return t('flashcard.modes.bubbleShooter', 'Bubble Shooter')
       case 'snake-game':
         return t('flashcard.modes.snakeGame', 'Snake Hunt')
+      case 'flip-tile':
+        return t('flashcard.modes.flipTile', 'Flip Tile')
       default:
         return 'Unknown'
     }
