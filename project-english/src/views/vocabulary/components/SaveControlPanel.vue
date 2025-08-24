@@ -220,7 +220,7 @@
         <div class="space-y-3 xs:space-y-4">
           <!-- Save Status Card -->
           <div class="bg-gray-50 dark:bg-[#0f0f0f] border border-gray-200 dark:border-[#0f0f0f] rounded-lg p-3 xs:p-4">
-            <h4 class="text-xs xs:text-sm font-medium text-gray-800 dark:text-gray-200 mb-2 xs:mb-3">{{ t('vocabulary.save.status', 'Save Status') }}</h4>
+            <h4 class="text-xs xs:text-sm font-medium text-gray-800 dark:text-gray-200 mb-2 xs:mb-3">{{ t('vocabulary.save.status.title', 'Save Status') }}</h4>
             
             <div class="space-y-2 xs:space-y-3">
               <!-- Current Status -->
