@@ -45,7 +45,7 @@
                   <div class="divide-y divide-gray-200 dark:divide-dark-bg-mute rounded-md sm:rounded-lg overflow-hidden border border-gray-200 dark:border-dark-bg-mute">
                     <div v-for="(e, idx) in paginatedEntries" :key="idx" class="p-2 sm:p-3 md:p-4 bg-white dark:bg-gray-custom">
                       <div class="flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-3 max-md:block max-lg:block">
-                        <div class="min-w-0 flex-1 max-xs:border max-xs:w-full max-sm:w-full">
+                        <div class="min-w-0 flex-1 max-xs:w-full max-sm:w-full">
                           <div class="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
                             <span class="text-sm font-semibold text-gray-900 dark:text-white break-words">{{ e.word }}</span>
                             <span class="text-xs text-gray-500 dark:text-white/70 break-words">— {{ e.meaningShort }}</span>
