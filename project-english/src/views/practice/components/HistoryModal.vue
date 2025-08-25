@@ -252,6 +252,7 @@ const modalStore = useModalStore()
 
 const lockBodyScroll = () => {
   document.body.classList.add('modal-open')
+  document.documentElement.classList.add('modal-open')
 }
 
 const isAnyOtherModalOpen = () => {
@@ -273,6 +274,7 @@ const unlockBodyScroll = () => {
   // Only remove the class if no other modal is open
   if (!isAnyOtherModalOpen()) {
     document.body.classList.remove('modal-open')
+    document.documentElement.classList.remove('modal-open')
   }
 }
 
@@ -380,3 +382,11 @@ const getCategoryDisplay = (category: string): string => {
   return category;
 };
 </script> 
+
+<style>
+/* Ensure desktop scroll is fully disabled when modal is open */
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+}
+</style>
