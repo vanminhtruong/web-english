@@ -228,13 +228,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+
+const props = defineProps<{
+  show: boolean;
+  history: any[];
+  getModeColor: (mode: string) => string;
+  getModeText: (mode: string) => string;
+  formatDate: (date: string) => string;
+  formatDuration: (duration: number) => string;
+  deleteSession?: (sessionId: string) => void;
+}>();
 
 const emit = defineEmits(['close', 'open-details', 'delete-session']);
 
 const { t } = useI18n();
+
+// Body scroll lock functions
+const lockBodyScroll = () => {
+  document.body.style.overflow = 'hidden'
+}
+
+const unlockBodyScroll = () => {
+  document.body.style.overflow = ''
+}
+
+// Watch for modal show/hide to control body scroll
+watch(() => props.show, (newShow) => {
+  if (newShow) {
+    lockBodyScroll()
+  } else {
+    unlockBodyScroll()
+  }
+}, { immediate: true })
+
+// Cleanup on unmount
+onUnmounted(() => {
+  unlockBodyScroll()
+})
 
 // Pagination state
 const currentPage = ref(1)
@@ -262,6 +295,17 @@ const showingEnd = computed(() => {
   return Math.min(currentPage.value * itemsPerPage, props.history.length)
 })
 
+// Visible pages for desktop pagination (windowed)
+const visiblePages = computed(() => {
+  const pages = []
+  const start = Math.max(1, currentPage.value - 2)
+  const end = Math.min(totalPages.value, currentPage.value + 2)
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  return pages
+})
+
 // Pagination methods
 const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
@@ -280,42 +324,6 @@ const prevPage = () => {
     currentPage.value--
   }
 }
-
-// Get visible page numbers (max 5 pages)
-const visiblePages = computed(() => {
-  const pages = []
-  const total = totalPages.value
-  const current = currentPage.value
-  
-  if (total <= 5) {
-    for (let i = 1; i <= total; i++) {
-      pages.push(i)
-    }
-  } else {
-    let start = Math.max(1, current - 2)
-    let end = Math.min(total, start + 4)
-    
-    if (end - start < 4) {
-      start = Math.max(1, end - 4)
-    }
-    
-    for (let i = start; i <= end; i++) {
-      pages.push(i)
-    }
-  }
-  
-  return pages
-})
-
-const props = defineProps<{
-  show: boolean;
-  history: any[];
-  getModeColor: (mode: string) => string;
-  getModeText: (mode: string) => string;
-  formatDate: (date: string) => string;
-  formatDuration: (duration: number) => string;
-  deleteSession?: (sessionId: string) => void;
-}>();
 
 // Show eye icon if either hasDetails flag is true or session details key exists
 const hasSessionDetails = (sessionId: string, flag?: boolean) => {
