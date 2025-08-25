@@ -687,7 +687,8 @@
         "yourAnswer": "Câu trả lời của bạn",
         "noAnswer": "Chưa trả lời",
         "correctAnswer": "Đáp án đúng"
-      }
+      },
+      "showingSessions": "Hiển thị {start} đến {end} trong {total} phiên luyện tập"
     },
     "completion": {
       "title": "Hoàn thành!",

@@ -640,7 +640,8 @@
         "yourAnswer": "Your answer",
         "noAnswer": "No answer",
         "correctAnswer": "Correct answer"
-      }
+      },
+      "showingSessions": "Showing {start} to {end} of {total} sessions"
     },
     "completion": {
       "title": "Completed!",

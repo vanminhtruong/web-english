@@ -638,7 +638,8 @@
           "yourAnswer": "당신의 답변",
           "noAnswer": "답변 없음",
           "correctAnswer": "정답"
-        }
+        },
+        "showingSessions": "{total}개 세션 중 {start}에서 {end}까지 표시"
       },
       "completion": {
         "title": "완료!",

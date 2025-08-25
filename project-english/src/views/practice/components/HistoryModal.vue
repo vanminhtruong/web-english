@@ -58,7 +58,8 @@
                 </div>
 
                 <div v-else class="space-y-4">
-                  <div v-for="session in history" :key="session.id" class="bg-gray-50 dark:bg-dark-bg-mute rounded-lg p-4">
+                  <!-- Sessions List -->
+                  <div v-for="session in paginatedHistory" :key="session.id" class="bg-gray-50 dark:bg-dark-bg-mute rounded-lg p-4">
                     <div class="flex justify-between items-start">
                       <div class="flex-1">
                         <div class="flex items-center space-x-2 mb-2">
@@ -139,6 +140,83 @@
                       </div>
                     </div>
                   </div>
+                  
+                  <!-- Pagination Controls -->
+                  <div v-if="totalPages > 1" class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <!-- Pagination Info -->
+                    <div class="text-sm text-gray-700 dark:text-white/70">
+                      {{ t('flashcard.history.showingSessions', { start: showingStart, end: showingEnd, total: history.length }) }}
+                    </div>
+                    
+                    <!-- Mobile Pagination (Simple Prev/Next) -->
+                    <div class="flex sm:hidden gap-2">
+                      <button
+                        @click="prevPage"
+                        :disabled="currentPage === 1"
+                        class="px-3 py-2 text-sm border rounded-md transition-colors duration-200"
+                        :class="currentPage === 1
+                          ? 'border-gray-300 text-gray-400 cursor-not-allowed dark:border-dark-bg-mute dark:text-white/40'
+                          : 'border-blue-300 text-blue-600 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20'
+                        "
+                      >
+                        {{ t('common.previous', 'Previous') }}
+                      </button>
+                      <button
+                        @click="nextPage"
+                        :disabled="currentPage === totalPages"
+                        class="px-3 py-2 text-sm border rounded-md transition-colors duration-200"
+                        :class="currentPage === totalPages
+                          ? 'border-gray-300 text-gray-400 cursor-not-allowed dark:border-dark-bg-mute dark:text-white/40'
+                          : 'border-blue-300 text-blue-600 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20'
+                        "
+                      >
+                        {{ t('common.next', 'Next') }}
+                      </button>
+                    </div>
+                    
+                    <!-- Desktop Pagination (Full) -->
+                    <div class="hidden sm:flex items-center gap-1">
+                      <!-- Previous Button -->
+                      <button
+                        @click="prevPage"
+                        :disabled="currentPage === 1"
+                        class="px-3 py-2 text-sm border rounded-md transition-colors duration-200"
+                        :class="currentPage === 1
+                          ? 'border-gray-300 text-gray-400 cursor-not-allowed dark:border-dark-bg-mute dark:text-white/40'
+                          : 'border-blue-300 text-blue-600 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20'
+                        "
+                      >
+                        {{ t('common.previous', 'Previous') }}
+                      </button>
+                      
+                      <!-- Page Numbers -->
+                      <button
+                        v-for="page in visiblePages"
+                        :key="page"
+                        @click="goToPage(page)"
+                        class="px-3 py-2 text-sm border rounded-md transition-colors duration-200"
+                        :class="page === currentPage
+                          ? 'bg-blue-600 border-blue-600 text-white dark:bg-blue-500 dark:border-blue-500'
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-dark-bg-mute dark:text-white/80 dark:hover:bg-[#0a0a0a]'
+                        "
+                      >
+                        {{ page }}
+                      </button>
+                      
+                      <!-- Next Button -->
+                      <button
+                        @click="nextPage"
+                        :disabled="currentPage === totalPages"
+                        class="px-3 py-2 text-sm border rounded-md transition-colors duration-200"
+                        :class="currentPage === totalPages
+                          ? 'border-gray-300 text-gray-400 cursor-not-allowed dark:border-dark-bg-mute dark:text-white/40'
+                          : 'border-blue-300 text-blue-600 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20'
+                        "
+                      >
+                        {{ t('common.next', 'Next') }}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -150,9 +228,86 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-defineProps<{
+
+const emit = defineEmits(['close', 'open-details', 'delete-session']);
+
+const { t } = useI18n();
+
+// Pagination state
+const currentPage = ref(1)
+const itemsPerPage = 5
+
+// Computed for pagination
+const totalPages = computed(() => {
+  return Math.ceil((props.history?.length || 0) / itemsPerPage)
+})
+
+const paginatedHistory = computed(() => {
+  if (!props.history) return []
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return props.history.slice(start, end)
+})
+
+const showingStart = computed(() => {
+  if (!props.history?.length) return 0
+  return (currentPage.value - 1) * itemsPerPage + 1
+})
+
+const showingEnd = computed(() => {
+  if (!props.history?.length) return 0
+  return Math.min(currentPage.value * itemsPerPage, props.history.length)
+})
+
+// Pagination methods
+const goToPage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
+
+// Get visible page numbers (max 5 pages)
+const visiblePages = computed(() => {
+  const pages = []
+  const total = totalPages.value
+  const current = currentPage.value
+  
+  if (total <= 5) {
+    for (let i = 1; i <= total; i++) {
+      pages.push(i)
+    }
+  } else {
+    let start = Math.max(1, current - 2)
+    let end = Math.min(total, start + 4)
+    
+    if (end - start < 4) {
+      start = Math.max(1, end - 4)
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i)
+    }
+  }
+  
+  return pages
+})
+
+const props = defineProps<{
   show: boolean;
   history: any[];
   getModeColor: (mode: string) => string;
@@ -161,10 +316,6 @@ defineProps<{
   formatDuration: (duration: number) => string;
   deleteSession?: (sessionId: string) => void;
 }>();
-
-const emit = defineEmits(['close', 'open-details', 'delete-session']);
-
-const { t } = useI18n();
 
 // Show eye icon if either hasDetails flag is true or session details key exists
 const hasSessionDetails = (sessionId: string, flag?: boolean) => {
