@@ -230,6 +230,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useModalStore } from '../../../stores/modalStore'
 
 
 const props = defineProps<{
@@ -246,13 +247,33 @@ const emit = defineEmits(['close', 'open-details', 'delete-session']);
 
 const { t } = useI18n();
 
-// Body scroll lock functions
+// Body scroll lock functions (use global body class to be consistent across app)
+const modalStore = useModalStore()
+
 const lockBodyScroll = () => {
-  document.body.style.overflow = 'hidden'
+  document.body.classList.add('modal-open')
+}
+
+const isAnyOtherModalOpen = () => {
+  return (
+    modalStore.showVocabularyForm ||
+    modalStore.showTopicManager ||
+    modalStore.showNoteDialog ||
+    modalStore.showVocabularyDetail ||
+    modalStore.showGrammarManager ||
+    modalStore.showCompletionModal ||
+    modalStore.showSettingsModal ||
+    modalStore.showSessionDetailModal ||
+    modalStore.showExitWarningModal ||
+    modalStore.showHistoryModal
+  )
 }
 
 const unlockBodyScroll = () => {
-  document.body.style.overflow = ''
+  // Only remove the class if no other modal is open
+  if (!isAnyOtherModalOpen()) {
+    document.body.classList.remove('modal-open')
+  }
 }
 
 // Watch for modal show/hide to control body scroll

@@ -1782,15 +1782,6 @@ watch(showCompletionModal, (newValue) => {
   }
 })
 
-// Prevent body scroll when history modal is open
-watch(showHistory, (newValue) => {
-  if (newValue) {
-    document.body.classList.add('modal-open')
-  } else {
-    document.body.classList.remove('modal-open')
-  }
-})
-
 // Prevent body scroll when session detail modal is open
 watch(showSessionDetail, (newValue) => {
   if (newValue) {
