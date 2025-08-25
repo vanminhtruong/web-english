@@ -1,0 +1,6 @@
+
+/* Ensure desktop scroll is fully disabled when modal is open */
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+}
