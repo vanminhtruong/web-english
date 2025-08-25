@@ -360,6 +360,13 @@ import { useFlashcardSettings } from './composables/useFlashcardSettings'
 import { useFlashcardStats } from './composables/useFlashcardStats'
 import { getTopicName } from '../../utils/topicUtils'
 import { usePracticeSessionDetails } from './composables/usePracticeSessionDetails'
+// Local composables
+import { useFlashcardDateFilter } from './composables/useFlashcardDateFilter'
+import { useFlashcardModeToggles } from './composables/useFlashcardModeToggles'
+import { useFlashcardCardState } from './composables/useFlashcardCardState'
+import { useFlashcardNavigation } from './composables/useFlashcardNavigation'
+import { useFlashcardModeAvailability } from './composables/useFlashcardModeAvailability'
+import { useFlashcardShuffle } from './composables/useFlashcardShuffle'
 
 // Vocabulary store
 const { allVocabularies } = useVocabularyStore()
@@ -418,166 +425,26 @@ const handleDeleteSession = (sessionId: string) => {
   )
 }
 
-// Date filter state with localStorage persistence
-const STORAGE_KEY = 'flashcard-date-filter'
+// Date filter composable
+const {
+  dateFilterEnabled,
+  selectedDate,
+  filterVocabulariesByDate
+} = useFlashcardDateFilter()
 
-// Load date filter state from localStorage (always enabled)
-const loadDateFilterState = () => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      return {
-        selectedDate: parsed.selectedDate || ''
-      }
-    }
-  } catch (error) {
-    console.error('Error loading date filter state:', error)
-  }
-  return { selectedDate: '' }
-}
+// Mode toggles composable
+const {
+  bubbleShooterVietnameseMode,
+  snakeDoubleBaitMode,
+  pictionaryDefinitionMode,
+  scrambleWordsEnabled,
+  wordsCrushEnabled,
+  initializeToggles,
+  toggleBubbleShooterVietnameseMode
+} = useFlashcardModeToggles()
 
-// Save date filter state to localStorage (enabled is implicitly true)
-const saveDateFilterState = () => {
-  try {
-    const state = { selectedDate: selectedDate.value }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch (error) {
-    console.error('Error saving date filter state:', error)
-  }
-}
-
-// Initialize state from localStorage
-const initialState = loadDateFilterState()
-// Keep ref for SettingsModal compatibility; always true
-const dateFilterEnabled = ref(true)
-const selectedDate = ref(initialState.selectedDate)
-
-// Persist date filter changes
-watch(selectedDate, () => {
-  saveDateFilterState()
-})
-
-// Bubble Shooter Vietnamese Mode Toggle State with localStorage support
-const bubbleShooterVietnameseMode = ref(false)
-// Snake Game Double Bait Mode Toggle State with localStorage support
-const snakeDoubleBaitMode = ref(false)
-// Pictionary Definition Mode Toggle State with localStorage support
-const pictionaryDefinitionMode = ref(false)
-// Scramble Words Mode Toggle State with localStorage support
-const scrambleWordsEnabled = ref(false)
-// Words Crush Mode Toggle State with localStorage support
-const wordsCrushEnabled = ref(false)
-
-// Load from localStorage on init
-const loadBubbleShooterVietnameseModeFromStorage = () => {
-  try {
-    const saved = localStorage.getItem('pe_bubbleShooterVietnameseMode')
-    return saved === null ? false : saved === 'true'
-  } catch {
-    return false
-  }
-}
-
-// Save to localStorage
-const saveBubbleShooterVietnameseModeToStorage = (enabled: boolean) => {
-  try {
-    localStorage.setItem('pe_bubbleShooterVietnameseMode', String(enabled))
-  } catch {}
-}
-
-// Load/Save helpers for Snake Double Bait mode
-const loadSnakeDoubleBaitModeFromStorage = () => {
-  try {
-    const saved = localStorage.getItem('pe_snakeDoubleBaitMode')
-    return saved === null ? false : saved === 'true'
-  } catch {
-    return false
-  }
-}
-
-const saveSnakeDoubleBaitModeToStorage = (enabled: boolean) => {
-  try {
-    localStorage.setItem('pe_snakeDoubleBaitMode', String(enabled))
-  } catch {}
-}
-
-// Load/Save helpers for Pictionary Definition mode
-const loadPictionaryDefinitionModeFromStorage = () => {
-  try {
-    const saved = localStorage.getItem('pe_pictionaryDefinitionMode')
-    return saved === null ? false : saved === 'true'
-  } catch {
-    return false
-  }
-}
-
-const savePictionaryDefinitionModeToStorage = (enabled: boolean) => {
-  try {
-    localStorage.setItem('pe_pictionaryDefinitionMode', String(enabled))
-  } catch {}
-}
-
-// Load/Save helpers for Scramble Words mode
-const loadScrambleWordsModeFromStorage = () => {
-  try {
-    const saved = localStorage.getItem('pe_scrambleWordsEnabled')
-    return saved === null ? false : saved === 'true'
-  } catch {
-    return false
-  }
-}
-
-const saveScrambleWordsModeToStorage = (enabled: boolean) => {
-  try {
-    localStorage.setItem('pe_scrambleWordsEnabled', String(enabled))
-  } catch {}
-}
-
-// Load/Save helpers for Words Crush mode
-const loadWordsCrushModeFromStorage = () => {
-  try {
-    const saved = localStorage.getItem('pe_wordsCrushEnabled')
-    return saved === null ? false : saved === 'true'
-  } catch {
-    return false
-  }
-}
-
-const saveWordsCrushModeToStorage = (enabled: boolean) => {
-  try {
-    localStorage.setItem('pe_wordsCrushEnabled', String(enabled))
-  } catch {}
-}
-
-// Initialize from localStorage
-bubbleShooterVietnameseMode.value = loadBubbleShooterVietnameseModeFromStorage()
-snakeDoubleBaitMode.value = loadSnakeDoubleBaitModeFromStorage()
-pictionaryDefinitionMode.value = loadPictionaryDefinitionModeFromStorage()
-scrambleWordsEnabled.value = loadScrambleWordsModeFromStorage()
-wordsCrushEnabled.value = loadWordsCrushModeFromStorage()
-
-// Watch for changes and save to localStorage
-watch(bubbleShooterVietnameseMode, (newVal) => {
-  saveBubbleShooterVietnameseModeToStorage(newVal)
-})
-watch(snakeDoubleBaitMode, (newVal) => {
-  saveSnakeDoubleBaitModeToStorage(newVal)
-})
-watch(pictionaryDefinitionMode, (newVal) => {
-  savePictionaryDefinitionModeToStorage(newVal)
-})
-watch(scrambleWordsEnabled, (newVal) => {
-  saveScrambleWordsModeToStorage(newVal)
-})
-watch(wordsCrushEnabled, (newVal) => {
-  saveWordsCrushModeToStorage(newVal)
-})
-
-// Toggle function for FlashcardHeader
-const toggleBubbleShooterVietnameseMode = () => {
-  bubbleShooterVietnameseMode.value = !bubbleShooterVietnameseMode.value
-}
+// Initialize toggles from localStorage
+initializeToggles()
 
 // Event handlers for FlashcardHeader events - using existing implementations
 
@@ -592,19 +459,12 @@ const {
   openSettings
 } = useFlashcardSettings()
 
-// Filter flashcards by date and category
+// Filter vocabularies by date first, then by category
 const filteredVocabularies = computed(() => {
-  let vocabularies = allVocabularies.value
+  // First filter by date using composable
+  let vocabularies = filterVocabulariesByDate(allVocabularies.value)
 
-  // Filter by date (always enabled)
-  if (selectedDate.value) {
-    vocabularies = vocabularies.filter((vocab: Vocabulary) => {
-      const vocabDateKey = getDateKey(vocab.createdAt)
-      return vocabDateKey === selectedDate.value
-    })
-  }
-
-  // Filter by category if a category is selected
+  // Then filter by category if selected
   if (flashcardSettings.value.category) {
     vocabularies = vocabularies.filter((vocab: Vocabulary) => vocab.category === flashcardSettings.value.category)
   }
@@ -623,81 +483,25 @@ const baseFlashcards = computed(() => {
   })
 })
 
-// Determine if Image mode is available for the CURRENT effective set (date + category + difficulty)
-// This ensures that when a date contains multiple topics, Image mode is only enabled if the selected
-// topic (and difficulty) actually has images.
-const imageModeAvailable = computed(() => {
-  const cards = baseFlashcards.value
-  if (cards.length === 0) return false
-  // Image mode is available only if ALL cards in the current effective set have a non-empty image
-  return cards.every((v: Vocabulary) => {
-    const img: any = (v as any).image
-    if (img == null) return false
-    const s = typeof img === 'string' ? img : String(img)
-    return s.trim().length > 0
-  })
-})
-
-// Determine if Pictionary mode is available for the CURRENT effective set (date + category + difficulty)
-// This ensures that when a date contains multiple topics, Pictionary mode is only enabled if the selected
-// topic (and difficulty) actually has images.
-const pictionaryModeAvailable = computed(() => {
-  const cards = baseFlashcards.value
-  if (cards.length === 0) return false
-  // Pictionary mode is available only if ALL cards in the current effective set have a non-empty image
-  return cards.every((v: Vocabulary) => {
-    const img: any = (v as any).image
-    if (img == null) return false
-    const s = typeof img === 'string' ? img : String(img)
-    return s.trim().length > 0
-  })
-})
-
-// Determine if Flip Tile mode is available for the CURRENT effective set (date + category + difficulty)
-// This ensures that when a date contains multiple topics, Flip Tile mode is only enabled if the selected
-// topic (and difficulty) actually has images.
-const flipTileModeAvailable = computed(() => {
-  const cards = baseFlashcards.value
-  if (cards.length === 0) return false
-  // Flip Tile mode is available only if ALL cards in the current effective set have a non-empty image
-  return cards.every((v: Vocabulary) => {
-    const img: any = (v as any).image
-    if (img == null) return false
-    const s = typeof img === 'string' ? img : String(img)
-    return s.trim().length > 0
-  })
-})
-
-// Determine if Bubble Shooter mode is available based on vocabulary count
-// Bubble Shooter mode is disabled when the selected date contains more than 8 vocabulary words
-// to avoid gameplay issues with too many balls
-const bubbleShooterModeAvailable = computed(() => {
-  // If no date is selected, count all vocabularies
-  if (!selectedDate.value) {
-    return filteredVocabularies.value.length <= 8
-  }
-  
-  // Count vocabularies for the selected date (before category/difficulty filtering)
-  const dateFilteredVocabs = allVocabularies.value.filter((vocab: Vocabulary) => {
-    const vocabDateKey = getDateKey(vocab.createdAt)
-    return vocabDateKey === selectedDate.value
-  })
-  
-  return dateFilteredVocabs.length <= 8
-})
+// Mode availability composable
+const {
+  imageModeAvailable,
+  pictionaryModeAvailable,
+  flipTileModeAvailable,
+  bubbleShooterModeAvailable
+} = useFlashcardModeAvailability(baseFlashcards, filteredVocabularies, allVocabularies, selectedDate)
 
 // Practice Timer State
 const practiceStarted = ref(false)
 const practiceTimerRef = ref()
 
-// Exit Warning State
-const showExitWarning = ref(false)
-const allowExit = ref(false)
-
 // Modal states (showSettingsDialog and showHistory are imported from composables)
 
 // Timer Event Handlers
 const handlePracticeStart = () => {
+  // Reset navigation state for fresh practice session
+  resetNavigationState()
+  
   practiceStarted.value = true
   console.log('Practice started!')
   // Start a new session details log
@@ -705,13 +509,7 @@ const handlePracticeStart = () => {
   startSessionDetails(activeSessionId.value, practiceMode.value)
 }
 
-const handleExitPractice = () => {
-  if (practiceStarted.value && !allowExit.value) {
-    showExitWarning.value = true
-  } else {
-    router.push('/practice/flashcard')
-  }
-}
+// handleExitPractice now provided by navigation composable
 
 const handleTimeout = () => {
   console.log('Time out for current card!')
@@ -756,49 +554,9 @@ const handleSkip = () => {
   router.push('/practice/flashcard')
 }
 
-// Exit Warning Handlers
-const continueSession = () => {
-  showExitWarning.value = false
-}
+// Exit Warning Handlers now provided by navigation composable
 
-const confirmExit = () => {
-  allowExit.value = true
-  showExitWarning.value = false
-  // End the practice session
-  practiceStarted.value = false
-  if (practiceTimerRef.value) {
-    practiceTimerRef.value.resetPractice()
-  }
-  // Remove navigation guard to allow exit
-  removeNavigationGuard()
-  // Navigate back to Flashcard main page
-  router.push('/practice/flashcard')
-}
-
-// Navigation guard to prevent leaving page during practice
-let unregisterGuard: (() => void) | null = null
-
-const setupNavigationGuard = () => {
-  if (unregisterGuard) {
-    unregisterGuard()
-  }
-  
-  unregisterGuard = router.beforeEach((to, from, next) => {
-    if (practiceStarted.value && !allowExit.value && from.path.includes('/practice/flashcard')) {
-      showExitWarning.value = true
-      // Prevent navigation temporarily
-      return false
-    }
-    next()
-  })
-}
-
-const removeNavigationGuard = () => {
-  if (unregisterGuard) {
-    unregisterGuard()
-    unregisterGuard = null
-  }
-}
+// Navigation guard functions now provided by navigation composable
 
 // Image Answer Handler
 const handleImageAnswer = () => {
@@ -919,13 +677,30 @@ const {
   getDetailedStats
 } = useFlashcardStats(stats)
 
-// Get current flashcards (filtered + shuffled if enabled)
-const currentFlashcards = computed(() => {
-  if (flashcardSettings.value.shuffleCards && shuffledFlashcards.value.length > 0) {
-    return shuffledFlashcards.value
-  }
-  return baseFlashcards.value
-})
+// Shuffle composable - must be initialized before using currentFlashcards
+const {
+  shuffledFlashcards,
+  currentFlashcards,
+  shuffleEnabled,
+  shuffleFlashcards,
+  toggleShuffle,
+  setupShuffleWatcher,
+  initializeShuffle,
+  reshuffleForRestart,
+  resetShuffleState
+} = useFlashcardShuffle(baseFlashcards, flashcardSettings, currentIndex, () => resetAndRestoreCard())
+
+// Navigation composable - must be after shuffle to access resetShuffleState
+const {
+  showExitWarning,
+  allowExit,
+  continueSession,
+  confirmExit,
+  handleExitPractice,
+  initializeNavigation,
+  cleanupNavigation,
+  resetNavigationState
+} = useFlashcardNavigation(router, practiceStarted, practiceTimerRef, resetShuffleState)
 
 // Current card (works with both filtered and shuffled)
 const currentShuffledCard = computed(() => {
@@ -940,21 +715,6 @@ const currentProgressPercentage = computed(() => {
   if (currentIndex.value >= currentFlashcards.value.length) return 100
   return ((currentIndex.value + 1) / currentFlashcards.value.length) * 100
 })
-
-// Shuffle functionality
-const shuffleEnabled = computed(() => flashcardSettings.value.shuffleCards)
-const shuffledFlashcards = ref<any[]>([])
-
-const shuffleFlashcards = (cards = baseFlashcards.value) => {
-  // Fisher-Yates shuffle algorithm - use filtered flashcards
-  const shuffled = [...cards]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-  
-  shuffledFlashcards.value = shuffled
-}
 
 // Modes composable
 const {
@@ -1697,23 +1457,7 @@ const resetAndRestoreCard = () => {
   }
 };
 
-const toggleShuffle = () => {
-  // Update settings through the settings composable to ensure localStorage persistence
-  flashcardSettings.value.shuffleCards = !flashcardSettings.value.shuffleCards
-  
-  // If shuffle is enabled, create shuffled array
-  if (flashcardSettings.value.shuffleCards) {
-    shuffleFlashcards()
-  } else {
-    // Clear shuffled array when shuffle is disabled
-    shuffledFlashcards.value = []
-  }
-  
-  // Reset to first card after shuffle and clear state (order changed)
-  cardStateStorage.value = {}
-  currentIndex.value = 0
-  resetAndRestoreCard() // Will reset and generate new quiz options as there's no state
-}
+// toggleShuffle function now provided by shuffle composable
 
 // Override navigation functions to work with shuffled cards
 const enhancedNextCard = () => {
@@ -2006,9 +1750,20 @@ watch(practiceMode, () => {
   resetAndRestoreCard();
   
   // Ensure shuffle is applied after mode switch (e.g., Image mode)
-  // If shuffle is enabled but no shuffled list exists yet, generate it.
   if (flashcardSettings.value.shuffleCards && shuffledFlashcards.value.length === 0) {
     shuffleFlashcards()
+  }
+})
+
+// Ensure fresh shuffle after exiting a session (component may be reused by router)
+watch(practiceStarted, (started) => {
+  if (!started && flashcardSettings.value.shuffleCards) {
+    // Reset shuffle state and re-initialize order for next entry
+    resetShuffleState()
+    initializeShuffle()
+    // Reset to first card and clear any per-card state
+    currentIndex.value = 0
+    resetAndRestoreCard()
   }
 })
 
@@ -2071,14 +1826,7 @@ watch(showSessionDetail, (newValue) => {
   modalStore.setSessionDetailModal(newValue)
 })
 
-// Watch date filter state changes and save to localStorage
-watch(dateFilterEnabled, () => {
-  saveDateFilterState()
-})
-
-watch(selectedDate, () => {
-  saveDateFilterState()
-})
+// Watch date filter state changes - handled by composable internally
 
 // Watch baseFlashcards changes and re-shuffle if shuffle is enabled
 watch(baseFlashcards, (newCards) => {
@@ -2107,7 +1855,10 @@ const handleFlipTileHintsToggle = (enabled: boolean) => {
 
 // Initialize on mount
 onMounted(() => {
-  console.log('FlashcardView mounted')
+  console.log('FlashcardView mounted - forcing fresh shuffle state')
+  
+  // Force complete shuffle state reset on every mount (navigation or refresh)
+  resetShuffleState()
   
   // Initialize stats
   initializeStats(currentFlashcards.value.length)
@@ -2117,14 +1868,11 @@ onMounted(() => {
     generateQuizOptions()
   }
   
-  // Initialize shuffle if enabled
-  if (flashcardSettings.value.shuffleCards) {
-    shuffleFlashcards()
-  }
+  // Initialize shuffle if enabled - use composable function for proper fresh shuffle
+  initializeShuffle()
   
   // Setup navigation guard for exit warning
-  setupNavigationGuard()
-  window.addEventListener('beforeunload', handleBeforeUnload)
+  initializeNavigation()
 })
 
 // Cleanup on unmount
@@ -2133,8 +1881,7 @@ onUnmounted(() => {
   cleanup()
   
   // Remove navigation guard and event listeners
-  removeNavigationGuard()
-  window.removeEventListener('beforeunload', handleBeforeUnload)
+  cleanupNavigation()
 })
 </script>
 
